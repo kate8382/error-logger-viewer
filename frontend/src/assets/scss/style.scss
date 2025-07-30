@@ -1,0 +1,143 @@
+@use 'normalize';
+@use 'variables';
+@use 'aside';
+@use 'header';
+@use 'stats';
+@use 'table';
+@use 'modal';
+@use 'footer';
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+@font-face {
+  font-family: "Lato";
+  src: local(Lato-Bold),
+    url(../fonts/LatoBold.woff2) format("woff2"),
+    url(../fonts/Lato-Bold.woff) format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lato";
+  src: local(Lato-Medium),
+    url(../fonts/LatoMedium.woff2) format("woff2"),
+    url(../fonts/Lato-Medium.woff) format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lato";
+  src: local(Lato-Regular),
+    url(../fonts/LatoRegular.woff2) format("woff2"),
+    url(../fonts/Lato-Regular.woff) format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lato";
+  src: local(Lato-Light),
+    url(../fonts/LatoLight.woff2) format("woff2"),
+    url(../fonts/Lato-Light.woff) format("woff");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--black-color);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+button {
+  padding: 0;
+  cursor: pointer;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+.flex {
+  display: flex;
+}
+
+body {
+  min-width: var(--mobile);
+  min-height: 100vh; //Высота экрана
+  margin: 0;
+  padding: 0;
+  font-size: var(--body-font);
+  font-family: 'Lato', sans-serif;
+  color: var(--black-color);
+  background-color: var(--body-color);
+
+  .container {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: 112px 1fr 50px;
+  grid-template-areas:
+    "sidebar header"
+    "sidebar main"
+    "sidebar footer";
+  min-height: 100vh;
+
+    .main {
+    grid-area: main;
+    padding: 30px;
+    min-width: 0;
+    min-height: 0;
+    }
+  }
+}
+
+@media (max-width: var(--desktop)) {
+  .container {
+    grid-template-columns: 60px 1fr;
+  }
+}
+
+@media (max-width: var(--tablet)) {
+  .container {
+    grid-template-columns: 1fr;
+    grid-template-rows: 60px 1fr 60px 50px;
+    grid-template-areas:
+      "header"
+      "sidebar"
+      "main"
+      "footer";
+  }
+}
+
+@media (max-width: var(--mobile)) {
+  .container {
+    grid-template-rows: 60px 1fr 60px;
+    grid-template-areas:
+      "header"
+      "main"
+      "footer";
+  }
+}

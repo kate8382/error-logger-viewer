@@ -1,0 +1,33 @@
+:root {
+  // Container
+  --container-width: 1440px;
+  --max-gap: 30px;
+  --min-gap: 8px;
+
+  // Breakpoints
+  --mobile: 480px;
+  --tablet: 768px;
+  --desktop: 1024px;
+
+  // Fonts
+  --h1-font: 36px;
+  --h2-font: 28px;
+  --h3-font: 24px;
+  --body-font: 16px;
+  --small-font: 14px;
+
+  // Colors
+  --body-color: #DBDCDE;
+  --white-color: #FFFFFF;
+  --black-color: #3A3541;
+  --grey-color: #89868D;  
+  --focus-color: #9255FD;
+  --hover-color: #DECCFE;
+  --active-color: #6E39CB;
+  --grafic-color: #2DCCFF;
+  --error-color: #F93131;
+
+  // Radius
+  --button-radius: 4px;
+  --card-radius: 8px;
+}
