@@ -16,7 +16,7 @@
 
       <ul class="sidebar__list flex" aria-label="Sidebar navigation">
         <li class="sidebar__item">
-          <a class="sidebar__item-link flex" href="#about" aria-label="About" data-i18n-aria-label="ariaAbout">
+          <a class="sidebar__item-link flex" href="#about">
             <svg class="sidebar__item-icon" width="18" height="18" viewBox="0 0 18 18" fill="none"
               xmlns="http://www.w3.org/2000/svg">
               <path
@@ -28,8 +28,7 @@
         </li>
 
         <li class="sidebar__item">
-          <a class="sidebar__item-link flex" href="#errorStats" aria-label="Error Statistics"
-            data-i18n-aria-label="ariaStats">
+          <a class="sidebar__item-link flex" href="#errorStats">
             <svg class="sidebar__item-icon" width="18" height="18" viewBox="0 0 18 18" fill="none"
               xmlns="http://www.w3.org/2000/svg">
               <g clip-path="url(#clip0_1261_2079)">
@@ -48,8 +47,7 @@
         </li>
 
         <li class="sidebar__item">
-          <a class="sidebar__item-link flex" href="#errorTable" aria-label="Error Table"
-            data-i18n-aria-label="ariaErrors">
+          <a class="sidebar__item-link flex" href="#errorTable">
             <svg class="sidebar__item-icon" width="18" height="18" viewBox="0 0 18 18" fill="none"
               xmlns="http://www.w3.org/2000/svg">
               <path
@@ -62,7 +60,7 @@
 
         <li class="sidebar__item">
           <div class="sidebar__dropdown" id="sidebarDropdown">
-            <button class="sidebar__dropdown-btn flex" aria-label="Settings" data-i18n-aria-label="ariaSettings">
+            <button class="sidebar__dropdown-btn flex">
               <svg class="sidebar__item-icon" width="18" height="18" viewBox="0 0 18 18" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_1303_3752)">
@@ -86,8 +84,7 @@
 
             <div class="sidebar__dropdown-list" id="sidebarDropdownList">
               <div class="sidebar__dropdown-group">
-                <button class="sidebar__dropdown-group-btn flex" data-group="theme" aria-label="Theme"
-                  data-i18n-aria-label="ariaTheme">
+                <button class="sidebar__dropdown-group-btn flex" data-group="theme">
                   <span class="sidebar__dropdown-group-text" data-i18n="sidebarDropdownTheme">Theme</span>
                   <svg class="sidebar__dropdown-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
@@ -96,16 +93,15 @@
                   </svg>
                 </button>
                 <div class="sidebar__dropdown-sublist" data-group="theme">
-                  <button class="sidebar__dropdown-option" data-value="light" aria-label="Light theme"
-                    data-i18n-aria-label="ariaLightTheme" data-i18n="sidebarDropdownLight">Light</button>
-                  <button class="sidebar__dropdown-option" data-value="dark" aria-label="Dark theme"
-                    data-i18n-aria-label="ariaDarkTheme" data-i18n="sidebarDropdownDark">Dark</button>
+                  <button class="sidebar__dropdown-option" data-value="light"
+                    data-i18n="sidebarDropdownLight">Light</button>
+                  <button class="sidebar__dropdown-option" data-value="dark"
+                    data-i18n="sidebarDropdownDark">Dark</button>
                 </div>
               </div>
 
               <div class="sidebar__dropdown-group">
-                <button class="sidebar__dropdown-group-btn flex" data-group="language" aria-label="Language"
-                  data-i18n-aria-label="ariaLanguage">
+                <button class="sidebar__dropdown-group-btn flex" data-group="language">
                   <span class="sidebar__dropdown-group-text" data-i18n="sidebarDropdownLanguage">Language</span>
                   <svg class="sidebar__dropdown-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
@@ -114,10 +110,10 @@
                   </svg>
                 </button>
                 <div class="sidebar__dropdown-sublist" data-group="language">
-                  <button class="sidebar__dropdown-option" data-value="en" aria-label="English language"
-                    data-i18n-aria-label="ariaEnglish" data-i18n="sidebarDropdownEn">English</button>
-                  <button class="sidebar__dropdown-option" data-value="ru" aria-label="Русский язык"
-                    data-i18n-aria-label="ariaRussian" data-i18n="sidebarDropdownRu">Русский</button>
+                  <button class="sidebar__dropdown-option" data-value="en"
+                    data-i18n="sidebarDropdownEn">English</button>
+                  <button class="sidebar__dropdown-option" data-value="ru"
+                    data-i18n="sidebarDropdownRu">Русский</button>
                 </div>
               </div>
             </div>
@@ -129,8 +125,8 @@
     <header class="header flex">
       <h1 class="header__title" data-i18n="title">Error Logger &amp;&nbsp;Viewer</h1>
       <div class="header__search flex">
-        <input class="header__search-input" id="searchInput" data-i18n-placeholder="placeholder"
-          aria-label="Search errors" type="text" placeholder="Search errors...">
+        <input class="header__search-input" id="searchInput" data-i18n-placeholder="placeholder" type="text"
+          placeholder="Search errors...">
         <button class="header__search-btn" id="searchBtn" aria-label="Button search">
           <svg class="header__search-icon" width="18" height="18" viewBox="0 0 18 18" fill="none"
             xmlns="http://www.w3.org/2000/svg">
@@ -155,13 +151,47 @@
     </header>
 
     <main class="main">
-      <section class="stats" id="errorStats">
+      <section class="stats flex" id="errorStats">
         <h2 class="stats__title" data-i18n="statsTitle">Error Statistics</h2>
-        <p class="stats__description" data-i18n="statsTotal">Total Errors: <span id="totalErrors">0</span></p>
-        <p class="stats__description" data-i18n="statsUnique">Unique Errors: <span id="uniqueErrors">0</span></p>
-        <p class="stats__description" data-i18n="statsLast">Last Error: <span id="lastError">N/A</span></p>
-        <p class="stats__description" data-i18n="statsLastTime">Last Error Timestamp: <span
-            id="lastErrorTimestamp">N/A</span></p>
+        <ul class="stats__list flex">
+          <li class="stats__item flex">
+            <div class="stats__icon-wrapper stats__icon-wrapper--purple">
+              <svg class="stats__icon stats__icon--purple" width="28" height="28" viewBox="0 0 28 28" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <polygon points="14,3 25,25 3,25" fill="currentColor" />
+                <rect x="13" y="11" width="2" height="7" rx="1" fill="currentColor" />
+                <rect x="13" y="20" width="2" height="2" rx="1" fill="currentColor" />
+              </svg>
+            </div>
+            <span class="stats__label" data-i18n="statsErrorsPerDay"></span>: <span
+              class="stats__value stats__value--purple" id="errorsPerDay" aria-live="polite">0</span>
+          </li>
+          <li class="stats__item flex">
+            <div class="stats__icon-wrapper stats__icon-wrapper--red">
+              <svg class="stats__icon stats__icon--red" width="28" height="28" viewBox="0 0 28 28" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <polygon points="14,3 25,25 3,25" fill="currentColor" />
+                <rect x="13" y="11" width="2" height="7" rx="1" fill="currentColor" />
+                <rect x="13" y="20" width="2" height="2" rx="1" fill="currentColor" />
+              </svg>
+            </div>
+            <span class="stats__label" data-i18n="statsTotal"></span>: <span class="stats__value stats__value--red"
+              id="totalErrors" aria-live="polite">0</span>
+          </li>
+          <li class="stats__item flex">
+            <div class="stats__icon-wrapper stats__icon-wrapper--blue">
+              <svg class="stats__icon stats__icon--blue" width="28" height="28" viewBox="0 0 28 28" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <polygon points="14,3 25,25 3,25" fill="currentColor" />
+                <rect x="13" y="11" width="2" height="7" rx="1" fill="currentColor" />
+                <rect x="13" y="20" width="2" height="2" rx="1" fill="currentColor" />
+              </svg>
+            </div>
+            <span class="stats__label" data-i18n="statsUnique"></span>: <span class="stats__value stats__value--blue"
+              id="uniqueErrors" aria-live="polite">0</span>
+          </li>
+        </ul>
+        <canvas class="stats__chart" id="errorsChart"></canvas>
       </section>
 
       <table class="error-table" id="errorTable" aria-label="Error Table">

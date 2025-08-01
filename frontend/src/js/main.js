@@ -2,6 +2,7 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import '../assets/scss/style.scss';
 import { translations } from './i18n';
+import { initErrorsCharts } from './stats';
 
 const userLang = navigator.language || navigator.userLanguage;
 const lang = userLang.startsWith('ru') ? 'ru' : 'en';

@@ -1,0 +1,103 @@
+.stats {
+  flex-direction: column;
+  gap: var(--max-gap);
+  width: 100%;
+  min-height: 560px;
+
+  .stats__title {
+    margin: 0;
+    font-size: 24px;
+  }
+
+  .stats__list {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+
+
+    .stats__item {
+      flex-basis: calc(33.333% - var(--max-gap));
+      align-items: center;
+      justify-content: flex-start;
+      gap: var(--min-gap);
+      min-height: 150px;
+      padding: var(--max-gap);
+      background-color: var(--white-color);
+      border-radius: var(--card-radius);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+
+      .stats__icon-wrapper {
+        width: 30px;
+        height: 30px;
+        padding: 6px;
+        border-radius: var(--card-radius);
+
+        &--purple {
+          background-color: var(--hover-color);
+        }
+
+        &--red {
+          background-color: var(--total-bg);
+        }
+
+        &--blue {
+          background-color: var(--unique-bg);
+        }
+
+        .stats__icon {
+          width: 18px;
+          height: 18px;
+          flex-shrink: 0;
+
+          &--purple {
+            color: var(--focus-color);
+            stroke: var(--hover-color);
+          }
+
+          &--red {
+            color: var(--total-color);
+            stroke: var(--total-bg);
+          }
+
+          &--blue {
+            color: var(--unique-color);
+            stroke: var(--unique-bg);
+          }
+        }
+      }
+
+      .stats__label {
+        font-weight: 700;
+      }
+
+      .stats__value {
+        margin-left: auto;
+        font-size: var(--h1-font);
+        font-weight: 700;
+
+        &--purple {
+          color: var(--focus-color);
+        }
+
+        &--red {
+          color: var(--total-color);
+        }
+
+        &--blue {
+          color: var(--unique-color);
+        }
+      }
+    }
+  }
+
+  .stats__chart {
+    display: block;
+    width: 100%;
+    height: 300px;
+    margin: 0 auto;
+    background: var(--white-color);
+    border-radius: var(--card-radius);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+}
