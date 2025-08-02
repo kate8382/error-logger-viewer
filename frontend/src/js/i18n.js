@@ -21,8 +21,13 @@ export const translations = {
     statsErrorsPerDay: 'Errors per day',
     statsTotal: 'Total Errors',
     statsUnique: 'Unique Errors',
-
-
+    statsChartTitle: 'Error Statistics Chart',
+    statsPeriodWeek: 'Week',
+    ariaWeek: 'Week',
+    statsPeriodMonth: 'Month',
+    ariaMonth: 'Month',
+    statsPeriodYear: 'Year',
+    ariaYear: 'Year',
 
 
     tableId: 'ID',
@@ -55,8 +60,13 @@ export const translations = {
     statsErrorsPerDay: 'Ошибок за день',
     statsTotal: 'Всего ошибок',
     statsUnique: 'Уникальных ошибок',
-
-
+    statsChartTitle: 'График статистики ошибок',
+    statsPeriodWeek: 'Неделя',
+    ariaWeek: 'Неделя',
+    statsPeriodMonth: 'Месяц',
+    ariaMonth: 'Месяц',
+    statsPeriodYear: 'Год',
+    ariaYear: 'Год',
 
     tableId: 'ID',
     tableData: 'Данные',
