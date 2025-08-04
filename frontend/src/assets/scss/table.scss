@@ -1,0 +1,53 @@
+.error-table {
+  max-width: 100%;
+  min-height: 300px;
+  padding: var(--max-gap);
+  overflow-x: auto;
+  background-color: var(--white-color);
+  border-radius: var(--card-radius);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--body-color);
+
+  &__title {
+    font-size: var(--h2-font);
+    margin: 0;
+    margin-bottom: var(--max-gap);
+  }
+
+  &__table {
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    font-size: var(--body-font);
+
+    .error-table__head {
+      display: grid;
+      grid-template-columns: 20% 20% 20% 20% 20%;
+      align-items: flex-end;
+      width: 100%;
+      min-height: 22px;
+      padding: var(--max-gap);
+      text-align: left;
+      border-top: 1px solid var(--body-color);
+      border-bottom: 1px solid var(--body-color);
+
+      .error-table__btn-sort {
+        justify-content: flex-start;
+        align-items: center;
+        font-weight: bold;
+
+
+      }
+    }
+
+    .error-table__body {
+      .error-table__row {
+        display: grid;
+        grid-template-columns: 20% 20% 20% 20% 20%;
+        align-items: center;
+        padding: var(--max-gap);
+        border-bottom: 1px solid var(--body-color);
+      }
+    }
+  }
+}

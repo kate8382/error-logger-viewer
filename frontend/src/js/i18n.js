@@ -16,6 +16,9 @@ export const translations = {
     sidebarDropdownLanguage: 'Language',
     sidebarDropdownEn: 'English',
     sidebarDropdownRu: 'Russian',
+    sidebarDropdownMode: 'Mode',
+    sidebarDropdownServer: 'Server',
+    sidebarDropdownDemo: 'Demo',
     sidebarDropdownArrow: 'Open',
     statsTitle: 'Error Statistics',
     statsErrorsPerDay: 'Errors per day',
@@ -28,13 +31,17 @@ export const translations = {
     ariaMonth: 'Month',
     statsPeriodYear: 'Year',
     ariaYear: 'Year',
-
-
+    errorTableTitle: 'Error Table',
     tableId: 'ID',
-    tableData: 'Data',
-    tableMessage: 'Message',
+    ariaId: 'Sort by ID',
+    tableType: 'Type of Error',
+    ariaType: 'Sort by Type',
     tableTimestamp: 'Timestamp',
+    ariaTimestamp: 'Sort by Timestamp',
+    tableMessage: 'Message',
     tableActions: 'Actions',
+
+
     modalTitle: 'Error Details',
     modalClose: 'Close'
   },
@@ -55,6 +62,9 @@ export const translations = {
     sidebarDropdownLanguage: 'Язык',
     sidebarDropdownEn: 'Английский',
     sidebarDropdownRu: 'Русский',
+    sidebarDropdownMode: 'Режим',
+    sidebarDropdownServer: 'Сервер',
+    sidebarDropdownDemo: 'Демо-режим',
     sidebarDropdownArrow: 'Открыть',
     statsTitle: 'Статистика ошибок',
     statsErrorsPerDay: 'Ошибок за день',
@@ -67,12 +77,17 @@ export const translations = {
     ariaMonth: 'Месяц',
     statsPeriodYear: 'Год',
     ariaYear: 'Год',
-
+    errorTableTitle: 'Таблица ошибок',
     tableId: 'ID',
-    tableData: 'Данные',
-    tableMessage: 'Сообщение',
+    ariaId: 'Сортировка по ID',
+    tableType: 'Тип ошибки',
+    ariaType: 'Сортировка по типу ошибки',
     tableTimestamp: 'Время',
+    ariaTimestamp: 'Сортировка по времени',
+    tableMessage: 'Сообщение',
     tableActions: 'Действия',
+
+
     modalTitle: 'Детали ошибки',
     modalClose: 'Закрыть'
   }

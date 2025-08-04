@@ -27,7 +27,24 @@ app.use(express.json()); // для обработки JSON-запросов
 // Маршрут для получения ошибок
 app.get('/errors', async (req, res) => {
   await db.read();
-  res.json(db.data.errors);
+  let errors = db.data.errors || [];
+
+  // Фильтрация по типу ошибки
+  if (req.query.filter) {
+    errors = errors.filter(e => String(e.type).toLowerCase() === String(req.query.filter).toLowerCase());
+  }
+
+  // Сортировка по полю
+  if (req.query.sort) {
+    const order = req.query.order === 'desc' ? -1 : 1;
+    errors = errors.sort((a, b) => {
+      if (a[req.query.sort] < b[req.query.sort]) return -1 * order;
+      if (a[req.query.sort] > b[req.query.sort]) return 1 * order;
+      return 0;
+    });
+  }
+
+  res.json(errors);
 });
 
 // Маршрут для добавления новой ошибки

@@ -84,6 +84,23 @@
 
             <div class="sidebar__dropdown-list" id="sidebarDropdownList">
               <div class="sidebar__dropdown-group">
+                <button class="sidebar__dropdown-group-btn flex" data-group="mode">
+                  <span class="sidebar__dropdown-group-text" data-i18n="sidebarDropdownMode">Mode</span>
+                  <svg class="sidebar__dropdown-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 5.4975L2.12175 3.375L9.003 10.3792L15.8783 3.375L18 5.4975L9.003 14.625L0 5.4975Z"
+                      fill="black"></path>
+                  </svg>
+                </button>
+                <div class="sidebar__dropdown-sublist" data-group="mode">
+                  <button class="sidebar__dropdown-option" data-i18n="sidebarDropdownServer"
+                    data-value="server"><S>Server</S></button>
+                  <button class="sidebar__dropdown-option" data-i18n="sidebarDropdownDemo"
+                    data-value="demo"><S>Demo</S></button>
+                </div>
+              </div>
+
+              <div class="sidebar__dropdown-group">
                 <button class="sidebar__dropdown-group-btn flex" data-group="theme">
                   <span class="sidebar__dropdown-group-text" data-i18n="sidebarDropdownTheme">Theme</span>
                   <svg class="sidebar__dropdown-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none"
@@ -208,19 +225,63 @@
         </div>
       </section>
 
-      <table class="error-table" id="errorTable" aria-label="Error Table">
-        <thead>
-          <tr>
-            <th data-i18n="tableId">ID</th>
-            <th data-i18n="tableData">Data</th>
-            <th data-i18n="tableMessage">Message</th>
-            <th data-i18n="tableTimestamp">Timestamp</th>
-            <th data-i18n="tableActions">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
+      <section class="error-table" id="errorTableSection">
+        <h2 class="error-table__title" data-i18n="errorTableTitle">Error Table</h2>
+        <table class="error-table__table flex" id="errorTable" aria-label="Error Table">
+          <thead>
+            <tr class="error-table__head" id="errorTableHead">
+              <th>
+                <button class="error-table__btn-sort flex" id="sortById" aria-label="Sort by ID">
+                  <span data-i18n="tableId">ID</span>
+                  <svg class="sort-icon" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                    style="vertical-align: middle; margin-left: 4px; margin-bottom: 2px;">
+                    <polygon points="10,4 5,9 15,9" fill="currentColor" />
+                    <polygon points="10,16 15,11 5,11" fill="currentColor" />
+                  </svg>
+                </button>
+              </th>
+
+              <th>
+                <button class="error-table__btn-sort flex" id="sortByType" aria-label="Sort by Type of Error">
+                  <span data-i18n="tableType">Type of Error</span>
+                  <svg class="sort-icon" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                    style="vertical-align: middle; margin-left: 4px; margin-bottom: 2px;">
+                    <polygon points="10,4 5,9 15,9" fill="currentColor" />
+                    <polygon points="10,16 15,11 5,11" fill="currentColor" />
+                  </svg>
+                </button>
+              </th>
+
+              <th>
+                <button class="error-table__btn-sort flex" id="sortByTimestamp" aria-label="Sort by Timestamp">
+                  <span data-i18n="tableTimestamp">Timestamp</span>
+                  <svg class="sort-icon" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                    style="vertical-align: middle; margin-left: 4px; margin-bottom: 2px;">
+                    <polygon points="10,4 5,9 15,9" fill="currentColor" />
+                    <polygon points="10,16 15,11 5,11" fill="currentColor" />
+                  </svg>
+                </button>
+              </th>
+
+              <th data-i18n="tableMessage">Message</th>
+              <th data-i18n="tableActions">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody class="error-table__body" id="errorTableBody">
+            <tr class="error-table__row" id="errorRowTemplate" style="display: none;">
+              <td class="error-table__cell error-table__cell--id"></td>
+              <td class="error-table__cell error-table__cell--data"></td>
+              <td class="error-table__cell error-table__cell--timestamp"></td>
+              <td class="error-table__cell error-table__cell--message"></td>
+              <td class="error-table__cell error-table__cell--actions">
+                <button class="error-table__btn error-table__btn--view" data-i18n="tableView">View</button>
+                <button class="error-table__btn error-table__btn--delete" data-i18n="tableDelete">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
       <div class="modal" aria-labelledby="modalTitle" aria-modal="true" role="dialog">
         <div class="modal__content">
