@@ -83,7 +83,7 @@ app.put('/errors/:id', async (req, res) => {
     return res.status(404).json({ error: 'No errors found' });
   }
 
-  const index = db.data.errors.findIndex(e => e.id === Number(req.params.id));
+  const index = db.data.errors.findIndex(e => e.id === req.params.id);
   if (index === -1) {
     return res.status(404).json({ error: 'Error not found' });
   }
@@ -103,7 +103,7 @@ app.get('/errors/:id', async (req, res) => {
     return res.status(404).json({ error: 'No errors found' });
   }
 
-  const error = db.data.errors.find(e => e.id === Number(req.params.id));
+  const error = db.data.errors.find(e => e.id === req.params.id);
   if (!error) {
     return res.status(404).json({ error: 'Error not found' });
   }
@@ -118,7 +118,7 @@ app.delete('/errors/:id', async (req, res) => {
     return res.status(404).json({ error: 'No errors found' });
   }
 
-  const index = db.data.errors.findIndex(e => e.id === Number(req.params.id));
+  const index = db.data.errors.findIndex(e => e.id === req.params.id);
   if (index === -1) {
     return res.status(404).json({ error: 'Error not found' });
   }

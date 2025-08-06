@@ -7,6 +7,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Error Logger & Viewer</title>
   <!-- Стили и скрипты будут автоматически подключены HtmlWebpackPlugin -->
+  <!-- Мини-скрипт для раннего логирования ошибок ресурсов -->
+  <script>
+    window.__earlyErrors = [];
+    window.addEventListener('error', function (event) {
+      if (event.target && (event.target.tagName === 'SCRIPT' || event.target.tagName === 'LINK' || event.target.tagName === 'IMG')) {
+        window.__earlyErrors.push({
+          type: 'ResourceLoadError',
+          message: 'Failed to load resource: ' + (event.target.src || event.target.href),
+          source: event.target.tagName,
+          timestamp: new Date().toISOString()
+        });
+      }
+    }, true);
+  </script>
+
 </head>
 
 <body>
@@ -268,18 +283,7 @@
             </tr>
           </thead>
 
-          <tbody class="error-table__body" id="errorTableBody">
-            <tr class="error-table__row" id="errorRowTemplate" style="display: none;">
-              <td class="error-table__cell error-table__cell--id"></td>
-              <td class="error-table__cell error-table__cell--data"></td>
-              <td class="error-table__cell error-table__cell--timestamp"></td>
-              <td class="error-table__cell error-table__cell--message"></td>
-              <td class="error-table__cell error-table__cell--actions">
-                <button class="error-table__btn error-table__btn--view" data-i18n="tableView">View</button>
-                <button class="error-table__btn error-table__btn--delete" data-i18n="tableDelete">Delete</button>
-              </td>
-            </tr>
-          </tbody>
+          <tbody class="error-table__body" id="errorTableBody"></tbody>
         </table>
       </section>
 

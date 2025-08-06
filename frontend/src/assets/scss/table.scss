@@ -22,7 +22,7 @@
 
     .error-table__head {
       display: grid;
-      grid-template-columns: 20% 20% 20% 20% 20%;
+      grid-template-columns: 18% 18% 18% 26% 20%;
       align-items: flex-end;
       width: 100%;
       min-height: 22px;
@@ -35,18 +35,95 @@
         justify-content: flex-start;
         align-items: center;
         font-weight: bold;
+        transition: color 0.3s ease-in-out, fill 0.3s ease-in-out;
 
+        &:hover {
+          color: var(--hover-color);
+          fill: var(--hover-color);
+        }
 
+        &:focus {
+          color: var(--focus-color);
+          fill: var(--focus-color);
+        }
+
+        &:active {
+          color: var(--active-color);
+          fill: var(--active-color);
+        }
       }
     }
 
     .error-table__body {
       .error-table__row {
         display: grid;
-        grid-template-columns: 20% 20% 20% 20% 20%;
+        grid-template-columns: 18% 18% 18% 26% 20%;
         align-items: center;
         padding: var(--max-gap);
         border-bottom: 1px solid var(--body-color);
+        transition: border-bottom 0.3s ease-in-out;
+
+        &:hover {
+          border-bottom: 2px solid var(--hover-color);
+        }
+
+        .error-table__cell {
+          text-align: left;
+          color: var(--black-color);
+          font-size: var(--small-font);
+
+          &--id,
+          &--timestamp {
+            color: var(--grey-color);
+          }
+
+          &--data,
+          &--message {
+            font-weight: 700;
+          }
+
+          &--actions {
+            display: flex;
+            justify-content: flex-start;
+            align-items: start;
+            gap: var(--max-gap);
+            width: 100%;
+
+            .error-table__btn {
+              width: 50%;
+              min-height: 32px;
+              padding: 8px 14px;
+              color: var(--white-color);
+              font-size: 12px;
+              border-radius: var(--button-radius);
+              transition: background-color 0.3s ease-in-out;
+
+              &--view {
+                background-color: var(--focus-color);
+
+                &:hover {
+                  background-color: var(--hover-color);
+                }
+
+                &:active {
+                  background-color: var(--active-color);
+                }
+              }
+
+              &--delete {
+                background-color: var(--total-color);
+
+                &:hover {
+                  background-color: var(--total-bg);
+                }
+
+                &:active {
+                  background-color: var(--total-color);
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
