@@ -287,14 +287,8 @@
         </table>
       </section>
 
-      <div class="modal" aria-labelledby="modalTitle" aria-modal="true" role="dialog">
-        <div class="modal__content">
-          <span class="modal__close">&times;</span>
-          <h2 class="modal__title" id="modalTitle" data-i18n="modalTitle">Error Details</h2>
-          <p class="modal__message" id="errorMessage"></p>
-          <p class="modal__timestamp" id="errorTimestamp"></p>
-          <button class="modal__button" id="closeModalButton" data-i18n="modalClose">Close</button>
-        </div>
+      <div class="modal" id="modal" aria-labelledby="modalTitle" aria-modal="true" role="dialog">
+        <div class="modal__content flex" id="modalContent"></div>
       </div>
     </main>
 

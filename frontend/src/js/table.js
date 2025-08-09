@@ -56,17 +56,25 @@ export class ErrorTable {
   createViewButton(error) {
     const btn = el('button', { className: 'error-table__btn error-table__btn--view', 'data-i18n': 'tableViewBtn', 'aria-label': this.translations[this.lang]['tableViewBtn'] || 'View' }, 'View');
     btn.addEventListener('click', () => {
-      // Здесь можно реализовать показ модального окна с деталями ошибки
-      alert(`Error details:\n${JSON.stringify(error, null, 2)}`);
+      import('./modal').then(({ Modal }) => {
+        const modal = new Modal();
+        modal.open(error);
+      }).catch(error => {
+        console.error('Ошибка при открытии модального окна:', error);
+      });
     });
     return btn;
   }
 
   createDeleteButton(error) {
     const btn = el('button', { className: 'error-table__btn error-table__btn--delete', 'data-i18n': 'tableDeleteBtn', 'aria-label': this.translations[this.lang]['tableDeleteBtn'] || 'Delete' }, 'Delete');
-    btn.addEventListener('click', async () => {
-      await this.errorApi.deleteError(error.id);
-      await this.fetchErrors();
+    btn.addEventListener('click', () => {
+      import('./modal').then(({ Modal }) => {
+        const modal = new Modal();
+        modal.deleteError(error.id);
+      }).catch(error => {
+        console.error('Ошибка при открытии модального окна удаления:', error);
+      });
     });
     return btn;
   }

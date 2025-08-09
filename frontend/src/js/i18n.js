@@ -47,10 +47,14 @@ export const translations = {
     tableActions: 'Actions',
     tableViewBtn: 'View',
     tableDeleteBtn: 'Delete',
-
-
     modalTitle: 'Error Details',
-    modalClose: 'Close'
+    modalClose: 'Close',
+    modalCloseBtn: 'Close',
+    modalDeleteTitle: 'Delete Error',
+    modalDeleteMessage: 'Are you sure you want to delete this error?',
+    modalCancelBtn: 'Cancel',
+    modalDeleteBtn: 'Delete',
+
   },
   ru: {
     title: 'Error Logger & Viewer',
@@ -100,9 +104,13 @@ export const translations = {
     tableActions: 'Действия',
     tableViewBtn: 'Просмотр',
     tableDeleteBtn: 'Удалить',
-
-
     modalTitle: 'Детали ошибки',
-    modalClose: 'Закрыть'
+    modalClose: 'Закрыть',
+    modalCloseBtn: 'Закрыть',
+    modalDeleteTitle: 'Удалить ошибку',
+    modalDeleteMessage: 'Вы уверены, что хотите удалить эту ошибку?',
+    modalCancelBtn: 'Отмена',
+    modalDeleteBtn: 'Удалить',
+
   }
 };
