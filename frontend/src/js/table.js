@@ -27,22 +27,23 @@ export class ErrorTable {
       // Перевод типа ошибки
       const typeKey = 'errorType_' + error.type;
       const typeText = this.translations[currentLang][typeKey] || error.type;
+      const status = error.status || '';
       return el('tr', { className: 'error-table__row' }, [
         el('td', { className: 'error-table__cell error-table__cell--id' }, this.formatId(error.id)),
         el('td', { className: 'error-table__cell error-table__cell--data' }, typeText),
         el('td', { className: 'error-table__cell error-table__cell--timestamp' }, this.formatDate(error.timestamp || error.createdAt || '')),
-        el('td', { className: 'error-table__cell error-table__cell--message' }, error.message),
+        el('td', { className: 'error-table__cell error-table__cell--status' }, status),
         el('td', { className: 'error-table__cell error-table__cell--actions' }, [
-          this.createViewButton(error),
+          this.createEditButton(error),
           this.createDeleteButton(error)
         ])
       ]);
     });
     setChildren(tableBody, { className: 'error-table__body' }, rows);
 
-    // Переводим кнопки View/Delete после рендера, используя актуальный язык
-    const viewBtns = tableBody.querySelectorAll('.error-table__btn--view[data-i18n]');
-    viewBtns.forEach(btn => {
+    // Переводим кнопки Edit/Delete после рендера, используя актуальный язык
+    const editBtns = tableBody.querySelectorAll('.error-table__btn--edit[data-i18n]');
+    editBtns.forEach(btn => {
       const key = btn.getAttribute('data-i18n');
       btn.textContent = this.translations[currentLang][key] || key;
     });
@@ -53,14 +54,14 @@ export class ErrorTable {
     });
   }
 
-  createViewButton(error) {
-    const btn = el('button', { className: 'error-table__btn error-table__btn--view', 'data-i18n': 'tableViewBtn', 'aria-label': this.translations[this.lang]['tableViewBtn'] || 'View' }, 'View');
+  createEditButton(error) {
+    const btn = el('button', { className: 'error-table__btn error-table__btn--edit', 'data-i18n': 'tableEditBtn', 'aria-label': this.translations[this.lang]['tableEditBtn'] || 'Edit' }, 'Edit');
     btn.addEventListener('click', () => {
       import('./modal').then(({ Modal }) => {
-        const modal = new Modal();
-        modal.open(error);
+        if (!window.appModal) window.appModal = new Modal();
+        window.appModal.openEdit(error);
       }).catch(error => {
-        console.error('Ошибка при открытии модального окна:', error);
+        console.error('Ошибка при открытии модального окна редактирования:', error);
       });
     });
     return btn;
@@ -70,8 +71,8 @@ export class ErrorTable {
     const btn = el('button', { className: 'error-table__btn error-table__btn--delete', 'data-i18n': 'tableDeleteBtn', 'aria-label': this.translations[this.lang]['tableDeleteBtn'] || 'Delete' }, 'Delete');
     btn.addEventListener('click', () => {
       import('./modal').then(({ Modal }) => {
-        const modal = new Modal();
-        modal.deleteError(error.id);
+        if (!window.appModal) window.appModal = new Modal();
+        window.appModal.deleteError(error.id);
       }).catch(error => {
         console.error('Ошибка при открытии модального окна удаления:', error);
       });

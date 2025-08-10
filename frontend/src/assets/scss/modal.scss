@@ -1,166 +1,214 @@
-// Стили для динамических полей модального окна
-.modal__row {
-  margin-bottom: 10px;
-  font-size: 18px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-}
+   .modal {
+     display: none;
+     position: fixed;
+     top: 0;
+     left: 0;
+     right: 0;
+     bottom: 0;
+     justify-content: center;
+     align-items: center;
+     z-index: 1;
+     width: 100%;
+     height: 100%;
+     background: rgba(0, 0, 0, 0.5);
+     animation: fadeIn 0.3s ease-in-out,
+       fadeOut 0.3s ease-in-out;
+     transition: opacity 0.3s ease-in-out;
 
-.modal__field-title {
-  font-weight: bold;
-  color: var(--black-color);
-  margin-right: 8px;
-}
+     &--open {
+       display: flex;
+       animation: fadeIn 0.3s ease-in-out;
+     }
 
-.modal__field-value {
-  color: var(--grey-color);
-  font-size: var(--body-font);
-  word-break: break-all;
-}
+     &__content {
+       position: relative;
+       flex-direction: column;
+       justify-content: space-between;
+       align-items: flex-start;
+       gap: var(--min-gap);
+       width: 45%;
+       height: auto;
+       padding: var(--max-gap);
+       background-color: var(--white-color);
+       border-radius: var(--card-radius);
+       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+       overflow-y: auto;
+       animation: slideUp 0.3s ease-in-out, scaleUp 0.3s ease-in-out;
+     }
 
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  justify-content: center;
-  align-items: center;
-  z-index: 1;
-  animation: fadeIn 0.3s ease-in-out,
-    fadeOut 0.3s ease-in-out;
-  transition: opacity 0.3s ease-in-out;
+     &__close {
+       position: absolute;
+       top: 10px;
+       right: 15px;
+       width: var(--h3-font);
+       height: var(--h3-font);
+       margin: 0;
+       font-size: var(--h2-font);
+       color: var(--black-color);
+       cursor: pointer;
+       transition: color 0.3s ease-in-out;
 
-  &--open {
-    display: flex;
-    animation: fadeIn 0.3s ease-in-out;
-  }
+       &:hover {
+         color: var(--grey-color);
+       }
 
-  &__content {
-    position: relative;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: var(--min-gap);
-    width: 45%;
-    height: 80%;
-    padding: var(--max-gap);
-    background-color: var(--white-color);
-    border-radius: var(--card-radius);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    overflow-y: auto;
-    animation: slideUp 0.3s ease-in-out, scaleUp 0.3s ease-in-out;
-  }
+       &:active {
+         color: var(--black-color);
+       }
+     }
 
-  &__close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 24px;
-    color: var(--black-color);
-    cursor: pointer;
-    transition: color 0.3s ease-in-out;
+     &__title {
+       margin: 0;
+       margin-bottom: var(--body-font);
+       font-size: var(--h3-font);
+       color: var(--black-color);
+     }
 
-    &:hover {
-      color: var(--grey-color);
-    }
+     &__message {
+       margin: 0;
+       margin-bottom: var(--body-font);
+       font-size: 18px;
+       color: var(--black-color);
+     }
 
-    &:active {
-      color: var(--black-color);
-    }
-  }
+     &__row {
+       display: flex;
+       flex-wrap: wrap;
+       align-items: baseline; // Выравнивание по базовой линии
+       gap: var(--min-gap);
+       font-size: var(--body-font);
+     }
 
-  &__title {
-    font-size: var(--h2-font);
-    color: var(--black-color);
-    margin: 0;
-    margin-bottom: var(--body-font);
-  }
+     &__row:last-of-type {
+       margin-bottom: var(--max-gap);
+     }
 
-  &__id,
-  &__message,
-  &__timestamp {
-    margin: 0;
-    font-size: 18px;
-    color: var(--black-color);
-    font-weight: bold;
-  }
+     &__field-title {
+       font-weight: bold;
+       color: var(--black-color);
+     }
 
-  &__id-value,
-  &__message-value,
-  &__timestamp-value {
-    font-size: var(--body-font);
-    color: var(--grey-color);
-    font-weight: normal;
-  }
+     &__field-value {
+       color: var(--grey-color);
+       word-break: break-all; // Чтобы длинные строки не выходили за пределы контейнера
+     }
 
-  &__button {
-    align-self: center;
-    padding: 10px 20px;
-    font-size: var(--body-font);
-    color: var(--white-color);
-    background-color: var(--focus-color);
-    border: none;
-    border-radius: var(--button-radius);
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
+     &__status-select {
+       min-width: 120px;
+       padding: 6px 12px;
+       font-size: var(--body-font);
+       border-radius: var(--button-radius);
+       border: 1px solid var(--grey-color);
+       background: var(--white-color);
+       color: var(--black-color);
+       margin-left: 8px;
+       transition: border-color 0.2s;
 
-    &:hover {
-      background-color: var(--hover-color);
-    }
+       &:focus {
+         border-color: var(--focus-color);
+         outline: none;
+       }
+     }
 
-    &:active {
-      background-color: var(--active-color);
-    }
-  }
+     &__comment-area {
+       min-width: 220px;
+       width: 100%;
+       max-width: 100%;
+       min-height: 60px;
+       font-size: var(--body-font);
+       border-radius: var(--button-radius);
+       border: 1px solid var(--grey-color);
+       background: var(--white-color);
+       color: var(--black-color);
+       padding: 8px 12px;
+       margin-left: 8px;
+       resize: vertical;
+       transition: border-color 0.2s;
 
-  /* Анимация для модальных окон */
-  // Анимация для затемнения фона
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
+       &:focus {
+         border-color: var(--focus-color);
+         outline: none;
+       }
+     }
 
-    to {
-      opacity: 1;
-    }
-  }
+     &__button {
+       align-self: center;
+       padding: 10px 20px;
+       font-size: var(--body-font);
+       color: var(--white-color);
+       background-color: var(--focus-color);
+       border-radius: var(--button-radius);
+       transition: background-color 0.3s ease-in-out;
 
-  // Анимация для скрытия модального окна
-  @keyframes fadeOut {
-    from {
-      opacity: 1;
-    }
+       &:hover {
+         background-color: var(--hover-color);
+       }
 
-    to {
-      opacity: 0;
-    }
-  }
+       &:active {
+         background-color: var(--active-color);
+       }
+     }
 
-  // Анимация для появления модального окна
-  @keyframes slideUp {
-    from {
-      transform: translateY(100%);
-    }
+     &__delete-btn {
+       align-self: center;
+       padding: 10px 20px;
+       color: var(--white-color);
+       font-size: var(--body-font);
+       border-radius: var(--button-radius);
+       background-color: var(--total-color);
+       transition: background-color 0.3s ease-in-out;
 
-    to {
-      transform: translateY(0);
-    }
-  }
+       &:hover {
+         background-color: var(--total-bg);
+       }
+     }
 
-  // Анимация для увеличения модального окна
-  @keyframes scaleUp {
-    from {
-      transform: scale(0.8);
-    }
+     &__cancel-btn {
+       align-self: center;
+       font-size: var(--small-font);
+       text-decoration: underline;
+       transition: color 0.3s ease-in-out;
 
-    to {
-      transform: scale(1);
-    }
-  }
-}
+       &:hover {
+         color: var(--grey-color);
+       }
+
+       &:active {
+         color: var(--black-color);
+       }
+     }
+
+     // Анимация для модальных окон:
+     // Анимация для затемнения фона
+     @keyframes fadeIn {
+       from {
+         opacity: 0;
+       }
+
+       to {
+         opacity: 1;
+       }
+     }
+
+     // Анимация для появления модального окна
+     @keyframes slideUp {
+       from {
+         transform: translateY(100%);
+       }
+
+       to {
+         transform: translateY(0);
+       }
+     }
+
+     // Анимация для увеличения модального окна
+     @keyframes scaleUp {
+       from {
+         transform: scale(0.8);
+       }
+
+       to {
+         transform: scale(1);
+       }
+     }
+   }

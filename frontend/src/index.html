@@ -278,7 +278,16 @@
                 </button>
               </th>
 
-              <th data-i18n="tableMessage">Message</th>
+              <th data-i18n="tableStatus">
+                <button class="error-table__btn-sort flex" id="sortByStatus" aria-label="Sort by Status">
+                  <span data-i18n="tableStatus">Status</span>
+                  <svg class="sort-icon" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                    style="vertical-align: middle; margin-left: 4px; margin-bottom: 2px;">
+                    <polygon points="10,4 5,9 15,9" fill="currentColor" />
+                    <polygon points="10,16 15,11 5,11" fill="currentColor" />
+                  </svg>
+                </button>
+              </th>
               <th data-i18n="tableActions">Actions</th>
             </tr>
           </thead>

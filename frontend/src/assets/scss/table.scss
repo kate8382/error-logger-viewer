@@ -57,7 +57,7 @@
     .error-table__body {
       .error-table__row {
         display: grid;
-        grid-template-columns: 18% 18% 18% 26% 20%;
+        grid-template-columns: 18% 18% 18% 18% 18%;
         align-items: center;
         padding: var(--max-gap);
         border-bottom: 1px solid var(--body-color);
@@ -77,9 +77,15 @@
             color: var(--grey-color);
           }
 
-          &--data,
-          &--message {
+
+          &--data {
             font-weight: 700;
+          }
+
+          &--status {
+            font-weight: 700;
+            color: var(--focus-color);
+            text-transform: capitalize;
           }
 
           &--actions {
@@ -98,7 +104,8 @@
               border-radius: var(--button-radius);
               transition: background-color 0.3s ease-in-out;
 
-              &--view {
+
+              &--edit {
                 background-color: var(--focus-color);
 
                 &:hover {

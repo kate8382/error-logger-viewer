@@ -7,7 +7,9 @@
       "timestamp": "2025-08-06T14:32:47.558Z",
       "id": "edc52dd2-50cb-426b-be62-4125df8dd09f",
       "createdAt": "2025-08-06T14:32:47.609Z",
-      "updatedAt": "2025-08-06T14:32:47.609Z"
+      "updatedAt": "2025-08-10T16:55:00.081Z",
+      "status": "in_progress",
+      "comment": ""
     },
     {
       "type": "FetchError",
@@ -57,18 +59,6 @@
       "updatedAt": "2025-08-06T15:49:11.834Z"
     },
     {
-      "type": "Error",
-      "message": "Uncaught Error: Test JS error",
-      "source": "webpack://error-logger-viewer/./src/js/main.js?",
-      "lineno": 26,
-      "colno": 9,
-      "stack": "Error: Test JS error\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:26:9)",
-      "timestamp": "2025-08-06T16:29:00.760Z",
-      "id": "f0e98f7e-85a2-4095-a520-cc9fd81e70e2",
-      "createdAt": "2025-08-06T16:29:00.773Z",
-      "updatedAt": "2025-08-06T16:29:00.773Z"
-    },
-    {
       "type": "FetchError",
       "message": "Fetch failed: 404 Not Found",
       "source": "http://localhost:8080/main.2c3c24f3d0e3a78ce50f.hot-update.json",
@@ -86,27 +76,6 @@
       "id": "c75cfda5-5b7c-4a29-bc71-f60826269048",
       "createdAt": "2025-08-06T16:30:34.957Z",
       "updatedAt": "2025-08-06T16:30:34.957Z"
-    },
-    {
-      "type": "Error",
-      "message": "Uncaught Error: Test JS error",
-      "source": "webpack://error-logger-viewer/./src/js/main.js?",
-      "lineno": 254,
-      "colno": 9,
-      "stack": "Error: Test JS error\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:254:9)",
-      "timestamp": "2025-08-06T16:31:02.337Z",
-      "id": "ec613bc5-4ff8-400d-9793-ff011d90b98f",
-      "createdAt": "2025-08-06T16:31:02.471Z",
-      "updatedAt": "2025-08-06T16:31:02.471Z"
-    },
-    {
-      "type": "UnhandledPromiseRejection",
-      "message": "Test unhandled rejection",
-      "stack": "",
-      "timestamp": "2025-08-06T16:34:59.028Z",
-      "id": "d781be7b-3fdc-45e8-bc95-c6f4aba02fba",
-      "createdAt": "2025-08-06T16:34:59.040Z",
-      "updatedAt": "2025-08-06T16:34:59.040Z"
     },
     {
       "type": "UnhandledPromiseRejection",
@@ -179,6 +148,69 @@
       "id": "2164f4e3-0a85-433f-814f-9c73731d654c",
       "createdAt": "2025-08-09T16:36:18.944Z",
       "updatedAt": "2025-08-09T16:36:18.944Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.e447ef6f9a2ff3593e30.hot-update.json",
+      "timestamp": "2025-08-10T13:41:34.039Z",
+      "id": "2085d59a-6edb-475a-853a-1da11c8abba6",
+      "createdAt": "2025-08-10T13:41:34.990Z",
+      "updatedAt": "2025-08-10T13:41:34.990Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.f472c2cc850e5aa673ec.hot-update.json",
+      "timestamp": "2025-08-10T15:41:50.881Z",
+      "id": "9612020a-3565-408f-a322-a2d16f69caaa",
+      "createdAt": "2025-08-10T15:41:50.898Z",
+      "updatedAt": "2025-08-10T15:41:50.898Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:3000/errors/f0e98f7e-85a2-4095-a520-cc9fd81e70e2",
+      "timestamp": "2025-08-10T15:46:24.820Z",
+      "id": "aaa7135e-a745-4270-aa74-95fc3a067337",
+      "createdAt": "2025-08-10T15:46:24.864Z",
+      "updatedAt": "2025-08-10T15:46:24.864Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:3000/errors/d781be7b-3fdc-45e8-bc95-c6f4aba02fba",
+      "timestamp": "2025-08-10T15:47:30.339Z",
+      "id": "8a67ec2d-bb54-4695-a5a7-631aa59c4b80",
+      "createdAt": "2025-08-10T15:47:30.400Z",
+      "updatedAt": "2025-08-10T15:47:30.400Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.bfcf974be37aa1ae0913.hot-update.json",
+      "timestamp": "2025-08-10T16:33:04.276Z",
+      "id": "46b224b2-8e2f-46db-83ad-e85072d592cb",
+      "createdAt": "2025-08-10T16:33:04.318Z",
+      "updatedAt": "2025-08-10T16:33:04.318Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.9a16f669c8ff16d7c741.hot-update.json",
+      "timestamp": "2025-08-10T16:46:20.843Z",
+      "id": "eb35d972-a44f-461b-be37-95aaaafae506",
+      "createdAt": "2025-08-10T16:46:20.856Z",
+      "updatedAt": "2025-08-10T16:46:20.856Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.7faf9256081e1417eafa.hot-update.json",
+      "timestamp": "2025-08-10T16:49:37.070Z",
+      "id": "9a2d4e15-06da-4f4b-86e6-444ceebd0733",
+      "createdAt": "2025-08-10T16:49:37.079Z",
+      "updatedAt": "2025-08-10T16:49:37.079Z"
     }
   ]
 }
