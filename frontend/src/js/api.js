@@ -36,7 +36,6 @@ export class ErrorApi {
       let errors = JSON.parse(localStorage.getItem(this.localKey) || '[]');
       data.id = Date.now().toString();
       data.createdAt = new Date().toISOString();
-      data.updatedAt = new Date().toISOString();
       errors.push(data);
       localStorage.setItem(this.localKey, JSON.stringify(errors));
       return data;

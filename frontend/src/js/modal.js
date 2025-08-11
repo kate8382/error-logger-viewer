@@ -65,6 +65,7 @@ export class Modal {
     const typeLabel = this.translations[lang]['modalField_type'] || 'Type';
     const idLabel = this.translations[lang]['modalField_id'] || 'ID';
     const dateLabel = this.translations[lang]['modalField_date'] || 'Date';
+    const updatedAtLabel = this.translations[lang]['modalField_updatedAt'] || 'Updated At';
     const messageLabel = this.translations[lang]['modalField_message'] || 'Message';
     const sourceLabel = this.translations[lang]['modalField_source'] || 'Source';
     const stackLabel = this.translations[lang]['modalField_stack'] || 'Stack';
@@ -76,34 +77,102 @@ export class Modal {
     const type = error.type || '';
     const id = error.id || '';
     let dateValue = '';
-    if (error.timestamp) dateValue = new Date(error.timestamp).toLocaleString();
-    else if (error.createdAt) dateValue = new Date(error.createdAt).toLocaleString();
+    if (error.timestamp) {
+      dateValue = new Date(error.timestamp).toLocaleString();
+    } else if (error.createdAt) {
+      dateValue = new Date(error.createdAt).toLocaleString();
+    }
+    // updatedAt: показываем, если есть
+    const hasUpdatedAt = Boolean(error.updatedAt);
+    const updatedAt = hasUpdatedAt ? new Date(error.updatedAt).toLocaleString() : '';
     const message = error.message || '';
-    const status = error.status || '';
     const comment = error.comment || '';
-
-    // Статусы для выбора (можно расширить)
     const statusOptions = [
-      { value: '', label: '' },
-      { value: 'new', label: lang === 'ru' ? 'Новая' : 'New' },
-      { value: 'in_progress', label: lang === 'ru' ? 'В работе' : 'In progress' },
-      { value: 'fixed', label: lang === 'ru' ? 'Исправлена' : 'Fixed' },
-      { value: 'ignored', label: lang === 'ru' ? 'Игнорировать' : 'Ignored' }
+      { value: 'new', label: this.translations[lang]['new'] || 'Новая' },
+      { value: 'in_progress', label: this.translations[lang]['in_progress'] || 'В работе' },
+      { value: 'fixed', label: this.translations[lang]['fixed'] || 'Исправлена' },
+      { value: 'ignored', label: this.translations[lang]['ignored'] || 'Игнорировать' }
     ];
-    const statusSelect = el('select', { className: 'modal__status-select' },
-      statusOptions.map(opt => el('option', { value: opt.value, selected: opt.value === status }, opt.label))
-    );
-    const commentArea = el('textarea', { className: 'modal__comment-area', rows: 3, placeholder: commentLabel }, comment);
+    let currentStatus = statusOptions.find(opt => opt.value === error.status);
+    if (!currentStatus) currentStatus = statusOptions[0];
+    // Кастомный select для статуса
+    const statusSelect = el('div', { className: 'modal__status-select is-close' }, [
+      el('span', { className: 'modal__status-current' }, currentStatus.label),
+      el('span', { className: 'modal__status-arrow' }),
+      el('ul', { className: 'modal__status-list', style: 'display: none;' },
+        ...statusOptions
+          .filter(opt => opt.value !== currentStatus.value)
+          .map(opt => el('li', { 'data-value': opt.value, className: 'modal__status-option' }, opt.label))
+      )
+    ]);
+    const currentSpan = statusSelect.querySelector('.modal__status-current');
+    const list = statusSelect.querySelector('.modal__status-list');
+    // Обработчик для закрытия по клику вне select
+    function closeCustomSelect(e) {
+      if (!statusSelect.contains(e.target)) {
+        statusSelect.classList.remove('is-open');
+        statusSelect.classList.add('is-close');
+        list.style.display = 'none';
+        document.removeEventListener('mousedown', closeCustomSelect);
+      }
+    }
+    statusSelect.addEventListener('click', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      if (statusSelect.classList.contains('is-open')) {
+        statusSelect.classList.remove('is-open');
+        statusSelect.classList.add('is-close');
+        list.style.display = 'none';
+        document.removeEventListener('mousedown', closeCustomSelect);
+      } else {
+        statusSelect.classList.add('is-open');
+        statusSelect.classList.remove('is-close');
+        list.style.display = 'block';
+        document.addEventListener('mousedown', closeCustomSelect);
+      }
+    });
+    // Выбор опции
+    list.addEventListener('click', (e) => {
+      if (e.target && e.target.matches('li')) {
+        const value = e.target.getAttribute('data-value');
+        const label = e.target.textContent;
+        currentStatus = statusOptions.find(opt => opt.value === value) || statusOptions[0];
+        currentSpan.textContent = label;
+        // Пересоздать список без выбранной опции
+        list.innerHTML = '';
+        statusOptions.filter(opt => opt.value !== currentStatus.value)
+          .forEach(opt => {
+            const li = el('li', { 'data-value': opt.value, className: 'modal__status-option' }, opt.label);
+            list.appendChild(li);
+          });
+        // закрыть список
+        statusSelect.classList.remove('is-open');
+        statusSelect.classList.add('is-close');
+        list.style.display = 'none';
+      }
+    });
+    // Escape — закрыть
+    statusSelect.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        statusSelect.classList.remove('is-open');
+        statusSelect.classList.add('is-close');
+        list.style.display = 'none';
+      }
+    });
+
+    const commentArea = el('textarea', { className: 'modal__comment-area', rows: 3, placeholder: `${commentLabel} ...` }, comment);
 
     // Остальные поля (только для просмотра)
-    const exclude = ['type', 'id', 'timestamp', 'createdAt', 'message', 'updatedAt', 'status', 'comment'];
+    const exclude = ['type', 'id', 'timestamp', 'createdAt', 'updatedAt', 'message', 'status', 'comment'];
     const otherRows = Object.entries(error)
       .filter(([key, value]) => !exclude.includes(key) && typeof value !== 'object' && value !== '' && value !== null && value !== undefined)
       .map(([key, value]) => {
         let label;
-        if (key === 'source') label = sourceLabel;
-        else if (key === 'stack') label = stackLabel;
-        else {
+        if (key === 'source') {
+          label = sourceLabel;
+        } else if (key === 'stack') {
+          label = stackLabel;
+        } else {
           const labelKey = 'modalField_' + key;
           label = this.translations[lang][labelKey] || (key.charAt(0).toUpperCase() + key.slice(1));
         }
@@ -126,6 +195,10 @@ export class Modal {
         el('span', { className: 'modal__field-title' }, dateLabel + ': '),
         el('span', { className: 'modal__field-value' }, dateValue)
       ]),
+      ...(hasUpdatedAt ? [el('div', { className: 'modal__row' }, [
+        el('span', { className: 'modal__field-title' }, updatedAtLabel + ': '),
+        el('span', { className: 'modal__field-value' }, updatedAt)
+      ])] : []),
       ...otherRows,
       el('div', { className: 'modal__row' }, [
         el('span', { className: 'modal__field-title' }, messageLabel + ': '),
@@ -143,7 +216,7 @@ export class Modal {
 
     const saveBtn = el('button', { className: 'modal__button', id: 'saveModalButton', 'data-i18n': 'modalSaveBtn', 'aria-label': this.translations[lang]['modalSaveBtn'] || 'Save' }, this.translations[lang]['modalSaveBtn'] || 'Save');
     saveBtn.addEventListener('click', async () => {
-      const newStatus = statusSelect.value;
+      const newStatus = currentStatus.value;
       const newComment = commentArea.value;
       const updated = { ...error, status: newStatus, comment: newComment };
       try {
@@ -210,6 +283,14 @@ export class Modal {
       this.modal.classList.remove('modal--open');
       // Удаляем обработчик клика по фону при закрытии
       this.modal.removeEventListener('click', this._outsideClickHandler);
+      // Снимаем .is-open у select при закрытии модалки
+      const select = this.modalContent.querySelector('.modal__status-select');
+      if (select) select.classList.remove('is-open');
+      // Удаляем обработчик document.mousedown для кастомного select
+      if (window.closeCustomSelectModal) {
+        document.removeEventListener('mousedown', window.closeCustomSelectModal);
+        window.closeCustomSelectModal = null;
+      }
     }
   }
 }

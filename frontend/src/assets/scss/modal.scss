@@ -76,6 +76,7 @@
        flex-wrap: wrap;
        align-items: baseline; // Выравнивание по базовой линии
        gap: var(--min-gap);
+       width: 100%;
        font-size: var(--body-font);
      }
 
@@ -94,41 +95,84 @@
      }
 
      &__status-select {
-       min-width: 120px;
-       padding: 6px 12px;
+       position: relative;
+       width: 30%;
+       padding: 6px 32px 6px 12px;
        font-size: var(--body-font);
+       color: var(--black-color);
        border-radius: var(--button-radius);
        border: 1px solid var(--grey-color);
        background: var(--white-color);
-       color: var(--black-color);
-       margin-left: 8px;
-       transition: border-color 0.2s;
+       cursor: pointer;
+       transition: border-color 0.3s;
+       user-select: none;
+     }
 
-       &:focus {
-         border-color: var(--focus-color);
-         outline: none;
-       }
+     &__status-arrow {
+       position: absolute;
+       top: 50%;
+       right: 12px;
+       width: 16px;
+       height: 16px;
+       transform: translateY(-50%);
+       pointer-events: none;
+       background-image: url('../img/down.svg');
+       background-repeat: no-repeat;
+       background-position: center;
+       background-size: 14px 14px;
+       transition: background-image 0.3s;
+     }
+
+     &__status-select.is-open .modal__status-arrow {
+       background-image: url('../img/up-active.svg');
+     }
+
+     &__status-select.is-close .modal__status-arrow {
+       background-image: url('../img/down.svg');
+     }
+
+     &__status-list {
+       position: absolute;
+       left: 0;
+       top: 100%;
+       z-index: 1;
+       width: 100%;
+       max-height: 180px;
+       margin: 2px 0 0 0;
+       padding: 0;
+       background: var(--white-color);
+       border: 1px solid var(--grey-color);
+       border-radius: var(--button-radius);
+       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+       overflow-y: auto;
+     }
+
+     &__status-option {
+       padding: 8px 12px;
+       cursor: pointer;
+       font-size: var(--body-font);
+       color: var(--black-color);
+       background: var(--white-color);
+       transition: background-color 0.3s ease-in-out;
+     }
+
+     &__status-option:hover,
+     &__status-option.selected {
+       background: var(--body-color);
      }
 
      &__comment-area {
-       min-width: 220px;
-       width: 100%;
-       max-width: 100%;
+       width: 75%;
        min-height: 60px;
+       padding: 8px 12px;
        font-size: var(--body-font);
+       color: var(--black-color);
        border-radius: var(--button-radius);
        border: 1px solid var(--grey-color);
+       outline: none;
        background: var(--white-color);
-       color: var(--black-color);
-       padding: 8px 12px;
-       margin-left: 8px;
        resize: vertical;
        transition: border-color 0.2s;
-
-       &:focus {
-         border-color: var(--focus-color);
-         outline: none;
-       }
      }
 
      &__button {

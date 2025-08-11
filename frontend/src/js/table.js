@@ -27,12 +27,16 @@ export class ErrorTable {
       // Перевод типа ошибки
       const typeKey = 'errorType_' + error.type;
       const typeText = this.translations[currentLang][typeKey] || error.type;
-      const status = error.status || '';
+      let status = error.status;
+      let statusText = this.translations[currentLang][status] || status;
+      if (!status) {
+        statusText = currentLang === 'ru' ? 'Новая' : 'New';
+      }
       return el('tr', { className: 'error-table__row' }, [
         el('td', { className: 'error-table__cell error-table__cell--id' }, this.formatId(error.id)),
         el('td', { className: 'error-table__cell error-table__cell--data' }, typeText),
         el('td', { className: 'error-table__cell error-table__cell--timestamp' }, this.formatDate(error.timestamp || error.createdAt || '')),
-        el('td', { className: 'error-table__cell error-table__cell--status' }, status),
+        el('td', { className: 'error-table__cell error-table__cell--status' }, statusText),
         el('td', { className: 'error-table__cell error-table__cell--actions' }, [
           this.createEditButton(error),
           this.createDeleteButton(error)

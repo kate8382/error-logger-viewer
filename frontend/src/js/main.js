@@ -1,3 +1,29 @@
+// Кнопка для тестовой генерации ошибки (для отладки)
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.createElement('button');
+  btn.textContent = 'Создать тестовую ошибку';
+  btn.style.position = 'fixed';
+  btn.style.bottom = '20px';
+  btn.style.right = '20px';
+  btn.style.zIndex = 10000;
+  btn.style.background = '#a0a0ff';
+  btn.style.color = '#222';
+  btn.style.padding = '10px 20px';
+  btn.style.borderRadius = '8px';
+  btn.style.border = 'none';
+  btn.style.cursor = 'pointer';
+  btn.onclick = async () => {
+    const { ErrorApi } = await import('./api.js');
+    const api = new ErrorApi();
+    await api.createError({
+      type: 'TestError',
+      message: 'Тестовая ошибка для проверки дат',
+      timestamp: new Date().toISOString()
+    });
+    alert('Тестовая ошибка создана! Обновите таблицу.');
+  };
+  document.body.appendChild(btn);
+});
 import '../assets/scss/style.scss';
 import { translations } from './i18n';
 import { ErrorApi } from './api';

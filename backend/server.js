@@ -64,7 +64,7 @@ app.post('/errors', async (req, res) => {
     return res.status(400).json({ error: 'Error with this ID already exists' });
   }
   newError.createdAt = new Date().toISOString();
-  newError.updatedAt = new Date().toISOString();
+  // updatedAt не добавляем при создании!
   db.data.errors.push(newError);
   await db.write();
 
@@ -89,6 +89,7 @@ app.put('/errors/:id', async (req, res) => {
   }
 
   updatedError.id = db.data.errors[index].id; // Сохраняем оригинальный ID
+  updatedError.createdAt = db.data.errors[index].createdAt; // Сохраняем дату создания
   updatedError.updatedAt = new Date().toISOString();
   db.data.errors[index] = updatedError;
 
