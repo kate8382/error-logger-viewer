@@ -37,11 +37,31 @@ app.get('/errors', async (req, res) => {
   // Сортировка по полю
   if (req.query.sort) {
     const order = req.query.order === 'desc' ? -1 : 1;
-    errors = errors.sort((a, b) => {
-      if (a[req.query.sort] < b[req.query.sort]) return -1 * order;
-      if (a[req.query.sort] > b[req.query.sort]) return 1 * order;
-      return 0;
-    });
+    if (req.query.sort === 'status') {
+      const statusOrder = ['new', 'in_progress', 'fixed', 'ignored'];
+      errors = errors.sort((a, b) => {
+        const aStatus = (a.status || 'new').toLowerCase();
+        const bStatus = (b.status || 'new').toLowerCase();
+        const aIndex = statusOrder.indexOf(aStatus);
+        const bIndex = statusOrder.indexOf(bStatus);
+        if (aIndex !== -1 && bIndex !== -1) return (aIndex - bIndex) * order;
+        if (aIndex !== -1) return -1 * order;
+        if (bIndex !== -1) return 1 * order;
+        return aStatus.localeCompare(bStatus) * order;
+      });
+    } else if (req.query.sort === 'timestamp') {
+      errors = errors.sort((a, b) => {
+        const aValue = a.timestamp || a.createdAt ? new Date(a.timestamp || a.createdAt).getTime() : 0;
+        const bValue = b.timestamp || b.createdAt ? new Date(b.timestamp || b.createdAt).getTime() : 0;
+        return (aValue - bValue) * order;
+      });
+    } else {
+      errors = errors.sort((a, b) => {
+        if (a[req.query.sort] < b[req.query.sort]) return -1 * order;
+        if (a[req.query.sort] > b[req.query.sort]) return 1 * order;
+        return 0;
+      });
+    }
   }
 
   res.json(errors);

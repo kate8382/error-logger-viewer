@@ -1,5 +1,5 @@
 import Chart from 'chart.js/auto';
-import { translations } from './i18n';
+import { translations } from './utils/i18n';
 
 // Инициализация графика ошибок
 

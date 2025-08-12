@@ -1,258 +1,258 @@
-   .modal {
-     display: none;
-     position: fixed;
-     top: 0;
-     left: 0;
-     right: 0;
-     bottom: 0;
-     justify-content: center;
-     align-items: center;
-     z-index: 1;
-     width: 100%;
-     height: 100%;
-     background: rgba(0, 0, 0, 0.5);
-     animation: fadeIn 0.3s ease-in-out,
-       fadeOut 0.3s ease-in-out;
-     transition: opacity 0.3s ease-in-out;
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.3s ease-in-out,
+    fadeOut 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
 
-     &--open {
-       display: flex;
-       animation: fadeIn 0.3s ease-in-out;
-     }
+  &--open {
+    display: flex;
+    animation: fadeIn 0.3s ease-in-out;
+  }
 
-     &__content {
-       position: relative;
-       flex-direction: column;
-       justify-content: space-between;
-       align-items: flex-start;
-       gap: var(--min-gap);
-       width: 45%;
-       height: auto;
-       padding: var(--max-gap);
-       background-color: var(--white-color);
-       border-radius: var(--card-radius);
-       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-       overflow-y: auto;
-       animation: slideUp 0.3s ease-in-out, scaleUp 0.3s ease-in-out;
-     }
+  &__content {
+    position: relative;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--min-gap);
+    width: 45%;
+    height: auto;
+    padding: var(--max-gap);
+    background-color: var(--white-color);
+    border-radius: var(--card-radius);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    animation: slideUp 0.3s ease-in-out, scaleUp 0.3s ease-in-out;
+  }
 
-     &__close {
-       position: absolute;
-       top: 10px;
-       right: 15px;
-       width: var(--h3-font);
-       height: var(--h3-font);
-       margin: 0;
-       font-size: var(--h2-font);
-       color: var(--black-color);
-       cursor: pointer;
-       transition: color 0.3s ease-in-out;
+  &__close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    width: var(--h3-font);
+    height: var(--h3-font);
+    margin: 0;
+    font-size: var(--h2-font);
+    color: var(--black-color);
+    cursor: pointer;
+    transition: color 0.3s ease-in-out;
 
-       &:hover {
-         color: var(--grey-color);
-       }
+    &:hover {
+      color: var(--grey-color);
+    }
 
-       &:active {
-         color: var(--black-color);
-       }
-     }
+    &:active {
+      color: var(--black-color);
+    }
+  }
 
-     &__title {
-       margin: 0;
-       margin-bottom: var(--body-font);
-       font-size: var(--h3-font);
-       color: var(--black-color);
-     }
+  &__title {
+    margin: 0;
+    margin-bottom: var(--body-font);
+    font-size: var(--h3-font);
+    color: var(--black-color);
+  }
 
-     &__message {
-       margin: 0;
-       margin-bottom: var(--body-font);
-       font-size: 18px;
-       color: var(--black-color);
-     }
+  &__message {
+    margin: 0;
+    margin-bottom: var(--body-font);
+    font-size: 18px;
+    color: var(--black-color);
+  }
 
-     &__row {
-       display: flex;
-       flex-wrap: wrap;
-       align-items: baseline; // Выравнивание по базовой линии
-       gap: var(--min-gap);
-       width: 100%;
-       font-size: var(--body-font);
-     }
+  &__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline; // Выравнивание по базовой линии
+    gap: var(--min-gap);
+    width: 100%;
+    font-size: var(--body-font);
+  }
 
-     &__row:last-of-type {
-       margin-bottom: var(--max-gap);
-     }
+  &__row:last-of-type {
+    margin-bottom: var(--max-gap);
+  }
 
-     &__field-title {
-       font-weight: bold;
-       color: var(--black-color);
-     }
+  &__field-title {
+    font-weight: bold;
+    color: var(--black-color);
+  }
 
-     &__field-value {
-       color: var(--grey-color);
-       word-break: break-all; // Чтобы длинные строки не выходили за пределы контейнера
-     }
+  &__field-value {
+    color: var(--grey-color);
+    word-break: break-all; // Чтобы длинные строки не выходили за пределы контейнера
+  }
 
-     &__status-select {
-       position: relative;
-       width: 30%;
-       padding: 6px 32px 6px 12px;
-       font-size: var(--body-font);
-       color: var(--black-color);
-       border-radius: var(--button-radius);
-       border: 1px solid var(--grey-color);
-       background: var(--white-color);
-       cursor: pointer;
-       transition: border-color 0.3s;
-       user-select: none;
-     }
+  &__status-select {
+    position: relative;
+    width: 30%;
+    padding: 6px 32px 6px 12px;
+    font-size: var(--body-font);
+    color: var(--black-color);
+    border-radius: var(--button-radius);
+    border: 1px solid var(--grey-color);
+    background: var(--white-color);
+    cursor: pointer;
+    transition: border-color 0.3s;
+    user-select: none;
+  }
 
-     &__status-arrow {
-       position: absolute;
-       top: 50%;
-       right: 12px;
-       width: 16px;
-       height: 16px;
-       transform: translateY(-50%);
-       pointer-events: none;
-       background-image: url('../img/down.svg');
-       background-repeat: no-repeat;
-       background-position: center;
-       background-size: 14px 14px;
-       transition: background-image 0.3s;
-     }
+  &__status-arrow {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    width: 16px;
+    height: 16px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    background-image: url('../img/down.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 14px 14px;
+    transition: background-image 0.3s;
+  }
 
-     &__status-select.is-open .modal__status-arrow {
-       background-image: url('../img/up-active.svg');
-     }
+  &__status-select.is-open .modal__status-arrow {
+    background-image: url('../img/up-active.svg');
+  }
 
-     &__status-select.is-close .modal__status-arrow {
-       background-image: url('../img/down.svg');
-     }
+  &__status-select.is-close .modal__status-arrow {
+    background-image: url('../img/down.svg');
+  }
 
-     &__status-list {
-       position: absolute;
-       left: 0;
-       top: 100%;
-       z-index: 1;
-       width: 100%;
-       max-height: 180px;
-       margin: 2px 0 0 0;
-       padding: 0;
-       background: var(--white-color);
-       border: 1px solid var(--grey-color);
-       border-radius: var(--button-radius);
-       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-       overflow-y: auto;
-     }
+  &__status-list {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 1;
+    width: 100%;
+    max-height: 180px;
+    margin: 2px 0 0 0;
+    padding: 0;
+    background: var(--white-color);
+    border: 1px solid var(--grey-color);
+    border-radius: var(--button-radius);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow-y: auto;
+  }
 
-     &__status-option {
-       padding: 8px 12px;
-       cursor: pointer;
-       font-size: var(--body-font);
-       color: var(--black-color);
-       background: var(--white-color);
-       transition: background-color 0.3s ease-in-out;
-     }
+  &__status-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: var(--body-font);
+    color: var(--black-color);
+    background: var(--white-color);
+    transition: background-color 0.3s ease-in-out;
+  }
 
-     &__status-option:hover,
-     &__status-option.selected {
-       background: var(--body-color);
-     }
+  &__status-option:hover,
+  &__status-option.selected {
+    background: var(--body-color);
+  }
 
-     &__comment-area {
-       width: 75%;
-       min-height: 60px;
-       padding: 8px 12px;
-       font-size: var(--body-font);
-       color: var(--black-color);
-       border-radius: var(--button-radius);
-       border: 1px solid var(--grey-color);
-       outline: none;
-       background: var(--white-color);
-       resize: vertical;
-       transition: border-color 0.2s;
-     }
+  &__comment-area {
+    width: 75%;
+    min-height: 60px;
+    padding: 8px 12px;
+    font-size: var(--body-font);
+    color: var(--black-color);
+    border-radius: var(--button-radius);
+    border: 1px solid var(--grey-color);
+    outline: none;
+    background: var(--white-color);
+    resize: vertical;
+    transition: border-color 0.2s;
+  }
 
-     &__button {
-       align-self: center;
-       padding: 10px 20px;
-       font-size: var(--body-font);
-       color: var(--white-color);
-       background-color: var(--focus-color);
-       border-radius: var(--button-radius);
-       transition: background-color 0.3s ease-in-out;
+  &__button {
+    align-self: center;
+    padding: 10px 20px;
+    font-size: var(--body-font);
+    color: var(--white-color);
+    background-color: var(--focus-color);
+    border-radius: var(--button-radius);
+    transition: background-color 0.3s ease-in-out;
 
-       &:hover {
-         background-color: var(--hover-color);
-       }
+    &:hover {
+      background-color: var(--hover-color);
+    }
 
-       &:active {
-         background-color: var(--active-color);
-       }
-     }
+    &:active {
+      background-color: var(--active-color);
+    }
+  }
 
-     &__delete-btn {
-       align-self: center;
-       padding: 10px 20px;
-       color: var(--white-color);
-       font-size: var(--body-font);
-       border-radius: var(--button-radius);
-       background-color: var(--total-color);
-       transition: background-color 0.3s ease-in-out;
+  &__delete-btn {
+    align-self: center;
+    padding: 10px 20px;
+    color: var(--white-color);
+    font-size: var(--body-font);
+    border-radius: var(--button-radius);
+    background-color: var(--total-color);
+    transition: background-color 0.3s ease-in-out;
 
-       &:hover {
-         background-color: var(--total-bg);
-       }
-     }
+    &:hover {
+      background-color: var(--total-bg);
+    }
+  }
 
-     &__cancel-btn {
-       align-self: center;
-       font-size: var(--small-font);
-       text-decoration: underline;
-       transition: color 0.3s ease-in-out;
+  &__cancel-btn {
+    align-self: center;
+    font-size: var(--small-font);
+    text-decoration: underline;
+    transition: color 0.3s ease-in-out;
 
-       &:hover {
-         color: var(--grey-color);
-       }
+    &:hover {
+      color: var(--grey-color);
+    }
 
-       &:active {
-         color: var(--black-color);
-       }
-     }
+    &:active {
+      color: var(--black-color);
+    }
+  }
 
-     // Анимация для модальных окон:
-     // Анимация для затемнения фона
-     @keyframes fadeIn {
-       from {
-         opacity: 0;
-       }
+  // Анимация для модальных окон:
+  // Анимация для затемнения фона
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
 
-       to {
-         opacity: 1;
-       }
-     }
+    to {
+      opacity: 1;
+    }
+  }
 
-     // Анимация для появления модального окна
-     @keyframes slideUp {
-       from {
-         transform: translateY(100%);
-       }
+  // Анимация для появления модального окна
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+    }
 
-       to {
-         transform: translateY(0);
-       }
-     }
+    to {
+      transform: translateY(0);
+    }
+  }
 
-     // Анимация для увеличения модального окна
-     @keyframes scaleUp {
-       from {
-         transform: scale(0.8);
-       }
+  // Анимация для увеличения модального окна
+  @keyframes scaleUp {
+    from {
+      transform: scale(0.8);
+    }
 
-       to {
-         transform: scale(1);
-       }
-     }
-   }
+    to {
+      transform: scale(1);
+    }
+  }
+}

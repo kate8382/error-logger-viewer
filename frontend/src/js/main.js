@@ -24,8 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   document.body.appendChild(btn);
 });
+
 import '../assets/scss/style.scss';
-import { translations } from './i18n';
+import { translations } from './utils/i18n';
+import { getCurrentLang } from './utils/lang';
 import { ErrorApi } from './api';
 import { initErrorsChart } from './stats';
 import { ErrorTable } from './table';
@@ -33,7 +35,7 @@ import { ErrorTable } from './table';
 // Главный класс приложения - инициализирует API, обработчики ошибок и aside
 class ErrorLoggerApp {
   constructor(mode = 'server') {
-    this.lang = (navigator.language || navigator.userLanguage).startsWith('ru') ? 'ru' : 'en';
+    this.lang = getCurrentLang();
     this.errorApi = new ErrorApi(mode);
     this.translations = translations;
     this.init();

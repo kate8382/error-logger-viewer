@@ -1,10 +1,11 @@
 import { el, setChildren } from 'redom';
 import { ErrorApi } from './api';
-import { translations } from './i18n';
+import { translations } from './utils/i18n';
+import { getCurrentLang } from './utils/lang';
 
 export class ErrorTable {
   constructor() {
-    this.lang = (navigator.language || navigator.userLanguage).startsWith('ru') ? 'ru' : 'en';
+    this.lang = getCurrentLang();
     this.errorApi = new ErrorApi();
     this.translations = translations;
   }
@@ -22,15 +23,15 @@ export class ErrorTable {
     const tableBody = document.getElementById('errorTableBody');
     if (!tableBody) return;
 
-    const currentLang = window.app && window.app.lang ? window.app.lang : this.lang;
+    const lang = getCurrentLang();
     const rows = errors.map(error => {
       // Перевод типа ошибки
       const typeKey = 'errorType_' + error.type;
-      const typeText = this.translations[currentLang][typeKey] || error.type;
+      const typeText = this.translations[lang][typeKey] || error.type;
       let status = error.status;
-      let statusText = this.translations[currentLang][status] || status;
+      let statusText = this.translations[lang][status] || status;
       if (!status) {
-        statusText = currentLang === 'ru' ? 'Новая' : 'New';
+        statusText = lang === 'ru' ? 'Новая' : 'New';
       }
       return el('tr', { className: 'error-table__row' }, [
         el('td', { className: 'error-table__cell error-table__cell--id' }, this.formatId(error.id)),
@@ -43,18 +44,18 @@ export class ErrorTable {
         ])
       ]);
     });
-    setChildren(tableBody, { className: 'error-table__body' }, rows);
+    setChildren(tableBody, rows);
 
     // Переводим кнопки Edit/Delete после рендера, используя актуальный язык
     const editBtns = tableBody.querySelectorAll('.error-table__btn--edit[data-i18n]');
     editBtns.forEach(btn => {
       const key = btn.getAttribute('data-i18n');
-      btn.textContent = this.translations[currentLang][key] || key;
+      btn.textContent = this.translations[lang][key] || key;
     });
     const deleteBtns = tableBody.querySelectorAll('.error-table__btn--delete[data-i18n]');
     deleteBtns.forEach(btn => {
       const key = btn.getAttribute('data-i18n');
-      btn.textContent = this.translations[currentLang][key] || key;
+      btn.textContent = this.translations[lang][key] || key;
     });
   }
 
@@ -95,28 +96,65 @@ export class ErrorTable {
   }
 
   sortErrors(errors, field, order = 'asc') {
+    const lang = getCurrentLang();
+    const translations = this.translations;
+    const statusOrder = ['new', 'in_progress', 'fixed', 'ignored'];
+
     return errors.sort((a, b) => {
+      if (field === 'status') {
+        const aStatus = (a.status || 'new').toString().toLowerCase();
+        const bStatus = (b.status || 'new').toString().toLowerCase();
+        const aIndex = statusOrder.indexOf(aStatus);
+        const bIndex = statusOrder.indexOf(bStatus);
+        if (aIndex !== -1 && bIndex !== -1) {
+          const result = order === 'asc' ? aIndex - bIndex : bIndex - aIndex;
+          return result;
+        } else if (aIndex !== -1) {
+          return order === 'asc' ? -1 : 1;
+        } else if (bIndex !== -1) {
+          return order === 'asc' ? 1 : -1;
+        } else {
+          // Если оба не из списка — сортировать по переводу
+          const aText = translations[lang][aStatus] || aStatus;
+          const bText = translations[lang][bStatus] || bStatus;
+          const result = order === 'asc' ? aText.localeCompare(bText) : bText.localeCompare(aText);
+          return result;
+        }
+      }
+      if (field === 'timestamp') {
+        const aValue = a.timestamp || a.createdAt ? new Date(a.timestamp || a.createdAt).getTime() : 0;
+        const bValue = b.timestamp || b.createdAt ? new Date(b.timestamp || b.createdAt).getTime() : 0;
+        const result = order === 'asc' ? aValue - bValue : bValue - aValue;
+        return result;
+      }
+      if (field === 'id') {
+        const aValue = a.id ? a.id.toString().toLowerCase() : '';
+        const bValue = b.id ? b.id.toString().toLowerCase() : '';
+        const result = order === 'asc'
+          ? (aValue > bValue ? 1 : aValue < bValue ? -1 : 0)
+          : (aValue < bValue ? 1 : aValue > bValue ? -1 : 0);
+        return result;
+      }
+      // Для других строковых полей
       let aValue = a[field];
       let bValue = b[field];
-
-      // Для времени сравниваем либо timestamp, либо createdAt
-      if (field === 'timestamp') {
-        aValue = a.timestamp || a.createdAt ? new Date(a.timestamp || a.createdAt).getTime() : 0;
-        bValue = b.timestamp || b.createdAt ? new Date(b.timestamp || b.createdAt).getTime() : 0;
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
       }
-
-      if (order === 'asc') {
-        return aValue > bValue ? 1 : -1;
-      } else {
-        return aValue < bValue ? 1 : -1;
-      }
+      const result = order === 'asc'
+        ? (aValue > bValue ? 1 : aValue < bValue ? -1 : 0)
+        : (aValue < bValue ? 1 : aValue > bValue ? -1 : 0);
+      return result;
     });
   }
 }
 
 // Инициализация таблицы при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
+  // Глобальный экземпляр для обновления из модалок
   const errorTable = new ErrorTable();
+  window.errorTableInstance = errorTable;
   errorTable.fetchErrors();
   window.renderErrorTable = errors => errorTable.renderErrors(errors);
 
@@ -124,7 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let sortOrder = {
     id: 'asc',
     type: 'asc',
-    timestamp: 'asc'
+    timestamp: 'asc',
+    status: 'asc'
   };
 
   // Универсальный обработчик сортировки
@@ -164,6 +203,14 @@ document.addEventListener('DOMContentLoaded', () => {
     sortTimestampBtn.addEventListener('click', e => {
       e.preventDefault();
       handleSort('timestamp');
+    });
+  }
+
+  const sortStatusBtn = document.getElementById('sortByStatus');
+  if (sortStatusBtn) {
+    sortStatusBtn.addEventListener('click', e => {
+      e.preventDefault();
+      handleSort('status');
     });
   }
 });

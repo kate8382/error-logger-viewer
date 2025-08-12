@@ -1,23 +1,19 @@
 import { el, setChildren } from 'redom';
-import { translations } from './i18n.js';
 import { ErrorApi } from './api.js';
+import { translations } from './utils/i18n.js';
+import { getCurrentLang } from './utils/lang.js';
 
 export class Modal {
   constructor() {
-    if (Modal._instance) {
+    if (Modal._instance) { // Если экземпляр уже существует, возвращаем его
       return Modal._instance;
     }
     this.errorApi = new ErrorApi();
-    this.translations = translations;
-    // Определяем актуальный язык
-    // Язык будет определяться динамически при открытии модалки
-
+    this.translations = translations; // Определяем актуальный язык - язык будет определяться динамически при открытии модалки
     this.modal = document.getElementById('modal');
     this.modalContent = document.getElementById('modalContent');
-    if (!this.modal || !this.modalContent) {
-      console.error('Modal elements not found in the document');
-      return;
-    }
+    if (!this.modal || !this.modalContent) return;
+
     this.modalClose = document.querySelectorAll('.modal__close');
     Array.from(this.modalClose).forEach(closeBtn => {
       closeBtn.addEventListener('click', () => this.close());
@@ -48,10 +44,6 @@ export class Modal {
     }
   }
 
-  getCurrentLang() {
-    return (window.app && window.app.lang) ? window.app.lang : ((navigator.language || navigator.userLanguage).startsWith('ru') ? 'ru' : 'en');
-  }
-
   createCloseBtn() {
     const closeBtn = el('span', { className: 'modal__close', 'aria-hidden': 'true' }, '×');
     closeBtn.addEventListener('click', () => this.close());
@@ -61,7 +53,7 @@ export class Modal {
   openEdit(error) {
     if (!this.modal || !this.modalContent) return;
 
-    const lang = this.getCurrentLang();
+    const lang = getCurrentLang();
     const typeLabel = this.translations[lang]['modalField_type'] || 'Type';
     const idLabel = this.translations[lang]['modalField_id'] || 'ID';
     const dateLabel = this.translations[lang]['modalField_date'] || 'Date';
@@ -222,10 +214,8 @@ export class Modal {
       try {
         await this.errorApi.updateError(error.id, updated);
         this.close();
-        // Обновляем таблицу ошибок после сохранения
-        const table = document.querySelector('.error-table');
-        if (table) {
-          table.dispatchEvent(new Event('update'));
+        if (window.errorTableInstance && typeof window.errorTableInstance.fetchErrors === 'function') {
+          window.errorTableInstance.fetchErrors();
         }
       } catch (e) {
         console.error('Ошибка при сохранении изменений:', e);
@@ -247,15 +237,13 @@ export class Modal {
   deleteError(errorId) {
     if (!this.modal || !this.modalContent) return;
 
-    const lang = this.getCurrentLang();
+    const lang = getCurrentLang();
     const deleteBtn = el('button', { className: 'modal__delete-btn', id: 'deleteErrorButton', 'data-i18n': 'modalDeleteBtn', 'aria-label': this.translations[lang]['modalDeleteBtn'] || 'Delete' }, this.translations[lang]['modalDeleteBtn'] || 'Delete');
     deleteBtn.addEventListener('click', () => {
       this.errorApi.deleteError(errorId).then(() => {
         this.close();
-        // Обновляем таблицу ошибок после удаления
-        const table = document.querySelector('.error-table');
-        if (table) {
-          table.dispatchEvent(new Event('update'));
+        if (window.errorTableInstance && typeof window.errorTableInstance.fetchErrors === 'function') {
+          window.errorTableInstance.fetchErrors();
         }
       }).catch(error => {
         console.error('Ошибка при удалении ошибки:', error);

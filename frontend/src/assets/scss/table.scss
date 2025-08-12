@@ -22,7 +22,7 @@
 
     .error-table__head {
       display: grid;
-      grid-template-columns: 18% 18% 18% 26% 20%;
+      grid-template-columns: 20% 20% 20% 20% 20%;
       align-items: flex-end;
       width: 100%;
       min-height: 22px;
@@ -31,7 +31,7 @@
       border-top: 1px solid var(--body-color);
       border-bottom: 1px solid var(--body-color);
 
-      .error-table__btn-sort {
+      &__btn-sort {
         justify-content: flex-start;
         align-items: center;
         font-weight: bold;
@@ -57,7 +57,7 @@
     .error-table__body {
       .error-table__row {
         display: grid;
-        grid-template-columns: 18% 18% 18% 18% 18%;
+        grid-template-columns: 20% 20% 20% 20% 20%;
         align-items: center;
         padding: var(--max-gap);
         border-bottom: 1px solid var(--body-color);
@@ -78,14 +78,9 @@
           }
 
 
-          &--data {
-            font-weight: 700;
-          }
-
+          &--data,
           &--status {
             font-weight: 700;
-            color: var(--focus-color);
-            text-transform: capitalize;
           }
 
           &--actions {
