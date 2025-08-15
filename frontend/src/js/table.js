@@ -61,12 +61,18 @@ export class ErrorTable {
 
   createEditButton(error) {
     const btn = el('button', { className: 'error-table__btn error-table__btn--edit', 'data-i18n': 'tableEditBtn', 'aria-label': this.translations[this.lang]['tableEditBtn'] || 'Edit' }, 'Edit');
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
+      const { showLoading, hideLoading } = await import('./utils/loading');
+      showLoading(btn, 'save');
+      // await new Promise(resolve => setTimeout(resolve, 5000));
+
       import('./modal').then(({ Modal }) => {
         if (!window.appModal) window.appModal = new Modal();
         window.appModal.openEdit(error);
+        hideLoading(btn);
       }).catch(error => {
         console.error('Ошибка при открытии модального окна редактирования:', error);
+        hideLoading(btn);
       });
     });
     return btn;
@@ -74,12 +80,18 @@ export class ErrorTable {
 
   createDeleteButton(error) {
     const btn = el('button', { className: 'error-table__btn error-table__btn--delete', 'data-i18n': 'tableDeleteBtn', 'aria-label': this.translations[this.lang]['tableDeleteBtn'] || 'Delete' }, 'Delete');
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
+      const { showLoading, hideLoading } = await import('./utils/loading');
+      showLoading(btn, 'delete');
+
       import('./modal').then(({ Modal }) => {
-        if (!window.appModal) window.appModal = new Modal();
+        if (!window.appModal) window.appModal = new Modal(); // Создаем модальное окно, если его еще нет
         window.appModal.deleteError(error.id);
+        // После завершения действия скрываем спиннер
+        hideLoading(btn);
       }).catch(error => {
         console.error('Ошибка при открытии модального окна удаления:', error);
+        hideLoading(btn); // Скрываем спиннер в случае ошибки
       });
     });
     return btn;

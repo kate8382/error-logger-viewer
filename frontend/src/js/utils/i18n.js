@@ -1,9 +1,11 @@
 export const translations = {
   en: {
+    loading: 'Loading...',
     title: 'Error Logger & Viewer',
     placeholder: 'Search errors...',
     ariaInput: 'Search errors',
     ariaInputBtn: 'Button search',
+    // Sidebar
     sidebarLogo: 'Logo',
     ariaSidebar: 'Sidebar navigation',
     navAbout: 'About',
@@ -20,6 +22,7 @@ export const translations = {
     sidebarDropdownServer: 'Server',
     sidebarDropdownDemo: 'Demo',
     sidebarDropdownArrow: 'Open',
+    // Statistics
     statsTitle: 'Error Statistics',
     statsErrorsPerDay: 'Errors per day',
     statsTotal: 'Total Errors',
@@ -32,7 +35,7 @@ export const translations = {
     statsPeriodYear: 'Year',
     ariaYear: 'Year',
     // Error Table
-    errorTableTitle: 'Error Table',
+    errorTableTitle: 'Table of Errors',
     tableId: 'ID',
     ariaId: 'Sort by ID',
     tableType: 'Type of Error',
@@ -75,6 +78,7 @@ export const translations = {
 
   },
   ru: {
+    loading: 'Загрузка...',
     title: 'Error Logger & Viewer',
     placeholder: 'Поиск ошибок...',
     ariaInput: 'Поиск ошибок',
@@ -95,6 +99,7 @@ export const translations = {
     sidebarDropdownServer: 'Сервер',
     sidebarDropdownDemo: 'Демо-режим',
     sidebarDropdownArrow: 'Открыть',
+    // Статистика
     statsTitle: 'Статистика ошибок',
     statsErrorsPerDay: 'Ошибок за день',
     statsTotal: 'Всего ошибок',

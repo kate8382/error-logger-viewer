@@ -211,14 +211,19 @@ export class Modal {
       const newStatus = currentStatus.value;
       const newComment = commentArea.value;
       const updated = { ...error, status: newStatus, comment: newComment };
+      const { showLoading, hideLoading } = await import('./utils/loading');
+      showLoading(saveBtn, 'save');
+
       try {
         await this.errorApi.updateError(error.id, updated);
         this.close();
         if (window.errorTableInstance && typeof window.errorTableInstance.fetchErrors === 'function') {
           window.errorTableInstance.fetchErrors();
         }
+        hideLoading(saveBtn);
       } catch (e) {
         console.error('Ошибка при сохранении изменений:', e);
+        hideLoading(saveBtn);
       }
     });
 
@@ -239,14 +244,19 @@ export class Modal {
 
     const lang = getCurrentLang();
     const deleteBtn = el('button', { className: 'modal__delete-btn', id: 'deleteErrorButton', 'data-i18n': 'modalDeleteBtn', 'aria-label': this.translations[lang]['modalDeleteBtn'] || 'Delete' }, this.translations[lang]['modalDeleteBtn'] || 'Delete');
-    deleteBtn.addEventListener('click', () => {
+    deleteBtn.addEventListener('click', async () => {
+      const { showLoading, hideLoading } = await import('./utils/loading');
+      showLoading(deleteBtn, 'delete');
+
       this.errorApi.deleteError(errorId).then(() => {
         this.close();
         if (window.errorTableInstance && typeof window.errorTableInstance.fetchErrors === 'function') {
           window.errorTableInstance.fetchErrors();
         }
+        hideLoading(deleteBtn);
       }).catch(error => {
         console.error('Ошибка при удалении ошибки:', error);
+        hideLoading(deleteBtn);
       });
     });
 

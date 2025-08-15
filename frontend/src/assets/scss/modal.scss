@@ -175,8 +175,13 @@
     transition: border-color 0.2s;
   }
 
-  &__button {
+  &__button,
+  &__delete-btn {
     align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--min-gap);
     padding: 10px 20px;
     font-size: var(--body-font);
     color: var(--white-color);
@@ -194,11 +199,6 @@
   }
 
   &__delete-btn {
-    align-self: center;
-    padding: 10px 20px;
-    color: var(--white-color);
-    font-size: var(--body-font);
-    border-radius: var(--button-radius);
     background-color: var(--total-color);
     transition: background-color 0.3s ease-in-out;
 
