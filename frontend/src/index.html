@@ -185,19 +185,8 @@
     <main class="main flex">
       <section class="stats flex" id="errorStats">
         <h2 class="stats__title" data-i18n="statsTitle">Error Statistics</h2>
-        <ul class="stats__list flex">
-          <li class="stats__item flex">
-            <div class="stats__icon-wrapper stats__icon-wrapper--purple">
-              <svg class="stats__icon stats__icon--purple" width="28" height="28" viewBox="0 0 28 28" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <polygon points="14,3 25,25 3,25" fill="currentColor"></polygon>
-                <rect x="13" y="11" width="2" height="7" rx="1" fill="currentColor"></rect>
-                <rect x="13" y="20" width="2" height="2" rx="1" fill="currentColor"></rect>
-              </svg>
-            </div>
-            <span class="stats__label" data-i18n="statsErrorsPerDay"></span>: <span
-              class="stats__value stats__value--purple" id="errorsPerDay" aria-live="polite">0</span>
-          </li>
+        <!-- Карточки общего количества и за день -->
+        <ul class="stats__list stats__list--amount flex">
           <li class="stats__item flex">
             <div class="stats__icon-wrapper stats__icon-wrapper--red">
               <svg class="stats__icon stats__icon--red" width="28" height="28" viewBox="0 0 28 28" fill="none"
@@ -207,20 +196,50 @@
                 <rect x="13" y="20" width="2" height="2" rx="1" fill="currentColor"></rect>
               </svg>
             </div>
-            <span class="stats__label" data-i18n="statsTotal"></span>: <span class="stats__value stats__value--red"
+            <span class="stats__label" data-i18n="statsTotal"></span><span class="stats__value stats__value--red"
               id="totalErrors" aria-live="polite">0</span>
           </li>
+
           <li class="stats__item flex">
-            <div class="stats__icon-wrapper stats__icon-wrapper--blue">
-              <svg class="stats__icon stats__icon--blue" width="28" height="28" viewBox="0 0 28 28" fill="none"
+            <div class="stats__icon-wrapper stats__icon-wrapper--purple">
+              <svg class="stats__icon stats__icon--purple" width="28" height="28" viewBox="0 0 28 28" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
                 <polygon points="14,3 25,25 3,25" fill="currentColor"></polygon>
                 <rect x="13" y="11" width="2" height="7" rx="1" fill="currentColor"></rect>
                 <rect x="13" y="20" width="2" height="2" rx="1" fill="currentColor"></rect>
               </svg>
             </div>
-            <span class="stats__label" data-i18n="statsUnique"></span>: <span class="stats__value stats__value--blue"
-              id="uniqueErrors" aria-live="polite">0</span>
+            <span class="stats__label" data-i18n="statsErrorsPerDay"></span><span
+              class="stats__value stats__value--purple" id="errorsPerDay" aria-live="polite">0</span>
+          </li>
+        </ul>
+
+        <!-- Группы карточек по статусу и типу ошибок -->
+        <ul class="stats__list stats__list--feature flex">
+          <li class="stats__group flex">
+            <div class="stats__title-wrapper flex">
+              <svg class="stats__icon" width="99" height="72" viewBox="0 0 99 72" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M2 70L13.4458 59.9932L17.7954 41.7993L23.9761 49.077L43.4339 32.2475L50.0724 2L60.6025 43.6187L76.1687 2L80.747 51.1237L86.9277 30.4281L97 46.8027"
+                  stroke="#2DCCFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <h3 class="stats__subtitle" data-i18n="statsTypeTitle"></h3>
+            </div>
+            <ul class="stats__list flex" id="statsTypeCards"></ul>
+          </li>
+
+          <li class="stats__group flex">
+            <div class="stats__title-wrapper flex">
+              <svg class="stats__icon" width="99" height="72" viewBox="0 0 99 72" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M2 70L14.961 63.518L19.0971 53L25.026 57.8921L42.5369 2L52.4644 43.705L61.9782 24.8705L75.3527 53L81.971 44.4389L87.2104 47.741L97 28.4173"
+                  stroke="#04CE00" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <h3 class="stats__subtitle" data-i18n="statsStatusTitle"></h3>
+            </div>
+            <ul class="stats__list-status flex" id="statsStatusCards"></ul>
           </li>
         </ul>
 

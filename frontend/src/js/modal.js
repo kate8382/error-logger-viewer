@@ -154,6 +154,14 @@ export class Modal {
 
     const commentArea = el('textarea', { className: 'modal__comment-area', rows: 3, placeholder: `${commentLabel} ...` }, comment);
 
+    // Обработчик событий Enter для сохранения комментария
+    commentArea.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        saveBtn.click();
+      }
+    });
+
     // Остальные поля (только для просмотра)
     const exclude = ['type', 'id', 'timestamp', 'createdAt', 'updatedAt', 'message', 'status', 'comment'];
     const otherRows = Object.entries(error)
