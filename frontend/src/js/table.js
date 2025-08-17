@@ -2,24 +2,34 @@ import { el, setChildren } from 'redom';
 import { ErrorApi } from './api';
 import { translations } from './utils/i18n';
 import { getCurrentLang } from './utils/lang';
+import { StatsManager } from './stats';
 
 export class ErrorTable {
   constructor() {
-    this.lang = getCurrentLang();
+    this.errors = [];
     this.errorApi = new ErrorApi();
     this.translations = translations;
+    this.lang = getCurrentLang();
   }
 
   async fetchErrors() {
     try {
       const errors = await this.errorApi.getErrors();
       this.renderErrors(errors);
+      if (window.renderErrorTable) {
+        window.renderErrorTable(errors);
+      }
     } catch (error) {
       console.error('Ошибка при получении данных об ошибках:', error);
     }
   }
 
+  getErrors() {
+    return this.errors;
+  }
+
   renderErrors(errors) {
+    this.errors = errors || [];
     const tableBody = document.getElementById('errorTableBody');
     if (!tableBody) return;
 
@@ -162,13 +172,17 @@ export class ErrorTable {
   }
 }
 
-// Инициализация таблицы при загрузке страницы
+// Инициализация таблицы и статистики при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
   // Глобальный экземпляр для обновления из модалок
   const errorTable = new ErrorTable();
   window.errorTableInstance = errorTable;
   errorTable.fetchErrors();
-  window.renderErrorTable = errors => errorTable.renderErrors(errors);
+  window.renderErrorTable = errors => {
+    errorTable.renderErrors(errors);
+    const statsManager = new StatsManager(errors);
+    statsManager.renderErrorCards();
+  };
 
   // Состояние направления сортировки
   let sortOrder = {
@@ -226,3 +240,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+

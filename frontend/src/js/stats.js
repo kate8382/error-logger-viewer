@@ -1,146 +1,85 @@
-import Chart from 'chart.js/auto';
+import { el, setChildren } from 'redom';
 import { translations } from './utils/i18n';
+import { getCurrentLang } from './utils/lang';
 
-// Инициализация графика ошибок
+export class StatsManager {
+  constructor(errors = []) {
+    this.errors = errors;
+    this.translations = translations;
+    this.lang = getCurrentLang();
+  }
 
-function createErrorsChart(lang) {
-  const ctx = document.getElementById('errorsChartCanvas').getContext('2d');
-  return new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: ['5 May', '6 May', '7 May', '8 May', '9 May', '10 May', '11 May'],
-      datasets: [
-        {
-          label: 'Total Errors',
-          data: [120, 200, 340, 400, 390, 320, 280],
-          borderColor: 'rgba(249, 49, 49, 1)',
-          backgroundColor: 'rgba(249, 49, 49, 0.1)',
-          tension: 0.6,
-          pointBackgroundColor: 'rgba(249, 49, 49, 1)',
-          pointHoverRadius: 7,
-          borderWidth: 3 // увеличена ширина линии
-        },
-        {
-          label: 'Unique Errors',
-          data: [80, 120, 200, 300, 270, 250, 230],
-          borderColor: 'rgba(45, 204, 255, 1)',
-          backgroundColor: 'rgba(45, 204, 255, 0.1)',
-          tension: 0.6,
-          pointBackgroundColor: 'rgba(45, 204, 255, 1)',
-          pointHoverRadius: 7,
-          borderWidth: 3
-        }
-      ]
-    },
-    options: {
-      responsive: true, // адаптивность графика
-      maintainAspectRatio: true, // отключение сохранения соотношения сторон
-      plugins: {
-        legend: {
-          display: false,
-        },
-        tooltip: {
-          backgroundColor: '#fff',
-          titleColor: '#3A3541',
-          bodyColor: '#3A3541',
-          borderColor: '#89868D',
-          borderWidth: 0.5,
-          callbacks: {
-            title: function (context) {
-              // context[0].label — это дата
-              return context[0].label;
-            },
-            label: function (context) {
-              const datasetLabel = context.dataset.label;
-              const value = context.parsed.y;
-              let translatedLabel = '';
-              if (datasetLabel === 'Total Errors') {
-                translatedLabel = translations[lang].statsTotal;
-              } else if (datasetLabel === 'Unique Errors') {
-                translatedLabel = translations[lang].statsUnique;
-              } else {
-                translatedLabel = datasetLabel;
-              }
-              return `${translatedLabel}: ${value}`;
-            }
-          }
-        }
-      },
-      layout: {
-        padding: {
-          left: 10,
-          right: 10,
-          top: 10,
-          bottom: 10
-        }
-      },
-      scales: {
-        x: {
-          title: {
-            display: false,
-          },
-          grid: {
-            display: false,
-            drawBorder: false,
-            drawOnChartArea: false,
-            drawTicks: false
-          },
-          ticks: {
-            color: '#89868D',
-            font: { size: 12 },
-            padding: 30,
-            maxRotation: 0,
-            minRotation: 0
-          }
-        },
-        y: {
-          title: {
-            display: false,
-          },
-          grid: {
-            display: true,
-            color: '#DBDCDE',
-            lineWidth: 1, // ширина линий сетки
-            drawBorder: false, // убрать рамку
-            drawTicks: true, // показывать деления
-            tickLength: 1, // длина делений 1 - это минимальная длина
-            drawOnChartArea: true, // рисовать сетку на области графика
-            offset: false // нормальная разметка сетки (без смещения)
-          },
-          border: { display: false }, // убрать рамку оси Y
-          ticks: {
-            padding: 30,
-            color: '#89868D',
-            font: { size: 12 },
-            stepSize: 100,
-            count: 5 // количество делений на оси Y
-          }
-        }
-      }
+  // Общее количество ошибок
+  getTotalCount() {
+    return this.errors.length;
+  }
+
+  // Количество ошибок за сегодня
+  getTodayCount() {
+    const today = new Date().toISOString().slice(0, 10);
+    return this.errors.filter(e => e.timestamp && e.timestamp.slice(0, 10) === today).length;
+  }
+
+  // Статистика по типам ошибок: [['TypeError', 25], ...]
+  getTypeStats() {
+    const typeStats = {};
+    this.errors.forEach(e => {
+      const type = e.type || 'Unknown';
+      typeStats[type] = (typeStats[type] || 0) + 1;
+    });
+    return Object.entries(typeStats);
+  }
+
+  // Статистика по статусам ошибок: [['new', 10], ...]
+  getStatusStats() {
+    const statusStats = {};
+    this.errors.forEach(e => {
+      const status = e.status || 'new';
+      statusStats[status] = (statusStats[status] || 0) + 1;
+    });
+    return Object.entries(statusStats);
+  }
+
+  // создание карточек ошибок
+  renderErrorCards() {
+    // Общие суммы
+    const total = document.getElementById('totalErrors');
+    if (total) total.textContent = this.getTotalCount();
+
+    const today = document.getElementById('errorsPerDay');
+    if (today) today.textContent = this.getTodayCount();
+
+    // Карточки по типам
+    const typeList = document.getElementById('statsTypeList');
+    if (typeList) {
+      typeList.innerHTML = '';
+      this.getTypeStats().forEach(([type, count]) => {
+        const typeKey = 'errorType_' + type;
+        const typeLabel = this.translations[this.lang][typeKey] || type;
+        const li = el('li', { className: 'stat-card' });
+
+        setChildren(li, [
+          el('span', { className: 'stat-title' }, typeLabel),
+          el('span', { className: 'stat-value' }, count)
+        ]);
+        typeList.appendChild(li);
+      });
     }
-  });
+
+    // Карточки по статусам
+    const statusList = document.getElementById('statsStatusList');
+    if (statusList) {
+      statusList.innerHTML = '';
+      this.getStatusStats().forEach(([status, count]) => {
+        const statusLabel = this.translations[this.lang][status] || status;
+        const li = el('li', { className: 'stat-card' });
+
+        setChildren(li, [
+          el('span', { className: 'stat-title' }, statusLabel),
+          el('span', { className: 'stat-value' }, count)
+        ]);
+        statusList.appendChild(li);
+      });
+    }
+  }
 }
-
-// Инициализация графика при загрузке страницы
-export const initErrorsCharts = document.addEventListener('DOMContentLoaded', () => {
-  let currentLang = localStorage.getItem('lang') || 'ru';
-  let chart = createErrorsChart(currentLang);
-
-  // Обработчики смены языка
-  const langEnBtn = document.getElementById('lang-en');
-  const langRuBtn = document.getElementById('lang-ru');
-  if (langEnBtn) {
-    langEnBtn.addEventListener('click', () => {
-      localStorage.setItem('lang', 'en');
-      chart.destroy();
-      chart = createErrorsChart('en');
-    });
-  }
-  if (langRuBtn) {
-    langRuBtn.addEventListener('click', () => {
-      localStorage.setItem('lang', 'ru');
-      chart.destroy();
-      chart = createErrorsChart('ru');
-    });
-  }
-});

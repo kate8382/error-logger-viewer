@@ -455,6 +455,70 @@
       "timestamp": "2025-08-16T16:10:16.298Z",
       "id": "0841840c-a24b-45fb-ba13-4c9ff22d3a6c",
       "createdAt": "2025-08-16T16:10:16.309Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.e3315665a6f809e2a153.hot-update.json",
+      "timestamp": "2025-08-17T14:19:54.029Z",
+      "id": "ac4785d4-8c27-4e23-91f6-66ffb6c603bd",
+      "createdAt": "2025-08-17T14:19:54.862Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.c8a2b110d8ca45f56d2a.hot-update.json",
+      "timestamp": "2025-08-17T14:30:14.648Z",
+      "id": "cdea32f7-4b53-4aa5-87fd-0050ee067eea",
+      "createdAt": "2025-08-17T14:30:14.665Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.0701bc221fabcd2c1302.hot-update.json",
+      "timestamp": "2025-08-17T14:32:11.072Z",
+      "id": "064c66a6-13fc-4b0f-b34d-4a626f4a41f9",
+      "createdAt": "2025-08-17T14:32:11.083Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.1969c9d60cc586fa1f11.hot-update.json",
+      "timestamp": "2025-08-17T14:58:06.640Z",
+      "id": "dd7ac06f-0c54-4eb5-afdb-2224294c98d4",
+      "createdAt": "2025-08-17T14:58:06.650Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-08-17T15:07:16.647Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "source": "http://localhost:3000/errors?",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:172:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:18:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:19:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:20:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:21:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:49:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "timestamp": "2025-08-17T14:58:06.795Z",
+      "id": "6e25bbd9-d9e4-4049-83d7-875309e8af4b",
+      "createdAt": "2025-08-17T14:58:06.810Z",
+      "status": "ignored",
+      "comment": "same error",
+      "updatedAt": "2025-08-17T15:07:36.735Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.0d69f9bdc948b46a2623.hot-update.json",
+      "timestamp": "2025-08-17T16:01:10.696Z",
+      "id": "077ec85c-94f5-4e7b-ade4-815c64c58199",
+      "createdAt": "2025-08-17T16:01:10.707Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "source": "http://localhost:3000/errors?",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:180:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:18:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:19:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:20:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:21:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:49:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "timestamp": "2025-08-17T16:01:10.835Z",
+      "id": "c50b1e84-f220-41d4-84ad-38bede9d26cd",
+      "createdAt": "2025-08-17T16:01:10.846Z"
     }
   ]
 }

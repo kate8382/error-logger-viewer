@@ -226,7 +226,7 @@
               </svg>
               <h3 class="stats__subtitle" data-i18n="statsTypeTitle"></h3>
             </div>
-            <ul class="stats__list flex" id="statsTypeCards"></ul>
+            <ul class="stats__list flex" id="statsTypeList"></ul>
           </li>
 
           <li class="stats__group flex">
@@ -239,21 +239,13 @@
               </svg>
               <h3 class="stats__subtitle" data-i18n="statsStatusTitle"></h3>
             </div>
-            <ul class="stats__list-status flex" id="statsStatusCards"></ul>
+            <ul class="stats__list-status flex" id="statsStatusList"></ul>
           </li>
         </ul>
 
         <div class="stats__chart flex" id="errorsChart">
           <div class="stats__chart-header flex">
             <h3 class="stats__title" data-i18n="statsChartTitle"></h3>
-            <div class="stats__sort flex">
-              <button class="stats__sort-btn" id="errorsChartSortWeek" data-i18n="statsPeriodWeek" data-period="week"
-                aria-label="Week"></button>
-              <button class="stats__sort-btn" id="errorsChartSortMonth" data-i18n="statsPeriodMonth" data-period="month"
-                aria-label="Month"></button>
-              <button class="stats__sort-btn" id="errorsChartSortYear" data-i18n="statsPeriodYear" data-period="year"
-                aria-label="Year"></button>
-            </div>
           </div>
           <canvas class="stats__chart-canvas" id="errorsChartCanvas"></canvas>
         </div>

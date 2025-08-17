@@ -29,14 +29,18 @@ import '../assets/scss/style.scss';
 import { translations } from './utils/i18n';
 import { getCurrentLang } from './utils/lang';
 import { ErrorApi } from './api';
-import { initErrorsChart } from './stats';
 import { ErrorTable } from './table';
+import { StatsManager } from './stats';
+import { initErrorsChart } from './charts.js';
+
+// Инициализация таблицы ошибок и статистики
+const errorTable = new ErrorTable();
 
 // Главный класс приложения - инициализирует API, обработчики ошибок и aside
 class ErrorLoggerApp {
   constructor(mode = 'server') {
-    this.lang = getCurrentLang();
     this.errorApi = new ErrorApi(mode);
+    this.lang = getCurrentLang();
     this.translations = translations;
     this.init();
   }
@@ -160,6 +164,6 @@ class ErrorLoggerApp {
   }
 }
 
+// Инициализация приложения
 const app = new ErrorLoggerApp('server');
 window.app = app;
-// ...existing code...
