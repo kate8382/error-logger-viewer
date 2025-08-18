@@ -31,7 +31,7 @@ import { getCurrentLang } from './utils/lang';
 import { ErrorApi } from './api';
 import { ErrorTable } from './table';
 import { StatsManager } from './stats';
-import { initErrorsChart } from './charts.js';
+import ChartManager from './charts.js';
 
 // Инициализация таблицы ошибок и статистики
 const errorTable = new ErrorTable();
@@ -53,6 +53,8 @@ class ErrorLoggerApp {
         window.aside.translatePage(this.lang);
       });
       this.setupErrorListeners();
+      // Инициализация ChartManager для секции графика
+      new ChartManager('chartCanvas', 'chartFilterList', localStorage.getItem('lang') || 'ru');
     });
   }
 

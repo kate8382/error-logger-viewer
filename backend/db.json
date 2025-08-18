@@ -519,6 +519,236 @@
       "timestamp": "2025-08-17T16:01:10.835Z",
       "id": "c50b1e84-f220-41d4-84ad-38bede9d26cd",
       "createdAt": "2025-08-17T16:01:10.846Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.f338db0d66328d252cd5.hot-update.json",
+      "timestamp": "2025-08-18T14:44:13.611Z",
+      "id": "86146d23-1f34-4785-b2f5-6a30d45b58a3",
+      "createdAt": "2025-08-18T14:44:15.261Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-08-18T14:47:59.759Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "source": "http://localhost:3000/errors",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:175:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:18:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:19:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:20:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:21:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:91:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "timestamp": "2025-08-18T14:44:13.735Z",
+      "id": "f8e41f0f-0dce-4cc7-88c9-9380be41fd42",
+      "createdAt": "2025-08-18T14:44:16.655Z",
+      "status": "ignored",
+      "comment": "same error",
+      "updatedAt": "2025-08-18T14:48:10.937Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.7c425a101e808c9ed9ba.hot-update.json",
+      "timestamp": "2025-08-18T14:46:23.616Z",
+      "id": "00ba971d-d374-4f7c-8ff3-2c56000c44fc",
+      "createdAt": "2025-08-18T14:46:23.638Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.7e5b79510537be6967d6.hot-update.json",
+      "timestamp": "2025-08-18T15:50:42.881Z",
+      "id": "869ef90f-cb06-4bec-b466-20de90c45919",
+      "createdAt": "2025-08-18T15:50:42.937Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "source": "http://localhost:3000/errors?",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:175:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:18:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:19:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:20:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:21:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:49:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "timestamp": "2025-08-18T15:50:45.774Z",
+      "id": "a43fccd3-ef31-4c7b-888d-45812796e30c",
+      "createdAt": "2025-08-18T15:50:45.786Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: Cannot read properties of undefined (reading 'getStats')",
+      "stack": "TypeError: Cannot read properties of undefined (reading 'getStats')\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/chartManager.js?:44:67)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/chartManager.js?:9:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/chartManager.js?:10:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/chartManager.js?:11:70)\n    at _next (webpack://error-logger-viewer/./src/js/chartManager.js?:12:163)\n    at eval (webpack://error-logger-viewer/./src/js/chartManager.js?:12:299)\n    at new Promise (<anonymous>)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/chartManager.js?:12:90)\n    at ChartManager.renderChart (webpack://error-logger-viewer/./src/js/chartManager.js?:83:29)\n    at new ChartManager (webpack://error-logger-viewer/./src/js/chartManager.js?:32:10)",
+      "timestamp": "2025-08-18T16:31:03.723Z",
+      "id": "971ca459-6d0f-46f0-be8f-0f75b13db431",
+      "createdAt": "2025-08-18T16:31:03.732Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: Cannot read properties of undefined (reading 'getStats')",
+      "stack": "TypeError: Cannot read properties of undefined (reading 'getStats')\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/chartManager.js?:44:67)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/chartManager.js?:9:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/chartManager.js?:10:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/chartManager.js?:11:70)\n    at _next (webpack://error-logger-viewer/./src/js/chartManager.js?:12:163)\n    at eval (webpack://error-logger-viewer/./src/js/chartManager.js?:12:299)\n    at new Promise (<anonymous>)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/chartManager.js?:12:90)\n    at ChartManager.renderChart (webpack://error-logger-viewer/./src/js/chartManager.js?:83:29)\n    at new ChartManager (webpack://error-logger-viewer/./src/js/chartManager.js?:32:10)",
+      "timestamp": "2025-08-18T16:32:19.085Z",
+      "id": "ca1d4edc-5e63-41ac-9d90-9a3099b852bc",
+      "createdAt": "2025-08-18T16:32:19.096Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: Cannot read properties of undefined (reading 'getStats')",
+      "stack": "TypeError: Cannot read properties of undefined (reading 'getStats')\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/chartManager.js?:44:67)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/chartManager.js?:9:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/chartManager.js?:10:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/chartManager.js?:11:70)\n    at _next (webpack://error-logger-viewer/./src/js/chartManager.js?:12:163)\n    at eval (webpack://error-logger-viewer/./src/js/chartManager.js?:12:299)\n    at new Promise (<anonymous>)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/chartManager.js?:12:90)\n    at ChartManager.renderChart (webpack://error-logger-viewer/./src/js/chartManager.js?:83:29)\n    at new ChartManager (webpack://error-logger-viewer/./src/js/chartManager.js?:32:10)",
+      "timestamp": "2025-08-18T16:33:22.381Z",
+      "id": "cbbc97e2-8297-42c6-b23a-98aaa8644ab3",
+      "createdAt": "2025-08-18T16:33:22.396Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: Cannot read properties of undefined (reading 'getStats')",
+      "stack": "TypeError: Cannot read properties of undefined (reading 'getStats')\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/chartManager.js?:44:67)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/chartManager.js?:9:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/chartManager.js?:10:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/chartManager.js?:11:70)\n    at _next (webpack://error-logger-viewer/./src/js/chartManager.js?:12:163)\n    at eval (webpack://error-logger-viewer/./src/js/chartManager.js?:12:299)\n    at new Promise (<anonymous>)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/chartManager.js?:12:90)\n    at ChartManager.renderChart (webpack://error-logger-viewer/./src/js/chartManager.js?:83:29)\n    at new ChartManager (webpack://error-logger-viewer/./src/js/chartManager.js?:32:10)",
+      "timestamp": "2025-08-18T16:34:15.469Z",
+      "id": "6dcfb681-b0a4-47a4-8f9f-fe6c4ed35f0d",
+      "createdAt": "2025-08-18T16:34:15.505Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: Cannot read properties of undefined (reading 'getStats')",
+      "stack": "TypeError: Cannot read properties of undefined (reading 'getStats')\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/chartManager.js?:44:67)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/chartManager.js?:9:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/chartManager.js?:10:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/chartManager.js?:11:70)\n    at _next (webpack://error-logger-viewer/./src/js/chartManager.js?:12:163)\n    at eval (webpack://error-logger-viewer/./src/js/chartManager.js?:12:299)\n    at new Promise (<anonymous>)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/chartManager.js?:12:90)\n    at ChartManager.renderChart (webpack://error-logger-viewer/./src/js/chartManager.js?:83:29)\n    at new ChartManager (webpack://error-logger-viewer/./src/js/chartManager.js?:32:10)",
+      "timestamp": "2025-08-18T16:34:39.375Z",
+      "id": "b2a614f3-2d57-4094-a66f-3b3f001e3243",
+      "createdAt": "2025-08-18T16:34:39.403Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: Cannot read properties of undefined (reading 'getStats')",
+      "stack": "TypeError: Cannot read properties of undefined (reading 'getStats')\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/chartManager.js?:44:67)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/chartManager.js?:9:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/chartManager.js?:10:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/chartManager.js?:11:70)\n    at _next (webpack://error-logger-viewer/./src/js/chartManager.js?:12:163)\n    at eval (webpack://error-logger-viewer/./src/js/chartManager.js?:12:299)\n    at new Promise (<anonymous>)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/chartManager.js?:12:90)\n    at ChartManager.renderChart (webpack://error-logger-viewer/./src/js/chartManager.js?:83:29)\n    at new ChartManager (webpack://error-logger-viewer/./src/js/chartManager.js?:32:10)",
+      "timestamp": "2025-08-18T16:37:09.228Z",
+      "id": "b97811ed-1355-4204-a0f0-2f6e175b3a27",
+      "createdAt": "2025-08-18T16:37:09.239Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: Cannot read properties of undefined (reading 'getStats')",
+      "stack": "TypeError: Cannot read properties of undefined (reading 'getStats')\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:44:67)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/charts.js?:10:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/charts.js?:11:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/charts.js?:12:70)\n    at _next (webpack://error-logger-viewer/./src/js/charts.js?:13:163)\n    at eval (webpack://error-logger-viewer/./src/js/charts.js?:13:299)\n    at new Promise (<anonymous>)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:13:90)\n    at ChartManager.renderChart (webpack://error-logger-viewer/./src/js/charts.js?:83:29)\n    at new ChartManager (webpack://error-logger-viewer/./src/js/charts.js?:32:10)",
+      "timestamp": "2025-08-18T16:39:44.944Z",
+      "id": "fe9ae198-f300-4077-9658-cde7893498a9",
+      "createdAt": "2025-08-18T16:39:44.954Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: Cannot read properties of undefined (reading 'getStats')",
+      "stack": "TypeError: Cannot read properties of undefined (reading 'getStats')\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:44:67)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/charts.js?:10:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/charts.js?:11:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/charts.js?:12:70)\n    at _next (webpack://error-logger-viewer/./src/js/charts.js?:13:163)\n    at eval (webpack://error-logger-viewer/./src/js/charts.js?:13:299)\n    at new Promise (<anonymous>)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:13:90)\n    at ChartManager.renderChart (webpack://error-logger-viewer/./src/js/charts.js?:83:29)\n    at new ChartManager (webpack://error-logger-viewer/./src/js/charts.js?:32:10)",
+      "timestamp": "2025-08-18T16:43:44.409Z",
+      "id": "ec63b44e-3e4b-4a75-b375-2dd643ef97d1",
+      "createdAt": "2025-08-18T16:43:44.459Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: _api__WEBPACK_IMPORTED_MODULE_3__.ErrorApi.getStats is not a function",
+      "stack": "TypeError: _api__WEBPACK_IMPORTED_MODULE_3__.ErrorApi.getStats is not a function\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:44:65)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/charts.js?:10:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/charts.js?:11:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/charts.js?:12:70)\n    at _next (webpack://error-logger-viewer/./src/js/charts.js?:13:163)\n    at eval (webpack://error-logger-viewer/./src/js/charts.js?:13:299)\n    at new Promise (<anonymous>)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:13:90)\n    at ChartManager.renderChart (webpack://error-logger-viewer/./src/js/charts.js?:83:29)\n    at new ChartManager (webpack://error-logger-viewer/./src/js/charts.js?:32:10)",
+      "timestamp": "2025-08-18T16:43:55.993Z",
+      "id": "7983014b-b3b0-41ac-8d00-4d007d295290",
+      "createdAt": "2025-08-18T16:43:56.010Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:3000/errors/stats?by=type",
+      "timestamp": "2025-08-18T16:44:07.278Z",
+      "id": "5c4d5a0e-ddef-42ac-9030-d3db1b8002af",
+      "createdAt": "2025-08-18T16:44:07.317Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:3000/errors/stats?by=type",
+      "timestamp": "2025-08-18T16:48:21.636Z",
+      "id": "858f61f7-5aac-4031-a7af-57507dc4df4b",
+      "createdAt": "2025-08-18T16:48:21.644Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:3000/errors/stats?by=type",
+      "timestamp": "2025-08-18T16:49:03.293Z",
+      "id": "620dfa66-1c50-4bca-9854-89d412507912",
+      "createdAt": "2025-08-18T16:49:03.307Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:3000/errors/stats?by=type",
+      "timestamp": "2025-08-18T16:54:29.928Z",
+      "id": "b7d14d4b-51ef-409c-b4a7-82c74798d2c4",
+      "createdAt": "2025-08-18T16:54:29.991Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:3000/errors/stats?by=type",
+      "timestamp": "2025-08-18T16:55:33.641Z",
+      "id": "23c695d2-24dc-4dd0-9273-b90354226ca9",
+      "createdAt": "2025-08-18T16:55:34.229Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:3000/errors/stats?by=type",
+      "timestamp": "2025-08-18T17:03:27.498Z",
+      "id": "b51d23ba-039c-48b1-bbeb-c80f895b5aca",
+      "createdAt": "2025-08-18T17:03:27.528Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:3000/errors/stats?by=type",
+      "timestamp": "2025-08-18T17:04:03.821Z",
+      "id": "6f661453-0d36-416e-8258-19cb1b578fae",
+      "createdAt": "2025-08-18T17:04:04.112Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "source": "http://localhost:3000/errors",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:177:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:18:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:19:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:20:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:21:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:171:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "timestamp": "2025-08-18T17:06:37.544Z",
+      "id": "159f7549-3247-4543-bb1c-b6cd5f6730b8",
+      "createdAt": "2025-08-18T17:06:49.843Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: Failed to fetch",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:177:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:18:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:19:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:20:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:21:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:171:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "timestamp": "2025-08-18T17:06:42.467Z",
+      "id": "8dd2d0fc-f49f-4ca6-a1bb-2273a723927d",
+      "createdAt": "2025-08-18T17:06:51.367Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-08-18T17:17:46.377Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "source": "http://localhost:3000/errors",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:177:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:18:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:19:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:20:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:21:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:171:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "timestamp": "2025-08-18T17:06:44.757Z",
+      "id": "2c7577d6-6787-4a2e-819a-413d7b1bbaf6",
+      "createdAt": "2025-08-18T17:06:51.732Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-08-18T17:18:53.962Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: Failed to fetch",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:177:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:18:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:19:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:20:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:21:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:171:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "timestamp": "2025-08-18T17:06:52.758Z",
+      "id": "5ab04dce-56aa-4bd7-a1c8-2e006ab74b04",
+      "createdAt": "2025-08-18T17:06:52.771Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-08-18T17:17:18.210Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: Failed to fetch",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:177:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:18:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:19:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:20:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:21:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:171:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "timestamp": "2025-08-18T17:06:52.909Z",
+      "id": "7929d580-3132-459b-b29d-3610af4cd041",
+      "createdAt": "2025-08-18T17:06:52.920Z",
+      "status": "ignored",
+      "comment": "same error",
+      "updatedAt": "2025-08-18T17:17:30.871Z"
     }
   ]
 }

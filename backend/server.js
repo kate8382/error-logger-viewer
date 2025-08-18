@@ -21,8 +21,48 @@ console.log('db.data:', db.data);
 
 // Создание приложения Express
 const app = express();
+
 app.use(cors());
 app.use(express.json()); // для обработки JSON-запросов
+
+// Маршрут для получения статистики ошибок
+app.get('/errors/stats', async (req, res) => {
+  await db.read();
+  const errors = db.data.errors || [];
+  const by = req.query.by || 'status';
+
+  let result = {};
+  if (by === 'status') {
+    result = errors.reduce((acc, e) => {
+      const status = e.status || 'new';
+      acc[status] = (acc[status] || 0) + 1;
+      return acc;
+    }, {});
+  } else if (by === 'type') {
+    result = errors.reduce((acc, e) => {
+      const type = e.type || 'Unknown';
+      acc[type] = (acc[type] || 0) + 1;
+      return acc;
+    }, {});
+  } else if (by === 'day') {
+    result = {};
+    errors.forEach(e => {
+      const day = (e.timestamp || e.createdAt || '').slice(0, 10);
+      if (!day) return;
+      if (!result[day]) result[day] = {};
+      const status = e.status || 'new';
+      result[day][status] = (result[day][status] || 0) + 1;
+    });
+  } else {
+    // Если параметр некорректный — по умолчанию возвращаем по статусу
+    result = errors.reduce((acc, e) => {
+      const status = e.status || 'new';
+      acc[status] = (acc[status] || 0) + 1;
+      return acc;
+    }, {});
+  }
+  return res.json(result);
+});
 
 // Маршрут для получения ошибок
 app.get('/errors', async (req, res) => {

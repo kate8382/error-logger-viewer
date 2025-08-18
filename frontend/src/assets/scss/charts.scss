@@ -1,4 +1,4 @@
-.stats__chart {
+.chart {
   flex-direction: column;
   gap: 16px;
   width: 100%;
@@ -8,7 +8,7 @@
   border-radius: var(--card-radius);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 
-  &-header {
+  &__header {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
@@ -18,34 +18,44 @@
     padding-right: var(--max-gap);
     padding-left: var(--max-gap);
 
-    .stats__title {
+    .chart__title {
       margin: 0;
       font-size: var(--h3-font);
     }
 
-    .stats__sort {
+    .chart__filter-list {
       justify-content: space-between;
-      align-items: center;
-      width: 26%;
+      align-items: flex-end;
+      width: 40%;
       min-height: 35px;
       padding: 5px 15px;
-      color: var(--grey-color);
       font-size: var(--body-font);
-      background-color: var(--stats-btn-color);
-      border-radius: var(--button-radius);
 
-      .stats__sort-btn {
-        width: 30%;
+      .chart__filter-item {
         min-height: 25px;
-      }
-    }
+        text-align: end;
 
-    .stats__chart-canvas {
-      display: block;
-      max-width: 100%;
-      max-height: 300px;
-      padding: 0;
-      background: transparent;
+        .chart__filter-btn {
+          color: var(--focus-color);
+          transition: color 0.3s ease-in-out;
+
+          &:hover {
+            color: var(--hover-color);
+          }
+
+          &:active {
+            color: var(--active-color);
+          }
+        }
+      }
+
+      &__canvas {
+        display: block;
+        max-width: 100%;
+        max-height: 300px;
+        padding: 0;
+        background: transparent;
+      }
     }
   }
 }

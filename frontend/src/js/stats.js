@@ -56,11 +56,11 @@ export class StatsManager {
       this.getTypeStats().forEach(([type, count]) => {
         const typeKey = 'errorType_' + type;
         const typeLabel = this.translations[this.lang][typeKey] || type;
-        const li = el('li', { className: 'stat-card' });
+        const li = el('li', { className: 'stat__card' });
 
         setChildren(li, [
-          el('span', { className: 'stat-title' }, typeLabel),
-          el('span', { className: 'stat-value' }, count)
+          el('span', { className: 'stat__title' }, typeLabel),
+          el('span', { className: 'stat__value stat__value--type' }, count)
         ]);
         typeList.appendChild(li);
       });
@@ -72,11 +72,11 @@ export class StatsManager {
       statusList.innerHTML = '';
       this.getStatusStats().forEach(([status, count]) => {
         const statusLabel = this.translations[this.lang][status] || status;
-        const li = el('li', { className: 'stat-card' });
+        const li = el('li', { className: 'stat__card' });
 
         setChildren(li, [
-          el('span', { className: 'stat-title' }, statusLabel),
-          el('span', { className: 'stat-value' }, count)
+          el('span', { className: 'stat__title' }, statusLabel),
+          el('span', { className: 'stat__value stat__value--status' }, count)
         ]);
         statusList.appendChild(li);
       });

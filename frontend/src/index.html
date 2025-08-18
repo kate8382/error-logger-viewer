@@ -239,16 +239,28 @@
               </svg>
               <h3 class="stats__subtitle" data-i18n="statsStatusTitle"></h3>
             </div>
-            <ul class="stats__list-status flex" id="statsStatusList"></ul>
+            <ul class="stats__list flex" id="statsStatusList"></ul>
           </li>
         </ul>
+      </section>
 
-        <div class="stats__chart flex" id="errorsChart">
-          <div class="stats__chart-header flex">
-            <h3 class="stats__title" data-i18n="statsChartTitle"></h3>
-          </div>
-          <canvas class="stats__chart-canvas" id="errorsChartCanvas"></canvas>
+      <section class="chart flex" id="errorsChart">
+        <div class="chart__header flex">
+          <h3 class="chart__title" data-i18n="chartTitle"></h3>
+          <ul class="chart__filter-list flex" id="chartFilterList">
+            <li class="chart__filter-item">
+              <button class="chart__filter-btn" aria-label="Chart by Type" data-i18n="chartHeaderBtn_type"></button>
+            </li>
+            <li class="chart__filter-item">
+              <button class="chart__filter-btn" aria-label="Chart by Status" data-i18n="chartHeaderBtn_status"></button>
+            </li>
+            <li class="chart__filter-item">
+              <button class="chart__filter-btn" aria-label="Chart by Date" data-i18n="chartHeaderBtn_date"></button>
+            </li>
+          </ul>
         </div>
+        <canvas class="chart__canvas" id="chartCanvas"></canvas>
+      </section>
       </section>
 
       <section class="error-table" id="errorTableSection">
