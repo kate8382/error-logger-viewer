@@ -23,37 +23,44 @@
       font-size: var(--h3-font);
     }
 
-    .chart__filter-list {
+    .chart__sort {
       justify-content: space-between;
-      align-items: flex-end;
-      width: 40%;
+      align-items: center;
+      width: 26%;
       min-height: 35px;
       padding: 5px 15px;
+      color: var(--grey-color);
       font-size: var(--body-font);
+      background-color: var(--stats-btn-color);
+      border-radius: var(--button-radius);
 
-      .chart__filter-item {
+      &__sort-btn {
+        width: 30%;
         min-height: 25px;
-        text-align: end;
+        transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 
-        .chart__filter-btn {
+        &__sort-btn:focus {
           color: var(--focus-color);
-          transition: color 0.3s ease-in-out;
+          background-color: var(--white-color);
+        }
 
-          &:hover {
-            color: var(--hover-color);
-          }
+        &__sort-btn:hover {
+          color: var(--hover-color);
+          background-color: var(--white-color);
+        }
 
-          &:active {
-            color: var(--active-color);
-          }
+        &__sort-btn:active {
+          color: var(--active-color);
+          background-color: var(--white-color);
         }
       }
 
       &__canvas {
         display: block;
-        max-width: 100%;
-        max-height: 300px;
-        padding: 0;
+        width: 100%;
+        max-height: 180px;
+        margin: 0 auto;
+        padding: var(--max-gap);
         background: transparent;
       }
     }

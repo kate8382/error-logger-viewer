@@ -247,17 +247,14 @@
       <section class="chart flex" id="errorsChart">
         <div class="chart__header flex">
           <h3 class="chart__title" data-i18n="chartTitle"></h3>
-          <ul class="chart__filter-list flex" id="chartFilterList">
-            <li class="chart__filter-item">
-              <button class="chart__filter-btn" aria-label="Chart by Type" data-i18n="chartHeaderBtn_type"></button>
-            </li>
-            <li class="chart__filter-item">
-              <button class="chart__filter-btn" aria-label="Chart by Status" data-i18n="chartHeaderBtn_status"></button>
-            </li>
-            <li class="chart__filter-item">
-              <button class="chart__filter-btn" aria-label="Chart by Date" data-i18n="chartHeaderBtn_date"></button>
-            </li>
-          </ul>
+          <div class="chart__sort flex">
+            <button class="chart__sort-btn" id="errorsChartSortWeek" data-i18n="statsPeriodWeek" data-period="week"
+              aria-label="Week"></button>
+            <button class="chart__sort-btn" id="errorsChartSortMonth" data-i18n="statsPeriodMonth" data-period="month"
+              aria-label="Month"></button>
+            <button class="chart__sort-btn" id="errorsChartSortYear" data-i18n="statsPeriodYear" data-period="year"
+              aria-label="Year"></button>
+          </div>
         </div>
         <canvas class="chart__canvas" id="chartCanvas"></canvas>
       </section>

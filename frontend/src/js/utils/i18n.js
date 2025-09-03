@@ -30,10 +30,9 @@ export const translations = {
     statsStatusTitle: 'Error Statuses: ',
     // Charts
     chartTitle: 'Error Statistics Chart',
-    chartHeaderBtn_type: 'By type',
-    chartHeaderBtn_status: 'By status',
-    chartHeaderBtn_date: 'By date',
-
+    statsPeriodWeek: 'Week',
+    statsPeriodMonth: 'Month',
+    statsPeriodYear: 'Year',
     // Error Table
     errorTableTitle: 'Table of Errors',
     tableId: 'ID',
@@ -107,9 +106,9 @@ export const translations = {
     statsStatusTitle: 'Статусы ошибок: ',
     // Графики
     chartTitle: 'График статистики ошибок',
-    chartHeaderBtn_type: 'По типу',
-    chartHeaderBtn_status: 'По статусу',
-    chartHeaderBtn_date: 'По дате',
+    statsPeriodWeek: 'Неделя',
+    statsPeriodMonth: 'Месяц',
+    statsPeriodYear: 'Год',
     // Таблица ошибок
     errorTableTitle: 'Таблица ошибок',
     tableId: 'ID',

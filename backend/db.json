@@ -749,6 +749,180 @@
       "status": "ignored",
       "comment": "same error",
       "updatedAt": "2025-08-18T17:17:30.871Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.d6609cd122d27415fd6b.hot-update.json",
+      "timestamp": "2025-08-19T17:47:21.015Z",
+      "id": "ddf56340-f891-48ac-88f8-96a3a26806f5",
+      "createdAt": "2025-08-19T17:47:22.304Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "source": "http://localhost:3000/errors?",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:177:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:18:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:19:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:20:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:21:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:49:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "timestamp": "2025-08-19T17:47:22.840Z",
+      "id": "77557dd0-9f17-45e3-9055-51ab155b40d5",
+      "createdAt": "2025-08-19T17:47:22.859Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "ReferenceError: tick is not defined",
+      "stack": "ReferenceError: tick is not defined\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:174:29)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/charts.js?:10:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/charts.js?:11:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/charts.js?:18:70)\n    at _next (webpack://error-logger-viewer/./src/js/charts.js?:19:163)",
+      "timestamp": "2025-08-19T17:53:20.942Z",
+      "id": "9761a8c3-3fde-433f-9a52-374d62c7157c",
+      "createdAt": "2025-08-19T17:53:20.953Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.aed14391fbc8a31fbf1b.hot-update.json",
+      "timestamp": "2025-09-03T14:11:40.641Z",
+      "id": "b84d0dac-0050-463a-9766-96b8fe8cc8e4",
+      "createdAt": "2025-09-03T14:11:41.447Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-03T15:29:52.300Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.e3c44ffd19784c5d8007.hot-update.json",
+      "timestamp": "2025-09-03T14:26:22.559Z",
+      "id": "8b169b81-af81-45dd-b071-e0a227e32526",
+      "createdAt": "2025-09-03T14:26:22.571Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-03T15:29:57.869Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "source": "http://localhost:3000/errors?",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:177:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:18:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:19:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:20:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:21:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:49:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "timestamp": "2025-09-03T14:26:22.719Z",
+      "id": "26c6245d-fbc0-4875-affc-2b03ccce5b7d",
+      "createdAt": "2025-09-03T14:26:22.733Z",
+      "status": "ignored",
+      "comment": "same error",
+      "updatedAt": "2025-09-03T15:30:11.128Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.c9544de71659e9f3b587.hot-update.json",
+      "timestamp": "2025-09-03T14:37:31.994Z",
+      "id": "fe0e76f0-99a1-485c-9e7d-439cb875b141",
+      "createdAt": "2025-09-03T14:37:32.046Z",
+      "status": "in_progress",
+      "comment": "",
+      "updatedAt": "2025-09-03T15:30:28.969Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "ReferenceError: statsStatus is not defined",
+      "stack": "ReferenceError: statsStatus is not defined\n    at eval (webpack://error-logger-viewer/./src/js/charts.js?:72:32)\n    at Array.map (<anonymous>)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:71:37)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/charts.js?:10:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/charts.js?:11:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/charts.js?:12:70)\n    at _next (webpack://error-logger-viewer/./src/js/charts.js?:13:163)",
+      "timestamp": "2025-09-03T14:56:35.819Z",
+      "id": "669ad30f-da41-4256-bd69-1b0e19b9ddd5",
+      "createdAt": "2025-09-03T14:56:35.830Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-03T15:30:35.325Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "ReferenceError: statsStatus is not defined",
+      "stack": "ReferenceError: statsStatus is not defined\n    at eval (webpack://error-logger-viewer/./src/js/charts.js?:72:32)\n    at Array.map (<anonymous>)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:71:37)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/charts.js?:10:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/charts.js?:11:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/charts.js?:12:70)\n    at _next (webpack://error-logger-viewer/./src/js/charts.js?:13:163)",
+      "timestamp": "2025-09-03T14:57:15.343Z",
+      "id": "ed3fb115-15c6-45ba-a459-17d1c40a207f",
+      "createdAt": "2025-09-03T14:57:15.449Z",
+      "status": "ignored",
+      "comment": "same error",
+      "updatedAt": "2025-09-03T15:30:51.183Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.95b143b4ccab4c66fb6a.hot-update.json",
+      "timestamp": "2025-09-03T15:20:13.685Z",
+      "id": "25704545-52db-427d-ad30-40a0cd571e88",
+      "createdAt": "2025-09-03T15:20:13.696Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: config.data.datasets.filter is not a function",
+      "stack": "TypeError: config.data.datasets.filter is not a function\n    at retrieveAxisFromDatasets (webpack://error-logger-viewer/./node_modules/chart.js/dist/chart.js?:5324:46)\n    at eval (webpack://error-logger-viewer/./node_modules/chart.js/dist/chart.js?:5346:51)\n    at Array.forEach (<anonymous>)\n    at mergeScaleConfig (webpack://error-logger-viewer/./node_modules/chart.js/dist/chart.js?:5338:31)\n    at initOptions (webpack://error-logger-viewer/./node_modules/chart.js/dist/chart.js?:5388:22)\n    at initConfig (webpack://error-logger-viewer/./node_modules/chart.js/dist/chart.js?:5399:5)\n    at new Config (webpack://error-logger-viewer/./node_modules/chart.js/dist/chart.js?:5421:24)\n    at new Chart (webpack://error-logger-viewer/./node_modules/chart.js/dist/chart.js?:5691:38)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:125:28)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/charts.js?:10:1660)",
+      "timestamp": "2025-09-03T16:09:10.617Z",
+      "id": "2a370e4b-42c6-4a10-b9c5-13ed78ba0ab5",
+      "createdAt": "2025-09-03T16:09:10.631Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: config.data.datasets.filter is not a function",
+      "stack": "TypeError: config.data.datasets.filter is not a function\n    at retrieveAxisFromDatasets (webpack://error-logger-viewer/./node_modules/chart.js/dist/chart.js?:5324:46)\n    at eval (webpack://error-logger-viewer/./node_modules/chart.js/dist/chart.js?:5346:51)\n    at Array.forEach (<anonymous>)\n    at mergeScaleConfig (webpack://error-logger-viewer/./node_modules/chart.js/dist/chart.js?:5338:31)\n    at initOptions (webpack://error-logger-viewer/./node_modules/chart.js/dist/chart.js?:5388:22)\n    at initConfig (webpack://error-logger-viewer/./node_modules/chart.js/dist/chart.js?:5399:5)\n    at new Config (webpack://error-logger-viewer/./node_modules/chart.js/dist/chart.js?:5421:24)\n    at new Chart (webpack://error-logger-viewer/./node_modules/chart.js/dist/chart.js?:5691:38)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:125:28)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/charts.js?:10:1660)",
+      "timestamp": "2025-09-03T16:09:38.266Z",
+      "id": "634ec8e2-6289-4922-8694-3495d96b72d9",
+      "createdAt": "2025-09-03T16:09:38.298Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.53c4b570318daf56e02d.hot-update.json",
+      "timestamp": "2025-09-03T16:11:34.628Z",
+      "id": "8e5562fb-3315-45c4-a5f0-2eee6e12e46e",
+      "createdAt": "2025-09-03T16:11:34.638Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "source": "http://localhost:3000/errors?",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:177:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:18:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:19:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:20:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:21:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:49:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "timestamp": "2025-09-03T16:11:34.744Z",
+      "id": "2e77224e-17ab-4816-a814-469b812e6771",
+      "createdAt": "2025-09-03T16:11:34.771Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.254e73452c91b362ac27.hot-update.json",
+      "timestamp": "2025-09-03T17:10:25.898Z",
+      "id": "20977810-f35f-413e-a7ee-40318f3cbdea",
+      "createdAt": "2025-09-03T17:10:25.910Z"
+    },
+    {
+      "type": "ReferenceError",
+      "message": "Uncaught ReferenceError: btnType is not defined",
+      "source": "webpack://error-logger-viewer/./src/js/charts.js?",
+      "lineno": 245,
+      "colno": 7,
+      "stack": "ReferenceError: btnType is not defined\n    at ChartManager.initFilterHandlers (webpack://error-logger-viewer/./src/js/charts.js?:245:7)\n    at new ChartManager (webpack://error-logger-viewer/./src/js/charts.js?:37:10)\n    at HTMLDocument.eval (webpack://error-logger-viewer/./src/js/main.js?:98:9)",
+      "timestamp": "2025-09-03T17:11:56.442Z",
+      "id": "0cb51034-fc4d-46dc-a746-2d69e446a77f",
+      "createdAt": "2025-09-03T17:11:56.462Z"
+    },
+    {
+      "type": "ReferenceError",
+      "message": "Uncaught ReferenceError: btnType is not defined",
+      "source": "webpack://error-logger-viewer/./src/js/charts.js?",
+      "lineno": 245,
+      "colno": 7,
+      "stack": "ReferenceError: btnType is not defined\n    at ChartManager.initFilterHandlers (webpack://error-logger-viewer/./src/js/charts.js?:245:7)\n    at new ChartManager (webpack://error-logger-viewer/./src/js/charts.js?:37:10)\n    at HTMLDocument.eval (webpack://error-logger-viewer/./src/js/main.js?:98:9)",
+      "timestamp": "2025-09-03T17:12:09.861Z",
+      "id": "cc1888b4-b4d2-4150-ac05-c7b3cdc7b797",
+      "createdAt": "2025-09-03T17:12:09.872Z"
+    },
+    {
+      "type": "ReferenceError",
+      "message": "Uncaught ReferenceError: btnDate is not defined",
+      "source": "webpack://error-logger-viewer/./src/js/charts.js?",
+      "lineno": 259,
+      "colno": 7,
+      "stack": "ReferenceError: btnDate is not defined\n    at ChartManager.initFilterHandlers (webpack://error-logger-viewer/./src/js/charts.js?:259:7)\n    at new ChartManager (webpack://error-logger-viewer/./src/js/charts.js?:37:10)\n    at HTMLDocument.eval (webpack://error-logger-viewer/./src/js/main.js?:98:9)",
+      "timestamp": "2025-09-03T17:12:51.657Z",
+      "id": "e073fbe9-feff-4c2f-8680-a534897ab7ba",
+      "createdAt": "2025-09-03T17:12:51.672Z"
     }
   ]
 }

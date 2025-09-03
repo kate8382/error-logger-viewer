@@ -30,37 +30,87 @@ app.get('/errors/stats', async (req, res) => {
   await db.read();
   const errors = db.data.errors || [];
   const by = req.query.by || 'status';
-
+  const group = req.query.group || 'status';
+  console.log('[STATS] Запрос:', { by, group });
   let result = {};
+  // Группировка по статусу
   if (by === 'status') {
     result = errors.reduce((acc, e) => {
       const status = e.status || 'new';
       acc[status] = (acc[status] || 0) + 1;
       return acc;
     }, {});
-  } else if (by === 'type') {
+  }
+  // Группировка по типу
+  else if (by === 'type') {
     result = errors.reduce((acc, e) => {
       const type = e.type || 'Unknown';
       acc[type] = (acc[type] || 0) + 1;
       return acc;
     }, {});
-  } else if (by === 'day') {
+  }
+  // Группировка по дням/неделям/месяцам/годам
+  else if (['day', 'week', 'month', 'year'].includes(by)) {
+    function getPeriodKey(dateStr, by) {
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return '';
+      if (by === 'day') {
+        return dateStr.slice(0, 10);
+      }
+      if (by === 'week') {
+        const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+        const dayNum = d.getUTCDay() || 7;
+        d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+        const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+        const weekNum = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+        return `${d.getUTCFullYear()}-W${weekNum.toString().padStart(2, '0')}`;
+      }
+      if (by === 'month') {
+        return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+      }
+      if (by === 'year') {
+        return `${date.getFullYear()}`;
+      }
+      return '';
+    }
     result = {};
     errors.forEach(e => {
-      const day = (e.timestamp || e.createdAt || '').slice(0, 10);
-      if (!day) return;
-      if (!result[day]) result[day] = {};
-      const status = e.status || 'new';
-      result[day][status] = (result[day][status] || 0) + 1;
+      const dateStr = e.timestamp || e.createdAt || '';
+      const periodKey = getPeriodKey(dateStr, by);
+      if (!periodKey) return;
+      if (!result[periodKey]) result[periodKey] = {};
+      const key = group === 'type' ? (e.type || 'Unknown') : (e.status || 'new');
+      result[periodKey][key] = (result[periodKey][key] || 0) + 1;
     });
-  } else {
-    // Если параметр некорректный — по умолчанию возвращаем по статусу
+    if (Object.keys(result).length === 0) {
+      const now = new Date();
+      let currentPeriod = '';
+      if (by === 'day') currentPeriod = now.toISOString().slice(0, 10);
+      if (by === 'week') {
+        const d = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+        const dayNum = d.getUTCDay() || 7;
+        d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+        const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+        const weekNum = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+        currentPeriod = `${d.getUTCFullYear()}-W${weekNum.toString().padStart(2, '0')}`;
+      }
+      if (by === 'month') currentPeriod = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
+      if (by === 'year') currentPeriod = `${now.getFullYear()}`;
+      result[currentPeriod] = {};
+    }
+    // ВАЖНО: не переходим к else, всегда возвращаем periods!
+    return res.json(result);
+  }
+  // Если параметр некорректный — по умолчанию возвращаем по статусу
+  else {
     result = errors.reduce((acc, e) => {
       const status = e.status || 'new';
       acc[status] = (acc[status] || 0) + 1;
       return acc;
     }, {});
   }
+  console.log('[STATS] Результат:', result);
   return res.json(result);
 });
 
