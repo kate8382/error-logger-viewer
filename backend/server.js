@@ -83,22 +83,6 @@ app.get('/errors/stats', async (req, res) => {
       const key = group === 'type' ? (e.type || 'Unknown') : (e.status || 'new');
       result[periodKey][key] = (result[periodKey][key] || 0) + 1;
     });
-    if (Object.keys(result).length === 0) {
-      const now = new Date();
-      let currentPeriod = '';
-      if (by === 'day') currentPeriod = now.toISOString().slice(0, 10);
-      if (by === 'week') {
-        const d = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
-        const dayNum = d.getUTCDay() || 7;
-        d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-        const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-        const weekNum = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-        currentPeriod = `${d.getUTCFullYear()}-W${weekNum.toString().padStart(2, '0')}`;
-      }
-      if (by === 'month') currentPeriod = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
-      if (by === 'year') currentPeriod = `${now.getFullYear()}`;
-      result[currentPeriod] = {};
-    }
     // ВАЖНО: не переходим к else, всегда возвращаем periods!
     return res.json(result);
   }

@@ -31,8 +31,11 @@ export const translations = {
     // Charts
     chartTitle: 'Error Statistics Chart',
     statsPeriodWeek: 'Week',
+    ariaChartWeek: 'Week',
     statsPeriodMonth: 'Month',
+    ariaChartMonth: 'Month',
     statsPeriodYear: 'Year',
+    ariaChartYear: 'Year',
     // Error Table
     errorTableTitle: 'Table of Errors',
     tableId: 'ID',
@@ -43,7 +46,13 @@ export const translations = {
     errorType_FetchError: 'Fetch Error',
     errorType_ResourceLoadError: 'Resource Load Error',
     errorType_UnhandledPromiseRejection: 'Unhandled Promise',
+    errorType_ReferenceError: 'ReferenceError',
     errorType_Error: 'JavaScript Error',
+    errorType_SyntaxError: 'Syntax Error',
+    errorType_TypeError: 'Type Error',
+    errorType_RangeError: 'Range Error',
+    errorType_EvalError: 'Eval Error',
+    errorType_URIError: 'URI Error',
     tableTimestamp: 'Timestamp',
     ariaTimestamp: 'Sort by Timestamp',
     tableStatus: 'Status',
@@ -76,6 +85,7 @@ export const translations = {
     modalDeleteBtn: 'Delete',
 
   },
+
   ru: {
     loading: 'Загрузка...',
     title: 'Error Logger & Viewer',
@@ -107,8 +117,11 @@ export const translations = {
     // Графики
     chartTitle: 'График статистики ошибок',
     statsPeriodWeek: 'Неделя',
+    ariaChartWeek: 'Неделя',
     statsPeriodMonth: 'Месяц',
+    ariaChartMonth: 'Месяц',
     statsPeriodYear: 'Год',
+    ariaChartYear: 'Год',
     // Таблица ошибок
     errorTableTitle: 'Таблица ошибок',
     tableId: 'ID',
@@ -119,7 +132,13 @@ export const translations = {
     errorType_FetchError: 'Ошибка запроса',
     errorType_ResourceLoadError: 'Ошибка загрузки ресурса',
     errorType_UnhandledPromiseRejection: 'Необработанный Promise',
+    errorType_ReferenceError: 'Переменная не определена',
     errorType_Error: 'Ошибка JavaScript',
+    errorType_SyntaxError: 'Синтаксическая ошибка',
+    errorType_TypeError: 'Ошибка типа',
+    errorType_RangeError: 'Ошибка диапазона',
+    errorType_EvalError: 'Ошибка eval',
+    errorType_URIError: 'Ошибка URI',
     tableTimestamp: 'Время',
     ariaTimestamp: 'Сортировка по времени',
     tableStatus: 'Статус',

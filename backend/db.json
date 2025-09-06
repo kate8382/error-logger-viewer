@@ -900,7 +900,10 @@
       "stack": "ReferenceError: btnType is not defined\n    at ChartManager.initFilterHandlers (webpack://error-logger-viewer/./src/js/charts.js?:245:7)\n    at new ChartManager (webpack://error-logger-viewer/./src/js/charts.js?:37:10)\n    at HTMLDocument.eval (webpack://error-logger-viewer/./src/js/main.js?:98:9)",
       "timestamp": "2025-09-03T17:11:56.442Z",
       "id": "0cb51034-fc4d-46dc-a746-2d69e446a77f",
-      "createdAt": "2025-09-03T17:11:56.462Z"
+      "createdAt": "2025-09-03T17:11:56.462Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-06T16:06:41.611Z"
     },
     {
       "type": "ReferenceError",
@@ -911,7 +914,10 @@
       "stack": "ReferenceError: btnType is not defined\n    at ChartManager.initFilterHandlers (webpack://error-logger-viewer/./src/js/charts.js?:245:7)\n    at new ChartManager (webpack://error-logger-viewer/./src/js/charts.js?:37:10)\n    at HTMLDocument.eval (webpack://error-logger-viewer/./src/js/main.js?:98:9)",
       "timestamp": "2025-09-03T17:12:09.861Z",
       "id": "cc1888b4-b4d2-4150-ac05-c7b3cdc7b797",
-      "createdAt": "2025-09-03T17:12:09.872Z"
+      "createdAt": "2025-09-03T17:12:09.872Z",
+      "status": "ignored",
+      "comment": "same error",
+      "updatedAt": "2025-09-06T16:06:51.505Z"
     },
     {
       "type": "ReferenceError",
@@ -922,7 +928,121 @@
       "stack": "ReferenceError: btnDate is not defined\n    at ChartManager.initFilterHandlers (webpack://error-logger-viewer/./src/js/charts.js?:259:7)\n    at new ChartManager (webpack://error-logger-viewer/./src/js/charts.js?:37:10)\n    at HTMLDocument.eval (webpack://error-logger-viewer/./src/js/main.js?:98:9)",
       "timestamp": "2025-09-03T17:12:51.657Z",
       "id": "e073fbe9-feff-4c2f-8680-a534897ab7ba",
-      "createdAt": "2025-09-03T17:12:51.672Z"
+      "createdAt": "2025-09-03T17:12:51.672Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-06T16:06:17.741Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: Cannot read properties of undefined (reading '2025-W32')",
+      "stack": "TypeError: Cannot read properties of undefined (reading '2025-W32')\n    at eval (webpack://error-logger-viewer/./src/js/charts.js?:80:59)\n    at Array.filter (<anonymous>)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:78:51)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/charts.js?:10:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/charts.js?:11:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/charts.js?:22:70)\n    at _next (webpack://error-logger-viewer/./src/js/charts.js?:23:163)",
+      "timestamp": "2025-09-04T13:52:27.307Z",
+      "id": "e98fae49-172f-4935-80e6-2aaca19a8879",
+      "createdAt": "2025-09-04T13:52:28.410Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-06T16:06:23.526Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.df8bdf8ab8b9a04f2e80.hot-update.json",
+      "timestamp": "2025-09-06T14:00:36.439Z",
+      "id": "9deadcb3-fa78-45d9-9f1f-610f6463e53b",
+      "createdAt": "2025-09-06T14:00:37.361Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-06T16:06:05.941Z"
+    },
+    {
+      "type": "ReferenceError",
+      "message": "Uncaught ReferenceError: btnDay is not defined",
+      "source": "webpack://error-logger-viewer/./src/js/charts.js?",
+      "lineno": 316,
+      "colno": 7,
+      "stack": "ReferenceError: btnDay is not defined\n    at ChartManager.initFilterHandlers (webpack://error-logger-viewer/./src/js/charts.js?:316:7)\n    at new ChartManager (webpack://error-logger-viewer/./src/js/charts.js?:40:10)\n    at HTMLDocument.eval (webpack://error-logger-viewer/./src/js/main.js?:98:9)",
+      "timestamp": "2025-09-06T14:10:07.455Z",
+      "id": "4695b7f6-cba2-4ac7-804c-a47741362606",
+      "createdAt": "2025-09-06T14:10:07.473Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-06T16:05:58.232Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.da3e411e4cb6cd58325e.hot-update.json",
+      "timestamp": "2025-09-06T14:30:28.148Z",
+      "id": "18f04a64-ad90-41fe-a75c-39cd6c74d002",
+      "createdAt": "2025-09-06T14:30:30.302Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-06T16:05:39.975Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.6881743d7e9042326b7b.hot-update.json",
+      "timestamp": "2025-09-06T14:56:34.389Z",
+      "id": "32947a74-163e-430c-bd43-79d9694817be",
+      "createdAt": "2025-09-06T14:56:34.400Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-06T16:05:32.746Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.691d3ebfc31fac16b25d.hot-update.json",
+      "timestamp": "2025-09-06T15:06:55.972Z",
+      "id": "2e7214eb-95f2-44ae-8e3d-bff82a3a8cf5",
+      "createdAt": "2025-09-06T15:06:55.985Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-06T16:05:27.197Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.bc38750a2bd899890268.hot-update.json",
+      "timestamp": "2025-09-06T15:38:32.894Z",
+      "id": "235ecf8b-08dd-49fc-955e-b5aefaf38d20",
+      "createdAt": "2025-09-06T15:38:32.908Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-06T16:04:49.385Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "source": "http://localhost:3000/errors?",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:177:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:18:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:19:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:20:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:21:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:49:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "timestamp": "2025-09-06T15:38:33.383Z",
+      "id": "3478ef1a-dc36-4f2d-8509-a97902410720",
+      "createdAt": "2025-09-06T15:38:33.421Z",
+      "status": "ignored",
+      "comment": "same error",
+      "updatedAt": "2025-09-06T16:05:05.987Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "ReferenceError: maxY is not defined",
+      "stack": "ReferenceError: maxY is not defined\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:286:28)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/charts.js?:10:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/charts.js?:11:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/charts.js?:22:70)\n    at _next (webpack://error-logger-viewer/./src/js/charts.js?:23:163)",
+      "timestamp": "2025-09-06T15:48:30.621Z",
+      "id": "6b93c856-50e5-48e6-b081-33860d452301",
+      "createdAt": "2025-09-06T15:48:30.647Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-06T16:05:16.074Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.ea92f4a08f6f74bd70c2.hot-update.json",
+      "timestamp": "2025-09-06T16:47:28.697Z",
+      "id": "4aec8fff-a7fa-45fc-8c05-b9131887d448",
+      "createdAt": "2025-09-06T16:47:28.711Z"
     }
   ]
 }

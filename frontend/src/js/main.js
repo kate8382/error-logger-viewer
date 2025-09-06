@@ -54,7 +54,7 @@ class ErrorLoggerApp {
       });
       this.setupErrorListeners();
       // Инициализация ChartManager для секции графика
-      new ChartManager('chartCanvas', 'chartFilterList', localStorage.getItem('lang') || 'ru');
+      new ChartManager();
     });
   }
 
@@ -140,6 +140,24 @@ class ErrorLoggerApp {
         throw error;
       }
     };
+
+    // Дополнительный глобальный обработчик ошибок через addEventListener
+    window.addEventListener('error', function (event) {
+      if (event.error) {
+        // Это JS-ошибка (TypeError, SyntaxError и др.)
+        if (window.app && window.app.errorApi) {
+          window.app.errorApi.createError({
+            type: event.error.name || 'Error',
+            message: event.error.message || String(event.message),
+            source: event.filename,
+            lineno: event.lineno,
+            colno: event.colno,
+            stack: event.error.stack || '',
+            timestamp: new Date().toISOString()
+          });
+        }
+      }
+    }, true);
   }
 
   // Получаем ошибки из localStorage
