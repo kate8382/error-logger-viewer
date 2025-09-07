@@ -103,29 +103,61 @@
       min-height: 120px;
 
       .stats__group {
-        justify-content: center;
+        flex-direction: column;
+        gap: var(--min-gap);
         width: 50%;
-        min-height: 120px;
+        min-height: 180px;
         padding: var(--min-gap) var(--max-gap);
         background-color: var(--white-color);
         border: 1px solid var(--body-color);
         border-radius: var(--card-radius);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-        .stats__title-wrapper {
-          justify-content: flex-start;
+        .stats__header {
           align-items: center;
+          justify-content: flex-start;
           gap: var(--small-font);
-          width: 55%;
+          width: 100%;
 
           .stats__icon {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
           }
 
-          .stats__subtitle {
+          .stats__header-title {
             margin: 0;
             font-size: var(--h4-font);
+          }
+
+          .stats__header-btns {
+            align-items: center;
+            justify-content: center;
+            gap: var(--max-gap);
+            margin-left: auto;
+
+            .stats__btn {
+              width: 20px;
+              height: 20px;
+              padding: 0;
+              border-radius: 50%;
+              background-color: var(--grey-color);
+              color: var(--white-color);
+              font-size: var(--small-font);
+              text-align: center;
+              transition: background-color 0.3s ease-in-out;
+
+              &:focus-visible {
+                background-color: var(--focus-color);
+              }
+
+              &:hover {
+                background-color: var(--hover-color);
+              }
+
+              &:active {
+                background-color: var(--active-color);
+              }
+            }
           }
         }
 
@@ -135,14 +167,25 @@
           align-items: flex-start;
           flex-wrap: wrap;
           gap: var(--min-gap);
-          width: 45%;
+          width: 100%;
 
           .stat__card {
-            display: flex;
+            justify-content: flex-start;
+            align-items: center;
             gap: var(--min-gap);
             width: 100%;
             font-size: var(--small-font);
             color: var(--grey-color);
+
+
+            .stat__color-box {
+              display: inline-block;
+              width: 12px;
+              height: 12px;
+              border-radius: 3px;
+              border: 1px solid var(--body-color);
+              vertical-align: middle;
+            }
 
             .stat__title {
               padding-top: 2px;

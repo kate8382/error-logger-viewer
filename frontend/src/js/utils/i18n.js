@@ -26,8 +26,8 @@ export const translations = {
     statsTitle: 'Error Statistics',
     statsTotal: 'Total Errors: ',
     statsErrorsPerDay: 'Errors per day: ',
-    statsTypeTitle: 'Error Types: ',
-    statsStatusTitle: 'Error Statuses: ',
+    statsTypeTitle: 'Error Types',
+    statsStatusTitle: 'Error Statuses',
     // Charts
     chartTitle: 'Error Statistics Chart',
     statsPeriodWeek: 'Week',
@@ -112,8 +112,8 @@ export const translations = {
     statsTitle: 'Статистика ошибок',
     statsTotal: 'Всего ошибок: ',
     statsErrorsPerDay: 'Ошибок за день: ',
-    statsTypeTitle: 'Типы ошибок: ',
-    statsStatusTitle: 'Статусы ошибок: ',
+    statsTypeTitle: 'Типы ошибок',
+    statsStatusTitle: 'Статусы ошибок',
     // Графики
     chartTitle: 'График статистики ошибок',
     statsPeriodWeek: 'Неделя',

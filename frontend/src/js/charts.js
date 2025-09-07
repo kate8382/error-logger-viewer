@@ -1,6 +1,8 @@
 import Chart from 'chart.js/auto';
 import { translations } from './utils/i18n';
 import { getCurrentLang } from './utils/lang';
+import { typeColors, statusColors } from './utils/colors';
+import { getLabel } from './utils/label';
 
 export default class ChartManager {
   constructor() {
@@ -20,10 +22,6 @@ export default class ChartManager {
 
   async renderChart() {
     if (this.chart) this.chart.destroy();
-    // Цвета для графиков
-    // Голубые/синие оттенки для всех типов ошибок
-    const typeColors = ['#2dccff', '#4285F4', '#31e2f9', '#E0F8FF', '#EBF4FF', '#1877F2', '#5AC8FA', '#A7C7E7', '#007AFF', '#B3E5FC'];
-    const statusColors = ['#13e75dad', '#34A853', '#D7FFC3', '#04CE00', '#2AC670'];
 
     // BAR CHART по датам, неделям, месяцам, годам
     if (['day', 'date', 'week', 'month', 'year'].includes(this.currentType)) {
@@ -112,7 +110,7 @@ export default class ChartManager {
       const allStatuses = Array.from(new Set(periodKeys.flatMap(date => Object.keys(statsStatus[date] || {}))));
       // Формируем datasets для типов
       const typeDatasets = allTypes.map((type, idx) => ({
-        label: translations[this.lang][`errorType_${type}`] || type,
+        label: getLabel(type, this.lang, translations),
         data: periodKeys.map(date => statsType[date][type] || 0),
         backgroundColor: typeColors[idx % typeColors.length],
         borderWidth: 0,
@@ -123,7 +121,7 @@ export default class ChartManager {
       }));
       // Формируем datasets для статусов
       const statusDatasets = allStatuses.map((status, idx) => ({
-        label: translations[this.lang][status] || status,
+        label: getLabel(status, this.lang, translations),
         data: periodKeys.map(date => statsStatus[date][status] || 0),
         backgroundColor: statusColors[idx % statusColors.length],
         borderWidth: 0,
