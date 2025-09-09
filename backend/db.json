@@ -1092,6 +1092,101 @@
       "timestamp": "2025-09-07T16:32:12.947Z",
       "id": "37a8d960-7799-412e-9dec-e6b0db7adedd",
       "createdAt": "2025-09-07T16:32:13.005Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.4a9c0f405265071fb6aa.hot-update.json",
+      "timestamp": "2025-09-09T13:35:31.664Z",
+      "id": "e70f9780-d5d6-48b4-9e68-034cbd8365b7",
+      "createdAt": "2025-09-09T13:35:33.755Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-09T17:25:13.565Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.bd83ae8f0a7a07d807a8.hot-update.json",
+      "timestamp": "2025-09-09T14:07:01.384Z",
+      "id": "5c1793bb-452f-4eee-95c5-01f7c49854a6",
+      "createdAt": "2025-09-09T14:07:01.395Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-09T17:25:29.472Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.18655b3e01d2f6dc5ca2.hot-update.json",
+      "timestamp": "2025-09-09T14:17:17.445Z",
+      "id": "e8958073-16ac-4fc1-8cb7-cbc08e290e55",
+      "createdAt": "2025-09-09T14:17:17.467Z",
+      "status": "in_progress",
+      "comment": "",
+      "updatedAt": "2025-09-09T17:25:34.849Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.66903210e7357d6f726f.hot-update.json",
+      "timestamp": "2025-09-09T15:18:21.801Z",
+      "id": "986dbc42-021a-443e-817d-44acabaac8e4",
+      "createdAt": "2025-09-09T15:18:21.817Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-09T17:25:43.740Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "source": "http://localhost:3000/errors?",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:177:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:18:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:19:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:20:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:21:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:49:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "timestamp": "2025-09-09T15:18:23.571Z",
+      "id": "0f4bc610-d64b-4173-b5f8-20edeb2066e9",
+      "createdAt": "2025-09-09T15:18:23.586Z",
+      "status": "ignored",
+      "comment": "same error",
+      "updatedAt": "2025-09-09T17:26:09.024Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.e8d95b8ff06e06ccec27.hot-update.json",
+      "timestamp": "2025-09-09T15:56:38.639Z",
+      "id": "8daf9520-5a2a-4c54-9725-40571e07832e",
+      "createdAt": "2025-09-09T15:56:38.653Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-09T17:26:16.313Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.9aecf33214ac26d91073.hot-update.json",
+      "timestamp": "2025-09-09T16:17:38.397Z",
+      "id": "58d8bc69-715a-4bc1-82b8-a15037c29a75",
+      "createdAt": "2025-09-09T16:17:38.411Z",
+      "status": "in_progress",
+      "comment": "",
+      "updatedAt": "2025-09-09T17:26:20.713Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.a3d959d8f97db02c9d36.hot-update.json",
+      "timestamp": "2025-09-09T17:43:46.851Z",
+      "id": "86feb461-a8d5-4199-9e0a-44655e8f3489",
+      "createdAt": "2025-09-09T17:43:46.863Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "source": "http://localhost:3000/errors?",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:177:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:18:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:19:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:20:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:21:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:49:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "timestamp": "2025-09-09T17:43:47.001Z",
+      "id": "9f80ccf4-cc8d-493d-a499-53643d2bf2e5",
+      "createdAt": "2025-09-09T17:43:47.014Z"
     }
   ]
 }
