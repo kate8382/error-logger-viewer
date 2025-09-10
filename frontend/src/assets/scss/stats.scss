@@ -107,8 +107,7 @@
         flex-direction: column;
         gap: var(--min-gap);
         width: 50%;
-        min-height: 180px;
-        padding: var(--max-gap) var(--max-gap) 20px var(--max-gap);
+        padding: var(--max-gap);
         background-color: var(--white-color);
         border: 1px solid var(--body-color);
         border-radius: var(--card-radius);
@@ -131,15 +130,15 @@
           }
 
           .stats__header-btns {
-            align-items: center;
-            justify-content: center;
+            align-items: flex-start;
+            justify-content: flex-start;
             gap: var(--max-gap);
             margin-left: auto;
 
             .stats__btn {
               width: 20px;
               height: 20px;
-              padding: 0;
+              padding: 3px 5px;
               border-radius: 50%;
               background-color: var(--grey-color);
               color: var(--white-color);
@@ -193,8 +192,7 @@
             }
 
             .stat__title {
-              // align-self: center;
-              max-width: 80px;
+              width: 80px;
               margin: 0;
               font-size: 10px;
               text-align: center;

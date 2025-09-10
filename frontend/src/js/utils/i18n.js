@@ -28,6 +28,8 @@ export const translations = {
     statsErrorsPerDay: 'Errors per day: ',
     statsTypeTitle: 'Error Types',
     statsStatusTitle: 'Error Statuses',
+    ariaStatsBtnPercent: 'Show percentage',
+    ariaStatsBtnCount: 'Show count',
     // Charts
     chartTitle: 'Error Statistics Chart',
     statsPeriodWeek: 'Week',
@@ -114,6 +116,8 @@ export const translations = {
     statsErrorsPerDay: 'Ошибок за день: ',
     statsTypeTitle: 'Типы ошибок',
     statsStatusTitle: 'Статусы ошибок',
+    ariaStatsBtnPercent: 'Показать в процентах',
+    ariaStatsBtnCount: 'Показать в числах',
     // Графики
     chartTitle: 'График статистики ошибок',
     statsPeriodWeek: 'Неделя',

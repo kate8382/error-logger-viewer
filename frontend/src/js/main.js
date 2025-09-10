@@ -35,6 +35,18 @@ import ChartManager from './charts.js';
 
 // Инициализация таблицы ошибок и статистики
 const errorTable = new ErrorTable();
+// Асинхронная инициализация statsManager после загрузки ошибок
+async function initStatsManager() {
+  let errors = [];
+  try {
+    errors = await (new ErrorApi()).getErrors();
+  } catch (e) {
+    console.error('[StatsManager] Ошибка загрузки ошибок:', e);
+  }
+  window.statsManager = new StatsManager(errors);
+  window.statsManager.renderErrorCards();
+}
+initStatsManager();
 
 // Главный класс приложения - инициализирует API, обработчики ошибок и aside
 class ErrorLoggerApp {

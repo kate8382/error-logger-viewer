@@ -1,4 +1,3 @@
-import Chart from 'chart.js/auto';
 import { el, setChildren } from 'redom';
 import { translations } from './utils/i18n';
 import { getCurrentLang } from './utils/lang';
@@ -12,10 +11,21 @@ export class StatsManager {
     this.lang = getCurrentLang();
   }
 
+  // Общее количество ошибок
+  get totalCount() {
+    return this.errors.filter(e => e.status !== 'deleted').length;
+  }
+
+  // Количество ошибок за сегодня
+  get todayCount() {
+    const today = new Date().toISOString().slice(0, 10);
+    return this.errors.filter(e => e.timestamp && e.timestamp.slice(0, 10) === today).length;
+  }
+
   // Статистика по типам ошибок: [['TypeError', 25], ...]
-  getTypeStats() {
+  get typeStats() {
     const typeStats = {};
-    this.errors.filter(e => e.status !== 'fixed' && e.status !== 'deleted').forEach(e => {
+    this.errors.filter(e => e.status !== 'deleted').forEach(e => {
       const type = e.type || 'Unknown';
       typeStats[type] = (typeStats[type] || 0) + 1;
     });
@@ -23,119 +33,78 @@ export class StatsManager {
   }
 
   // Статистика по статусам ошибок: [['new', 10], ...]
-  getStatusStats() {
+  get statusStats() {
     const statusStats = {};
-    this.errors.filter(e => e.status !== 'fixed' && e.status !== 'deleted').forEach(e => {
+    this.errors.filter(e => e.status !== 'deleted').forEach(e => {
       const status = e.status || 'new';
       statusStats[status] = (statusStats[status] || 0) + 1;
     });
     return Object.entries(statusStats);
   }
 
-  // Общее количество ошибок
-  getTotalCount() {
-    return this.errors.filter(e => e.status !== 'deleted').length;
-  }
-
-  // Количество ошибок за сегодня
-  getTodayCount() {
-    const today = new Date().toISOString().slice(0, 10);
-    return this.errors.filter(e => e.timestamp && e.timestamp.slice(0, 10) === today).length;
-  }
-
-  // Получить проценты по типам
-  getTypePercentStats() {
-    const stats = this.getTypeStats();
+  // Универсальный метод для расчёта процентов по статистике
+  getPercentStats(getStatsMethod) {
+    if (typeof getStatsMethod !== 'function') {
+      console.error('[StatsManager] getPercentStats: getStatsMethod должен быть функцией, а не', getStatsMethod);
+      return [];
+    }
+    const stats = getStatsMethod();
     const total = stats.reduce((sum, [, count]) => sum + count, 0);
-    return stats.map(([, count]) => total ? Math.round((count / total) * 100) : 0);
+    if (!total) return stats.map(() => 0);
+    // Largest Remainder Method
+    const rawPercents = stats.map(([, count]) => (count / total) * 100);
+    const floored = rawPercents.map(Math.floor);
+    let remainder = 100 - floored.reduce((a, b) => a + b, 0);
+    const remainders = rawPercents.map((v, i) => ({ idx: i, frac: v - floored[i] }));
+    remainders.sort((a, b) => b.frac - a.frac);
+    const percents = [...floored];
+    for (let i = 0; i < remainder; i++) {
+      percents[remainders[i].idx]++;
+    }
+    return percents;
   }
 
-  // Отрисовать полу-бублик для типов
-  renderTypeDoughnut(view = 'percent') {
-    const canvasWrapper = document.getElementById('statsChartType');
+  // Проценты по типам
+  get typePercentStats() {
+    return this.getPercentStats(() => this.typeStats);
+  }
+
+  // Проценты по статусам
+  get statusPercentStats() {
+    return this.getPercentStats(() => this.statusStats);
+  }
+
+  // Универсальный рендер полу-бублика
+  renderDoughnut({ chartId, stats, colors, view = 'percent' }) {
+    const canvasWrapper = document.getElementById(chartId);
     if (!canvasWrapper) return;
     canvasWrapper.innerHTML = '';
-    // динамическая ширина canvas
     const parentWidth = canvasWrapper.offsetWidth || 385;
     const canvas = document.createElement('canvas');
     canvas.width = parentWidth;
     canvas.height = 130;
     canvasWrapper.appendChild(canvas);
     const ctx = canvas.getContext('2d');
-    const stats = this.getTypeStats();
-    const labels = stats.map(([type]) => getLabel(type, this.lang, this.translations));
-    const data = view === 'percent' ? this.getTypePercentStats() : stats.map(([, count]) => count);
-    if (!labels.length) return;
-    // параметры дуги
+    const data = view === 'percent'
+      ? stats.percents
+      : stats.counts;
+    if (!data.length) return;
     const cx = canvas.width / 2;
     const cy = canvas.height * 0.98;
     const r = Math.min(canvas.width, canvas.height * 2) / 2 - 16;
     const thickness = 20;
     const startAngle = Math.PI;
     const total = data.reduce((sum, v) => sum + v, 0);
-    // уменьшенный зазор между сегментами
-    const gap = 0.01; // радиан (~0.5 градуса)
-    const minSegment = 0.03; // минимальная длина сегмента
+    const gap = 0.01;
+    const minSegment = 0.03;
     let currentAngle = startAngle;
-    // рисуем сегменты
     data.forEach((value, i) => {
-      const color = typeColors[i % typeColors.length];
+      const color = colors[i % colors.length];
       let segmentAngle = (Math.PI * value / total) - gap;
       if (segmentAngle < minSegment) segmentAngle = minSegment;
       ctx.save();
       ctx.lineWidth = thickness;
-      ctx.lineCap = 'butt'; // строгие края
-      ctx.strokeStyle = color;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, currentAngle, currentAngle + segmentAngle, false);
-      ctx.stroke();
-      ctx.restore();
-      currentAngle += segmentAngle + gap;
-    });
-  }
-
-  // Получить проценты по статусам
-  getStatusPercentStats() {
-    const stats = this.getStatusStats();
-    const total = stats.reduce((sum, [, count]) => sum + count, 0);
-    return stats.map(([, count]) => total ? Math.round((count / total) * 100) : 0);
-  }
-
-  // Отрисовать полу-бублик для статусов
-  renderStatusDoughnut(view = 'percent') {
-    const canvasWrapper = document.getElementById('statsChartStatus');
-    if (!canvasWrapper) return;
-    canvasWrapper.innerHTML = '';
-    // динамическая ширина canvas
-    const parentWidth = canvasWrapper.offsetWidth || 385;
-    const canvas = document.createElement('canvas');
-    canvas.width = parentWidth;
-    canvas.height = 130;
-    canvasWrapper.appendChild(canvas);
-    const ctx = canvas.getContext('2d');
-    const stats = this.getStatusStats();
-    const labels = stats.map(([status]) => getLabel(status, this.lang, this.translations));
-    const data = view === 'percent' ? this.getStatusPercentStats() : stats.map(([, count]) => count);
-    if (!labels.length) return;
-    // параметры дуги
-    const cx = canvas.width / 2;
-    const cy = canvas.height * 0.98;
-    const r = Math.min(canvas.width, canvas.height * 2) / 2 - 16;
-    const thickness = 20;
-    const startAngle = Math.PI;
-    const total = data.reduce((sum, v) => sum + v, 0);
-    // уменьшенный зазор между сегментами
-    const gap = 0.01; // радиан (~0.5 градуса)
-    const minSegment = 0.03; // минимальная длина сегмента
-    let currentAngle = startAngle;
-    // рисуем сегменты
-    data.forEach((value, i) => {
-      const color = statusColors[i % statusColors.length];
-      let segmentAngle = (Math.PI * value / total) - gap;
-      if (segmentAngle < minSegment) segmentAngle = minSegment;
-      ctx.save();
-      ctx.lineWidth = thickness;
-      ctx.lineCap = 'butt'; // строгие края
+      ctx.lineCap = 'butt';
       ctx.strokeStyle = color;
       ctx.beginPath();
       ctx.arc(cx, cy, r, currentAngle, currentAngle + segmentAngle, false);
@@ -146,7 +115,7 @@ export class StatsManager {
   }
 
   // Универсальный рендер карточек для типов/статусов
-  renderStatCards(listElem, stats, getValue, valueClass, colors, type) {
+  renderStatCards(listElem, stats, getValue, valueClass, colors) {
     listElem.innerHTML = '';
     stats.forEach(([item, value], idx) => {
       const itemLabel = getLabel(item, this.lang, this.translations);
@@ -166,63 +135,127 @@ export class StatsManager {
   renderErrorCards() {
     // Общие суммы
     const total = document.getElementById('totalErrors');
-    if (total) total.textContent = this.getTotalCount();
-
+    if (total) total.textContent = this.totalCount;
     const today = document.getElementById('errorsPerDay');
-    if (today) today.textContent = this.getTodayCount();
+    if (today) today.textContent = this.todayCount;
 
-    // Карточки по типам
-    const typeChart = document.getElementById('statsChartType');
-    if (typeChart) {
-      const typeStats = this.getTypeStats();
-      const typeLabels = typeStats.map(([type]) => getLabel(type, this.lang, this.translations));
-      const typeData = typeStats.map(([, count]) => count);
-      this.renderTypeDoughnut(typeChart, typeLabels, typeData, typeColors);
+    // Типы ошибок
+    this.renderSection({
+      chartId: 'statsChartType',
+      listId: 'statsTypeList',
+      getStats: () => this.typeStats,
+      getPercents: () => this.typePercentStats,
+      colors: typeColors,
+      btnPercentId: 'btnStatsTypePercent',
+      btnCountId: 'btnStatsTypeCount',
+      doughnutMethod: (view) => {
+        const stats = {
+          percents: this.typePercentStats,
+          counts: this.typeStats.map(([, count]) => count)
+        };
+        this.renderDoughnut({ chartId: 'statsChartType', stats, colors: typeColors, view });
+      }
+    });
+
+    // Статусы ошибок
+    this.renderSection({
+      chartId: 'statsChartStatus',
+      listId: 'statsStatusList',
+      getStats: () => this.statusStats,
+      getPercents: () => this.statusPercentStats,
+      colors: statusColors,
+      btnPercentId: 'btnStatsStatusPercent',
+      btnCountId: 'btnStatsStatusCount',
+      doughnutMethod: (view) => {
+        const stats = {
+          percents: this.statusPercentStats,
+          counts: this.statusStats.map(([, count]) => count)
+        };
+        this.renderDoughnut({ chartId: 'statsChartStatus', stats, colors: statusColors, view });
+      }
+    });
+
+    // Динамическое выравнивание высоты .stats__group
+    setTimeout(() => {
+      const groups = document.querySelectorAll('.stats__group');
+      if (groups.length < 2) return;
+      // Сброс высоты перед измерением
+      groups.forEach(g => g.style.height = 'auto');
+      const maxHeight = Math.max(...Array.from(groups).map(g => g.offsetHeight));
+      groups.forEach(g => g.style.height = maxHeight + 'px');
+    }, 0);
+  }
+  // Универсальный рендер секции статистики (тип/статус)
+  renderSection({
+    chartId,
+    listId,
+    getStats,
+    getPercents,
+    colors,
+    btnPercentId,
+    btnCountId,
+    doughnutMethod
+  }) {
+    const chartElem = document.getElementById(chartId);
+    const listElem = document.getElementById(listId);
+    if (!chartElem || !listElem) return;
+
+    // Защита: если getStats/getPercents не функция — не рендерим
+    if (typeof getStats !== 'function' || typeof getPercents !== 'function') {
+      console.error('[StatsManager] getStats/getPercents не функция:', getStats, getPercents);
+      return;
     }
 
-    const typeList = document.getElementById('statsTypeList');
-    if (typeList) {
-      this.renderStatCards(typeList, this.getTypeStats(), (idx, count) => `${count} %`, 'stat__value stat__value--type', typeColors, 'type');
-      this.renderTypeDoughnut('percent');
-
-      // Обработчики кнопок
-      const btnPercent = document.getElementById('btnStatsTypePercent');
-      const btnCount = document.getElementById('btnStatsTypeCount');
-      if (btnPercent) btnPercent.onclick = () => {
-        this.renderErrorCards();
-        this.renderTypeDoughnut('percent');
-      };
-      if (btnCount) btnCount.onclick = () => {
-        // Перерисовать карточки с числами
-        this.renderStatCards(typeList, this.getTypeStats(), (idx, count) => count, 'stat__value stat__value--type', typeColors, 'type');
-        this.renderTypeDoughnut('count');
-      };
+    const percentStats = getPercents.call(this);
+    const statsArr = getStats.call(this);
+    this.renderStatCards(
+      listElem,
+      statsArr,
+      (idx) => `${percentStats[idx]} %`,
+      'stat__value',
+      colors
+    );
+    if (typeof doughnutMethod === 'function') {
+      doughnutMethod('percent');
     }
 
-    // Карточки по статусам
-    const statusChart = document.getElementById('statsChartStatus');
-    if (statusChart) {
-      const statusStats = this.getStatusStats();
-      const statusLabels = statusStats.map(([status]) => getLabel(status, this.lang, this.translations));
-      const statusData = statusStats.map(([, count]) => count);
-      this.renderStatusDoughnut(statusChart, statusLabels, statusData, statusColors);
-    }
-
-    const statusList = document.getElementById('statsStatusList');
-    if (statusList) {
-      this.renderStatCards(statusList, this.getStatusStats(), (idx, count) => `${count} %`, 'stat__value stat__value--status', statusColors, 'status');
-      this.renderStatusDoughnut('percent');
-
-      // Обработчики кнопок
-      const btnPercent = document.getElementById('btnStatsStatusPercent');
-      const btnCount = document.getElementById('btnStatsStatusCount');
-      if (btnPercent) btnPercent.onclick = () => {
-        this.renderErrorCards();
+    // Обработчики кнопок
+    const btnPercent = document.getElementById(btnPercentId);
+    const btnCount = document.getElementById(btnCountId);
+    if (btnPercent) {
+      btnPercent.onclick = () => {
+        btnPercent.setAttribute('aria-label', this.translations[this.lang].ariaStatsBtnPercent || 'Show percentage');
+        this.renderStatCards(
+          listElem,
+          statsArr,
+          (idx) => `${percentStats[idx]} %`,
+          'stat__value',
+          colors
+        );
+        if (typeof doughnutMethod === 'function') {
+          doughnutMethod('percent');
+        }
       };
-      if (btnCount) btnCount.onclick = () => {
-        this.renderStatCards(statusList, this.getStatusStats(), (idx, count) => count, 'stat__value stat__value--status', statusColors, 'status');
-        this.renderStatusDoughnut('count');
+    }
+    if (btnCount) {
+      btnCount.onclick = () => {
+        btnCount.setAttribute('aria-label', this.translations[this.lang].ariaStatsBtnCount || 'Show count');
+        this.renderStatCards(
+          listElem,
+          statsArr,
+          (idx) => statsArr[idx][1],
+          'stat__value',
+          colors
+        );
+        if (typeof doughnutMethod === 'function') {
+          doughnutMethod('count');
+        }
       };
     }
   }
 }
+
+
+
+
+

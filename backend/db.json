@@ -1187,6 +1187,133 @@
       "timestamp": "2025-09-09T17:43:47.001Z",
       "id": "9f80ccf4-cc8d-493d-a499-53643d2bf2e5",
       "createdAt": "2025-09-09T17:43:47.014Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.a10540fb46613a853463.hot-update.json",
+      "timestamp": "2025-09-10T15:01:53.679Z",
+      "id": "bf918c66-e688-4292-a2f6-8ffe0ce11b64",
+      "createdAt": "2025-09-10T15:01:54.666Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: this.getTotalCount is not a function",
+      "stack": "TypeError: this.getTotalCount is not a function\n    at StatsManager.renderErrorCards (webpack://error-logger-viewer/./src/js/stats.js?:237:43)\n    at window.renderErrorTable (webpack://error-logger-viewer/./src/js/table.js?:273:18)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:143:33)",
+      "timestamp": "2025-09-10T15:42:54.666Z",
+      "id": "cb80795b-4011-4f9e-983b-22665c3ab66f",
+      "createdAt": "2025-09-10T15:42:54.690Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-10T16:13:37.323Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: this.getTotalCount is not a function",
+      "stack": "TypeError: this.getTotalCount is not a function\n    at StatsManager.renderErrorCards (webpack://error-logger-viewer/./src/js/stats.js?:237:43)\n    at window.renderErrorTable (webpack://error-logger-viewer/./src/js/table.js?:273:18)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:143:33)",
+      "timestamp": "2025-09-10T15:43:47.276Z",
+      "id": "88f116fd-d127-4619-9ba0-4a6f299fa88a",
+      "createdAt": "2025-09-10T15:43:47.285Z",
+      "status": "ignored",
+      "comment": "same error",
+      "updatedAt": "2025-09-10T16:13:59.958Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: this.getTotalCount is not a function",
+      "stack": "TypeError: this.getTotalCount is not a function\n    at StatsManager.renderErrorCards (webpack://error-logger-viewer/./src/js/stats.js?:233:43)\n    at window.renderErrorTable (webpack://error-logger-viewer/./src/js/table.js?:273:18)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:143:33)",
+      "timestamp": "2025-09-10T15:45:56.982Z",
+      "id": "7881f896-a618-40e6-ad7a-d78aaec2824d",
+      "createdAt": "2025-09-10T15:45:56.994Z",
+      "status": "ignored",
+      "comment": "same error",
+      "updatedAt": "2025-09-10T16:14:11.558Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: getStatsMethod.call is not a function",
+      "stack": "TypeError: getStatsMethod.call is not a function\n    at StatsManager.getPercentStats (webpack://error-logger-viewer/./src/js/stats.js?:92:34)\n    at StatsManager.get (webpack://error-logger-viewer/./src/js/stats.js?:131:19)\n    at StatsManager.getPercents (webpack://error-logger-viewer/./src/js/stats.js?:245:25)\n    at StatsManager.renderSection (webpack://error-logger-viewer/./src/js/stats.js?:321:38)\n    at StatsManager.renderErrorCards (webpack://error-logger-viewer/./src/js/stats.js?:238:12)\n    at window.renderErrorTable (webpack://error-logger-viewer/./src/js/table.js?:273:18)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:143:33)",
+      "timestamp": "2025-09-10T15:46:54.716Z",
+      "id": "f277da02-5b2d-43e1-a70a-a1c7010ed26e",
+      "createdAt": "2025-09-10T15:46:54.728Z",
+      "status": "ignored",
+      "comment": "same error",
+      "updatedAt": "2025-09-10T16:14:24.476Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: getStatsMethod.call is not a function",
+      "stack": "TypeError: getStatsMethod.call is not a function\n    at StatsManager.getPercentStats (webpack://error-logger-viewer/./src/js/stats.js?:92:34)\n    at StatsManager.get (webpack://error-logger-viewer/./src/js/stats.js?:131:19)\n    at StatsManager.getPercents (webpack://error-logger-viewer/./src/js/stats.js?:245:25)\n    at StatsManager.renderSection (webpack://error-logger-viewer/./src/js/stats.js?:321:38)\n    at StatsManager.renderErrorCards (webpack://error-logger-viewer/./src/js/stats.js?:238:12)\n    at window.renderErrorTable (webpack://error-logger-viewer/./src/js/table.js?:273:18)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:143:33)",
+      "timestamp": "2025-09-10T15:47:37.093Z",
+      "id": "38a873ac-8956-4167-bb5c-a4fcd8fb66c0",
+      "createdAt": "2025-09-10T15:47:37.186Z",
+      "status": "ignored",
+      "comment": "same error",
+      "updatedAt": "2025-09-10T16:14:39.840Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: getStatsMethod.call is not a function",
+      "stack": "TypeError: getStatsMethod.call is not a function\n    at StatsManager.getPercentStats (webpack://error-logger-viewer/./src/js/stats.js?:92:34)\n    at StatsManager.get (webpack://error-logger-viewer/./src/js/stats.js?:131:19)\n    at StatsManager.getPercents (webpack://error-logger-viewer/./src/js/stats.js?:245:25)\n    at StatsManager.renderSection (webpack://error-logger-viewer/./src/js/stats.js?:321:38)\n    at StatsManager.renderErrorCards (webpack://error-logger-viewer/./src/js/stats.js?:238:12)\n    at window.renderErrorTable (webpack://error-logger-viewer/./src/js/table.js?:273:18)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:143:33)",
+      "timestamp": "2025-09-10T15:48:34.557Z",
+      "id": "6fba2a44-ee42-4ad7-a9ed-8bee6a90dd22",
+      "createdAt": "2025-09-10T15:48:34.570Z",
+      "status": "ignored",
+      "comment": "same error",
+      "updatedAt": "2025-09-10T16:14:54.537Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: getStatsMethod is not a function",
+      "stack": "TypeError: getStatsMethod is not a function\n    at StatsManager.getPercentStats (webpack://error-logger-viewer/./src/js/stats.js?:92:19)\n    at StatsManager.get (webpack://error-logger-viewer/./src/js/stats.js?:131:19)\n    at StatsManager.getPercents (webpack://error-logger-viewer/./src/js/stats.js?:245:25)\n    at StatsManager.renderSection (webpack://error-logger-viewer/./src/js/stats.js?:321:38)\n    at StatsManager.renderErrorCards (webpack://error-logger-viewer/./src/js/stats.js?:238:12)\n    at window.renderErrorTable (webpack://error-logger-viewer/./src/js/table.js?:273:18)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:143:33)",
+      "timestamp": "2025-09-10T15:50:43.121Z",
+      "id": "8e89e4e4-cf8b-4dda-b5a4-2e047505b7a3",
+      "createdAt": "2025-09-10T15:50:43.155Z",
+      "status": "in_progress",
+      "comment": "",
+      "updatedAt": "2025-09-10T16:15:17.752Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: getStatsMethod is not a function",
+      "stack": "TypeError: getStatsMethod is not a function\n    at StatsManager.getPercentStats (webpack://error-logger-viewer/./src/js/stats.js?:92:19)\n    at StatsManager.get (webpack://error-logger-viewer/./src/js/stats.js?:131:19)\n    at StatsManager.getPercents (webpack://error-logger-viewer/./src/js/stats.js?:245:25)\n    at StatsManager.renderSection (webpack://error-logger-viewer/./src/js/stats.js?:321:38)\n    at StatsManager.renderErrorCards (webpack://error-logger-viewer/./src/js/stats.js?:238:12)\n    at window.renderErrorTable (webpack://error-logger-viewer/./src/js/table.js?:273:18)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:143:33)",
+      "timestamp": "2025-09-10T15:51:59.815Z",
+      "id": "416c8ce4-99e1-4fa5-bc9c-2a8ccdbd3eff",
+      "createdAt": "2025-09-10T15:51:59.826Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-10T16:15:24.175Z"
+    },
+    {
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: getStatsMethod is not a function",
+      "stack": "TypeError: getStatsMethod is not a function\n    at StatsManager.getPercentStats (webpack://error-logger-viewer/./src/js/stats.js?:92:19)\n    at StatsManager.get (webpack://error-logger-viewer/./src/js/stats.js?:131:19)\n    at StatsManager.getPercents (webpack://error-logger-viewer/./src/js/stats.js?:245:25)\n    at StatsManager.renderSection (webpack://error-logger-viewer/./src/js/stats.js?:321:38)\n    at StatsManager.renderErrorCards (webpack://error-logger-viewer/./src/js/stats.js?:238:12)\n    at window.renderErrorTable (webpack://error-logger-viewer/./src/js/table.js?:273:18)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:143:33)",
+      "timestamp": "2025-09-10T15:52:54.610Z",
+      "id": "b6bea1bc-3f5e-4012-9316-ec7ac9a2860c",
+      "createdAt": "2025-09-10T15:52:54.623Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "source": "http://localhost:3000/errors",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:210:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:18:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:19:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:20:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:21:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:171:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "timestamp": "2025-09-10T15:54:36.666Z",
+      "id": "c56edc26-7fb3-43ec-9a62-18aede2e747c",
+      "createdAt": "2025-09-10T15:54:36.683Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-10T16:13:12.964Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:3000/errors/370b0ae7-b88e-4971-89b1-ecefef10332e",
+      "timestamp": "2025-09-10T16:10:34.219Z",
+      "id": "a4815337-9ab1-4cbd-8737-5d35969c52a6",
+      "createdAt": "2025-09-10T16:10:34.249Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-10T16:13:22.094Z"
     }
   ]
 }
