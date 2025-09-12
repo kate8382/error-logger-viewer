@@ -83,20 +83,29 @@ export class Modal {
       { value: 'new', label: this.translations[lang]['new'] || 'Новая' },
       { value: 'in_progress', label: this.translations[lang]['in_progress'] || 'В работе' },
       { value: 'fixed', label: this.translations[lang]['fixed'] || 'Исправлена' },
-      { value: 'ignored', label: this.translations[lang]['ignored'] || 'Игнорировать' }
+      { value: 'ignored', label: this.translations[lang]['ignored'] || 'Игнорировать' },
+      { value: 'duplicate', label: this.translations[lang]['duplicate'] || 'Дубликат ошибки' }
     ];
     let currentStatus = statusOptions.find(opt => opt.value === error.status);
     if (!currentStatus) currentStatus = statusOptions[0];
-    // Кастомный select для статуса
-    const statusSelect = el('div', { className: 'modal__status-select is-close' }, [
-      el('span', { className: 'modal__status-current' }, currentStatus.label),
-      el('span', { className: 'modal__status-arrow' }),
-      el('ul', { className: 'modal__status-list', style: 'display: none;' },
-        ...statusOptions
-          .filter(opt => opt.value !== currentStatus.value)
-          .map(opt => el('li', { 'data-value': opt.value, className: 'modal__status-option' }, opt.label))
-      )
-    ]);
+    let statusSelect;
+    if (error.status === 'duplicate') {
+      // Для дубликата просто текст, без селекта
+      statusSelect = el('div', { className: 'modal__status-static' }, [
+        el('span', { className: 'modal__status-current' }, currentStatus.label)
+      ]);
+    } else {
+      // Кастомный select для остальных статусов
+      statusSelect = el('div', { className: 'modal__status-select is-close' }, [
+        el('span', { className: 'modal__status-current' }, currentStatus.label),
+        el('span', { className: 'modal__status-arrow' }),
+        el('ul', { className: 'modal__status-list', style: 'display: none;' },
+          ...statusOptions
+            .filter(opt => opt.value !== currentStatus.value)
+            .map(opt => el('li', { 'data-value': opt.value, className: 'modal__status-option' }, opt.label))
+        )
+      ]);
+    }
     const currentSpan = statusSelect.querySelector('.modal__status-current');
     const list = statusSelect.querySelector('.modal__status-list');
     // Обработчик для закрытия по клику вне select

@@ -2,6 +2,7 @@ import { el, setChildren } from 'redom';
 import { ErrorApi } from './api';
 import { translations } from './utils/i18n';
 import { getCurrentLang } from './utils/lang';
+import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 import { StatsManager } from './stats';
 
 export class ErrorTable {
@@ -13,6 +14,9 @@ export class ErrorTable {
   }
 
   async fetchErrors() {
+    const tableSection = document.getElementById('errorTableSection');
+    showCenterSpinner(tableSection, 'page'); // сразу показываем
+
     try {
       const errors = await this.errorApi.getErrors();
       this.renderErrors(errors);
@@ -38,10 +42,14 @@ export class ErrorTable {
       // Перевод типа ошибки
       const typeKey = 'errorType_' + error.type;
       const typeText = this.translations[lang][typeKey] || error.type;
-      let status = error.status;
-      let statusText = this.translations[lang][status] || status;
-      if (!status) {
+      let status = error.status || 'new';
+      let statusText;
+      if (status === 'duplicate') {
+        statusText = this.translations[lang]['duplicate'];
+      } else if (!status) {
         statusText = lang === 'ru' ? 'Новая' : 'New';
+      } else {
+        statusText = this.translations[lang][status] || status;
       }
       return el('tr', { className: 'error-table__row' }, [
         el('td', { className: 'error-table__cell error-table__cell--id' }, this.formatId(error.id)),
@@ -67,6 +75,10 @@ export class ErrorTable {
       const key = btn.getAttribute('data-i18n');
       btn.textContent = this.translations[lang][key] || key;
     });
+
+    // Скрываем спиннер после рендера
+    const tableSection = document.getElementById('errorTableSection');
+    hideCenterSpinner(tableSection);
   }
 
   createEditButton(error) {

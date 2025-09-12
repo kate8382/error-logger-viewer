@@ -156,93 +156,31 @@ const typeCounts = {
 - Цветовая дифференциация по статусу/типу.
 
 
-Статистика
- // DOUGHNUT CHART по типу
-    if (this.currentType === 'type') {
-      const res = await fetch('http://localhost:3000/errors/stats?by=type');
-      const stats = await res.json();
-      const labels = Object.keys(stats);
-      if (!labels.length) {
-        this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.canvas.parentElement.querySelector('.chart__title').textContent = 'Нет данных для графика';
-        return;
-      } else {
-        this.canvas.parentElement.querySelector('.chart__title').textContent = translations[this.lang].chartTitle;
-      }
-      const total = labels.reduce((sum, key) => sum + stats[key], 0);
-      const data = labels.map(key => total ? Math.round((stats[key] / total) * 100) : 0);
-      const translatedLabels = labels.map(key => translations[this.lang][key] || key);
-      this.chart = new Chart(this.canvas, {
-        type: 'doughnut',
-        data: {
-          labels: translatedLabels,
-          datasets: [{
-            data,
-            backgroundColor: typeColors.slice(0, labels.length),
-            borderWidth: 2,
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: true },
-            tooltip: {
-              callbacks: {
-                label: ctx => `${ctx.label}: ${ctx.parsed} %`
-              }
-            }
-          },
-          cutout: '60%',
-          rotation: Math.PI,
-          circumference: Math.PI,
-        },
-        scales: {}
-      });
-      return;
-    }
+Ваши рассуждения абсолютно логичны и отражают реальные проблемы продакшн-систем: если ошибка повторяется часто, таблица быстро заполняется одинаковыми записями, и статус "new" не помогает отличить дубликаты.
 
-    // DOUGHNUT CHART по статусу
-    if (this.currentType === 'status') {
-      const res = await fetch('http://localhost:3000/errors/stats?by=status');
-      const stats = await res.json();
-      const labels = Object.keys(stats);
-      if (!labels.length) {
-        this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.canvas.parentElement.querySelector('.chart__title').textContent = 'Нет данных для графика';
-        return;
-      } else {
-        this.canvas.parentElement.querySelector('.chart__title').textContent = translations[this.lang].chartTitle;
-      }
-      const total = labels.reduce((sum, key) => sum + stats[key], 0);
-      const data = labels.map(key => total ? Math.round((stats[key] / total) * 100) : 0);
-      const translatedLabels = labels.map(key => translations[this.lang][key] || key);
-      this.chart = new Chart(this.canvas, {
-        type: 'doughnut',
-        data: {
-          labels: translatedLabels,
-          datasets: [{
-            data,
-            backgroundColor: statusColors.slice(0, labels.length),
-            borderWidth: 2,
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: true },
-            tooltip: {
-              callbacks: {
-                label: ctx => `${ctx.label}: ${ctx.parsed} %`
-              }
-            }
-          },
-          cutout: '60%',
-          rotation: Math.PI,
-          circumference: Math.PI,
-        },
-        scales: {}
-      });
-      return;
-    }
+Как обычно решают эту задачу в рабочих приложениях
+Агрегация ошибок (группировка):
 
-    завтра нужно будет: 1) отформатировать даты дня при начальном отображении графика, потому что сейчас если не сортировать по неделям/месяцам/годам, то даты в графике идут год-месяц-день (скрин 1); 2) уменьшить размеры баров для месяцев и года - они чересчур обьемные (бары даже при увеличении количества по оси у полностью не видны (скрин 2);  4) сделать перевод всех типов ошибок, которые мы запрограммировали отлавливать, потому сегодня у меня появилась новая ошибка, а перевода ее нет (ReferenceError 3); 4) и переделать карточки статистики по типу/статусу на числа и на бублик в процентном соотношении - планирую, что будут 2 кнопки переключения с % на цифры типов/статусов.
+Вместо хранения каждой ошибки отдельно, система хранит одну запись с количеством повторов (count), временем первого и последнего появления, и списком уникальных параметров (например, пользователей).
+В таблице отображается одна строка, а не сотни одинаковых ошибок.
+Статус "duplicate" как отдельная запись:
+
+Некоторые системы действительно сохраняют дубликаты с отдельным статусом, чтобы их можно было фильтровать и массово удалять.
+Но чаще всего дубликаты просто увеличивают счётчик повторов у основной ошибки.
+Фильтрация и авто-склейка:
+
+При отображении ошибок на фронте можно группировать их по типу/стеку/сообщению и показывать только уникальные, а количество повторов — отдельным столбцом.
+Массовые действия:
+
+Для удобства разработчика реализуют массовое удаление, игнорирование или пометку группы ошибок по фильтру (например, "удалить все ошибки с этим типом и сообщением").
+Как сделать у вас
+Рекомендация: Реализовать группировку ошибок на сервере или фронте, чтобы одинаковые ошибки не плодились в таблице, а отображались одной строкой с количеством повторов.
+Можно добавить поле count и при повторе ошибки просто увеличивать его.
+Статус "duplicate" можно использовать для фильтрации, но лучше хранить только уникальные ошибки и их количество.
+Пример (псевдокод):
+
+{  "type": "TypeError",  "message": "Cannot read property 'foo'",  "stack": "...",  "count": 17,  "firstSeen": "...",  "lastSeen": "..."}
+В таблице: одна строка, видно сколько раз ошибка повторялась.
+
+Если хотите реализовать такую логику — могу помочь с изменением backend и frontend!
+Такой подход — стандарт для продакшн-логгеров (Sentry, Rollbar, Bugsnag и др.).

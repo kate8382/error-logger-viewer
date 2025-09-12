@@ -153,6 +153,39 @@ app.post('/errors', async (req, res) => {
     db.data = { errors: [] };
   }
 
+  // Гибридная фильтрация: сравниваем по типу, сообщению и стеку
+  const errors = db.data.errors;
+  const now = Date.now();
+  const periodMs = 15000; // 15 секунд
+
+  // Найти последнюю ошибку с тем же типом, сообщением и стеком
+  const lastSimilar = [...errors].reverse().find(e =>
+    e.type === newError.type &&
+    e.message === newError.message &&
+    e.stack === newError.stack
+  );
+
+  let shouldSave = false;
+  if (!lastSimilar) {
+    // Уникальная ошибка — сохраняем
+    shouldSave = true;
+  } else {
+    // Если отличается хотя бы по одному из ключевых полей — сохраняем
+    if (newError.type !== lastSimilar.type || newError.message !== lastSimilar.message || newError.stack !== lastSimilar.stack) {
+      shouldSave = true;
+    } else {
+      // Если совпадает, проверяем интервал
+      const lastTime = new Date(lastSimilar.createdAt || lastSimilar.timestamp || now).getTime();
+      if (now - lastTime > periodMs) {
+        shouldSave = true;
+      }
+    }
+  }
+
+  if (!shouldSave) {
+    return res.status(200).json({ status: 'duplicate', error: 'Error ignored due to repeat within period' });
+  }
+
   newError.id = uuidv4(); // Генерация уникального ID
   if (db.data.errors.some(e => e.id === newError.id)) {
     return res.status(400).json({ error: 'Error with this ID already exists' });

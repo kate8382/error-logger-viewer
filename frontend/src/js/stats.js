@@ -3,6 +3,7 @@ import { translations } from './utils/i18n';
 import { getCurrentLang } from './utils/lang';
 import { typeColors, statusColors } from './utils/colors';
 import { getLabel } from './utils/label';
+import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 
 export class StatsManager {
   constructor(errors = []) {
@@ -132,48 +133,64 @@ export class StatsManager {
   }
 
   // создание карточек ошибок
-  renderErrorCards() {
-    // Общие суммы
+  async renderErrorCards() {
+    // Общие суммы (без спиннера)
     const total = document.getElementById('totalErrors');
     if (total) total.textContent = this.totalCount;
     const today = document.getElementById('errorsPerDay');
     if (today) today.textContent = this.todayCount;
 
-    // Типы ошибок
-    this.renderSection({
-      chartId: 'statsChartType',
-      listId: 'statsTypeList',
-      getStats: () => this.typeStats,
-      getPercents: () => this.typePercentStats,
-      colors: typeColors,
-      btnPercentId: 'btnStatsTypePercent',
-      btnCountId: 'btnStatsTypeCount',
-      doughnutMethod: (view) => {
-        const stats = {
-          percents: this.typePercentStats,
-          counts: this.typeStats.map(([, count]) => count)
-        };
-        this.renderDoughnut({ chartId: 'statsChartType', stats, colors: typeColors, view });
-      }
-    });
+    // Параллельная загрузка для обеих групп
+    const groupTypeContent = document.querySelector('.stats__group-content > #statsChartType')?.parentElement;
+    const groupStatusContent = document.querySelector('.stats__group-content > #statsChartStatus')?.parentElement;
 
-    // Статусы ошибок
-    this.renderSection({
-      chartId: 'statsChartStatus',
-      listId: 'statsStatusList',
-      getStats: () => this.statusStats,
-      getPercents: () => this.statusPercentStats,
-      colors: statusColors,
-      btnPercentId: 'btnStatsStatusPercent',
-      btnCountId: 'btnStatsStatusCount',
-      doughnutMethod: (view) => {
-        const stats = {
-          percents: this.statusPercentStats,
-          counts: this.statusStats.map(([, count]) => count)
-        };
-        this.renderDoughnut({ chartId: 'statsChartStatus', stats, colors: statusColors, view });
-      }
-    });
+    if (groupTypeContent) showCenterSpinner(groupTypeContent, 'page');
+    if (groupStatusContent) showCenterSpinner(groupStatusContent, 'page');
+
+    await Promise.all([
+      (async () => {
+        if (groupTypeContent) {
+          this.renderSection({
+            chartId: 'statsChartType',
+            listId: 'statsTypeList',
+            getStats: () => this.typeStats,
+            getPercents: () => this.typePercentStats,
+            colors: typeColors,
+            btnPercentId: 'btnStatsTypePercent',
+            btnCountId: 'btnStatsTypeCount',
+            doughnutMethod: (view) => {
+              const stats = {
+                percents: this.typePercentStats,
+                counts: this.typeStats.map(([, count]) => count)
+              };
+              this.renderDoughnut({ chartId: 'statsChartType', stats, colors: typeColors, view });
+            }
+          });
+          hideCenterSpinner(groupTypeContent);
+        }
+      })(),
+      (async () => {
+        if (groupStatusContent) {
+          this.renderSection({
+            chartId: 'statsChartStatus',
+            listId: 'statsStatusList',
+            getStats: () => this.statusStats,
+            getPercents: () => this.statusPercentStats,
+            colors: statusColors,
+            btnPercentId: 'btnStatsStatusPercent',
+            btnCountId: 'btnStatsStatusCount',
+            doughnutMethod: (view) => {
+              const stats = {
+                percents: this.statusPercentStats,
+                counts: this.statusStats.map(([, count]) => count)
+              };
+              this.renderDoughnut({ chartId: 'statsChartStatus', stats, colors: statusColors, view });
+            }
+          });
+          hideCenterSpinner(groupStatusContent);
+        }
+      })()
+    ]);
 
     // Динамическое выравнивание высоты .stats__group
     setTimeout(() => {

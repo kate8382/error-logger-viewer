@@ -9,7 +9,7 @@
       "createdAt": "2025-08-06T15:03:11.027Z",
       "status": "fixed",
       "comment": "",
-      "updatedAt": "2025-08-16T13:18:46.864Z"
+      "updatedAt": "2025-09-12T14:56:02.082Z"
     },
     {
       "type": "FetchError",
@@ -1314,6 +1314,89 @@
       "status": "fixed",
       "comment": "",
       "updatedAt": "2025-09-10T16:13:22.094Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.14a46fb5eb48ac105176.hot-update.json",
+      "timestamp": "2025-09-12T14:14:16.250Z",
+      "id": "3512fe2b-e9f3-418a-9884-366d6c6d3b65",
+      "createdAt": "2025-09-12T14:14:17.073Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.987a6c4bce0a4d3c8fd6.hot-update.json",
+      "timestamp": "2025-09-12T14:17:52.407Z",
+      "id": "1effa042-17b7-4f87-a984-993432bc60b8",
+      "createdAt": "2025-09-12T14:17:52.418Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-12T17:09:14.408Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.703f187d069d02faec3d.hot-update.json",
+      "timestamp": "2025-09-12T14:37:58.673Z",
+      "id": "a16d3937-0663-4c1e-95e2-7bd415686a31",
+      "createdAt": "2025-09-12T14:37:58.708Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-12T17:09:08.311Z"
+    },
+    {
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "source": "http://localhost:8080/main.ea08758ffc5e087f2e4a.hot-update.json",
+      "timestamp": "2025-09-12T16:17:51.071Z",
+      "id": "50162d13-4e4f-4a33-89c0-f73218860384",
+      "createdAt": "2025-09-12T16:17:51.171Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-12T17:08:18.207Z"
+    },
+    {
+      "type": "ReferenceError",
+      "message": "Uncaught ReferenceError: tableSection is not defined",
+      "source": "webpack://error-logger-viewer/./src/js/table.js?",
+      "lineno": 123,
+      "colno": 75,
+      "stack": "ReferenceError: tableSection is not defined\n    at eval (webpack://error-logger-viewer/./src/js/table.js?:123:75)",
+      "timestamp": "2025-09-12T16:32:07.980Z",
+      "id": "99bfd0ea-6ded-44cd-9152-ff073a92b6dc",
+      "createdAt": "2025-09-12T16:32:08.003Z",
+      "status": "fixed",
+      "comment": "",
+      "updatedAt": "2025-09-12T17:07:46.522Z"
+    },
+    {
+      "type": "ReferenceError",
+      "message": "tableSection is not defined",
+      "source": "webpack://error-logger-viewer/./src/js/table.js?",
+      "lineno": 123,
+      "colno": 75,
+      "stack": "ReferenceError: tableSection is not defined\n    at eval (webpack://error-logger-viewer/./src/js/table.js?:123:75)",
+      "timestamp": "2025-09-12T16:32:07.983Z",
+      "id": "bf2eb198-8289-4222-aa00-7977b176f869",
+      "createdAt": "2025-09-12T16:32:08.045Z",
+      "status": "ignored",
+      "comment": "same error",
+      "updatedAt": "2025-09-12T17:07:57.834Z"
+    },
+    {
+      "type": "TestError",
+      "message": "Тестовая ошибка для проверки дат",
+      "timestamp": "2025-09-12T17:27:35.311Z",
+      "id": "e670d794-6649-4189-bd44-8c4862b2f14d",
+      "createdAt": "2025-09-12T17:27:35.336Z"
+    },
+    {
+      "type": "TestError",
+      "message": "Тестовая ошибка для проверки дат",
+      "timestamp": "2025-09-12T17:33:13.281Z",
+      "id": "a6467645-cf69-44b8-b821-fc5946c1c2b3",
+      "createdAt": "2025-09-12T17:33:13.298Z"
     }
   ]
 }

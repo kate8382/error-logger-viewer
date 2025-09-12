@@ -161,6 +161,26 @@
           }
         }
 
+        .stats__group-content {
+          position: relative;
+          flex-direction: column;
+          gap: var(--min-gap);
+          width: 100%;
+          min-height: 180px;
+        }
+
+        .stats__chart-canvas {
+          width: 100%;
+          height: 130px;
+          max-height: 150px;
+          margin-bottom: 16px;
+        }
+
+        #statsChartType canvas,
+        #statsChartStatus canvas {
+          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
         .stats__list {
           justify-content: space-between;
           align-items: center;
@@ -198,18 +218,6 @@
               text-align: center;
             }
           }
-        }
-
-        .stats__chart-canvas {
-          width: 100%;
-          height: 130px;
-          max-height: 150px;
-          margin-bottom: 16px;
-        }
-
-        #statsChartType canvas,
-        #statsChartStatus canvas {
-          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
         }
       }
     }
