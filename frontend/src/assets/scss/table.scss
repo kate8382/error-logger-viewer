@@ -24,12 +24,14 @@
 
     .error-table__head {
       display: grid;
-      grid-template-columns: 20% 20% 20% 18% 22%;
+      grid-template-columns: 16% 16% 10% 16% 16% 16% 10%;
       align-items: flex-end;
+      justify-items: flex-start;
       width: 100%;
       min-height: 22px;
       padding: var(--max-gap);
       text-align: left;
+      font-size: var(--body-font);
       font-weight: 500;
       border-top: 1px solid var(--body-color);
       border-bottom: 1px solid var(--body-color);
@@ -37,7 +39,6 @@
       &__btn-sort {
         justify-content: flex-start;
         align-items: center;
-        font-weight: bold;
         transition: color 0.3s ease-in-out, fill 0.3s ease-in-out;
 
         &:hover {
@@ -60,7 +61,7 @@
     .error-table__body {
       .error-table__row {
         display: grid;
-        grid-template-columns: 20% 20% 20% 18% 22%;
+        grid-template-columns: 16% 16% 10% 16% 16% 16% 10%;
         align-items: center;
         padding: var(--max-gap);
         border-bottom: 1px solid var(--body-color);
@@ -76,7 +77,8 @@
           font-size: var(--small-font);
 
           &--id,
-          &--timestamp {
+          &--firstseen,
+          &--lastseen {
             color: var(--grey-color);
           }
 

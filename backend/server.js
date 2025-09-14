@@ -76,7 +76,8 @@ app.get('/errors/stats', async (req, res) => {
     }
     result = {};
     errors.forEach(e => {
-      const dateStr = e.timestamp || e.createdAt || '';
+      // Используем lastSeen для группировки по периоду
+      const dateStr = e.lastSeen || e.firstSeen || e.createdAt || '';
       const periodKey = getPeriodKey(dateStr, by);
       if (!periodKey) return;
       if (!result[periodKey]) result[periodKey] = {};
@@ -125,8 +126,9 @@ app.get('/errors', async (req, res) => {
       });
     } else if (req.query.sort === 'timestamp') {
       errors = errors.sort((a, b) => {
-        const aValue = a.timestamp || a.createdAt ? new Date(a.timestamp || a.createdAt).getTime() : 0;
-        const bValue = b.timestamp || b.createdAt ? new Date(b.timestamp || b.createdAt).getTime() : 0;
+        // Сортировка по lastSeen
+        const aValue = a.lastSeen || a.firstSeen || a.createdAt ? new Date(a.lastSeen || a.firstSeen || a.createdAt).getTime() : 0;
+        const bValue = b.lastSeen || b.firstSeen || b.createdAt ? new Date(b.lastSeen || b.firstSeen || b.createdAt).getTime() : 0;
         return (aValue - bValue) * order;
       });
     } else {
@@ -153,49 +155,45 @@ app.post('/errors', async (req, res) => {
     db.data = { errors: [] };
   }
 
-  // Гибридная фильтрация: сравниваем по типу, сообщению и стеку
-  const errors = db.data.errors;
-  const now = Date.now();
-  const periodMs = 15000; // 15 секунд
+  // Ключи для группировки
+  const groupKeys = ['type', 'message', 'stack'];
+  // Уникальный параметр, например, user (можно заменить на нужный)
+  const user = newError.user || 'unknown';
+  const now = new Date().toISOString();
 
-  // Найти последнюю ошибку с тем же типом, сообщением и стеком
-  const lastSimilar = [...errors].reverse().find(e =>
-    e.type === newError.type &&
-    e.message === newError.message &&
-    e.stack === newError.stack
+  // Поиск существующей ошибки
+  let found = db.data.errors.find(e =>
+    groupKeys.every(k => e[k] === newError[k])
   );
 
-  let shouldSave = false;
-  if (!lastSimilar) {
-    // Уникальная ошибка — сохраняем
-    shouldSave = true;
+  if (found) {
+    // Увеличиваем count, обновляем lastSeen, добавляем пользователя
+    found.count = (found.count || 1) + 1;
+    found.lastSeen = now;
+    if (!found.users) found.users = [];
+    if (!found.users.includes(user)) found.users.push(user);
+    // Можно обновлять другие поля, если нужно
+    await db.write();
+    return res.status(200).json(found);
   } else {
-    // Если отличается хотя бы по одному из ключевых полей — сохраняем
-    if (newError.type !== lastSimilar.type || newError.message !== lastSimilar.message || newError.stack !== lastSimilar.stack) {
-      shouldSave = true;
-    } else {
-      // Если совпадает, проверяем интервал
-      const lastTime = new Date(lastSimilar.createdAt || lastSimilar.timestamp || now).getTime();
-      if (now - lastTime > periodMs) {
-        shouldSave = true;
-      }
-    }
+    // Создаём новую уникальную ошибку
+    const errorObj = {
+      id: uuidv4(),
+      type: newError.type,
+      message: newError.message,
+      stack: newError.stack,
+      status: newError.status || 'new',
+      comment: newError.comment || '',
+      count: 1,
+      firstSeen: now,
+      lastSeen: now,
+      users: [user],
+      createdAt: now
+    };
+    db.data.errors.push(errorObj);
+    await db.write();
+    return res.status(201).json(errorObj);
   }
-
-  if (!shouldSave) {
-    return res.status(200).json({ status: 'duplicate', error: 'Error ignored due to repeat within period' });
-  }
-
-  newError.id = uuidv4(); // Генерация уникального ID
-  if (db.data.errors.some(e => e.id === newError.id)) {
-    return res.status(400).json({ error: 'Error with this ID already exists' });
-  }
-  newError.createdAt = new Date().toISOString();
-  // updatedAt не добавляем при создании!
-  db.data.errors.push(newError);
-  await db.write();
-
-  res.status(201).json(newError);
 });
 
 // Маршрут для обновления ошибки по ID

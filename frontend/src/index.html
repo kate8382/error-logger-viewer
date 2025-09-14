@@ -278,7 +278,7 @@
         <table class="error-table__table flex" id="errorTable" aria-label="Error Table">
           <thead>
             <tr class="error-table__head" id="errorTableHead">
-              <th>
+              <th class="error-table__cell error-table__cell--id">
                 <button class="error-table__btn-sort flex" id="sortById" aria-label="Sort by ID">
                   <span data-i18n="tableId">ID</span>
                   <svg class="sort-icon" width="20" height="20" viewBox="0 0 20 20" fill="none"
@@ -288,8 +288,7 @@
                   </svg>
                 </button>
               </th>
-
-              <th>
+              <th class="error-table__cell error-table__cell--data">
                 <button class="error-table__btn-sort flex" id="sortByType" aria-label="Sort by Type of Error">
                   <span data-i18n="tableType">Type of Error</span>
                   <svg class="sort-icon" width="20" height="20" viewBox="0 0 20 20" fill="none"
@@ -299,10 +298,9 @@
                   </svg>
                 </button>
               </th>
-
-              <th>
-                <button class="error-table__btn-sort flex" id="sortByTimestamp" aria-label="Sort by Timestamp">
-                  <span data-i18n="tableTimestamp">Timestamp</span>
+              <th class="error-table__cell error-table__cell--count">
+                <button class="error-table__btn-sort flex" id="sortByCount" aria-label="Sort by Count">
+                  <span data-i18n="tableCount">Count</span>
                   <svg class="sort-icon" width="20" height="20" viewBox="0 0 20 20" fill="none"
                     style="vertical-align: middle; margin-left: 4px; margin-bottom: 2px;">
                     <polygon points="10,4 5,9 15,9" fill="currentColor"></polygon>
@@ -310,8 +308,27 @@
                   </svg>
                 </button>
               </th>
-
-              <th data-i18n="tableStatus">
+              <th class="error-table__cell error-table__cell--firstseen flex">
+                <button class="error-table__btn-sort flex" id="sortByFirstSeen" aria-label="Sort by First Seen">
+                  <span data-i18n="tableFirstSeen">First Seen</span>
+                  <svg class="sort-icon" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                    style="vertical-align: middle; margin-left: 4px; margin-bottom: 2px;">
+                    <polygon points="10,4 5,9 15,9" fill="currentColor"></polygon>
+                    <polygon points="10,16 15,11 5,11" fill="currentColor"></polygon>
+                  </svg>
+                </button>
+              </th>
+              <th class="error-table__cell error-table__cell--lastseen flex">
+                <button class="error-table__btn-sort flex" id="sortByLastSeen" aria-label="Sort by Last Seen">
+                  <span data-i18n="tableLastSeen">Last Seen</span>
+                  <svg class="sort-icon" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                    style="vertical-align: middle; margin-left: 4px; margin-bottom: 2px;">
+                    <polygon points="10,4 5,9 15,9" fill="currentColor"></polygon>
+                    <polygon points="10,16 15,11 5,11" fill="currentColor"></polygon>
+                  </svg>
+                </button>
+              </th>
+              <th class="error-table__cell error-table__cell--status">
                 <button class="error-table__btn-sort flex" id="sortByStatus" aria-label="Sort by Status">
                   <span data-i18n="tableStatus">Status</span>
                   <svg class="sort-icon" width="20" height="20" viewBox="0 0 20 20" fill="none"
@@ -321,7 +338,8 @@
                   </svg>
                 </button>
               </th>
-              <th data-i18n="tableActions"><span data-i18n="tableActions">Actions</span></th>
+              <th class="error-table__cell error-table__cell--actions"><span data-i18n="tableActions">Actions</span>
+              </th>
             </tr>
           </thead>
 

@@ -43,23 +43,57 @@ export class ErrorTable {
       const typeKey = 'errorType_' + error.type;
       const typeText = this.translations[lang][typeKey] || error.type;
       let status = error.status || 'new';
-      let statusText;
-      if (status === 'duplicate') {
-        statusText = this.translations[lang]['duplicate'];
-      } else if (!status) {
-        statusText = lang === 'ru' ? 'Новая' : 'New';
-      } else {
-        statusText = this.translations[lang][status] || status;
-      }
+      let statusText = this.translations[lang][status] || status;
+      // Формат дат появления (fallback для старых ошибок)
+      const firstSeen = error.firstSeen
+        ? this.formatDate(error.firstSeen)
+        : error.createdAt
+          ? this.formatDate(error.createdAt)
+          : error.timestamp
+            ? this.formatDate(error.timestamp)
+            : '';
+      const lastSeen = error.lastSeen
+        ? this.formatDate(error.lastSeen)
+        : error.updatedAt
+          ? this.formatDate(error.updatedAt)
+          : error.timestamp
+            ? this.formatDate(error.timestamp)
+            : '';
+      // Выпадающее меню действий через методы
+      const actionsCell = el('td', { className: 'error-table__cell error-table__cell--actions' });
+      const dropdownBtn = el('button', {
+        className: 'error-table__dropdown-btn',
+        'aria-label': 'Actions',
+        style: 'min-width:32px;min-height:32px;background:none;border:none;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;'
+      }, '⋮');
+      const editBtn = this.createEditButton(error);
+      const deleteBtn = this.createDeleteButton(error);
+      editBtn.style.margin = '2px 0';
+      deleteBtn.style.margin = '2px 0';
+      const dropdownMenu = el('div', {
+        className: 'error-table__dropdown-menu',
+        style: 'position:absolute;z-index:10;top:36px;right:0;min-width:110px;background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.12);display:none;flex-direction:column;padding:4px;'
+      }, [editBtn, deleteBtn]);
+      // Открытие/закрытие меню
+      dropdownBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        dropdownMenu.style.display = dropdownMenu.style.display === 'none' ? 'flex' : 'none';
+      });
+      // Закрытие по клику вне меню
+      document.addEventListener('click', () => {
+        dropdownMenu.style.display = 'none';
+      });
+      actionsCell.style.position = 'relative';
+      actionsCell.appendChild(dropdownBtn);
+      actionsCell.appendChild(dropdownMenu);
       return el('tr', { className: 'error-table__row' }, [
         el('td', { className: 'error-table__cell error-table__cell--id' }, this.formatId(error.id)),
         el('td', { className: 'error-table__cell error-table__cell--data' }, typeText),
-        el('td', { className: 'error-table__cell error-table__cell--timestamp' }, this.formatDate(error.timestamp || error.createdAt || '')),
+        el('td', { className: 'error-table__cell error-table__cell--count' }, error.count || 1),
+        el('td', { className: 'error-table__cell error-table__cell--firstseen' }, firstSeen),
+        el('td', { className: 'error-table__cell error-table__cell--lastseen' }, lastSeen),
         el('td', { className: 'error-table__cell error-table__cell--status' }, statusText),
-        el('td', { className: 'error-table__cell error-table__cell--actions' }, [
-          this.createEditButton(error),
-          this.createDeleteButton(error)
-        ])
+        actionsCell
       ]);
     });
     setChildren(tableBody, rows);
@@ -141,33 +175,36 @@ export class ErrorTable {
         const aIndex = statusOrder.indexOf(aStatus);
         const bIndex = statusOrder.indexOf(bStatus);
         if (aIndex !== -1 && bIndex !== -1) {
-          const result = order === 'asc' ? aIndex - bIndex : bIndex - aIndex;
-          return result;
+          return order === 'asc' ? aIndex - bIndex : bIndex - aIndex;
         } else if (aIndex !== -1) {
           return order === 'asc' ? -1 : 1;
         } else if (bIndex !== -1) {
           return order === 'asc' ? 1 : -1;
         } else {
-          // Если оба не из списка — сортировать по переводу
           const aText = translations[lang][aStatus] || aStatus;
           const bText = translations[lang][bStatus] || bStatus;
-          const result = order === 'asc' ? aText.localeCompare(bText) : bText.localeCompare(aText);
-          return result;
+          return order === 'asc' ? aText.localeCompare(bText) : bText.localeCompare(aText);
         }
       }
-      if (field === 'timestamp') {
-        const aValue = a.timestamp || a.createdAt ? new Date(a.timestamp || a.createdAt).getTime() : 0;
-        const bValue = b.timestamp || b.createdAt ? new Date(b.timestamp || b.createdAt).getTime() : 0;
-        const result = order === 'asc' ? aValue - bValue : bValue - aValue;
-        return result;
+      if (field === 'lastSeen') {
+        const aValue = a.lastSeen ? new Date(a.lastSeen).getTime() : 0;
+        const bValue = b.lastSeen ? new Date(b.lastSeen).getTime() : 0;
+        return order === 'asc' ? aValue - bValue : bValue - aValue;
+      }
+      if (field === 'firstSeen') {
+        const aValue = a.firstSeen ? new Date(a.firstSeen).getTime() : 0;
+        const bValue = b.firstSeen ? new Date(b.firstSeen).getTime() : 0;
+        return order === 'asc' ? aValue - bValue : bValue - aValue;
+      }
+      if (field === 'count') {
+        return order === 'asc' ? (a.count || 0) - (b.count || 0) : (b.count || 0) - (a.count || 0);
       }
       if (field === 'id') {
         const aValue = a.id ? a.id.toString().toLowerCase() : '';
         const bValue = b.id ? b.id.toString().toLowerCase() : '';
-        const result = order === 'asc'
+        return order === 'asc'
           ? (aValue > bValue ? 1 : aValue < bValue ? -1 : 0)
           : (aValue < bValue ? 1 : aValue > bValue ? -1 : 0);
-        return result;
       }
       // Для других строковых полей
       let aValue = a[field];
@@ -176,10 +213,9 @@ export class ErrorTable {
         aValue = aValue.toLowerCase();
         bValue = bValue.toLowerCase();
       }
-      const result = order === 'asc'
+      return order === 'asc'
         ? (aValue > bValue ? 1 : aValue < bValue ? -1 : 0)
         : (aValue < bValue ? 1 : aValue > bValue ? -1 : 0);
-      return result;
     });
   }
 }
@@ -200,7 +236,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let sortOrder = {
     id: 'asc',
     type: 'asc',
-    timestamp: 'asc',
+    count: 'asc',
+    firstSeen: 'asc',
+    lastSeen: 'asc',
     status: 'asc'
   };
 
@@ -236,11 +274,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const sortTimestampBtn = document.getElementById('sortByTimestamp');
-  if (sortTimestampBtn) {
-    sortTimestampBtn.addEventListener('click', e => {
+  const sortCountBtn = document.getElementById('sortByCount');
+  if (sortCountBtn) {
+    sortCountBtn.addEventListener('click', e => {
       e.preventDefault();
-      handleSort('timestamp');
+      handleSort('count');
+    });
+  }
+  const sortFirstSeenBtn = document.getElementById('sortByFirstSeen');
+  if (sortFirstSeenBtn) {
+    sortFirstSeenBtn.addEventListener('click', e => {
+      e.preventDefault();
+      handleSort('firstSeen');
+    });
+  }
+  const sortLastSeenBtn = document.getElementById('sortByLastSeen');
+  if (sortLastSeenBtn) {
+    sortLastSeenBtn.addEventListener('click', e => {
+      e.preventDefault();
+      handleSort('lastSeen');
     });
   }
 
