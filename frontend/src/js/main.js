@@ -18,7 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
     await api.createError({
       type: 'TestError',
       message: 'Тестовая ошибка для проверки дат',
-      timestamp: new Date().toISOString()
+      firstSeen: new Date().toISOString(),
+      lastSeen: new Date().toISOString()
     });
     alert('Тестовая ошибка создана! Обновите таблицу.');
   };
@@ -77,6 +78,27 @@ class ErrorLoggerApp {
   }
 
   setupErrorListeners() {
+    // Глобальный обработчик ошибок загрузки ресурсов (скрипты, стили, изображения)
+    window.addEventListener('error', (event) => {
+      const target = event.target || event.srcElement;
+      if (target && (target instanceof HTMLScriptElement || target instanceof HTMLLinkElement || target instanceof HTMLImageElement)) {
+        const src = target.src || target.href || target.currentSrc || '';
+        const tag = target.tagName;
+        this.errorApi.createError({
+          type: 'ResourceLoadError',
+          message: `Failed to load resource: ${tag}`,
+          source: src,
+          firstSeen: new Date().toISOString(),
+          lastSeen: new Date().toISOString()
+        }).then((created) => {
+          if (created && created.id) {
+            this.updateErrorTable();
+          } else {
+            setTimeout(() => this.updateErrorTable(), 500);
+          }
+        });
+      }
+    }, true);
     // Глобальный обработчик ошибок JavaScript (onerror: message - ошибка в коде, source - файл, lineno - строка, colno - столбец)
     window.onerror = (message, source, lineno, colno, error) => {
       console.log('[ErrorLogger] Creating JS error:', message);
@@ -87,7 +109,8 @@ class ErrorLoggerApp {
         lineno,
         colno,
         stack: error && error.stack ? error.stack : '',
-        timestamp: new Date().toISOString()
+        firstSeen: new Date().toISOString(),
+        lastSeen: new Date().toISOString()
       }).then((created) => {
         if (created && created.id) {
           this.updateErrorTable();
@@ -103,7 +126,8 @@ class ErrorLoggerApp {
         type: 'UnhandledPromiseRejection',
         message: event.reason ? String(event.reason) : 'Promise rejected',
         stack: event.reason && event.reason.stack ? event.reason.stack : '',
-        timestamp: new Date().toISOString()
+        firstSeen: new Date().toISOString(),
+        lastSeen: new Date().toISOString()
       }).then((created) => {
         if (created && created.id) {
           this.updateErrorTable();
@@ -124,7 +148,8 @@ class ErrorLoggerApp {
             type: 'FetchError',
             message: `Fetch failed: ${response.status} ${response.statusText}`,
             source: args[0],
-            timestamp: new Date().toISOString()
+            firstSeen: new Date().toISOString(),
+            lastSeen: new Date().toISOString()
           }).then((created) => {
             if (created && created.id) {
               this.updateErrorTable();
@@ -141,7 +166,8 @@ class ErrorLoggerApp {
           message: error.message,
           source: args[0],
           stack: error.stack,
-          timestamp: new Date().toISOString()
+          firstSeen: new Date().toISOString(),
+          lastSeen: new Date().toISOString()
         }).then((created) => {
           if (created && created.id) {
             this.updateErrorTable();
@@ -165,7 +191,8 @@ class ErrorLoggerApp {
             lineno: event.lineno,
             colno: event.colno,
             stack: event.error.stack || '',
-            timestamp: new Date().toISOString()
+            firstSeen: new Date().toISOString(),
+            lastSeen: new Date().toISOString()
           });
         }
       }

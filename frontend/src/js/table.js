@@ -44,27 +44,17 @@ export class ErrorTable {
       const typeText = this.translations[lang][typeKey] || error.type;
       let status = error.status || 'new';
       let statusText = this.translations[lang][status] || status;
-      // Формат дат появления (fallback для старых ошибок)
       const firstSeen = error.firstSeen
         ? this.formatDate(error.firstSeen)
-        : error.createdAt
-          ? this.formatDate(error.createdAt)
-          : error.timestamp
-            ? this.formatDate(error.timestamp)
-            : '';
+        : '';
       const lastSeen = error.lastSeen
         ? this.formatDate(error.lastSeen)
-        : error.updatedAt
-          ? this.formatDate(error.updatedAt)
-          : error.timestamp
-            ? this.formatDate(error.timestamp)
-            : '';
+        : '';
       // Выпадающее меню действий через методы
-      const actionsCell = el('td', { className: 'error-table__cell error-table__cell--actions' });
+      const actionsCell = el('td', { className: 'error-table__cell error-table__cell--actions flex' });
       const dropdownBtn = el('button', {
-        className: 'error-table__dropdown-btn',
-        'aria-label': 'Actions',
-        style: 'min-width:32px;min-height:32px;background:none;border:none;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;'
+        className: 'error-table__dropdown-btn flex',
+        'aria-label': 'Actions'
       }, '⋮');
       const editBtn = this.createEditButton(error);
       const deleteBtn = this.createDeleteButton(error);
@@ -72,7 +62,6 @@ export class ErrorTable {
       deleteBtn.style.margin = '2px 0';
       const dropdownMenu = el('div', {
         className: 'error-table__dropdown-menu',
-        style: 'position:absolute;z-index:10;top:36px;right:0;min-width:110px;background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.12);display:none;flex-direction:column;padding:4px;'
       }, [editBtn, deleteBtn]);
       // Открытие/закрытие меню
       dropdownBtn.addEventListener('click', e => {
@@ -186,25 +175,27 @@ export class ErrorTable {
           return order === 'asc' ? aText.localeCompare(bText) : bText.localeCompare(aText);
         }
       }
-      if (field === 'lastSeen') {
-        const aValue = a.lastSeen ? new Date(a.lastSeen).getTime() : 0;
-        const bValue = b.lastSeen ? new Date(b.lastSeen).getTime() : 0;
-        return order === 'asc' ? aValue - bValue : bValue - aValue;
-      }
-      if (field === 'firstSeen') {
-        const aValue = a.firstSeen ? new Date(a.firstSeen).getTime() : 0;
-        const bValue = b.firstSeen ? new Date(b.firstSeen).getTime() : 0;
-        return order === 'asc' ? aValue - bValue : bValue - aValue;
-      }
-      if (field === 'count') {
-        return order === 'asc' ? (a.count || 0) - (b.count || 0) : (b.count || 0) - (a.count || 0);
-      }
       if (field === 'id') {
         const aValue = a.id ? a.id.toString().toLowerCase() : '';
         const bValue = b.id ? b.id.toString().toLowerCase() : '';
         return order === 'asc'
           ? (aValue > bValue ? 1 : aValue < bValue ? -1 : 0)
           : (aValue < bValue ? 1 : aValue > bValue ? -1 : 0);
+      }
+      if (field === 'count') {
+        return order === 'asc' ? (a.count || 0) - (b.count || 0) : (b.count || 0) - (a.count || 0);
+      }
+      if (field === 'firstSeen') {
+        const getFirstSeen = err => err.firstSeen || '';
+        const aValue = getFirstSeen(a) ? new Date(getFirstSeen(a)).getTime() : 0;
+        const bValue = getFirstSeen(b) ? new Date(getFirstSeen(b)).getTime() : 0;
+        return order === 'asc' ? aValue - bValue : bValue - aValue;
+      }
+      if (field === 'lastSeen') {
+        const getLastSeen = err => err.lastSeen || '';
+        const aValue = getLastSeen(a) ? new Date(getLastSeen(a)).getTime() : 0;
+        const bValue = getLastSeen(b) ? new Date(getLastSeen(b)).getTime() : 0;
+        return order === 'asc' ? aValue - bValue : bValue - aValue;
       }
       // Для других строковых полей
       let aValue = a[field];

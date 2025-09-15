@@ -150,9 +150,32 @@ export default class ChartManager {
         } else {
           // Есть данные — рендерим график
           this.canvas.parentElement.querySelector('.chart__title').textContent = translations[this.lang].chartTitle;
-          // Автоматический max для оси Y
-          const allData = datasets.flatMap(ds => ds.data); // Все значения из всех наборов данных
-          let maxY = Math.max(40, ...allData) || 40; // Максимум не меньше 40
+          // Автоматический max для оси Y с округлением и динамическим шагом
+          const allData = datasets.flatMap(ds => ds.data);
+          let rawMax = Math.max(1, ...allData) || 1;
+          // Округляем maxY вверх до "красивого" значения
+          function getNiceMax(val) {
+            if (val <= 10) return 10;
+            if (val <= 50) return Math.ceil(val / 10) * 10;
+            if (val <= 100) return Math.ceil(val / 20) * 20;
+            if (val <= 200) return Math.ceil(val / 50) * 50;
+            if (val <= 1000) return Math.ceil(val / 100) * 100;
+            // Для больших значений — округляем к ближайшей сотне/тысяче
+            const pow10 = Math.pow(10, Math.floor(Math.log10(val)));
+            return Math.ceil(val / pow10) * pow10;
+          }
+          const maxY = getNiceMax(rawMax);
+          // stepSize зависит от диапазона
+          function getStepSize(maxY) {
+            if (maxY <= 10) return 2;
+            if (maxY <= 50) return 10;
+            if (maxY <= 100) return 20;
+            if (maxY <= 200) return 50;
+            if (maxY <= 1000) return 100;
+            // Для больших значений — делим на 10
+            return Math.ceil(maxY / 10);
+          }
+          const stepSize = getStepSize(maxY);
           this.chart = new Chart(this.canvas, {
             type: 'bar',
             data: {
@@ -210,10 +233,14 @@ export default class ChartManager {
                     display: false // Отключаем линию оси Y
                   },
                   min: 0,
+                  suggestedMax: maxY,
                   ticks: {
                     padding: 10,
                     color: '#89868d',
-                    stepSize: maxY > 100 ? 20 : 10,
+                    stepSize: stepSize,
+                    callback: function (value) {
+                      return value;
+                    }
                   }
                 }
               },

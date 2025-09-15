@@ -4,5 +4,5 @@ export const typeColors = [
 
 // Цвета для статусов ошибок (Chart.js и карточки)
 export const statusColors = [
-  '#13e75dad', '#34A853', '#D7FFC3', '#04CE00', '#2AC670'
+  '#04CE00', '#34A853', '#D7FFC3', '#13e75dad', '#2AC670'
 ];

@@ -1,7 +1,7 @@
 .error-table {
   position: relative;
   max-width: 100%;
-  min-height: 300px;
+  min-height: 350px;
   padding: var(--max-gap);
   overflow-x: auto;
   background-color: var(--white-color);
@@ -19,24 +19,24 @@
     flex-direction: column;
     justify-content: space-between;
     width: 100%;
-    min-height: 300px;
+    min-height: auto;
     font-size: var(--body-font);
 
     .error-table__head {
       display: grid;
       grid-template-columns: 16% 16% 10% 16% 16% 16% 10%;
-      align-items: flex-end;
+      align-items: center;
       justify-items: flex-start;
       width: 100%;
-      min-height: 22px;
-      padding: var(--max-gap);
+      min-height: 32px;
+      padding: var(--max-gap) var(--min-gap);
       text-align: left;
-      font-size: var(--body-font);
-      font-weight: 500;
+      font-size: var(--small-font);
+      // font-weight: 500;
       border-top: 1px solid var(--body-color);
       border-bottom: 1px solid var(--body-color);
 
-      &__btn-sort {
+      .error-table__btn-sort {
         justify-content: flex-start;
         align-items: center;
         transition: color 0.3s ease-in-out, fill 0.3s ease-in-out;
@@ -56,14 +56,26 @@
           fill: var(--active-color);
         }
       }
+
+      .sort-icon {
+        width: 18px;
+        height: 18px;
+      }
+
+      .error-table__cell--actions {
+        font-weight: 500;
+        line-height: 1.15;
+      }
     }
 
     .error-table__body {
+
       .error-table__row {
         display: grid;
         grid-template-columns: 16% 16% 10% 16% 16% 16% 10%;
         align-items: center;
-        padding: var(--max-gap);
+        padding: var(--max-gap) var(--min-gap);
+        font-size: var(--small-font);
         border-bottom: 1px solid var(--body-color);
         transition: border-bottom 0.3s ease-in-out;
 
@@ -74,7 +86,6 @@
         .error-table__cell {
           text-align: left;
           color: var(--black-color);
-          font-size: var(--small-font);
 
           &--id,
           &--firstseen,
@@ -82,25 +93,51 @@
             color: var(--grey-color);
           }
 
+          &--count {
+            text-align: center;
+          }
+
 
           &--data,
           &--status {
-            font-weight: 700;
+            font-weight: 600;
           }
 
           &--actions {
-            display: flex;
-            justify-content: flex-start;
+            position: relative;
+            justify-content: flex-end;
             align-items: start;
             gap: var(--max-gap);
             width: 100%;
+
+            .error-table__dropdown-btn {
+              align-items: center;
+              justify-content: center;
+              min-width: 32px;
+              min-height: 32px;
+              font-size: 22px;
+            }
+
+            .error-table__dropdown-menu {
+              position: absolute;
+              z-index: 10;
+              top: -26px;
+              right: -26px;
+              display: none;
+              flex-direction: column;
+              padding: var(--min-gap);
+              min-width: 110px;
+              background: #fff;
+              border-radius: var(--card-radius);
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+            }
 
             .error-table__btn {
               display: flex;
               align-items: center;
               justify-content: center;
               gap: var(--min-gap);
-              min-width: 90px; // фиксированная минимальная ширина для стабильности
+              min-width: 90px;
               min-height: 32px;
               padding: 8px 6px;
               color: var(--white-color);

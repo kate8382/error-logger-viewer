@@ -20,7 +20,10 @@ export class StatsManager {
   // Количество ошибок за сегодня
   get todayCount() {
     const today = new Date().toISOString().slice(0, 10);
-    return this.errors.filter(e => e.timestamp && e.timestamp.slice(0, 10) === today).length;
+    return this.errors.filter(e => {
+      const date = e.lastSeen || e.firstSeen;
+      return date && date.slice(0, 10) === today;
+    }).length;
   }
 
   // Статистика по типам ошибок: [['TypeError', 25], ...]

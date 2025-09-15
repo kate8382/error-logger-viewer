@@ -16,7 +16,7 @@
           type: 'ResourceLoadError',
           message: 'Failed to load resource: ' + (event.target.src || event.target.href),
           source: event.target.tagName,
-          timestamp: new Date().toISOString()
+          firstSeen: new Date().toISOString()
         });
       }
     }, true);

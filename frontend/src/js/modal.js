@@ -56,8 +56,10 @@ export class Modal {
     const lang = getCurrentLang();
     const typeLabel = this.translations[lang]['modalField_type'] || 'Type';
     const idLabel = this.translations[lang]['modalField_id'] || 'ID';
-    const dateLabel = this.translations[lang]['modalField_date'] || 'Date';
-    const updatedAtLabel = this.translations[lang]['modalField_updatedAt'] || 'Updated At';
+    const firstSeenLabel = this.translations[lang]['modalField_firstSeen'] || 'First seen';
+    const lastSeenLabel = this.translations[lang]['modalField_lastSeen'] || 'Last seen';
+    const countLabel = this.translations[lang]['modalField_count'] || 'Repeat count';
+    const usersLabel = this.translations[lang]['modalField_users'] || 'Unique users';
     const messageLabel = this.translations[lang]['modalField_message'] || 'Message';
     const sourceLabel = this.translations[lang]['modalField_source'] || 'Source';
     const stackLabel = this.translations[lang]['modalField_stack'] || 'Stack';
@@ -68,44 +70,30 @@ export class Modal {
 
     const type = error.type || '';
     const id = error.id || '';
-    let dateValue = '';
-    if (error.timestamp) {
-      dateValue = new Date(error.timestamp).toLocaleString();
-    } else if (error.createdAt) {
-      dateValue = new Date(error.createdAt).toLocaleString();
-    }
-    // updatedAt: показываем, если есть
-    const hasUpdatedAt = Boolean(error.updatedAt);
-    const updatedAt = hasUpdatedAt ? new Date(error.updatedAt).toLocaleString() : '';
+    let firstSeenValue = error.firstSeen ? new Date(error.firstSeen).toLocaleString() : '';
+    let lastSeenValue = error.lastSeen ? new Date(error.lastSeen).toLocaleString() : '';
+    const countValue = typeof error.count === 'number' ? error.count : 1;
+    const usersValue = Array.isArray(error.users) ? error.users.join(', ') : '';
     const message = error.message || '';
     const comment = error.comment || '';
     const statusOptions = [
       { value: 'new', label: this.translations[lang]['new'] || 'Новая' },
       { value: 'in_progress', label: this.translations[lang]['in_progress'] || 'В работе' },
       { value: 'fixed', label: this.translations[lang]['fixed'] || 'Исправлена' },
-      { value: 'ignored', label: this.translations[lang]['ignored'] || 'Игнорировать' },
-      { value: 'duplicate', label: this.translations[lang]['duplicate'] || 'Дубликат ошибки' }
+      { value: 'ignored', label: this.translations[lang]['ignored'] || 'Игнорировать' }
     ];
     let currentStatus = statusOptions.find(opt => opt.value === error.status);
     if (!currentStatus) currentStatus = statusOptions[0];
-    let statusSelect;
-    if (error.status === 'duplicate') {
-      // Для дубликата просто текст, без селекта
-      statusSelect = el('div', { className: 'modal__status-static' }, [
-        el('span', { className: 'modal__status-current' }, currentStatus.label)
-      ]);
-    } else {
-      // Кастомный select для остальных статусов
-      statusSelect = el('div', { className: 'modal__status-select is-close' }, [
-        el('span', { className: 'modal__status-current' }, currentStatus.label),
-        el('span', { className: 'modal__status-arrow' }),
-        el('ul', { className: 'modal__status-list', style: 'display: none;' },
-          ...statusOptions
-            .filter(opt => opt.value !== currentStatus.value)
-            .map(opt => el('li', { 'data-value': opt.value, className: 'modal__status-option' }, opt.label))
-        )
-      ]);
-    }
+    // Универсальный select для всех статусов
+    let statusSelect = el('div', { className: 'modal__status-select is-close' }, [
+      el('span', { className: 'modal__status-current' }, currentStatus.label),
+      el('span', { className: 'modal__status-arrow' }),
+      el('ul', { className: 'modal__status-list', style: 'display: none;' },
+        ...statusOptions
+          .filter(opt => opt.value !== currentStatus.value)
+          .map(opt => el('li', { 'data-value': opt.value, className: 'modal__status-option' }, opt.label))
+      )
+    ]);
     const currentSpan = statusSelect.querySelector('.modal__status-current');
     const list = statusSelect.querySelector('.modal__status-list');
     // Обработчик для закрытия по клику вне select
@@ -172,7 +160,7 @@ export class Modal {
     });
 
     // Остальные поля (только для просмотра)
-    const exclude = ['type', 'id', 'timestamp', 'createdAt', 'updatedAt', 'message', 'status', 'comment'];
+    const exclude = ['type', 'id', 'message', 'status', 'comment', 'firstSeen', 'lastSeen', 'count', 'users'];
     const otherRows = Object.entries(error)
       .filter(([key, value]) => !exclude.includes(key) && typeof value !== 'object' && value !== '' && value !== null && value !== undefined)
       .map(([key, value]) => {
@@ -201,13 +189,21 @@ export class Modal {
         el('span', { className: 'modal__field-value' }, id)
       ]),
       el('div', { className: 'modal__row' }, [
-        el('span', { className: 'modal__field-title' }, dateLabel + ': '),
-        el('span', { className: 'modal__field-value' }, dateValue)
+        el('span', { className: 'modal__field-title' }, firstSeenLabel + ': '),
+        el('span', { className: 'modal__field-value' }, firstSeenValue)
       ]),
-      ...(hasUpdatedAt ? [el('div', { className: 'modal__row' }, [
-        el('span', { className: 'modal__field-title' }, updatedAtLabel + ': '),
-        el('span', { className: 'modal__field-value' }, updatedAt)
-      ])] : []),
+      el('div', { className: 'modal__row' }, [
+        el('span', { className: 'modal__field-title' }, lastSeenLabel + ': '),
+        el('span', { className: 'modal__field-value' }, lastSeenValue)
+      ]),
+      el('div', { className: 'modal__row' }, [
+        el('span', { className: 'modal__field-title' }, countLabel + ': '),
+        el('span', { className: 'modal__field-value' }, countValue)
+      ]),
+      el('div', { className: 'modal__row' }, [
+        el('span', { className: 'modal__field-title' }, usersLabel + ': '),
+        el('span', { className: 'modal__field-value' }, usersValue)
+      ]),
       ...otherRows,
       el('div', { className: 'modal__row' }, [
         el('span', { className: 'modal__field-title' }, messageLabel + ': '),

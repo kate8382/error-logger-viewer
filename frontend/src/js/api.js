@@ -18,7 +18,25 @@ export class ErrorApi {
       if (filter) errors = errors.filter(e => String(e.type).toLowerCase() === String(filter).toLowerCase());
       if (sort) {
         const ord = order === 'desc' ? -1 : 1;
-        errors = errors.sort((a, b) => (a[sort] < b[sort] ? -1 * ord : a[sort] > b[sort] ? 1 * ord : 0));
+        if (sort === 'count') {
+          errors = errors.sort((a, b) => ((a.count || 0) - (b.count || 0)) * ord);
+        } else if (sort === 'firstSeen') {
+          const getFirstSeen = err => err.firstSeen || '';
+          errors = errors.sort((a, b) => {
+            const aValue = getFirstSeen(a) ? new Date(getFirstSeen(a)).getTime() : 0;
+            const bValue = getFirstSeen(b) ? new Date(getFirstSeen(b)).getTime() : 0;
+            return (aValue - bValue) * ord;
+          });
+        } else if (sort === 'lastSeen') {
+          const getLastSeen = err => err.lastSeen || '';
+          errors = errors.sort((a, b) => {
+            const aValue = getLastSeen(a) ? new Date(getLastSeen(a)).getTime() : 0;
+            const bValue = getLastSeen(b) ? new Date(getLastSeen(b)).getTime() : 0;
+            return (aValue - bValue) * ord;
+          });
+        } else {
+          errors = errors.sort((a, b) => (a[sort] < b[sort] ? -1 * ord : a[sort] > b[sort] ? 1 * ord : 0));
+        }
       }
       return errors;
     }
@@ -53,7 +71,7 @@ export class ErrorApi {
       if (by === 'day') {
         const dayCounts = {};
         errors.forEach(e => {
-          const day = (e.timestamp || e.createdAt || '').slice(0, 10);
+          const day = (e.lastSeen || e.firstSeen || '').slice(0, 10);
           if (!day) return;
           if (!dayCounts[day]) dayCounts[day] = {};
           const status = e.status || 'new';
