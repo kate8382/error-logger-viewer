@@ -124,11 +124,22 @@ app.get('/errors', async (req, res) => {
         if (bIndex !== -1) return 1 * order;
         return aStatus.localeCompare(bStatus) * order;
       });
-    } else if (req.query.sort === 'timestamp') {
+    } else if (req.query.sort === 'count') {
       errors = errors.sort((a, b) => {
-        // Сортировка по lastSeen
-        const aValue = a.lastSeen || a.firstSeen || a.createdAt ? new Date(a.lastSeen || a.firstSeen || a.createdAt).getTime() : 0;
-        const bValue = b.lastSeen || b.firstSeen || b.createdAt ? new Date(b.lastSeen || b.firstSeen || b.createdAt).getTime() : 0;
+        return ((a.count || 0) - (b.count || 0)) * order;
+      });
+    } else if (req.query.sort === 'firstSeen') {
+      const getFirstSeen = err => err.firstSeen || '';
+      errors = errors.sort((a, b) => {
+        const aValue = getFirstSeen(a) ? new Date(getFirstSeen(a)).getTime() : 0;
+        const bValue = getFirstSeen(b) ? new Date(getFirstSeen(b)).getTime() : 0;
+        return (aValue - bValue) * order;
+      });
+    } else if (req.query.sort === 'lastSeen') {
+      const getLastSeen = err => err.lastSeen || '';
+      errors = errors.sort((a, b) => {
+        const aValue = getLastSeen(a) ? new Date(getLastSeen(a)).getTime() : 0;
+        const bValue = getLastSeen(b) ? new Date(getLastSeen(b)).getTime() : 0;
         return (aValue - bValue) * order;
       });
     } else {
@@ -139,7 +150,6 @@ app.get('/errors', async (req, res) => {
       });
     }
   }
-
   res.json(errors);
 });
 
@@ -172,7 +182,6 @@ app.post('/errors', async (req, res) => {
     found.lastSeen = now;
     if (!found.users) found.users = [];
     if (!found.users.includes(user)) found.users.push(user);
-    // Можно обновлять другие поля, если нужно
     await db.write();
     return res.status(200).json(found);
   } else {
@@ -187,8 +196,7 @@ app.post('/errors', async (req, res) => {
       count: 1,
       firstSeen: now,
       lastSeen: now,
-      users: [user],
-      createdAt: now
+      users: [user]
     };
     db.data.errors.push(errorObj);
     await db.write();
@@ -214,8 +222,6 @@ app.put('/errors/:id', async (req, res) => {
   }
 
   updatedError.id = db.data.errors[index].id; // Сохраняем оригинальный ID
-  updatedError.createdAt = db.data.errors[index].createdAt; // Сохраняем дату создания
-  updatedError.updatedAt = new Date().toISOString();
   db.data.errors[index] = updatedError;
 
   await db.write();
