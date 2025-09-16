@@ -40,7 +40,7 @@ const errorTable = new ErrorTable();
 async function initStatsManager() {
   let errors = [];
   try {
-    errors = await (new ErrorApi()).getErrors();
+    errors = await (new ErrorApi()).getErrors({});
   } catch (e) {
     console.error('[StatsManager] Ошибка загрузки ошибок:', e);
   }
@@ -73,7 +73,7 @@ class ErrorLoggerApp {
 
   async updateErrorTable() {
     if (window.renderErrorTable) {
-      this.errorApi.getErrors().then(errors => window.renderErrorTable(errors));
+      this.errorApi.getErrors({}).then(errors => window.renderErrorTable(errors));
     }
   }
 
@@ -201,7 +201,7 @@ class ErrorLoggerApp {
 
   // Получаем ошибки из localStorage
   async flushLocalErrors() {
-    const key = 'pendingErrors';
+    const key = 'errorsLocal';
     let errors = [];
     try {
       errors = JSON.parse(localStorage.getItem(key) || '[]');
@@ -226,3 +226,4 @@ class ErrorLoggerApp {
 // Инициализация приложения
 const app = new ErrorLoggerApp('server');
 window.app = app;
+app.flushLocalErrors();

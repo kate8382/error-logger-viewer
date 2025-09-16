@@ -2,20 +2,31 @@ export class ErrorApi {
   constructor(mode = 'server') {
     this.mode = mode; // 'server' или 'demo'
     this.baseUrl = 'http://localhost:3000/errors';
-    this.localKey = 'demoErrors';
+    this.localKey = 'errorsLocal';
   }
 
-  async getErrors({ sort, order, filter } = {}) {
+  async getErrors(params = {}) {
     if (this.mode === 'server') {
-      const params = new URLSearchParams();
-      if (sort) params.append('sort', sort);
-      if (order) params.append('order', order);
-      if (filter) params.append('filter', filter);
-      const res = await fetch(`${this.baseUrl}?${params}`);
+      const searchParams = new URLSearchParams();
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          searchParams.append(key, value);
+        }
+      });
+      const res = await fetch(`${this.baseUrl}?${searchParams}`);
       return await res.json();
     } else {
       let errors = JSON.parse(localStorage.getItem(this.localKey) || '[]');
-      if (filter) errors = errors.filter(e => String(e.type).toLowerCase() === String(filter).toLowerCase());
+      // Фильтрация по всем переданным полям, кроме sort/order
+      Object.entries(params).forEach(([key, value]) => {
+        if (['sort', 'order'].includes(key)) return;
+        if (value !== undefined && value !== null && value !== '') {
+          errors = errors.filter(e => e[key] !== undefined && String(e[key]).toLowerCase().includes(String(value).toLowerCase()));
+        }
+      });
+      // Сортировка
+      const sort = params.sort;
+      const order = params.order;
       if (sort) {
         const ord = order === 'desc' ? -1 : 1;
         if (sort === 'count') {

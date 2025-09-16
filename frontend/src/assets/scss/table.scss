@@ -113,8 +113,9 @@
             .error-table__dropdown-btn {
               align-items: center;
               justify-content: center;
-              min-width: 32px;
-              min-height: 32px;
+              min-width: 38px;
+              min-height: 38px;
+              padding: var(--min-gap);
               font-size: 22px;
             }
 
@@ -122,7 +123,7 @@
               position: absolute;
               z-index: 10;
               top: -26px;
-              right: -26px;
+              right: 10px;
               display: none;
               flex-direction: column;
               padding: var(--min-gap);

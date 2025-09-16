@@ -1,14 +1,14 @@
 // Импорт библиотек
-import express from 'express';
-import cors from 'cors';
-import { Low } from 'lowdb';
-import { JSONFile } from 'lowdb/node';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import { v4 as uuidv4 } from 'uuid';
+import express from 'express'; // ответственный за создание сервера и маршрутов
+import cors from 'cors'; // для обработки CORS (Cross-Origin Resource Sharing)
+import { Low } from 'lowdb'; // легковесная база данных
+import { JSONFile } from 'lowdb/node'; // адаптер для работы с JSON файлами
+import { fileURLToPath } from 'url'; // для получения пути к файлу
+import { dirname, join } from 'path'; // для работы с путями
+import { v4 as uuidv4 } from 'uuid'; // для генерации уникальных идентификаторов
 
 // Настройка базы данных
-const __filename = fileURLToPath(import.meta.url);
+const __filename = fileURLToPath(import.meta.url); // получение пути к текущему файлу
 const __dirname = dirname(__filename);
 
 const adapter = new JSONFile(join(__dirname, 'db.json'));
@@ -104,7 +104,18 @@ app.get('/errors', async (req, res) => {
   await db.read();
   let errors = db.data.errors || [];
 
-  // Фильтрация по типу ошибки
+  // Универсальная фильтрация по любому query-параметру (кроме служебных)
+  const filterKeys = Object.keys(req.query).filter(k => !['sort', 'order', 'filter'].includes(k));
+  if (filterKeys.length > 0) {
+    errors = errors.filter(e => {
+      return filterKeys.every(key => {
+        // Приводим к строке и сравниваем без регистра
+        return e[key] !== undefined && String(e[key]).toLowerCase().includes(String(req.query[key]).toLowerCase());
+      });
+    });
+  }
+
+  // Фильтрация по типу ошибки (старый вариант, если используется filter)
   if (req.query.filter) {
     errors = errors.filter(e => String(e.type).toLowerCase() === String(req.query.filter).toLowerCase());
   }
@@ -165,15 +176,17 @@ app.post('/errors', async (req, res) => {
     db.data = { errors: [] };
   }
 
-  // Ключи для группировки
+  // Ключи для группировки + дата
   const groupKeys = ['type', 'message', 'stack'];
-  // Уникальный параметр, например, user (можно заменить на нужный)
   const user = newError.user || 'unknown';
   const now = new Date().toISOString();
+  // Получаем день ошибки (YYYY-MM-DD)
+  const day = now.slice(0, 10);
 
-  // Поиск существующей ошибки
+  // Поиск существующей ошибки по типу, сообщению, стэку и дню
   let found = db.data.errors.find(e =>
-    groupKeys.every(k => e[k] === newError[k])
+    groupKeys.every(k => e[k] === newError[k]) &&
+    (e.firstSeen && e.firstSeen.slice(0, 10) === day)
   );
 
   if (found) {
@@ -185,7 +198,7 @@ app.post('/errors', async (req, res) => {
     await db.write();
     return res.status(200).json(found);
   } else {
-    // Создаём новую уникальную ошибку
+    // Создаём новую уникальную ошибку (на этот день)
     const errorObj = {
       id: uuidv4(),
       type: newError.type,

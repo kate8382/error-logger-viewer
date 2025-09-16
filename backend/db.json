@@ -25,6 +25,19 @@
       "users": [
         "unknown"
       ]
+    },
+    {
+      "id": "2974df6a-30a2-441d-9886-b293d8e65918",
+      "type": "TestError",
+      "message": "Тестовая ошибка для проверки дат",
+      "status": "new",
+      "comment": "",
+      "count": 2,
+      "firstSeen": "2025-09-16T14:32:15.480Z",
+      "lastSeen": "2025-09-16T14:44:59.834Z",
+      "users": [
+        "unknown"
+      ]
     }
   ]
 }

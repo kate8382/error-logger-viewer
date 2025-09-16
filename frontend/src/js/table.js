@@ -18,7 +18,7 @@ export class ErrorTable {
     showCenterSpinner(tableSection, 'page'); // сразу показываем
 
     try {
-      const errors = await this.errorApi.getErrors();
+      const errors = await this.errorApi.getErrors({});
       this.renderErrors(errors);
       if (window.renderErrorTable) {
         window.renderErrorTable(errors);
@@ -42,14 +42,12 @@ export class ErrorTable {
       // Перевод типа ошибки
       const typeKey = 'errorType_' + error.type;
       const typeText = this.translations[lang][typeKey] || error.type;
+      // Перевод статуса ошибки
       let status = error.status || 'new';
       let statusText = this.translations[lang][status] || status;
-      const firstSeen = error.firstSeen
-        ? this.formatDate(error.firstSeen)
-        : '';
-      const lastSeen = error.lastSeen
-        ? this.formatDate(error.lastSeen)
-        : '';
+      // Форматирование дат
+      const firstSeen = error.firstSeen ? this.formatDate(error.firstSeen) : '';
+      const lastSeen = error.lastSeen ? this.formatDate(error.lastSeen) : '';
       // Выпадающее меню действий через методы
       const actionsCell = el('td', { className: 'error-table__cell error-table__cell--actions flex' });
       const dropdownBtn = el('button', {
@@ -72,9 +70,9 @@ export class ErrorTable {
       document.addEventListener('click', () => {
         dropdownMenu.style.display = 'none';
       });
-      actionsCell.style.position = 'relative';
       actionsCell.appendChild(dropdownBtn);
       actionsCell.appendChild(dropdownMenu);
+
       return el('tr', { className: 'error-table__row' }, [
         el('td', { className: 'error-table__cell error-table__cell--id' }, this.formatId(error.id)),
         el('td', { className: 'error-table__cell error-table__cell--data' }, typeText),
@@ -241,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
       errorTable.renderErrors(errors);
     } else {
       // Локальная сортировка
-      const errors = await errorTable.errorApi.getErrors();
+      const errors = await errorTable.errorApi.getErrors({});
       const sorted = errorTable.sortErrors(errors, field, sortOrder[field]);
       errorTable.renderErrors(sorted);
     }

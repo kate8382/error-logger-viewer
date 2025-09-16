@@ -2,7 +2,7 @@ export const translations = {
   en: {
     loading: 'Loading...',
     title: 'Error Logger & Viewer',
-    placeholder: 'Search errors...',
+    placeholder: 'Search by application...',
     ariaInput: 'Search errors',
     ariaInputBtn: 'Button search',
     // Sidebar
@@ -95,7 +95,7 @@ export const translations = {
   ru: {
     loading: 'Загрузка...',
     title: 'Error Logger & Viewer',
-    placeholder: 'Поиск ошибок...',
+    placeholder: 'Поиск по приложению...',
     ariaInput: 'Поиск ошибок',
     ariaInputBtn: 'Кнопка поиска',
     sidebarLogo: 'Логотип',
