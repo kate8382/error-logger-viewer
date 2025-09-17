@@ -219,6 +219,9 @@ document.addEventListener('DOMContentLoaded', () => {
     errorTable.renderErrors(errors);
     const statsManager = new StatsManager(errors);
     statsManager.renderErrorCards();
+    if (window.chartManager) {
+      window.chartManager.renderChart();
+    }
   };
 
   // Состояние направления сортировки

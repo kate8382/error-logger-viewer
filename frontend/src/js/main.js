@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 import '../assets/scss/style.scss';
+import './header.js';
 import { translations } from './utils/i18n';
 import { getCurrentLang } from './utils/lang';
 import { ErrorApi } from './api';
@@ -35,7 +36,7 @@ import { StatsManager } from './stats';
 import ChartManager from './charts.js';
 
 // Инициализация таблицы ошибок и статистики
-const errorTable = new ErrorTable();
+// const errorTable = new ErrorTable();
 // Асинхронная инициализация statsManager после загрузки ошибок
 async function initStatsManager() {
   let errors = [];
@@ -66,8 +67,10 @@ class ErrorLoggerApp {
         window.aside.translatePage(this.lang);
       });
       this.setupErrorListeners();
-      // Инициализация ChartManager для секции графика
-      new ChartManager();
+      // Инициализация ChartManager только один раз глобально
+      if (!window.chartManager) {
+        window.chartManager = new ChartManager();
+      }
     });
   }
 

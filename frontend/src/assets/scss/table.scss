@@ -93,11 +93,6 @@
             color: var(--grey-color);
           }
 
-          &--count {
-            text-align: center;
-          }
-
-
           &--data,
           &--status {
             font-weight: 600;
@@ -117,6 +112,17 @@
               min-height: 38px;
               padding: var(--min-gap);
               font-size: 22px;
+              font-weight: 700;
+              transition: color 0.3s ease-in-out;
+
+              &:hover,
+              &:focus {
+                color: var(--focus-color);
+              }
+
+              &:active {
+                color: var(--active-color);
+              }
             }
 
             .error-table__dropdown-menu {

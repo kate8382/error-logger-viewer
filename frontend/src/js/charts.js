@@ -6,6 +6,7 @@ import { getLabel } from './utils/label';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 
 export default class ChartManager {
+  isRendering = false;
   constructor() {
     this.canvas = document.getElementById('chartCanvas');
     this.lang = getCurrentLang();
@@ -22,7 +23,12 @@ export default class ChartManager {
   }
 
   async renderChart() {
-    if (this.chart) this.chart.destroy();
+    if (this.isRendering) return;
+    this.isRendering = true;
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = null;
+    }
 
     const canvasWrapper = this.canvas.parentElement; // Родительский элемент canvas для спиннера
     // Показываем спиннер загрузки
@@ -247,16 +253,12 @@ export default class ChartManager {
             },
           });
         }
-      } catch (err) {
-        // Ошибка загрузки данных
-        if (this.canvas) {
-          this.canvas.parentElement.querySelector('.chart__title').textContent = 'Ошибка загрузки данных';
-        }
       } finally {
         // Скрываем спиннер
         if (canvasWrapper) {
           hideCenterSpinner(canvasWrapper);
         }
+        this.isRendering = false;
       }
       return;
     }

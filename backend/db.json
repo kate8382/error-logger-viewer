@@ -38,6 +38,75 @@
       "users": [
         "unknown"
       ]
+    },
+    {
+      "id": "1bd60354-cf6d-4846-86f9-07b44ad05221",
+      "type": "UnhandledPromiseRejection",
+      "message": "Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID 'chartCanvas' can be reused.",
+      "stack": "Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID 'chartCanvas' can be reused.\n    at new Chart (webpack://error-logger-viewer/./node_modules/chart.js/dist/chart.js?:5695:19)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:251:30)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/charts.js?:12:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/charts.js?:13:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/charts.js?:24:70)\n    at _next (webpack://error-logger-viewer/./src/js/charts.js?:25:163)",
+      "status": "fixed",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-09-17T15:31:32.217Z",
+      "lastSeen": "2025-09-17T15:31:32.217Z",
+      "users": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "ad8047fb-6dab-4109-b6ef-622d8397aef7",
+      "type": "UnhandledPromiseRejection",
+      "message": "Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID 'chartCanvas' can be reused.",
+      "stack": "Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID 'chartCanvas' can be reused.\n    at new Chart (webpack://error-logger-viewer/./node_modules/chart.js/dist/chart.js?:5695:19)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:254:30)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/charts.js?:12:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/charts.js?:13:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/charts.js?:24:70)\n    at _next (webpack://error-logger-viewer/./src/js/charts.js?:25:163)",
+      "status": "fixed",
+      "comment": "",
+      "count": 2,
+      "firstSeen": "2025-09-17T15:33:41.871Z",
+      "lastSeen": "2025-09-17T15:37:42.833Z",
+      "users": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "d1cd0f3e-37d0-49f9-9879-f8a0e5f21f3b",
+      "type": "UnhandledPromiseRejection",
+      "message": "Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID 'chartCanvas' can be reused.",
+      "stack": "Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID 'chartCanvas' can be reused.\n    at new Chart (webpack://error-logger-viewer/./node_modules/chart.js/dist/chart.js?:5695:19)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:263:30)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/charts.js?:12:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/charts.js?:13:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/charts.js?:24:70)\n    at _next (webpack://error-logger-viewer/./src/js/charts.js?:25:163)",
+      "status": "in_progress",
+      "comment": "",
+      "count": 3,
+      "firstSeen": "2025-09-17T15:40:16.916Z",
+      "lastSeen": "2025-09-17T15:52:54.231Z",
+      "users": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "8cb19e4d-b411-4e1f-87a3-086565e06aae",
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "status": "new",
+      "comment": "",
+      "count": 2,
+      "firstSeen": "2025-09-17T16:05:48.130Z",
+      "lastSeen": "2025-09-17T17:17:00.874Z",
+      "users": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "64e0a742-5deb-46d1-b379-e70406b97835",
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:240:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:19:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:20:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:21:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:22:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:22:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:22:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:61:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-09-17T17:17:01.205Z",
+      "lastSeen": "2025-09-17T17:17:01.205Z",
+      "users": [
+        "unknown"
+      ]
     }
   ]
 }

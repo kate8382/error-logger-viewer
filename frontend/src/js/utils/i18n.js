@@ -3,8 +3,10 @@ export const translations = {
     loading: 'Loading...',
     title: 'Error Logger & Viewer',
     placeholder: 'Search by application...',
-    ariaInput: 'Search errors',
+    ariaInput: 'Search by application',
     ariaInputBtn: 'Button search',
+    placeholderTable: 'Search in table...',
+    ariaInputTable: 'Search in table',
     // Sidebar
     sidebarLogo: 'Logo',
     ariaSidebar: 'Sidebar navigation',
@@ -31,7 +33,7 @@ export const translations = {
     ariaStatsBtnPercent: 'Show percentage',
     ariaStatsBtnCount: 'Show count',
     // Charts
-    chartTitle: 'Error Statistics Chart',
+    chartTitle: 'Error Chart',
     statsPeriodWeek: 'Week',
     ariaChartWeek: 'Week',
     statsPeriodMonth: 'Month',
@@ -98,6 +100,9 @@ export const translations = {
     placeholder: 'Поиск по приложению...',
     ariaInput: 'Поиск ошибок',
     ariaInputBtn: 'Кнопка поиска',
+    placeholderTable: 'Поиск в таблице...',
+    ariaInputTable: 'Поиск в таблице',
+    // Sidebar
     sidebarLogo: 'Логотип',
     ariaSidebar: 'Навигация по сайдбару',
     navAbout: 'О программе',
@@ -123,7 +128,7 @@ export const translations = {
     ariaStatsBtnPercent: 'Показать в процентах',
     ariaStatsBtnCount: 'Показать в числах',
     // Графики
-    chartTitle: 'График статистики ошибок',
+    chartTitle: 'График ошибок',
     statsPeriodWeek: 'Неделя',
     ariaChartWeek: 'Неделя',
     statsPeriodMonth: 'Месяц',
