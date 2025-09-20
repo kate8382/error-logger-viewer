@@ -12,6 +12,8 @@ export class HeaderManager {
     this.stats = window.statsManager || new StatsManager();
     this.chart = window.chartManager;
     this.lang = getCurrentLang();
+    this.justSwitchedToTable = false;
+    this.filteredErrors = null; // Храним отфильтрованные ошибки
     console.log('[HeaderManager] Инициализация конструктора');
     this.init();
   }
@@ -105,6 +107,39 @@ export class HeaderManager {
         this.handleSearch(this.searchInput.value);
       });
     }
+
+    // Добавляем обработчики сортировки по таблице
+    this.addTableSortHandlers();
+
+    // Переключение иконки поиска/выхода
+    this.searchOrExitIcon = document.getElementById('searchOrExitIcon');
+    this.searchIcon = document.getElementById('searchIcon');
+    this.exitIcon = document.getElementById('exitIcon');
+    if (this.searchBtn && this.searchInput && this.searchOrExitIcon && this.searchIcon && this.exitIcon) {
+      // Клик по exitIcon — сброс фильтра и возврат всех секций
+      this.searchBtn.addEventListener('click', () => {
+        if (this.exitIcon.style.display !== 'none') {
+          this.searchInput.value = '';
+          this.filteredErrors = null;
+          this.handleSearch('');
+          this.searchIcon.style.display = '';
+          this.exitIcon.style.display = 'none';
+        } else {
+          this.handleSearch(this.searchInput.value);
+        }
+      });
+      // Переключение иконки при вводе
+      this.searchInput.addEventListener('input', () => {
+        const onlyTableVisible = Object.entries(this.sections).filter(([, sec]) => sec && sec.style.display !== 'none').length === 1 && this.sections.table.style.display !== 'none';
+        if (this.searchInput.value.trim() || (onlyTableVisible && !this.searchInput.value.trim())) {
+          this.searchIcon.style.display = 'none';
+          this.exitIcon.style.display = '';
+        } else {
+          this.searchIcon.style.display = '';
+          this.exitIcon.style.display = 'none';
+        }
+      });
+    }
   }
 
   localizeHeader() {
@@ -115,10 +150,42 @@ export class HeaderManager {
   }
 
   handleSearch(query) {
-    // 1. Фильтрация по секциям (по заголовкам)
     const lowerQuery = query.trim().toLowerCase();
     let anyVisible = false;
     let onlyTableVisible = false;
+    // Проверяем, отображается ли только таблица
+    const visibleSections = Object.entries(this.sections).filter(([, sec]) => sec && sec.style.display !== 'none');
+    if (visibleSections.length === 1 && visibleSections[0][0] === 'table') {
+      onlyTableVisible = true;
+    }
+
+    if (onlyTableVisible) {
+      // Очищаем инпут только при первом переходе к таблице
+      if (!this.justSwitchedToTable) {
+        if (this.searchInput) {
+          this.searchInput.value = '';
+          this.searchInput.placeholder = translations[this.lang]?.placeholderTable || 'Search in table...';
+          this.searchInput.setAttribute('aria-label', translations[this.lang]?.ariaInputTable || 'Search in table');
+        }
+        // Показываем всю таблицу (без фильтрации)
+        showCenterSpinner(this.sections.table, 'page');
+        this.filterTable('').finally(() => {
+          hideCenterSpinner(this.sections.table);
+        });
+        this.justSwitchedToTable = true;
+        return;
+      }
+      // Если уже в таблице, не очищаем value, фильтруем по текущему запросу
+      showCenterSpinner(this.sections.table, 'page');
+      this.filterTable(query).finally(() => {
+        hideCenterSpinner(this.sections.table);
+      });
+      return;
+    } else {
+      this.justSwitchedToTable = false;
+    }
+
+    // Фильтрация по секциям (по заголовкам)
     Object.entries(this.sections).forEach(([key, section]) => {
       if (!section) return;
       let titleEl = null;
@@ -148,16 +215,6 @@ export class HeaderManager {
       }
     });
 
-    // Проверяем, отображается ли только таблица
-    const visibleSections = Object.entries(this.sections).filter(([, sec]) => sec && sec.style.display !== 'none');
-    if (visibleSections.length === 1 && visibleSections[0][0] === 'table') {
-      // Автоматически очищаем инпут, если фильтрация по секциям оставила только таблицу
-      if (this.searchInput && this.searchInput.value !== '') {
-        this.searchInput.value = '';
-      }
-      onlyTableVisible = true;
-    }
-
     // Меняем заголовок
     if (!lowerQuery || !anyVisible) {
       // Если инпут пустой (ручная очистка), показываем все секции
@@ -184,28 +241,14 @@ export class HeaderManager {
 
     // 2. Если выбрана таблица — сбрасываем инпут только при переходе к таблице по секционному поиску
     if (this.sections.table && this.sections.table.style.display !== 'none') {
-      if (onlyTableVisible) {
-        if (this.searchInput) {
-          this.searchInput.value = '';
+      // Обычный поиск по таблице, не сбрасываем инпут
+      showCenterSpinner(this.sections.table, 'page');
+      this.filterTable(query).finally(() => {
+        hideCenterSpinner(this.sections.table);
+        if (window.errorTableInstance) {
+          window.errorTableInstance.fetchErrors();
         }
-        // Показываем спиннер на таблице
-        showCenterSpinner(this.sections.table, 'page');
-        this.filterTable('').finally(() => {
-          hideCenterSpinner(this.sections.table);
-          if (window.errorTableInstance) {
-            window.errorTableInstance.fetchErrors();
-          }
-        });
-      } else {
-        // Обычный поиск по таблице, не сбрасываем инпут
-        showCenterSpinner(this.sections.table, 'page');
-        this.filterTable(query).finally(() => {
-          hideCenterSpinner(this.sections.table);
-          if (window.errorTableInstance) {
-            window.errorTableInstance.fetchErrors();
-          }
-        });
-      }
+      });
     }
     // В самом конце handleSearch гарантируем смену плейсхолдера после всех асинхронных операций
     if (this.searchInput) {
@@ -222,22 +265,81 @@ export class HeaderManager {
   async filterTable(query) {
     // Получаем все ошибки
     const errors = await this.api.getErrors({});
+    const lang = this.lang || getCurrentLang();
     const filtered = errors.filter(error => {
-      // Фильтрация по id, типу, статусу, датам, count
+      // Локализованные значения типа и статуса
+      const typeKey = 'errorType_' + error.type;
+      const typeText = this.table.translations[lang][typeKey] || error.type;
+      const statusText = this.table.translations[lang][error.status || 'new'] || (error.status || 'new');
+
+      // Только дата (без времени)
+      const getDateOnly = str => {
+        if (!str) return '';
+        const date = new Date(str);
+        return date.toLocaleDateString(lang, { day: '2-digit', month: '2-digit', year: 'numeric' });
+      };
+      const firstSeenDate = getDateOnly(error.firstSeen);
+      const lastSeenDate = getDateOnly(error.lastSeen);
+      // Сравниваем по строке и по числу
       return [
         error.id,
-        error.type,
-        error.status,
-        error.firstSeen,
-        error.lastSeen,
-        error.count
+        typeText,
+        statusText,
+        firstSeenDate,
+        lastSeenDate
       ].some(val => val && String(val).toLowerCase().includes(query.toLowerCase()));
     });
+    this.filteredErrors = filtered.length < errors.length ? filtered : null;
     this.table.renderErrors(filtered);
+  }
+  addTableSortHandlers() {
+    // Кнопки сортировки должны иметь id: sortById, sortByType, sortByCount, sortByFirstSeen, sortByLastSeen, sortByStatus
+    const sortFields = [
+      { id: 'sortById', field: 'id' },
+      { id: 'sortByType', field: 'type' },
+      { id: 'sortByCount', field: 'count' },
+      { id: 'sortByFirstSeen', field: 'firstSeen' },
+      { id: 'sortByLastSeen', field: 'lastSeen' },
+      { id: 'sortByStatus', field: 'status' }
+    ];
+    this.sortOrder = {
+      id: 'asc',
+      type: 'asc',
+      count: 'asc',
+      firstSeen: 'asc',
+      lastSeen: 'asc',
+      status: 'asc'
+    };
+    sortFields.forEach(({ id, field }) => {
+      const btn = document.getElementById(id);
+      if (btn) {
+        btn.addEventListener('click', e => {
+          e.preventDefault();
+          this.handleTableSort(field);
+        });
+      }
+    });
+  }
+
+  handleTableSort(field) {
+    // Если есть фильтр — сортируем только по отфильтрованным данным
+    let errorsToSort = this.filteredErrors || this.table.getErrors();
+    // Если массив пустой — запрашиваем все ошибки
+    if (!errorsToSort || !errorsToSort.length) {
+      errorsToSort = this.table.getErrors();
+    }
+    const sorted = this.table.sortErrors([...errorsToSort], field, this.sortOrder[field]);
+    this.table.renderErrors(sorted);
+    // Переключаем направление для следующего клика
+    this.sortOrder[field] = this.sortOrder[field] === 'asc' ? 'desc' : 'asc';
+    // Обновляем filteredErrors, чтобы сортировка была по текущему фильтру
+    if (this.filteredErrors) {
+      this.filteredErrors = sorted;
+    }
   }
 }
 
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
-  new HeaderManager();
+  window.headerManager = new HeaderManager();
 });

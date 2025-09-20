@@ -236,12 +236,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Универсальный обработчик сортировки
   async function handleSort(field) {
-    // Если серверный режим — сортировка через API
-    if (errorTable.errorApi.mode === 'server') {
+    // Если фильтр активен — сортируем только по отфильтрованным данным
+    if (window.headerManager && window.headerManager.filteredErrors) {
+      const filtered = window.headerManager.filteredErrors;
+      const sorted = errorTable.sortErrors([...filtered], field, sortOrder[field]);
+      errorTable.renderErrors(sorted);
+      // Обновляем filteredErrors, чтобы сортировка была по текущему фильтру
+      window.headerManager.filteredErrors = sorted;
+    } else if (errorTable.errorApi.mode === 'server') {
+      // Если серверный режим — сортировка через API
       const errors = await errorTable.errorApi.getErrors({ sort: field, order: sortOrder[field] });
       errorTable.renderErrors(errors);
     } else {
-      // Локальная сортировка
+      // Локальная сортировка по всем ошибкам
       const errors = await errorTable.errorApi.getErrors({});
       const sorted = errorTable.sortErrors(errors, field, sortOrder[field]);
       errorTable.renderErrors(sorted);
@@ -296,5 +303,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
 
 
