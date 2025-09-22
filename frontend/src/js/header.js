@@ -14,10 +14,81 @@ export class HeaderManager {
     this.lang = getCurrentLang();
     this.justSwitchedToTable = false;
     this.filteredErrors = null; // Храним отфильтрованные ошибки
-    console.log('[HeaderManager] Инициализация конструктора');
     this.init();
   }
 
+  // Универсальный сброс всех секций (показать все)
+  showAllSections() {
+    Object.values(this.sections).forEach(section => {
+      if (section) section.style.display = '';
+    });
+  }
+
+  // Скрыть все секции кроме указанной
+  showOnlySection(key) {
+    Object.entries(this.sections).forEach(([k, section]) => {
+      if (!section) return;
+      section.style.display = k === key ? '' : 'none';
+    });
+  }
+
+  // Универсальный сброс таблицы, статистики, графика
+  resetAllViews() {
+    if (this.table && typeof this.table.getErrors === 'function' && typeof this.table.renderErrors === 'function') {
+      const allErrors = this.table.getErrors();
+      this.table.renderErrors(allErrors);
+    }
+    if (window.statsManager && typeof window.statsManager.renderErrorCards === 'function') {
+      window.statsManager.renderErrorCards();
+    }
+    if (window.chartManager && typeof window.chartManager.resetToDefault === 'function') {
+      window.chartManager.resetToDefault();
+    }
+  }
+
+  // Универсальная локализация заголовка
+  setHeaderTitleBySection(sectionKey = null) {
+    if (!sectionKey) {
+      this.headerTitle.textContent = translations[this.lang]?.title || 'Error Logger & Viewer';
+      return;
+    }
+    const section = this.sections[sectionKey];
+    if (!section) return;
+    let titleEl = null;
+    if (sectionKey === 'chart') {
+      titleEl = section.querySelector('.chart__title');
+    } else if (sectionKey === 'stats') {
+      titleEl = section.querySelector('.stats__title');
+    } else if (sectionKey === 'table') {
+      titleEl = section.querySelector('.error-table__title');
+    } else {
+      titleEl = section.querySelector('h2,h3');
+    }
+    if (titleEl) {
+      const i18nKey = titleEl.getAttribute('data-i18n');
+      if (i18nKey && translations[this.lang][i18nKey]) {
+        this.headerTitle.textContent = translations[this.lang][i18nKey];
+      } else {
+        this.headerTitle.textContent = titleEl.textContent || translations[this.lang]?.title || 'Error Logger & Viewer';
+      }
+    } else {
+      this.headerTitle.textContent = translations[this.lang]?.title || 'Error Logger & Viewer';
+    }
+  }
+
+  // Универсальная смена плейсхолдера и aria-label
+  setSearchPlaceholder(mode = 'default') {
+    if (!this.searchInput) return;
+    if (mode === 'table') {
+      this.searchInput.placeholder = translations[this.lang]?.placeholderTable || 'Search in table...';
+      this.searchInput.setAttribute('aria-label', translations[this.lang]?.ariaInputTable || 'Search in table');
+    } else {
+      this.searchInput.placeholder = translations[this.lang]?.placeholder || 'Search by application...';
+      this.searchInput.setAttribute('aria-label', translations[this.lang]?.ariaInput || 'Search errors');
+    }
+  }
+
+  // Обновление заголовков секций при смене языка
   updateSectionTitles() {
     Object.entries(this.sections).forEach(([key, section]) => {
       if (!section) return;
@@ -26,7 +97,7 @@ export class HeaderManager {
         titleEl = section.querySelector('.chart__title');
         // Всегда устанавливаем локализованный заголовок графика
         if (titleEl) {
-          titleEl.textContent = translations[this.lang].chartTitle || 'График ошибок';
+          titleEl.textContent = translations[this.lang].chartTitle || 'Error Chart';
         }
         return;
       }
@@ -46,6 +117,17 @@ export class HeaderManager {
     });
   }
 
+  // Обновление заголовка и плейсхолдера
+  updateHeaderUI() {
+    const visibleSections = Object.entries(this.sections).filter(([, sec]) => sec && sec.style.display !== 'none');
+    let key = null;
+    if (visibleSections.length === 1) {
+      key = visibleSections[0][0];
+    }
+    this.setHeaderTitleBySection(key);
+    this.setSearchPlaceholder(key === 'table' ? 'table' : 'default');
+  }
+
   init() {
     this.searchInput = document.getElementById('searchInput');
     this.headerTitle = document.querySelector('.header__title');
@@ -56,15 +138,7 @@ export class HeaderManager {
       table: document.getElementById('errorTableSection')
     };
 
-    console.log('[HeaderManager] Элементы:', {
-      searchInput: this.searchInput,
-      headerTitle: this.headerTitle,
-      searchBtn: this.searchBtn,
-      sections: this.sections
-    });
-
     // Локализация при инициализации
-    this.localizeHeader();
     this.updateSectionTitles();
     // Обработка смены языка
     const langEnBtn = document.getElementById('lang-en');
@@ -72,29 +146,45 @@ export class HeaderManager {
     if (langEnBtn) {
       langEnBtn.addEventListener('click', () => {
         this.lang = 'en';
-        this.localizeHeader();
         this.updateSectionTitles();
+        // Определяем режим фильтрации
+        const visibleSections = Object.entries(this.sections).filter(([, sec]) => sec && sec.style.display !== 'none');
+        let key = null;
+        let mode = 'default';
+        if (visibleSections.length === 1) {
+          key = visibleSections[0][0];
+          if (key === 'table') mode = 'table';
+        }
+        this.setHeaderTitleBySection(key);
+        this.setSearchPlaceholder(mode);
       });
     }
     if (langRuBtn) {
       langRuBtn.addEventListener('click', () => {
         this.lang = 'ru';
-        this.localizeHeader();
         this.updateSectionTitles();
+        // Определяем режим фильтрации
+        const visibleSections = Object.entries(this.sections).filter(([, sec]) => sec && sec.style.display !== 'none');
+        let key = null;
+        let mode = 'default';
+        if (visibleSections.length === 1) {
+          key = visibleSections[0][0];
+          if (key === 'table') mode = 'table';
+        }
+        this.setHeaderTitleBySection(key);
+        this.setSearchPlaceholder(mode);
       });
     }
 
     // Фильтрация при вводе
     if (this.searchInput) {
       this.searchInput.addEventListener('input', e => {
-        console.log('[HeaderManager] input event', e.target.value);
         this.handleSearch(e.target.value);
       });
 
       // Фильтрация по Enter
       this.searchInput.addEventListener('keydown', e => {
         if (e.key === 'Enter') {
-          console.log('[HeaderManager] keydown Enter', this.searchInput.value);
           this.handleSearch(this.searchInput.value);
         }
       });
@@ -103,7 +193,6 @@ export class HeaderManager {
     // Фильтрация по клику на лупу
     if (this.searchBtn) {
       this.searchBtn.addEventListener('click', () => {
-        console.log('[HeaderManager] click event', this.searchInput.value);
         this.handleSearch(this.searchInput.value);
       });
     }
@@ -116,14 +205,51 @@ export class HeaderManager {
     this.searchIcon = document.getElementById('searchIcon');
     this.exitIcon = document.getElementById('exitIcon');
     if (this.searchBtn && this.searchInput && this.searchOrExitIcon && this.searchIcon && this.exitIcon) {
-      // Клик по exitIcon — сброс фильтра и возврат всех секций
+      // Клик по exitIcon — всегда полный выход из фильтрации
       this.searchBtn.addEventListener('click', () => {
         if (this.exitIcon.style.display !== 'none') {
-          this.searchInput.value = '';
-          this.filteredErrors = null;
-          this.handleSearch('');
-          this.searchIcon.style.display = '';
-          this.exitIcon.style.display = 'none';
+          const visibleSections = Object.entries(this.sections).filter(([, sec]) => sec && sec.style.display !== 'none');
+          const onlyTableVisible = visibleSections.length === 1 && this.sections.table.style.display !== 'none';
+          const isTableFilterMode = this.searchInput.placeholder === (translations[this.lang]?.placeholderTable || 'Search in table...');
+
+          // 1. Фильтрация по таблице — двухэтапная логика
+          if (onlyTableVisible && isTableFilterMode) {
+            if (this.searchInput.value) {
+              // Первый клик: сброс фильтра таблицы, остаёмся в таблице
+              this.searchInput.value = '';
+              this.filteredErrors = null;
+              this.setSearchPlaceholder('table');
+              this.showOnlySection('table');
+              this.searchIcon.style.display = '';
+              this.exitIcon.style.display = '';
+              this.resetAllViews();
+            } else {
+              // Второй клик: выход на главную
+              this.filteredErrors = null;
+              this.showAllSections();
+              this.setHeaderTitleBySection();
+              this.searchIcon.style.display = '';
+              this.exitIcon.style.display = 'none';
+              this.setSearchPlaceholder('default');
+              this.justSwitchedToTable = false;
+              this.resetAllViews();
+            }
+          }
+          // 2. Фильтрация по секциям — всегда полный выход
+          else if (visibleSections.length === 1) {
+            this.searchInput.value = '';
+            this.filteredErrors = null;
+            this.showAllSections();
+            this.setHeaderTitleBySection();
+            this.searchIcon.style.display = '';
+            this.exitIcon.style.display = 'none';
+            this.setSearchPlaceholder('default');
+            this.justSwitchedToTable = false;
+            this.resetAllViews();
+          } else {
+            // Если видны несколько секций, используем стандартную логику
+            this.handleSearch(this.searchInput.value);
+          }
         } else {
           this.handleSearch(this.searchInput.value);
         }
@@ -131,7 +257,8 @@ export class HeaderManager {
       // Переключение иконки при вводе
       this.searchInput.addEventListener('input', () => {
         const onlyTableVisible = Object.entries(this.sections).filter(([, sec]) => sec && sec.style.display !== 'none').length === 1 && this.sections.table.style.display !== 'none';
-        if (this.searchInput.value.trim() || (onlyTableVisible && !this.searchInput.value.trim())) {
+        // Показываем крестик если есть текст или только таблица видна
+        if (this.searchInput.value.trim() || onlyTableVisible) {
           this.searchIcon.style.display = 'none';
           this.exitIcon.style.display = '';
         } else {
@@ -142,13 +269,7 @@ export class HeaderManager {
     }
   }
 
-  localizeHeader() {
-    // Локализуем только заголовок
-    if (this.headerTitle) {
-      this.headerTitle.textContent = translations[this.lang]?.title || 'Error Logger & Viewer';
-    }
-  }
-
+  // Основная логика поиска и фильтрации
   handleSearch(query) {
     const lowerQuery = query.trim().toLowerCase();
     let anyVisible = false;
@@ -164,10 +285,9 @@ export class HeaderManager {
       if (!this.justSwitchedToTable) {
         if (this.searchInput) {
           this.searchInput.value = '';
-          this.searchInput.placeholder = translations[this.lang]?.placeholderTable || 'Search in table...';
-          this.searchInput.setAttribute('aria-label', translations[this.lang]?.ariaInputTable || 'Search in table');
+          this.setSearchPlaceholder('table');
         }
-        // Показываем всю таблицу (без фильтрации)
+        this.showOnlySection('table');
         showCenterSpinner(this.sections.table, 'page');
         this.filterTable('').finally(() => {
           hideCenterSpinner(this.sections.table);
@@ -217,31 +337,20 @@ export class HeaderManager {
 
     // Меняем заголовок
     if (!lowerQuery || !anyVisible) {
-      // Если инпут пустой (ручная очистка), показываем все секции
-      Object.entries(this.sections).forEach(([_, section]) => {
-        if (!section) return;
-        section.style.display = '';
-      });
-      this.headerTitle.textContent = translations[this.lang]?.title || 'Error Logger & Viewer';
+      this.showAllSections();
+      this.setHeaderTitleBySection();
+      if (window.chartManager && typeof window.chartManager.resetToDefault === 'function') {
+        window.chartManager.resetToDefault();
+      }
     } else {
       // Показываем заголовок первой видимой секции
       const firstVisible = Object.values(this.sections).find(sec => sec && sec.style.display !== 'none');
-      const titleEl = firstVisible?.querySelector('h2,h3');
-      if (titleEl) {
-        const i18nKey = titleEl.getAttribute('data-i18n');
-        if (i18nKey && translations[this.lang][i18nKey]) {
-          this.headerTitle.textContent = translations[this.lang][i18nKey];
-        } else {
-          this.headerTitle.textContent = titleEl.textContent || translations[this.lang]?.title || 'Error Logger & Viewer';
-        }
-      } else {
-        this.headerTitle.textContent = translations[this.lang]?.title || 'Error Logger & Viewer';
-      }
+      const key = Object.entries(this.sections).find(([, sec]) => sec === firstVisible)?.[0];
+      this.setHeaderTitleBySection(key);
     }
 
     // 2. Если выбрана таблица — сбрасываем инпут только при переходе к таблице по секционному поиску
     if (this.sections.table && this.sections.table.style.display !== 'none') {
-      // Обычный поиск по таблице, не сбрасываем инпут
       showCenterSpinner(this.sections.table, 'page');
       this.filterTable(query).finally(() => {
         hideCenterSpinner(this.sections.table);
@@ -252,13 +361,7 @@ export class HeaderManager {
     }
     // В самом конце handleSearch гарантируем смену плейсхолдера после всех асинхронных операций
     if (this.searchInput) {
-      if (onlyTableVisible) {
-        this.searchInput.placeholder = translations[this.lang]?.placeholderTable || 'Search in table...';
-        this.searchInput.setAttribute('aria-label', translations[this.lang]?.ariaInputTable || 'Search in table');
-      } else {
-        this.searchInput.placeholder = translations[this.lang]?.placeholder || 'Search by application...';
-        this.searchInput.setAttribute('aria-label', translations[this.lang]?.ariaInput || 'Search errors');
-      }
+      this.setSearchPlaceholder(onlyTableVisible ? 'table' : 'default');
     }
   }
 
@@ -292,6 +395,7 @@ export class HeaderManager {
     this.filteredErrors = filtered.length < errors.length ? filtered : null;
     this.table.renderErrors(filtered);
   }
+
   addTableSortHandlers() {
     // Кнопки сортировки должны иметь id: sortById, sortByType, sortByCount, sortByFirstSeen, sortByLastSeen, sortByStatus
     const sortFields = [

@@ -6,7 +6,6 @@ import { getLabel } from './utils/label';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 
 export default class ChartManager {
-  isRendering = false;
   constructor() {
     this.canvas = document.getElementById('chartCanvas');
     this.lang = getCurrentLang();
@@ -263,6 +262,19 @@ export default class ChartManager {
       return;
     }
   }
+
+  resetToDefault() {
+    this.currentType = 'day';
+    // Сброс активных классов у кнопок периодов
+    const btnWeek = document.getElementById('errorsChartSortWeek');
+    const btnMonth = document.getElementById('errorsChartSortMonth');
+    const btnYear = document.getElementById('errorsChartSortYear');
+    [btnWeek, btnMonth, btnYear].forEach(btn => {
+      if (btn) btn.classList.remove('chart__sort-btn--active');
+    });
+    this.renderChart();
+  }
+  isRendering = false;
 
   prepareChartData(stats) {
     // stats: { "type1": count, "type2": count, ... }
