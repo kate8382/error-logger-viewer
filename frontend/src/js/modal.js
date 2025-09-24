@@ -68,7 +68,10 @@ export class Modal {
 
     const title = el('h2', { className: 'modal__title', id: 'modalTitle', 'data-i18n': 'modalTitle' }, this.translations[lang]['modalTitle'] || 'Error Details');
 
-    const type = error.type || '';
+    // Для типа ошибки используем перевод, если есть
+    let type = error.type || '';
+    const typeKey = type ? `errorType_${type}` : '';
+    type = this.translations[lang][typeKey] || type;
     const id = error.id || '';
     let firstSeenValue = error.firstSeen ? new Date(error.firstSeen).toLocaleString() : '';
     let lastSeenValue = error.lastSeen ? new Date(error.lastSeen).toLocaleString() : '';
@@ -182,7 +185,7 @@ export class Modal {
     const rows = [
       el('div', { className: 'modal__row' }, [
         el('span', { className: 'modal__field-title' }, typeLabel + ': '),
-        el('span', { className: 'modal__field-value' }, type)
+        el('span', { className: 'modal__field-value', 'data-type': error.type }, type)
       ]),
       el('div', { className: 'modal__row' }, [
         el('span', { className: 'modal__field-title' }, idLabel + ': '),
@@ -224,6 +227,8 @@ export class Modal {
       const newStatus = currentStatus.value;
       const newComment = commentArea.value;
       const updated = { ...error, status: newStatus, comment: newComment };
+      // Удаляем lastSeen, чтобы сервер выставил новое значение
+      if ('lastSeen' in updated) delete updated.lastSeen;
       const { showLoading, hideLoading } = await import('./utils/loading');
       showLoading(saveBtn, 'save');
 

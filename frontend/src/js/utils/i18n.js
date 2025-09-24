@@ -93,6 +93,34 @@ export const translations = {
     modalCancelBtn: 'Cancel',
     modalDeleteBtn: 'Delete',
 
+    aboutText_en: `
+      <h2 class="about-title">About Error Logger & Viewer</h2>
+      <p class="about-description">Error Logger & Viewer is a modern SPA for collecting, storing, analyzing, and visualizing JavaScript errors in web projects. It is designed for developers and teams who need to quickly identify, group, and track errors in production or test environments.</p>
+      <ul class="about-features">
+        <li class="about-feature">Automatic error collection (JS, resource loading, unhandled promises, fetch errors)</li>
+        <li class="about-feature">Server or local storage (demo mode)</li>
+        <li class="about-feature">Statistics and charts by type, status, date</li>
+        <li class="about-feature">Filtering, sorting, commenting</li>
+        <li class="about-feature">Status tracking (new, in progress, fixed, ignored)</li>
+        <li class="about-feature">English and Russian UI</li>
+      </ul>
+      <h3 class="about-subtitle">How to use</h3>
+      <ol class="about-steps">
+        <li class="about-step">Install and run backend and frontend</li>
+        <li class="about-step">Errors are collected automatically</li>
+        <li class="about-step">Navigate via sidebar, use search and filters</li>
+        <li class="about-step">Edit, comment, and change error status in the table</li>
+        <li class="about-step">Analyze statistics and charts</li>
+      </ol>
+      <h3 class="about-subtitle">Architecture</h3>
+      <ul class="about-features">
+        <li class="about-feature">Frontend: pure JS SPA, modular structure</li>
+        <li class="about-feature">Backend: Node.js + Express + LowDB</li>
+        <li class="about-feature">REST API, i18n, theming, error grouping</li>
+      </ul>
+      <p class="about-text">See the full documentation in the <a href="https://github.com/kate8382/error-logger-viewer" target="_blank">README</a>.</p>
+    `,
+
   },
 
   ru: {
@@ -189,6 +217,34 @@ export const translations = {
     modalDeleteMessage: 'Вы уверены, что хотите удалить эту ошибку?',
     modalCancelBtn: 'Отмена',
     modalDeleteBtn: 'Удалить',
+
+    aboutText_ru: `
+      <h2 class="about-title">О приложении Error Logger & Viewer</h2>
+      <p class="about-description">Error Logger & Viewer — это современное SPA-приложение для сбора, хранения, анализа и визуализации ошибок JavaScript в веб-проектах. Оно предназначено для разработчиков и команд, которым важно быстро выявлять, группировать и отслеживать ошибки на продакшене или в тестовой среде.</p>
+      <ul class="about-features">
+        <li class="about-feature">Автоматический сбор ошибок (JS, загрузка ресурсов, необработанные промисы, fetch)</li>
+        <li class="about-feature">Серверное или локальное хранилище (демо-режим)</li>
+        <li class="about-feature">Статистика и графики по типу, статусу, дате</li>
+        <li class="about-feature">Фильтрация, сортировка, комментирование</li>
+        <li class="about-feature">Отслеживание статуса (новая, в работе, исправлена, игнорируется)</li>
+        <li class="about-feature">Интерфейс на русском и английском языках</li>
+      </ul>
+      <h3 class="about-subtitle">Как пользоваться</h3>
+      <ol class="about-steps">
+        <li class="about-step">Установите и запустите backend и frontend</li>
+        <li class="about-step">Ошибки собираются автоматически</li>
+        <li class="about-step">Навигируйте через сайдбар, используйте поиск и фильтры</li>
+        <li class="about-step">Редактируйте, комментируйте и меняйте статус ошибок в таблице</li>
+        <li class="about-step">Анализируйте статистику и графики</li>
+      </ol>
+      <h3 class="about-subtitle">Архитектура</h3>
+      <ul class="about-architecture">
+        <li class="about-architecture-item">Frontend: чистый JS SPA, модульная структура</li>
+        <li class="about-architecture-item">Backend: Node.js + Express + LowDB</li>
+        <li class="about-architecture-item">REST API, i18n, темы, группировка ошибок</li>
+      </ul>
+      <p class="about-text">Полная документация — в <a href="https://github.com/kate8382/error-logger-viewer" target="_blank">README</a>.</p>
+    `,
 
   }
 };

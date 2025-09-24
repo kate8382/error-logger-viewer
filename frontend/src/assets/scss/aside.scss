@@ -21,6 +21,18 @@
   align-items: center;
   gap: var(--min-gap);
   width: 100%;
+  min-height: 40px;
+  padding: 11px 8px 11px 5px;
+  color: currentColor;
+  border-radius: var(--card-radius);
+  transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+
+  &:focus,
+  &:hover,
+  &:active {
+    color: var(--active-color);
+    background-color: var(--hover-color);
+  }
 }
 
 @mixin item-icon {
@@ -75,7 +87,6 @@
     .sidebar__dropdown-btn {
       @include item-link;
       position: relative;
-      color: var(--black-color);
       transition: background 0.2s;
 
       .sidebar__item-icon {
@@ -113,16 +124,14 @@
     }
 
     .sidebar__dropdown-group {
-      width: 100%;
 
       .sidebar__dropdown-group-btn {
+        @include item-link;
         @include item-text;
         justify-content: space-evenly;
         align-items: center;
         width: 65%;
-        min-height: 40px;
         padding-left: 18px;
-        color: var(--black-color);
         font-weight: 700;
         text-align: left;
         transition: background 0.2s;
@@ -140,9 +149,8 @@
         padding: var(--small-font) var(--h3-font);
 
         .sidebar__dropdown-option {
-          width: 100%;
-          min-height: 40px;
-          color: var(--black-color);
+          @include item-link;
+          padding: 11px 8px;
           text-align: left;
           font-weight: 700;
           transition: background 0.2s;

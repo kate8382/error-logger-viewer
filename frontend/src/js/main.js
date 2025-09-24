@@ -34,6 +34,7 @@ import { ErrorApi } from './api';
 import { ErrorTable } from './table';
 import { StatsManager } from './stats';
 import ChartManager from './charts.js';
+// import { Aside } from './aside';
 
 // Инициализация таблицы ошибок и статистики
 // const errorTable = new ErrorTable();

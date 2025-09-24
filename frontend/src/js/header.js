@@ -48,12 +48,16 @@ export class HeaderManager {
 
   // Универсальная локализация заголовка
   setHeaderTitleBySection(sectionKey = null) {
+    // Если sectionKey не передан или все секции видимы — основной заголовок
     if (!sectionKey) {
-      this.headerTitle.textContent = translations[this.lang]?.title || 'Error Logger & Viewer';
+      this.headerTitle.textContent = 'Error Logger & Viewer';
       return;
     }
     const section = this.sections[sectionKey];
-    if (!section) return;
+    if (!section) {
+      this.headerTitle.textContent = 'Error Logger & Viewer';
+      return;
+    }
     let titleEl = null;
     if (sectionKey === 'chart') {
       titleEl = section.querySelector('.chart__title');
@@ -68,11 +72,13 @@ export class HeaderManager {
       const i18nKey = titleEl.getAttribute('data-i18n');
       if (i18nKey && translations[this.lang][i18nKey]) {
         this.headerTitle.textContent = translations[this.lang][i18nKey];
+      } else if (i18nKey && translations['en'][i18nKey]) {
+        this.headerTitle.textContent = translations['en'][i18nKey];
       } else {
-        this.headerTitle.textContent = titleEl.textContent || translations[this.lang]?.title || 'Error Logger & Viewer';
+        this.headerTitle.textContent = titleEl.textContent || 'Error Logger & Viewer';
       }
     } else {
-      this.headerTitle.textContent = translations[this.lang]?.title || 'Error Logger & Viewer';
+      this.headerTitle.textContent = 'Error Logger & Viewer';
     }
   }
 
@@ -84,7 +90,7 @@ export class HeaderManager {
       this.searchInput.setAttribute('aria-label', translations[this.lang]?.ariaInputTable || 'Search in table');
     } else {
       this.searchInput.placeholder = translations[this.lang]?.placeholder || 'Search by application...';
-      this.searchInput.setAttribute('aria-label', translations[this.lang]?.ariaInput || 'Search errors');
+      this.searchInput.setAttribute('aria-label', translations[this.lang]?.ariaInput || 'Search by application');
     }
   }
 
@@ -119,13 +125,12 @@ export class HeaderManager {
 
   // Обновление заголовка и плейсхолдера
   updateHeaderUI() {
+    // Если видна только одна секция — её заголовок, иначе основной
     const visibleSections = Object.entries(this.sections).filter(([, sec]) => sec && sec.style.display !== 'none');
-    let key = null;
-    if (visibleSections.length === 1) {
-      key = visibleSections[0][0];
-    }
+    const key = visibleSections.length === 1 ? visibleSections[0][0] : null;
+    const mode = key === 'table' ? 'table' : 'default';
     this.setHeaderTitleBySection(key);
-    this.setSearchPlaceholder(key === 'table' ? 'table' : 'default');
+    this.setSearchPlaceholder(mode);
   }
 
   init() {
@@ -140,40 +145,25 @@ export class HeaderManager {
 
     // Локализация при инициализации
     this.updateSectionTitles();
-    // Обработка смены языка
+    // Обработка смены языка (убираем дублирование)
     const langEnBtn = document.getElementById('lang-en');
     const langRuBtn = document.getElementById('lang-ru');
+    const handleLangSwitch = lang => {
+      this.lang = lang;
+      this.updateSectionTitles();
+      // Сброс фильтрации при смене языка
+      if (this.searchInput) {
+        this.searchInput.value = '';
+      }
+      this.showAllSections();
+      this.setHeaderTitleBySection(null);
+      this.setSearchPlaceholder('default');
+    };
     if (langEnBtn) {
-      langEnBtn.addEventListener('click', () => {
-        this.lang = 'en';
-        this.updateSectionTitles();
-        // Определяем режим фильтрации
-        const visibleSections = Object.entries(this.sections).filter(([, sec]) => sec && sec.style.display !== 'none');
-        let key = null;
-        let mode = 'default';
-        if (visibleSections.length === 1) {
-          key = visibleSections[0][0];
-          if (key === 'table') mode = 'table';
-        }
-        this.setHeaderTitleBySection(key);
-        this.setSearchPlaceholder(mode);
-      });
+      langEnBtn.addEventListener('click', () => handleLangSwitch('en'));
     }
     if (langRuBtn) {
-      langRuBtn.addEventListener('click', () => {
-        this.lang = 'ru';
-        this.updateSectionTitles();
-        // Определяем режим фильтрации
-        const visibleSections = Object.entries(this.sections).filter(([, sec]) => sec && sec.style.display !== 'none');
-        let key = null;
-        let mode = 'default';
-        if (visibleSections.length === 1) {
-          key = visibleSections[0][0];
-          if (key === 'table') mode = 'table';
-        }
-        this.setHeaderTitleBySection(key);
-        this.setSearchPlaceholder(mode);
-      });
+      langRuBtn.addEventListener('click', () => handleLangSwitch('ru'));
     }
 
     // Фильтрация при вводе
@@ -338,7 +328,30 @@ export class HeaderManager {
     // Меняем заголовок
     if (!lowerQuery || !anyVisible) {
       this.showAllSections();
-      this.setHeaderTitleBySection();
+      // Пересобираем ссылки на секции (на случай, если DOM изменился)
+      this.sections = {
+        stats: document.getElementById('errorStats'),
+        chart: document.getElementById('errorsChart'),
+        table: document.getElementById('errorTableSection')
+      };
+      // Логируем видимость секций
+      Object.entries(this.sections).forEach(([k, sec]) => {
+        if (sec) {
+          console.debug('[Header] Секция', k, 'display:', sec.style.display, 'exists:', !!sec);
+        } else {
+          console.warn('[Header] Секция', k, 'не найдена!');
+        }
+      });
+      // Определяем сколько секций реально видимо
+      const visibleSections = Object.entries(this.sections).filter(([, sec]) => sec && sec.style.display !== 'none');
+      if (visibleSections.length === Object.keys(this.sections).length) {
+        // Все секции видимы — основной заголовок
+        this.setHeaderTitleBySection(null);
+      } else {
+        // Одна секция — её заголовок
+        const key = visibleSections.length === 1 ? visibleSections[0][0] : null;
+        this.setHeaderTitleBySection(key);
+      }
       if (window.chartManager && typeof window.chartManager.resetToDefault === 'function') {
         window.chartManager.resetToDefault();
       }

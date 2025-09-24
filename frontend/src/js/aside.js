@@ -1,10 +1,55 @@
+import { ErrorApi } from './api';
+import { translations } from './utils/i18n';
+import { getCurrentLang } from './utils/lang';
+import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
+
 export class Aside {
-  constructor(app) {
-    this.app = app;
-    this.translations = app.translations;
+  constructor() {
+    this.app = window.app; // Ссылка на глобальный объект приложения
+    this.api = new ErrorApi();
+    this.translations = translations;
+    this.lang = getCurrentLang();
     this.initControls();
     this.initDropdowns();
+    this.initHashHandler();
+    // Показать about при загрузке, если #about
+    if (location.hash === '#about') {
+      this.showAboutSection(this.app.lang);
+    }
+  }
 
+  // Показывает About-секцию и скрывает остальные main > section
+  showAboutSection(lang = this.app.lang) {
+    document.querySelectorAll('main > section').forEach(sec => sec.style.display = 'none');
+    const aboutSection = document.getElementById('aboutSection');
+    if (aboutSection) {
+      const aboutKey = lang === 'ru' ? 'aboutText_ru' : 'aboutText_en';
+      aboutSection.innerHTML = this.translations[lang][aboutKey] || '';
+      aboutSection.style.display = '';
+    } else {
+      // Скрыть aboutSection
+      // const aboutSection = document.getElementById('aboutSection');
+      if (aboutSection) aboutSection.style.display = 'none';
+      // Показать все основные секции приложения
+      document.querySelectorAll('main > section').forEach(sec => {
+        if (sec.id !== 'aboutSection') sec.style.display = '';
+      });
+    }
+  }
+
+  // Обработчик смены hash для показа About
+  initHashHandler() {
+    window.addEventListener('hashchange', () => {
+      const lang = this.app?.lang || 'en';
+      if (location.hash === '#about') {
+        this.showAboutSection(lang);
+      } else {
+        // Скрыть aboutSection при переходе на другие разделы
+        const aboutSection = document.getElementById('aboutSection');
+        if (aboutSection) aboutSection.style.display = 'none';
+        // Можно добавить показ нужной секции по hash
+      }
+    });
   }
 
   initControls() {
@@ -84,8 +129,11 @@ export class Aside {
     this.translatePage(lang);
     // Обновляем таблицу ошибок при смене языка
     if (window.renderErrorTable && typeof window.app !== 'undefined') {
-      console.log('updateErrorTable called after lang switch');
       window.app.updateErrorTable();
+    }
+    // Если открыт about — обновить его
+    if (location.hash === '#about') {
+      this.showAboutSection(lang);
     }
   }
 
