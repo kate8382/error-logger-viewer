@@ -183,9 +183,13 @@ app.post('/errors', async (req, res) => {
   // Получаем день ошибки (YYYY-MM-DD)
   const day = now.slice(0, 10);
 
-  // Поиск существующей ошибки по типу, сообщению, стэку и дню
+  // Нормализуем сравниваемые поля (trim, toLowerCase, пустая строка вместо undefined)
+  function normalize(val) {
+    return (val === undefined || val === null) ? '' : String(val).trim().toLowerCase();
+  }
+
   let found = db.data.errors.find(e =>
-    groupKeys.every(k => e[k] === newError[k]) &&
+    groupKeys.every(k => normalize(e[k]) === normalize(newError[k])) &&
     (e.firstSeen && e.firstSeen.slice(0, 10) === day)
   );
 
@@ -235,6 +239,8 @@ app.put('/errors/:id', async (req, res) => {
   }
 
   updatedError.id = db.data.errors[index].id; // Сохраняем оригинальный ID
+  // Обновляем lastSeen при любом изменении
+  updatedError.lastSeen = new Date().toISOString();
   db.data.errors[index] = updatedError;
 
   await db.write();

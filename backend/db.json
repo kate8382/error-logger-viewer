@@ -147,6 +147,46 @@
       "users": [
         "unknown"
       ]
+    },
+    {
+      "id": "1cc7d519-ac1e-4889-8289-1d02fa21f9c3",
+      "type": "ReferenceError",
+      "message": "i18nKey is not defined",
+      "stack": "ReferenceError: i18nKey is not defined\n    at HeaderManager.setHeaderTitleBySection (webpack://error-logger-viewer/./src/js/header.js?:112:9)\n    at HeaderManager.handleSearch (webpack://error-logger-viewer/./src/js/header.js?:447:14)\n    at HTMLInputElement.eval (webpack://error-logger-viewer/./src/js/header.js?:254:18)",
+      "status": "in_progress",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-09-24T13:29:19.764Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2025-09-24T14:07:50.887Z"
+    },
+    {
+      "id": "5232f948-00e3-419a-8c09-965aec5c2711",
+      "type": "TestError",
+      "message": "Тестовая ошибка для проверки дат",
+      "status": "fixed",
+      "comment": "",
+      "count": 2,
+      "firstSeen": "2025-09-24T13:52:17.363Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2025-09-24T14:07:37.829Z"
+    },
+    {
+      "id": "b3d94c73-31a7-49bc-a337-3827ebb644fa",
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "status": "fixed",
+      "comment": "",
+      "count": 3,
+      "firstSeen": "2025-09-24T15:33:08.592Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2025-09-24T18:02:56.334Z"
     }
   ]
 }
