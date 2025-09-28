@@ -1,7 +1,6 @@
 import { ErrorApi } from './api';
 import { translations } from './utils/i18n';
 import { getCurrentLang } from './utils/lang';
-import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 
 export class Aside {
   constructor() {
@@ -26,9 +25,23 @@ export class Aside {
       const aboutKey = lang === 'ru' ? 'aboutText_ru' : 'aboutText_en';
       aboutSection.innerHTML = this.translations[lang][aboutKey] || '';
       aboutSection.style.display = '';
+
+      // Обработчик для кнопки-крестика
+      const closeBtn = aboutSection.querySelector('.about-btn-close');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          location.hash = '';
+        });
+      }
+
+      // Обработчик для Esc
+      this._aboutEscHandler = (e) => {
+        if (e.key === 'Escape') {
+          location.hash = '';
+        }
+      };
+      document.addEventListener('keydown', this._aboutEscHandler);
     } else {
-      // Скрыть aboutSection
-      // const aboutSection = document.getElementById('aboutSection');
       if (aboutSection) aboutSection.style.display = 'none';
       // Показать все основные секции приложения
       document.querySelectorAll('main > section').forEach(sec => {
@@ -47,7 +60,15 @@ export class Aside {
         // Скрыть aboutSection при переходе на другие разделы
         const aboutSection = document.getElementById('aboutSection');
         if (aboutSection) aboutSection.style.display = 'none';
-        // Можно добавить показ нужной секции по hash
+        // Удалить обработчик Esc, если был добавлен
+        if (this._aboutEscHandler) {
+          document.removeEventListener('keydown', this._aboutEscHandler);
+          this._aboutEscHandler = null;
+        }
+        // Показать все основные секции приложения
+        document.querySelectorAll('main > section').forEach(sec => {
+          if (sec.id !== 'aboutSection') sec.style.display = '';
+        });
       }
     });
   }
@@ -76,6 +97,7 @@ export class Aside {
     modeOptions.forEach(option => {
       option.addEventListener('click', () => {
         const mode = option.dataset.value;
+        console.log('Выбран режим:', mode);
         if (mode === 'server' || mode === 'demo') {
           this.app.errorApi.setMode(mode);
           this.app.updateErrorTable();

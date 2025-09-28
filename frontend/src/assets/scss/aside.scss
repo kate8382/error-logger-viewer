@@ -14,7 +14,6 @@
   }
 }
 
-
 // Миксины для общих стилей
 @mixin item-link {
   flex-direction: row;
@@ -53,7 +52,6 @@
   margin-left: auto;
   transition: transform 0.2s;
 }
-
 
 .sidebar__list {
   flex-direction: column;
@@ -159,6 +157,113 @@
 
       &.open .sidebar__dropdown-sublist {
         display: flex;
+      }
+    }
+  }
+}
+
+// About
+.about-section {
+  position: relative;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: auto;
+  padding: var(--max-gap);
+  font-size: var(--body-font);
+  line-height: 1.4;
+  border-radius: var(--card-radius);
+  background-color: var(--white-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  .about-btn-close {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    width: 30px;
+    height: 30px;
+    margin: 0;
+    color: var(--black-color);
+    transition: color 0.3s ease-in-out;
+
+    &:hover {
+      color: var(--grey-color);
+    }
+
+    &:active {
+      color: var(--black-color);
+    }
+  }
+
+  .about-title {
+    margin-bottom: var(--max-gap);
+    font-size: var(--h2-font);
+  }
+
+  .about-description {
+    margin-bottom: var(--min-gap);
+
+    &-highlight {
+      font-weight: 700;
+    }
+  }
+
+  .about-subtitle {
+    margin: 0;
+    margin-bottom: var(--min-gap);
+    font-size: var(--h3-font);
+  }
+
+  .about-features {
+    flex-direction: column;
+    gap: var(--min-gap);
+    margin-bottom: var(--max-gap);
+    padding-left: 20px;
+    list-style: disc;
+
+    .about-feature {
+      font-size: var(--body-font);
+
+      &-bold {
+        font-weight: 700;
+      }
+    }
+  }
+
+  .about-steps {
+    margin: 0;
+    margin-bottom: var(--max-gap);
+    padding-left: var(--max-gap);
+    padding-right: 16px;
+    list-style: decimal;
+    line-height: 1;
+
+    .about-step {
+      margin-bottom: var(--min-gap);
+    }
+  }
+
+  .about-steps li::marker {
+    font-weight: bold;
+  }
+
+  .about-text {
+    font-style: italic;
+
+    .about-link {
+      color: var(--type8-color);
+      transition: color 0.3s ease-in-out;
+
+      &:focus {
+        color: var(--type3-color);
+      }
+
+      &:hover {
+        color: var(--type7-color);
+      }
+
+      &:active {
+        color: var(--type8-color);
       }
     }
   }

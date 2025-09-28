@@ -37,27 +37,42 @@ export default class ChartManager {
 
     // BAR CHART по датам, неделям, месяцам, годам
     if (['day', 'date', 'week', 'month', 'year'].includes(this.currentType)) {
+      // Проверяем режим приложения
+      const mode = window.app?.errorApi?.mode || 'server';
+      if (mode === 'demo') {
+        // В демо-режиме строим пустой график
+        if (this.chart) {
+          this.chart.destroy();
+          this.chart = null;
+        }
+        if (canvasWrapper) {
+          hideCenterSpinner(canvasWrapper);
+        }
+        // Можно нарисовать пустой график или просто очистить canvas
+        this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.canvas.parentElement.querySelector('.chart__title').textContent = 'Нет данных для графика';
+        this.isRendering = false;
+        return;
+      }
+
       // Определяем параметр для запроса
       let byParam = 'day';
       if (this.currentType === 'week') byParam = 'week';
       if (this.currentType === 'month') byParam = 'month';
       if (this.currentType === 'year') byParam = 'year';
 
+      // timeset для теста спиннера (убрать на проде)
       try {
-        // timeset для теста спиннера (убрать на проде)
         await new Promise(res => setTimeout(res, 1200));
-
         // Получаем статистику по выбранному периоду и типам
         const resType = await fetch(`http://localhost:3000/errors/stats?by=${byParam}&group=type`);
         const statsType = await resType.json();
         // Получаем статистику по выбранному периоду и статусам (до фильтрации periodKeys)
         const resStatus = await fetch(`http://localhost:3000/errors/stats?by=${byParam}&group=status`);
         const statsStatus = await resStatus.json();
-
-        // Оставляем только периоды, где есть хотя бы одна ошибка (по типу или статусу)
         let periodKeys = Object.keys(statsType).filter(date => {
-          const typeVals = Object.values((statsType && statsType[date]) ? statsType[date] : {});
-          const statusVals = Object.values((statsStatus && statsStatus[date]) ? statsStatus[date] : {});
+          const typeVals = Object.values(statsType[date] || {});
+          const statusVals = Object.values(statsStatus[date] || {});
           const total = [...typeVals, ...statusVals].reduce((sum, v) => sum + v, 0);
           return total > 0;
         });
@@ -65,62 +80,26 @@ export default class ChartManager {
         let barPerc = 0.8;
         let catPerc = 0.6;
         if (this.currentType === 'date' || this.currentType === 'day') {
-          periodKeys = periodKeys.slice(-7);
           barPerc = 0.8;
           catPerc = 0.6;
         }
         if (this.currentType === 'week') {
-          periodKeys = periodKeys.slice(-10); // последние 10 недель
           barPerc = 0.7;
           catPerc = 0.5;
         }
         if (this.currentType === 'month') {
-          periodKeys = periodKeys.slice(-6); // последние 6 месяцев
-          barPerc = 0.5;
+          barPerc = 0.6;
           catPerc = 0.4;
         }
         if (this.currentType === 'year') {
-          periodKeys = periodKeys.slice(-4); // последние 4 года
-          barPerc = 0.4;
+          barPerc = 0.5;
           catPerc = 0.3;
         }
         // Форматированные подписи для оси X
         let labels = periodKeys;
-        if (this.currentType === 'date' || this.currentType === 'day') {
-          // Форматировать даты для дня: '2025-08-06' → '06.09.2025'
-          labels = periodKeys.map(dateStr => {
-            if (!dateStr || dateStr.length !== 10) return dateStr;
-            const [year, month, day] = dateStr.split('-');
-            if (!year || !month || !day) return dateStr;
-            return `${day}.${month}.${year}`;
-          });
-        }
-        if (this.currentType === 'week') {
-          labels = periodKeys.map(weekStr => {
-            const [year, week] = weekStr.split('-W');
-            if (!year || !week) return weekStr;
-            // ISO week to date (понедельник)
-            const simpleMonday = (y, w) => {
-              const d = new Date(y, 0, 1 + (w - 1) * 7);
-              const day = d.getDay();
-              const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-              const monday = new Date(d.setDate(diff));
-              return monday;
-            };
-            const monday = simpleMonday(+year, +week);
-            const dd = String(monday.getDate()).padStart(2, '0');
-            const mm = String(monday.getMonth() + 1).padStart(2, '0');
-            const yyyy = monday.getFullYear();
-            return `${dd}.${mm}.${yyyy}`;
-          });
-        }
-        if (this.currentType === 'month') {
-          labels = periodKeys.map(monthStr => {
-            const [year, month] = monthStr.split('-');
-            if (!year || !month) return monthStr;
-            return `${month}.${year}`;
-          });
-        }
+        if (this.currentType === 'date' || this.currentType === 'day') {/* Lines 90-97 omitted */ }
+        if (this.currentType === 'week') {/* Lines 99-116 omitted */ }
+        if (this.currentType === 'month') {/* Lines 118-123 omitted */ }
         // year: 2025 → 2025 (оставляем как есть)
         // Собираем все типы и статусы
         const allTypes = Array.from(new Set(periodKeys.flatMap(date => Object.keys(statsType[date] || {}))));
@@ -347,4 +326,5 @@ export default class ChartManager {
     updateAriaLabels();
   }
 }
+
 
