@@ -1,14 +1,12 @@
 import Chart from 'chart.js/auto';
-import { translations } from './utils/i18n';
-import { getCurrentLang } from './utils/lang';
+import { t, getLabel, onLangChange, setLang } from './utils/i18n.js';
 import { typeColors, statusColors } from './utils/colors';
-import { getLabel } from './utils/label';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 
 export default class ChartManager {
   constructor() {
     this.canvas = document.getElementById('chartCanvas');
-    this.lang = getCurrentLang();
+    // Язык теперь всегда берём через getCurrentLang()
     this.chart = null;
     // Всегда отображаем график по дням при загрузке страницы
     this.currentType = 'day';
@@ -19,6 +17,11 @@ export default class ChartManager {
     this.initFilterHandlers();
     this.renderChart();
     this.initLangHandlers();
+    // Подписка на смену языка для автоматического обновления графика и aria-label
+    onLangChange(() => {
+      this.renderChart();
+      this.updateAriaLabels();
+    });
   }
 
   async renderChart() {
@@ -50,7 +53,7 @@ export default class ChartManager {
         }
         // Можно нарисовать пустой график или просто очистить canvas
         this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.canvas.parentElement.querySelector('.chart__title').textContent = 'Нет данных для графика';
+        this.canvas.parentElement.querySelector('.chart__title').textContent = t('chartTitle') || 'Нет данных для графика';
         this.isRendering = false;
         return;
       }
@@ -61,9 +64,8 @@ export default class ChartManager {
       if (this.currentType === 'month') byParam = 'month';
       if (this.currentType === 'year') byParam = 'year';
 
-      // timeset для теста спиннера (убрать на проде)
       try {
-        await new Promise(res => setTimeout(res, 1200));
+        // await new Promise(res => setTimeout(res, 1200));
         // Получаем статистику по выбранному периоду и типам
         const resType = await fetch(`http://localhost:3000/errors/stats?by=${byParam}&group=type`);
         const statsType = await resType.json();
@@ -97,16 +99,48 @@ export default class ChartManager {
         }
         // Форматированные подписи для оси X
         let labels = periodKeys;
-        if (this.currentType === 'date' || this.currentType === 'day') {/* Lines 90-97 omitted */ }
-        if (this.currentType === 'week') {/* Lines 99-116 omitted */ }
-        if (this.currentType === 'month') {/* Lines 118-123 omitted */ }
+        if (this.currentType === 'date' || this.currentType === 'day') {
+          labels = periodKeys.map(date => new Date(date).toLocaleDateString());
+        }
+        if (this.currentType === 'week') {
+          // Поддержка periodKeys: '2025-W39' и '2025-39'
+          labels = periodKeys.map(isoWeek => {
+            let yearStr, weekStr;
+            if (/^\d{4}-W\d{2}$/.test(isoWeek)) {
+              [yearStr, weekStr] = isoWeek.split('-W');
+            } else if (/^\d{4}-\d{2}$/.test(isoWeek)) {
+              [yearStr, weekStr] = isoWeek.split('-');
+            } else {
+              return isoWeek;
+            }
+            const year = parseInt(yearStr, 10);
+            const week = parseInt(weekStr, 10);
+            if (isNaN(year) || isNaN(week)) return isoWeek;
+            // ISO: неделя начинается с понедельника
+            const simple = new Date(year, 0, 1 + (week - 1) * 7);
+            const dow = simple.getDay();
+            const ISOweekStart = new Date(simple);
+            if (dow <= 4)
+              ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+            else
+              ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+            const ISOweekEnd = new Date(ISOweekStart);
+            ISOweekEnd.setDate(ISOweekStart.getDate() + 6);
+            // Форматирование: дд.мм.гг
+            const fmt = d => `${d.getDate().toString().padStart(2, '0')}.${(d.getMonth() + 1).toString().padStart(2, '0')}.${d.getFullYear().toString().slice(-2)}`;
+            return `${fmt(ISOweekStart)} – ${fmt(ISOweekEnd)}`;
+          });
+        }
+        if (this.currentType === 'month') {
+          labels = periodKeys.map(date => new Date(date).toLocaleString('default', { month: 'numeric', year: 'numeric' }));
+        }
         // year: 2025 → 2025 (оставляем как есть)
         // Собираем все типы и статусы
         const allTypes = Array.from(new Set(periodKeys.flatMap(date => Object.keys(statsType[date] || {}))));
         const allStatuses = Array.from(new Set(periodKeys.flatMap(date => Object.keys(statsStatus[date] || {}))));
         // Формируем datasets для типов
         const typeDatasets = allTypes.map((type, idx) => ({
-          label: getLabel(type, this.lang, translations),
+          label: getLabel(type),
           data: periodKeys.map(date => statsType[date][type] || 0),
           backgroundColor: typeColors[idx % typeColors.length],
           borderWidth: 0,
@@ -115,9 +149,9 @@ export default class ChartManager {
           categoryPercentage: catPerc,
           stack: 'types',
         }));
-        // Формируем datasets для статусов
+        // Для статусов используем t(status)
         const statusDatasets = allStatuses.map((status, idx) => ({
-          label: getLabel(status, this.lang, translations),
+          label: t(status),
           data: periodKeys.map(date => statsStatus[date][status] || 0),
           backgroundColor: statusColors[idx % statusColors.length],
           borderWidth: 0,
@@ -133,7 +167,7 @@ export default class ChartManager {
           this.canvas.parentElement.querySelector('.chart__title').textContent = 'Нет данных для графика';
         } else {
           // Есть данные — рендерим график
-          this.canvas.parentElement.querySelector('.chart__title').textContent = translations[this.lang].chartTitle;
+          this.canvas.parentElement.querySelector('.chart__title').textContent = t('chartTitle');
           // Автоматический max для оси Y с округлением и динамическим шагом
           const allData = datasets.flatMap(ds => ds.data);
           let rawMax = Math.max(1, ...allData) || 1;
@@ -257,7 +291,7 @@ export default class ChartManager {
 
   prepareChartData(stats) {
     // stats: { "type1": count, "type2": count, ... }
-    const labels = Object.keys(stats).map(key => translations[this.lang][key] || key);
+    const labels = Object.keys(stats).map(key => getLabel(key));
     const data = Object.values(stats);
     return { labels, data };
   }
@@ -304,26 +338,18 @@ export default class ChartManager {
   initLangHandlers() {
     const langEnBtn = document.getElementById('lang-en');
     const langRuBtn = document.getElementById('lang-ru');
-    const updateAriaLabels = () => {
-      const btnWeek = document.getElementById('errorsChartSortWeek');
-      const btnMonth = document.getElementById('errorsChartSortMonth');
-      const btnYear = document.getElementById('errorsChartSortYear');
-      if (btnWeek) btnWeek.setAttribute('aria-label', translations[this.lang].ariaChartWeek);
-      if (btnMonth) btnMonth.setAttribute('aria-label', translations[this.lang].ariaChartMonth);
-      if (btnYear) btnYear.setAttribute('aria-label', translations[this.lang].ariaChartYear);
-    };
-    if (langEnBtn) langEnBtn.addEventListener('click', () => {
-      this.lang = 'en';
-      this.renderChart();
-      updateAriaLabels();
-    });
-    if (langRuBtn) langRuBtn.addEventListener('click', () => {
-      this.lang = 'ru';
-      this.renderChart();
-      updateAriaLabels();
-    });
-    // Инициализация при загрузке
-    updateAriaLabels();
+    if (langEnBtn) langEnBtn.addEventListener('click', () => setLang('en'));
+    if (langRuBtn) langRuBtn.addEventListener('click', () => setLang('ru'));
+    this.updateAriaLabels();
+  }
+
+  updateAriaLabels() {
+    const btnWeek = document.getElementById('errorsChartSortWeek');
+    const btnMonth = document.getElementById('errorsChartSortMonth');
+    const btnYear = document.getElementById('errorsChartSortYear');
+    if (btnWeek) btnWeek.setAttribute('aria-label', t('ariaChartWeek'));
+    if (btnMonth) btnMonth.setAttribute('aria-label', t('ariaChartMonth'));
+    if (btnYear) btnYear.setAttribute('aria-label', t('ariaChartYear'));
   }
 }
 

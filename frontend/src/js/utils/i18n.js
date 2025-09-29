@@ -1,3 +1,4 @@
+// Централизованный модуль i18n для управления языком и переводами
 export const translations = {
   en: {
     loading: 'Loading...',
@@ -136,7 +137,6 @@ export const translations = {
     modalCancelBtn: 'Cancel',
     modalDeleteBtn: 'Delete',
   },
-
   ru: {
     loading: 'Загрузка...',
     title: 'Error Logger & Viewer',
@@ -276,3 +276,60 @@ export const translations = {
     modalDeleteBtn: 'Удалить',
   }
 };
+
+// Используем глобальный объект translations
+let currentLang = (window.app && window.app.lang)
+  ? window.app.lang
+  : ((navigator.language || navigator.userLanguage).startsWith('ru') ? 'ru' : 'en');
+
+let listeners = [];
+
+export function getCurrentLang() {
+  return currentLang;
+}
+
+export function setLang(lang) {
+  if (lang !== currentLang) {
+    currentLang = lang;
+    if (window.app) window.app.lang = lang;
+    listeners.forEach(fn => fn(lang));
+    // Можно добавить сохранение в localStorage, если нужно
+  }
+}
+
+export function onLangChange(fn) {
+  if (typeof fn === 'function') listeners.push(fn);
+}
+
+// Получить перевод по ключу (универсально)
+export function t(key, vars = {}) {
+  let str = (translations?.[currentLang]?.[key]) || key;
+  // Поддержка шаблонов вида "Hello, {name}!"
+  Object.entries(vars).forEach(([k, v]) => {
+    str = str.replace(new RegExp(`{${k}}`, 'g'), v);
+  });
+  return str;
+}
+
+// Получить перевод для типа/статуса ошибки (универсально)
+export function getLabel(key) {
+  if (!key) return key;
+  const typeKey = key.startsWith('errorType_') ? key : 'errorType_' + key;
+  return t(typeKey) || t(key) || key;
+}
+
+// Получить все переводы для текущего языка
+export function getTranslations() {
+  return (translations?.[currentLang]) || {};
+}
+
+// Экспортируем объект для удобства
+const i18n = {
+  getCurrentLang,
+  setLang,
+  onLangChange,
+  t,
+  getLabel,
+  getTranslations
+};
+export default i18n;

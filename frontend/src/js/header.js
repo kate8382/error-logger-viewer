@@ -1,9 +1,8 @@
 import { ErrorApi } from './api';
 import { ErrorTable } from './table';
 import { StatsManager } from './stats';
-import { translations } from './utils/i18n';
-import { getCurrentLang } from './utils/lang';
-import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
+import { showCenterSpinner, hideCenterSpinner } from './utils/loading.js';
+import { t, getCurrentLang, getLabel, setLang, onLangChange } from './utils/i18n.js';
 
 export class HeaderManager {
   constructor() {
@@ -50,12 +49,12 @@ export class HeaderManager {
   setHeaderTitleBySection(sectionKey = null) {
     // Если sectionKey не передан или все секции видимы — основной заголовок
     if (!sectionKey) {
-      this.headerTitle.textContent = 'Error Logger & Viewer';
+      this.headerTitle.textContent = t('title') || 'Error Logger & Viewer';
       return;
     }
     const section = this.sections[sectionKey];
     if (!section) {
-      this.headerTitle.textContent = 'Error Logger & Viewer';
+      this.headerTitle.textContent = t('title') || 'Error Logger & Viewer';
       return;
     }
     let titleEl = null;
@@ -70,15 +69,13 @@ export class HeaderManager {
     }
     if (titleEl) {
       const i18nKey = titleEl.getAttribute('data-i18n');
-      if (i18nKey && translations[this.lang][i18nKey]) {
-        this.headerTitle.textContent = translations[this.lang][i18nKey];
-      } else if (i18nKey && translations['en'][i18nKey]) {
-        this.headerTitle.textContent = translations['en'][i18nKey];
+      if (i18nKey && t(i18nKey)) {
+        this.headerTitle.textContent = t(i18nKey);
       } else {
-        this.headerTitle.textContent = titleEl.textContent || 'Error Logger & Viewer';
+        this.headerTitle.textContent = titleEl.textContent || t('title');
       }
     } else {
-      this.headerTitle.textContent = 'Error Logger & Viewer';
+      this.headerTitle.textContent = t('title') || 'Error Logger & Viewer';
     }
   }
 
@@ -86,11 +83,11 @@ export class HeaderManager {
   setSearchPlaceholder(mode = 'default') {
     if (!this.searchInput) return;
     if (mode === 'table') {
-      this.searchInput.placeholder = translations[this.lang]?.placeholderTable || 'Search in table...';
-      this.searchInput.setAttribute('aria-label', translations[this.lang]?.ariaInputTable || 'Search in table');
+      this.searchInput.placeholder = t('placeholderTable') || t('Search in table...');
+      this.searchInput.setAttribute('aria-label', t('ariaInputTable') || t('Search in table'));
     } else {
-      this.searchInput.placeholder = translations[this.lang]?.placeholder || 'Search by application...';
-      this.searchInput.setAttribute('aria-label', translations[this.lang]?.ariaInput || 'Search by application');
+      this.searchInput.placeholder = t('placeholder') || t('Search by application...');
+      this.searchInput.setAttribute('aria-label', t('ariaInput') || t('Search by application'));
     }
   }
 
@@ -103,7 +100,7 @@ export class HeaderManager {
         titleEl = section.querySelector('.chart__title');
         // Всегда устанавливаем локализованный заголовок графика
         if (titleEl) {
-          titleEl.textContent = translations[this.lang].chartTitle || 'Error Chart';
+          titleEl.textContent = t('chartTitle') || 'Error Chart';
         }
         return;
       }
@@ -116,8 +113,8 @@ export class HeaderManager {
       }
       if (titleEl) {
         const i18nKey = titleEl.getAttribute('data-i18n');
-        if (i18nKey && translations[this.lang][i18nKey]) {
-          titleEl.textContent = translations[this.lang][i18nKey];
+        if (i18nKey && t(i18nKey)) {
+          titleEl.textContent = t(i18nKey);
         }
       }
     });
@@ -148,23 +145,28 @@ export class HeaderManager {
     // Обработка смены языка (убираем дублирование)
     const langEnBtn = document.getElementById('lang-en');
     const langRuBtn = document.getElementById('lang-ru');
-    const handleLangSwitch = lang => {
+    if (langEnBtn) langEnBtn.addEventListener('click', () => setLang('en'));
+    if (langRuBtn) langRuBtn.addEventListener('click', () => setLang('ru'));
+    onLangChange((lang) => {
       this.lang = lang;
       this.updateSectionTitles();
-      // Сброс фильтрации при смене языка
+      this.updateHeaderUI();
+      // Сброс фильтрации и возврат к полному приложению при смене языка
       if (this.searchInput) {
         this.searchInput.value = '';
+        this.searchInput.dispatchEvent(new Event('input'));
+      }
+      this.filteredErrors = null;
+      // Сброс таблицы: показать все ошибки через fetchErrors
+      if (this.table && typeof this.table.fetchErrors === 'function') {
+        this.table.fetchErrors();
       }
       this.showAllSections();
-      this.setHeaderTitleBySection(null);
+      this.setHeaderTitleBySection();
       this.setSearchPlaceholder('default');
-    };
-    if (langEnBtn) {
-      langEnBtn.addEventListener('click', () => handleLangSwitch('en'));
-    }
-    if (langRuBtn) {
-      langRuBtn.addEventListener('click', () => handleLangSwitch('ru'));
-    }
+      this.justSwitchedToTable = false;
+      this.resetAllViews();
+    });
 
     // Фильтрация при вводе
     if (this.searchInput) {
@@ -200,7 +202,7 @@ export class HeaderManager {
         if (this.exitIcon.style.display !== 'none') {
           const visibleSections = Object.entries(this.sections).filter(([, sec]) => sec && sec.style.display !== 'none');
           const onlyTableVisible = visibleSections.length === 1 && this.sections.table.style.display !== 'none';
-          const isTableFilterMode = this.searchInput.placeholder === (translations[this.lang]?.placeholderTable || 'Search in table...');
+          const isTableFilterMode = this.searchInput.placeholder === (t('placeholderTable') || t('Search in table...'));
 
           // 1. Фильтрация по таблице — двухэтапная логика
           if (onlyTableVisible && isTableFilterMode) {
@@ -311,8 +313,8 @@ export class HeaderManager {
       let localizedText = '';
       if (titleEl) {
         const i18nKey = titleEl.getAttribute('data-i18n');
-        if (i18nKey && translations[this.lang][i18nKey]) {
-          localizedText = translations[this.lang][i18nKey].toLowerCase();
+        if (i18nKey && t(i18nKey)) {
+          localizedText = t(i18nKey).toLowerCase();
         } else {
           localizedText = titleEl.textContent?.toLowerCase() || '';
         }
@@ -383,10 +385,9 @@ export class HeaderManager {
     const errors = await this.api.getErrors({});
     const lang = this.lang || getCurrentLang();
     const filtered = errors.filter(error => {
-      // Локализованные значения типа и статуса
-      const typeKey = 'errorType_' + error.type;
-      const typeText = this.table.translations[lang][typeKey] || error.type;
-      const statusText = this.table.translations[lang][error.status || 'new'] || (error.status || 'new');
+      // Локализованные значения типа и статуса через t/getLabel
+      const typeText = getLabel(error.type);
+      const statusText = t(error.status || 'new');
 
       // Только дата (без времени)
       const getDateOnly = str => {

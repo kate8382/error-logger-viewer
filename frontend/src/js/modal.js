@@ -1,7 +1,6 @@
 import { el, setChildren } from 'redom';
 import { ErrorApi } from './api.js';
-import { translations } from './utils/i18n.js';
-import { getCurrentLang } from './utils/lang.js';
+import { t, getLabel, onLangChange } from './utils/i18n.js';
 
 export class Modal {
   constructor() {
@@ -9,7 +8,16 @@ export class Modal {
       return Modal._instance;
     }
     this.errorApi = new ErrorApi();
-    this.translations = translations; // Определяем актуальный язык - язык будет определяться динамически при открытии модалки
+    // Подписка на смену языка для обновления модального окна, если оно открыто
+    onLangChange(() => {
+      if (this.modal && this.modal.classList.contains('modal--open')) {
+        if (this._lastErrorForEdit) {
+          this.openEdit(this._lastErrorForEdit, true);
+        } else if (this._lastErrorIdForDelete) {
+          this.deleteError(this._lastErrorIdForDelete, true);
+        }
+      }
+    });
     this.modal = document.getElementById('modal');
     this.modalContent = document.getElementById('modalContent');
     if (!this.modal || !this.modalContent) return;
@@ -52,38 +60,38 @@ export class Modal {
 
   openEdit(error) {
     if (!this.modal || !this.modalContent) return;
+    this._lastErrorForEdit = error;
 
-    const lang = getCurrentLang();
-    const typeLabel = this.translations[lang]['modalField_type'] || 'Type';
-    const idLabel = this.translations[lang]['modalField_id'] || 'ID';
-    const firstSeenLabel = this.translations[lang]['modalField_firstSeen'] || 'First seen';
-    const lastSeenLabel = this.translations[lang]['modalField_lastSeen'] || 'Last seen';
-    const countLabel = this.translations[lang]['modalField_count'] || 'Repeat count';
-    const usersLabel = this.translations[lang]['modalField_users'] || 'Unique users';
-    const messageLabel = this.translations[lang]['modalField_message'] || 'Message';
-    const sourceLabel = this.translations[lang]['modalField_source'] || 'Source';
-    const stackLabel = this.translations[lang]['modalField_stack'] || 'Stack';
-    const statusLabel = this.translations[lang]['modalField_status'] || 'Status';
-    const commentLabel = this.translations[lang]['modalField_comment'] || 'Comment';
+    const typeLabel = t('modalField_type');
+    const idLabel = t('modalField_id');
+    const firstSeenLabel = t('modalField_firstSeen');
+    const lastSeenLabel = t('modalField_lastSeen');
+    const countLabel = t('modalField_count');
+    const usersLabel = t('modalField_users');
+    const messageLabel = t('modalField_message');
+    const sourceLabel = t('modalField_source');
+    const stackLabel = t('modalField_stack');
+    const statusLabel = t('modalField_status');
+    const commentLabel = t('modalField_comment');
 
-    const title = el('h2', { className: 'modal__title', id: 'modalTitle', 'data-i18n': 'modalTitle' }, this.translations[lang]['modalTitle'] || 'Error Details');
+    const title = el('h2', { className: 'modal__title', id: 'modalTitle', 'data-i18n': 'modalTitle' }, t('modalTitle'));
 
-    // Для типа ошибки используем перевод, если есть
+    // Для типа ошибки используем перевод
     let type = error.type || '';
-    const typeKey = type ? `errorType_${type}` : '';
-    type = this.translations[lang][typeKey] || type;
+    type = getLabel(type) || type;
     const id = error.id || '';
-    let firstSeenValue = error.firstSeen ? new Date(error.firstSeen).toLocaleString() : '';
-    let lastSeenValue = error.lastSeen ? new Date(error.lastSeen).toLocaleString() : '';
+    // Формат даты: дд.мм.гггг чч:мм
+    let firstSeenValue = error.firstSeen ? this._formatDate(error.firstSeen) : '';
+    let lastSeenValue = error.lastSeen ? this._formatDate(error.lastSeen) : '';
     const countValue = typeof error.count === 'number' ? error.count : 1;
     const usersValue = Array.isArray(error.users) ? error.users.join(', ') : '';
     const message = error.message || '';
     const comment = error.comment || '';
     const statusOptions = [
-      { value: 'new', label: this.translations[lang]['new'] || 'Новая' },
-      { value: 'in_progress', label: this.translations[lang]['in_progress'] || 'В работе' },
-      { value: 'fixed', label: this.translations[lang]['fixed'] || 'Исправлена' },
-      { value: 'ignored', label: this.translations[lang]['ignored'] || 'Игнорировать' }
+      { value: 'new', label: t('new') },
+      { value: 'in_progress', label: t('in_progress') },
+      { value: 'fixed', label: t('fixed') },
+      { value: 'ignored', label: t('ignored') }
     ];
     let currentStatus = statusOptions.find(opt => opt.value === error.status);
     if (!currentStatus) currentStatus = statusOptions[0];
@@ -174,7 +182,7 @@ export class Modal {
           label = stackLabel;
         } else {
           const labelKey = 'modalField_' + key;
-          label = this.translations[lang][labelKey] || (key.charAt(0).toUpperCase() + key.slice(1));
+          label = t(labelKey) || (key.charAt(0).toUpperCase() + key.slice(1));
         }
         return el('div', { className: 'modal__row' }, [
           el('span', { className: 'modal__field-title' }, label + ': '),
@@ -222,7 +230,7 @@ export class Modal {
       ])
     ];
 
-    const saveBtn = el('button', { className: 'modal__button', id: 'saveModalButton', 'data-i18n': 'modalSaveBtn', 'aria-label': this.translations[lang]['modalSaveBtn'] || 'Save' }, this.translations[lang]['modalSaveBtn'] || 'Save');
+    const saveBtn = el('button', { className: 'modal__button', id: 'saveModalButton', 'data-i18n': 'modalSaveBtn', 'aria-label': t('modalSaveBtn') }, t('modalSaveBtn'));
     saveBtn.addEventListener('click', async () => {
       const newStatus = currentStatus.value;
       const newComment = commentArea.value;
@@ -259,9 +267,9 @@ export class Modal {
 
   deleteError(errorId) {
     if (!this.modal || !this.modalContent) return;
+    this._lastErrorIdForDelete = errorId;
 
-    const lang = getCurrentLang();
-    const deleteBtn = el('button', { className: 'modal__delete-btn', id: 'deleteErrorButton', 'data-i18n': 'modalDeleteBtn', 'aria-label': this.translations[lang]['modalDeleteBtn'] || 'Delete' }, this.translations[lang]['modalDeleteBtn'] || 'Delete');
+    const deleteBtn = el('button', { className: 'modal__delete-btn', id: 'deleteErrorButton', 'data-i18n': 'modalDeleteBtn', 'aria-label': t('modalDeleteBtn') }, t('modalDeleteBtn'));
     deleteBtn.addEventListener('click', async () => {
       const { showLoading, hideLoading } = await import('./utils/loading');
       showLoading(deleteBtn, 'delete');
@@ -278,7 +286,7 @@ export class Modal {
       });
     });
 
-    const cancelBtn = el('button', { className: 'modal__cancel-btn', id: 'cancelDeleteButton', 'data-i18n': 'modalCancelBtn', 'aria-label': this.translations[lang]['modalCancelBtn'] || 'Cancel' }, this.translations[lang]['modalCancelBtn'] || 'Cancel');
+    const cancelBtn = el('button', { className: 'modal__cancel-btn', id: 'cancelDeleteButton', 'data-i18n': 'modalCancelBtn', 'aria-label': t('modalCancelBtn') }, t('modalCancelBtn'));
     cancelBtn.addEventListener('click', () => this.close());
 
     // Добавляем обработчик клика по фону только при открытии
@@ -286,12 +294,19 @@ export class Modal {
 
     setChildren(this.modalContent, [
       this.createCloseBtn(),
-      el('h2', { className: 'modal__title', 'data-i18n': 'modalDeleteTitle' }, this.translations[lang]['modalDeleteTitle'] || 'Delete Error'),
-      el('p', { className: 'modal__message', 'data-i18n': 'modalDeleteMessage' }, this.translations[lang]['modalDeleteMessage'] || 'Are you sure you want to delete this error?'),
+      el('h2', { className: 'modal__title', 'data-i18n': 'modalDeleteTitle' }, t('modalDeleteTitle')),
+      el('p', { className: 'modal__message', 'data-i18n': 'modalDeleteMessage' }, t('modalDeleteMessage')),
       deleteBtn,
       cancelBtn
     ]);
     this.modal.classList.add('modal--open');
+  }
+  // Форматирование даты в стиле дд.мм.гггг чч:мм
+  _formatDate(dateStr) {
+    const date = new Date(dateStr);
+    if (isNaN(date)) return '';
+    const pad = n => n.toString().padStart(2, '0');
+    return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
   }
 
   close() {
@@ -307,6 +322,9 @@ export class Modal {
         document.removeEventListener('mousedown', window.closeCustomSelectModal);
         window.closeCustomSelectModal = null;
       }
+      // Сброс последних сохранённых ошибок для обновления
+      this._lastErrorForEdit = null;
+      this._lastErrorIdForDelete = null;
     }
   }
 }

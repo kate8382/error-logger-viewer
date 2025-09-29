@@ -1,16 +1,18 @@
 import { el, setChildren } from 'redom';
 import { ErrorApi } from './api';
-import { translations } from './utils/i18n';
-import { getCurrentLang } from './utils/lang';
-import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 import { StatsManager } from './stats';
+import { t, getLabel, getCurrentLang, onLangChange } from './utils/i18n.js';
+import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 
 export class ErrorTable {
   constructor() {
     this.errors = [];
     this.errorApi = new ErrorApi();
-    this.translations = translations;
     this.lang = getCurrentLang();
+    onLangChange((lang) => {
+      this.lang = lang;
+      this.renderErrors(this.errors);
+    });
   }
 
   async fetchErrors() {
@@ -37,14 +39,13 @@ export class ErrorTable {
     const tableBody = document.getElementById('errorTableBody');
     if (!tableBody) return;
 
-    const lang = getCurrentLang();
     const rows = errors.map(error => {
       // Перевод типа ошибки
       const typeKey = 'errorType_' + error.type;
-      const typeText = this.translations[lang][typeKey] || error.type;
+      const typeText = t(typeKey) || error.type;
       // Перевод статуса ошибки
       let status = error.status || 'new';
-      let statusText = this.translations[lang][status] || status;
+      let statusText = t(status) || status;
       // Форматирование дат
       const firstSeen = error.firstSeen ? this.formatDate(error.firstSeen) : '';
       const lastSeen = error.lastSeen ? this.formatDate(error.lastSeen) : '';
@@ -89,12 +90,12 @@ export class ErrorTable {
     const editBtns = tableBody.querySelectorAll('.error-table__btn--edit[data-i18n]');
     editBtns.forEach(btn => {
       const key = btn.getAttribute('data-i18n');
-      btn.textContent = this.translations[lang][key] || key;
+      btn.textContent = t(key) || key;
     });
     const deleteBtns = tableBody.querySelectorAll('.error-table__btn--delete[data-i18n]');
     deleteBtns.forEach(btn => {
       const key = btn.getAttribute('data-i18n');
-      btn.textContent = this.translations[lang][key] || key;
+      btn.textContent = t(key) || key;
     });
 
     // Скрываем спиннер после рендера
@@ -103,7 +104,7 @@ export class ErrorTable {
   }
 
   createEditButton(error) {
-    const btn = el('button', { className: 'error-table__btn error-table__btn--edit', 'data-i18n': 'tableEditBtn', 'aria-label': this.translations[this.lang]['tableEditBtn'] || 'Edit' }, 'Edit');
+    const btn = el('button', { className: 'error-table__btn error-table__btn--edit', 'data-i18n': 'tableEditBtn', 'aria-label': getLabel('tableEditBtn') || 'Edit' }, 'Edit');
     btn.addEventListener('click', async () => {
       const { showLoading, hideLoading } = await import('./utils/loading');
       showLoading(btn, 'save');
@@ -122,7 +123,7 @@ export class ErrorTable {
   }
 
   createDeleteButton(error) {
-    const btn = el('button', { className: 'error-table__btn error-table__btn--delete', 'data-i18n': 'tableDeleteBtn', 'aria-label': this.translations[this.lang]['tableDeleteBtn'] || 'Delete' }, 'Delete');
+    const btn = el('button', { className: 'error-table__btn error-table__btn--delete', 'data-i18n': 'tableDeleteBtn', 'aria-label': getLabel('tableDeleteBtn') || 'Delete' }, 'Delete');
     btn.addEventListener('click', async () => {
       const { showLoading, hideLoading } = await import('./utils/loading');
       showLoading(btn, 'delete');
@@ -146,13 +147,17 @@ export class ErrorTable {
 
   formatDate(dateStr) {
     const date = new Date(dateStr);
-    return date.toLocaleDateString(this.lang, { day: '2-digit', month: '2-digit', year: 'numeric' }) +
-      '  ' + date.toLocaleTimeString(this.lang, { hour: '2-digit', minute: '2-digit' });
+    // Формат: дд.мм.гггг  чч:мм
+    const d = date;
+    const day = d.getDate().toString().padStart(2, '0');
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    const year = d.getFullYear();
+    const hours = d.getHours().toString().padStart(2, '0');
+    const minutes = d.getMinutes().toString().padStart(2, '0');
+    return `${day}.${month}.${year}  ${hours}:${minutes}`;
   }
 
   sortErrors(errors, field, order = 'asc') {
-    const lang = getCurrentLang();
-    const translations = this.translations;
     const statusOrder = ['new', 'in_progress', 'fixed', 'ignored'];
 
     return errors.sort((a, b) => {
@@ -168,8 +173,8 @@ export class ErrorTable {
         } else if (bIndex !== -1) {
           return order === 'asc' ? 1 : -1;
         } else {
-          const aText = translations[lang][aStatus] || aStatus;
-          const bText = translations[lang][bStatus] || bStatus;
+          const aText = t(aStatus) || aStatus;
+          const bText = t(bStatus) || bStatus;
           return order === 'asc' ? aText.localeCompare(bText) : bText.localeCompare(aText);
         }
       }

@@ -1,43 +1,14 @@
-// Кнопка для тестовой генерации ошибки (для отладки)
-document.addEventListener('DOMContentLoaded', () => {
-  const btn = document.createElement('button');
-  btn.textContent = 'Создать тестовую ошибку';
-  btn.style.position = 'fixed';
-  btn.style.bottom = '20px';
-  btn.style.right = '20px';
-  btn.style.zIndex = 10000;
-  btn.style.background = '#a0a0ff';
-  btn.style.color = '#222';
-  btn.style.padding = '10px 20px';
-  btn.style.borderRadius = '8px';
-  btn.style.border = 'none';
-  btn.style.cursor = 'pointer';
-  btn.onclick = async () => {
-    const { ErrorApi } = await import('./api.js');
-    const api = new ErrorApi();
-    await api.createError({
-      type: 'TestError',
-      message: 'Тестовая ошибка для проверки дат',
-      firstSeen: new Date().toISOString(),
-      lastSeen: new Date().toISOString()
-    });
-    alert('Тестовая ошибка создана! Обновите таблицу.');
-  };
-  document.body.appendChild(btn);
-});
-
 import '../assets/scss/style.scss';
-import './header.js';
-import { translations } from './utils/i18n';
-import { getCurrentLang } from './utils/lang';
 import { ErrorApi } from './api';
-import { ErrorTable } from './table';
+import './header.js';
 import { StatsManager } from './stats';
 import ChartManager from './charts.js';
-// import { Aside } from './aside';
+import { ErrorTable } from './table';
+import { t, getCurrentLang, onLangChange } from './utils/i18n.js';
+import { showCenterSpinner, hideCenterSpinner } from './utils/loading.js';
 
 // Инициализация таблицы ошибок и статистики
-// const errorTable = new ErrorTable();
+window.errorTableInstance = new ErrorTable();
 // Асинхронная инициализация statsManager после загрузки ошибок
 async function initStatsManager() {
   let errors = [];
@@ -55,8 +26,7 @@ initStatsManager();
 class ErrorLoggerApp {
   constructor(mode = 'server') {
     this.errorApi = new ErrorApi(mode);
-    this.lang = getCurrentLang();
-    this.translations = translations;
+    // Язык и переводы теперь централизованы через i18n.js
     this.init();
   }
 
@@ -65,7 +35,10 @@ class ErrorLoggerApp {
     document.addEventListener('DOMContentLoaded', () => {
       import('./aside').then(({ Aside }) => { // Динамический импорт (lazy loading) для отложенной загрузки aside
         window.aside = new Aside(this);
-        window.aside.translatePage(this.lang);
+        if (window.aside && typeof window.aside.translatePage === 'function') {
+          window.aside.translatePage(getCurrentLang());
+          onLangChange(() => window.aside.translatePage(getCurrentLang()));
+        }
       });
       this.setupErrorListeners();
       // Инициализация ChartManager только один раз глобально
@@ -231,3 +204,34 @@ class ErrorLoggerApp {
 const app = new ErrorLoggerApp('server');
 window.app = app;
 app.flushLocalErrors();
+
+// Кнопка для тестовой генерации ошибки (для отладки)
+function createTestErrorButton() {
+  const btn = document.createElement('button');
+  const setBtnText = () => { btn.textContent = t('createTestErrorBtn') || 'Создать тестовую ошибку'; };
+  setBtnText();
+  btn.style.position = 'fixed';
+  btn.style.bottom = '20px';
+  btn.style.right = '20px';
+  btn.style.zIndex = 10000;
+  btn.style.background = '#a0a0ff';
+  btn.style.color = '#222';
+  btn.style.padding = '10px 20px';
+  btn.style.borderRadius = '8px';
+  btn.style.border = 'none';
+  btn.style.cursor = 'pointer';
+  btn.onclick = async () => {
+    const { ErrorApi } = await import('./api.js');
+    const api = new ErrorApi();
+    await api.createError({
+      type: 'TestError',
+      message: t('testErrorMsg') || 'Тестовая ошибка для проверки дат',
+      firstSeen: new Date().toISOString(),
+      lastSeen: new Date().toISOString()
+    });
+    alert(t('testErrorCreated') || 'Тестовая ошибка создана! Обновите таблицу.');
+  };
+  document.body.appendChild(btn);
+  onLangChange(setBtnText);
+}
+document.addEventListener('DOMContentLoaded', createTestErrorButton);

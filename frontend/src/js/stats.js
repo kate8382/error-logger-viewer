@@ -1,15 +1,15 @@
 import { el, setChildren } from 'redom';
-import { translations } from './utils/i18n';
-import { getCurrentLang } from './utils/lang';
+import { t, getLabel, onLangChange } from './utils/i18n.js';
 import { typeColors, statusColors } from './utils/colors';
-import { getLabel } from './utils/label';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 
 export class StatsManager {
   constructor(errors = []) {
     this.errors = errors;
-    this.translations = translations;
-    this.lang = getCurrentLang();
+    // Подписка на смену языка для автоматического обновления статистики
+    onLangChange(() => {
+      this.renderErrorCards();
+    });
   }
 
   // Общее количество ошибок
@@ -119,10 +119,10 @@ export class StatsManager {
   }
 
   // Универсальный рендер карточек для типов/статусов
-  renderStatCards(listElem, stats, getValue, valueClass, colors) {
+  renderStatCards(listElem, stats, getValue, valueClass, colors, isStatus = false) {
     listElem.innerHTML = '';
     stats.forEach(([item, value], idx) => {
-      const itemLabel = getLabel(item, this.lang, this.translations);
+      const itemLabel = isStatus ? t(item) : getLabel(item);
       const color = colors[idx % colors.length];
       const li = el('li', { className: 'stat__card flex' });
       const colorBox = el('span', { className: 'stat__color-box', style: `background:${color}` });
@@ -228,12 +228,15 @@ export class StatsManager {
 
     const percentStats = getPercents.call(this);
     const statsArr = getStats.call(this);
+    // Определяем, что это секция статусов, если listId содержит 'Status'
+    const isStatus = listId && listId.toLowerCase().includes('status');
     this.renderStatCards(
       listElem,
       statsArr,
       (idx) => `${percentStats[idx]} %`,
       'stat__value',
-      colors
+      colors,
+      isStatus
     );
     if (typeof doughnutMethod === 'function') {
       doughnutMethod('percent');
@@ -244,13 +247,14 @@ export class StatsManager {
     const btnCount = document.getElementById(btnCountId);
     if (btnPercent) {
       btnPercent.onclick = () => {
-        btnPercent.setAttribute('aria-label', this.translations[this.lang].ariaStatsBtnPercent || 'Show percentage');
+        btnPercent.setAttribute('aria-label', t('ariaStatsBtnPercent'));
         this.renderStatCards(
           listElem,
           statsArr,
           (idx) => `${percentStats[idx]} %`,
           'stat__value',
-          colors
+          colors,
+          isStatus
         );
         if (typeof doughnutMethod === 'function') {
           doughnutMethod('percent');
@@ -259,13 +263,14 @@ export class StatsManager {
     }
     if (btnCount) {
       btnCount.onclick = () => {
-        btnCount.setAttribute('aria-label', this.translations[this.lang].ariaStatsBtnCount || 'Show count');
+        btnCount.setAttribute('aria-label', t('ariaStatsBtnCount'));
         this.renderStatCards(
           listElem,
           statsArr,
           (idx) => statsArr[idx][1],
           'stat__value',
-          colors
+          colors,
+          isStatus
         );
         if (typeof doughnutMethod === 'function') {
           doughnutMethod('count');
@@ -274,8 +279,3 @@ export class StatsManager {
     }
   }
 }
-
-
-
-
-
