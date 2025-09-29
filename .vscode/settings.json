@@ -1,0 +1,30 @@
+{
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "eslint.workingDirectories": ["frontend", "backend"],
+  "eslint.validate": ["javascript"],
+  "files.associations": {
+    "*.js": "javascript"
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/coverage": true
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true
+  },
+  "typescript.preferences.includePackageJsonAutoImports": "off",
+  "javascript.suggest.autoImports": false,
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "package.json": "package-lock.json,npm-shrinkwrap.json,yarn.lock",
+    "*.js": "*.js.map",
+    "*.scss": "*.css",
+    "webpack.config.js": "webpack.*.js"
+  }
+}
