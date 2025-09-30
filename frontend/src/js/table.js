@@ -5,14 +5,21 @@ import { t, getLabel, getCurrentLang, onLangChange } from './utils/i18n.js';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 
 export class ErrorTable {
-  constructor() {
+
+  constructor(mode = 'server') {
     this.errors = [];
-    this.errorApi = new ErrorApi();
+    this.errorApi = new ErrorApi(mode);
     this.lang = getCurrentLang();
     onLangChange((lang) => {
       this.lang = lang;
       this.renderErrors(this.errors);
     });
+  }
+
+  setMode(mode) {
+    if (this.errorApi && typeof this.errorApi.setMode === 'function') {
+      this.errorApi.setMode(mode);
+    }
   }
 
   async fetchErrors() {
@@ -111,7 +118,8 @@ export class ErrorTable {
       // await new Promise(resolve => setTimeout(resolve, 5000));
 
       import('./modal').then(({ Modal }) => {
-        if (!window.appModal) window.appModal = new Modal();
+        const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
+        window.appModal = new Modal(mode);
         window.appModal.openEdit(error);
         hideLoading(btn);
       }).catch(error => {
@@ -129,7 +137,8 @@ export class ErrorTable {
       showLoading(btn, 'delete');
 
       import('./modal').then(({ Modal }) => {
-        if (!window.appModal) window.appModal = new Modal(); // Создаем модальное окно, если его еще нет
+        const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
+        window.appModal = new Modal(mode);
         window.appModal.deleteError(error.id);
         // После завершения действия скрываем спиннер
         hideLoading(btn);
@@ -308,6 +317,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-
-
-

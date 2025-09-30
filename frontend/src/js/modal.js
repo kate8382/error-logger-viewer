@@ -3,11 +3,12 @@ import { ErrorApi } from './api.js';
 import { t, getLabel, onLangChange } from './utils/i18n.js';
 
 export class Modal {
-  constructor() {
-    if (Modal._instance) { // Если экземпляр уже существует, возвращаем его
+  constructor(mode = 'server') {
+    if (Modal._instance && Modal._instance.mode === mode) {
       return Modal._instance;
     }
-    this.errorApi = new ErrorApi();
+    this.mode = mode;
+    this.errorApi = new ErrorApi(mode);
     // Подписка на смену языка для обновления модального окна, если оно открыто
     onLangChange(() => {
       if (this.modal && this.modal.classList.contains('modal--open')) {
@@ -171,7 +172,8 @@ export class Modal {
     });
 
     // Остальные поля (только для просмотра)
-    const exclude = ['type', 'id', 'message', 'status', 'comment', 'firstSeen', 'lastSeen', 'count', 'users'];
+    // Исключаем устаревшие и служебные поля
+    const exclude = ['type', 'id', 'message', 'status', 'comment', 'firstSeen', 'lastSeen', 'count', 'users', 'createdAt', 'updatedAt', 'modalField_createdAt'];
     const otherRows = Object.entries(error)
       .filter(([key, value]) => !exclude.includes(key) && typeof value !== 'object' && value !== '' && value !== null && value !== undefined)
       .map(([key, value]) => {
@@ -235,8 +237,15 @@ export class Modal {
       const newStatus = currentStatus.value;
       const newComment = commentArea.value;
       const updated = { ...error, status: newStatus, comment: newComment };
-      // Удаляем lastSeen, чтобы сервер выставил новое значение
-      if ('lastSeen' in updated) delete updated.lastSeen;
+      // Для demo-режима обновляем lastSeen и updatedAt вручную
+      if (this.mode === 'demo') {
+        const now = new Date().toISOString();
+        updated.lastSeen = now;
+        updated.updatedAt = now;
+      } else {
+        // Для server-режима удаляем lastSeen, чтобы сервер выставил новое значение
+        if ('lastSeen' in updated) delete updated.lastSeen;
+      }
       const { showLoading, hideLoading } = await import('./utils/loading');
       showLoading(saveBtn, 'save');
 

@@ -1,6 +1,11 @@
 // Централизованный модуль i18n для управления языком и переводами
 export const translations = {
   en: {
+
+
+    // Main
+    createTestErrorBtn: 'Create test error',
+    // Header
     loading: 'Loading...',
     title: 'Error Logger & Viewer',
     placeholder: 'Search by application...',
@@ -79,6 +84,7 @@ export const translations = {
     ariaStatsBtnCount: 'Show count',
     // Charts
     chartTitle: 'Error Chart',
+    noChartData: 'No data for chart',
     statsPeriodWeek: 'Week',
     ariaChartWeek: 'Week',
     statsPeriodMonth: 'Month',
@@ -138,6 +144,9 @@ export const translations = {
     modalDeleteBtn: 'Delete',
   },
   ru: {
+    // Main
+    createTestErrorBtn: 'Создать тестовую ошибку',
+    // Header
     loading: 'Загрузка...',
     title: 'Error Logger & Viewer',
     placeholder: 'Поиск по приложению...',
@@ -216,6 +225,7 @@ export const translations = {
     ariaStatsBtnCount: 'Показать в числах',
     // Графики
     chartTitle: 'График ошибок',
+    noChartData: 'Нет данных для графика',
     statsPeriodWeek: 'Неделя',
     ariaChartWeek: 'Неделя',
     statsPeriodMonth: 'Месяц',

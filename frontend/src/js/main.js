@@ -8,7 +8,7 @@ import { t, getCurrentLang, onLangChange } from './utils/i18n.js';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading.js';
 
 // Инициализация таблицы ошибок и статистики
-window.errorTableInstance = new ErrorTable();
+window.errorTableInstance = new ErrorTable('server');
 // Асинхронная инициализация statsManager после загрузки ошибок
 async function initStatsManager() {
   let errors = [];
@@ -205,9 +205,12 @@ const app = new ErrorLoggerApp('server');
 window.app = app;
 app.flushLocalErrors();
 
-// Кнопка для тестовой генерации ошибки (для отладки)
-function createTestErrorButton() {
+// Кнопка для тестовой генерации ошибки (только для demo-режима)
+let testErrorBtn = null;
+function showTestErrorButton() {
+  if (testErrorBtn) return;
   const btn = document.createElement('button');
+  testErrorBtn = btn;
   const setBtnText = () => { btn.textContent = t('createTestErrorBtn') || 'Создать тестовую ошибку'; };
   setBtnText();
   btn.style.position = 'fixed';
@@ -222,16 +225,39 @@ function createTestErrorButton() {
   btn.style.cursor = 'pointer';
   btn.onclick = async () => {
     const { ErrorApi } = await import('./api.js');
-    const api = new ErrorApi();
+    const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
+    const api = new ErrorApi(mode);
     await api.createError({
       type: 'TestError',
       message: t('testErrorMsg') || 'Тестовая ошибка для проверки дат',
       firstSeen: new Date().toISOString(),
       lastSeen: new Date().toISOString()
     });
+    if (window.app && typeof window.app.updateErrorTable === 'function') {
+      window.app.updateErrorTable();
+    }
     alert(t('testErrorCreated') || 'Тестовая ошибка создана! Обновите таблицу.');
   };
   document.body.appendChild(btn);
   onLangChange(setBtnText);
 }
-document.addEventListener('DOMContentLoaded', createTestErrorButton);
+function hideTestErrorButton() {
+  if (testErrorBtn && testErrorBtn.parentNode) {
+    testErrorBtn.parentNode.removeChild(testErrorBtn);
+    testErrorBtn = null;
+  }
+}
+
+function updateTestErrorButtonVisibility() {
+  const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
+  if (mode === 'demo') {
+    showTestErrorButton();
+  } else {
+    hideTestErrorButton();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', updateTestErrorButtonVisibility);
+
+// Следим за сменой режима (через aside)
+window.addEventListener('modeChanged', updateTestErrorButtonVisibility);

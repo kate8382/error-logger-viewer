@@ -104,7 +104,12 @@ export class Aside {
         const mode = option.dataset.value;
         if (window.app && window.app.errorApi && window.app.updateErrorTable) {
           window.app.errorApi.setMode(mode);
+          if (window.errorTableInstance && typeof window.errorTableInstance.setMode === 'function') {
+            window.errorTableInstance.setMode(mode);
+          }
           window.app.updateErrorTable();
+          // Триггерим кастомное событие для обновления UI (например, кнопки тестовой ошибки)
+          window.dispatchEvent(new CustomEvent('modeChanged'));
         }
       });
     });
@@ -149,8 +154,6 @@ export class Aside {
       });
     });
   }
-
-
 
   setTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
@@ -244,4 +247,3 @@ export class Aside {
     });
   }
 }
-

@@ -295,6 +295,47 @@
         "unknown"
       ],
       "lastSeen": "2025-09-29T17:58:07.165Z"
+    },
+    {
+      "id": "0131d6c5-13d8-43ed-a420-852cf25bc911",
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: Failed to fetch",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:203:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:14:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:15:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:21:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:22:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:22:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:22:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:218:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "status": "fixed",
+      "comment": "",
+      "count": 37,
+      "firstSeen": "2025-09-30T15:15:56.978Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2025-09-30T16:22:28.346Z"
+    },
+    {
+      "id": "402df774-8268-4cf3-a9fb-216e03e1a367",
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:203:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:14:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:15:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:21:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:22:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:22:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:22:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:218:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "status": "fixed",
+      "comment": "",
+      "count": 42,
+      "firstSeen": "2025-09-30T15:15:57.391Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2025-09-30T16:22:36.096Z"
+    },
+    {
+      "id": "8e6e3e9d-f9a6-468c-af3d-24a230167c8a",
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "status": "in_progress",
+      "comment": "",
+      "count": 10,
+      "firstSeen": "2025-09-30T15:30:49.199Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2025-09-30T17:19:41.505Z"
     }
   ]
 }
