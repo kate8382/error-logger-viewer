@@ -1,8 +1,6 @@
 // Централизованный модуль i18n для управления языком и переводами
 export const translations = {
   en: {
-
-
     // Main
     createTestErrorBtn: 'Create test error',
     // Header
@@ -14,7 +12,8 @@ export const translations = {
     placeholderTable: 'Search in table...',
     ariaInputTable: 'Search in table',
     // Sidebar
-    sidebarLogo: 'Logo',
+    logoFigmaAria: 'Open original logo design in Figma',
+    logoFigmaTitle: 'Open original logo design in Figma',
     ariaSidebar: 'Sidebar navigation',
     // About
     navAbout: 'About',
@@ -64,15 +63,25 @@ export const translations = {
     navCharts: 'Error Charts',
     navErrors: 'Error Table',
     sidebarDropdown: 'Settings',
-    sidebarDropdownTheme: 'Theme',
-    sidebarDropdownLight: 'Light',
-    sidebarDropdownDark: 'Dark',
-    sidebarDropdownLanguage: 'Language',
-    sidebarDropdownEn: 'English',
-    sidebarDropdownRu: 'Russian',
+    sidebarDropdownAria: 'Open settings',
     sidebarDropdownMode: 'Mode',
+    sidebarDropdownModeAria: 'Open mode list',
     sidebarDropdownServer: 'Server',
+    sidebarDropdownServerAria: 'Select server mode',
     sidebarDropdownDemo: 'Demo',
+    sidebarDropdownDemoAria: 'Select demo mode',
+    sidebarDropdownTheme: 'Theme',
+    sidebarDropdownThemeAria: 'Open theme list',
+    sidebarDropdownLight: 'Light',
+    sidebarDropdownLightAria: 'Enable light theme',
+    sidebarDropdownDark: 'Dark',
+    sidebarDropdownDarkAria: 'Enable dark theme',
+    sidebarDropdownLanguage: 'Language',
+    sidebarDropdownLanguageAria: 'Open language list',
+    sidebarDropdownEn: 'English',
+    sidebarDropdownEnAria: 'Select English',
+    sidebarDropdownRu: 'Russian',
+    sidebarDropdownRuAria: 'Select Russian',
     sidebarDropdownArrow: 'Open',
     // Statistics
     statsTitle: 'Error Statistics',
@@ -155,7 +164,8 @@ export const translations = {
     placeholderTable: 'Поиск в таблице...',
     ariaInputTable: 'Поиск в таблице',
     // Sidebar
-    sidebarLogo: 'Логотип',
+    logoFigmaAria: 'Открыть оригинальный макет логотипа в Figma',
+    logoFigmaTitle: 'Открыть оригинальный макет логотипа в Figma',
     ariaSidebar: 'Навигация по сайдбару',
     // About
     navAbout: 'О программе',
@@ -205,15 +215,25 @@ export const translations = {
     navCharts: 'Графики ошибок',
     navErrors: 'Таблица ошибок',
     sidebarDropdown: 'Настройки',
-    sidebarDropdownTheme: 'Тема',
-    sidebarDropdownLight: 'Светлая',
-    sidebarDropdownDark: 'Тёмная',
-    sidebarDropdownLanguage: 'Язык',
-    sidebarDropdownEn: 'Английский',
-    sidebarDropdownRu: 'Русский',
+    sidebarDropdownAria: 'Открыть настройки',
     sidebarDropdownMode: 'Режим',
+    sidebarDropdownModeAria: 'Открыть список режимов',
     sidebarDropdownServer: 'Сервер',
+    sidebarDropdownServerAria: 'Выбрать режим сервер',
     sidebarDropdownDemo: 'Демо-режим',
+    sidebarDropdownDemoAria: 'Выбрать демо-режим',
+    sidebarDropdownTheme: 'Тема',
+    sidebarDropdownThemeAria: 'Открыть список тем',
+    sidebarDropdownLight: 'Светлая',
+    sidebarDropdownLightAria: 'Включить светлую тему',
+    sidebarDropdownDark: 'Тёмная',
+    sidebarDropdownDarkAria: 'Включить тёмную тему',
+    sidebarDropdownLanguage: 'Язык',
+    sidebarDropdownLanguageAria: 'Открыть список языков',
+    sidebarDropdownEn: 'Английский',
+    sidebarDropdownEnAria: 'Выбрать английский',
+    sidebarDropdownRu: 'Русский',
+    sidebarDropdownRuAria: 'Выбрать русский',
     sidebarDropdownArrow: 'Открыть',
     // Статистика
     statsTitle: 'Статистика ошибок',

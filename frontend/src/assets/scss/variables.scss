@@ -1,3 +1,4 @@
+// Светлая тема (по умолчанию)
 :root {
   // Container
   --container-width: 1440px;
@@ -9,15 +10,8 @@
   --tablet: 768px;
   --desktop: 1024px;
 
-  // Fonts
-  --h1-font: 36px;
-  --h2-font: 28px;
-  --h3-font: 24px;
-  --h4-font: 20px;
-  --body-font: 16px;
-  --small-font: 14px;
-
-  // Colors
+  // Theme
+  color-scheme: light dark;
   --body-color: #dbdcde;
   --white-color: #FFFFFF;
   --black-color: #3A3541;
@@ -45,7 +39,46 @@
   --total-color: #f93131;
   --total-bg: #FFDFDF;
 
+  // Fonts
+  --h1-font: 36px;
+  --h2-font: 28px;
+  --h3-font: 24px;
+  --h4-font: 20px;
+  --body-font: 16px;
+  --small-font: 14px;
+
   // Radius
   --button-radius: 4px;
   --card-radius: 8px;
+}
+
+// Тёмная тема
+[data-theme="dark"] {
+  color-scheme: dark;
+  --body-color: #89868d;
+  --white-color: #3A3541;
+  --black-color: #FFFFFF;
+  --grey-color: #dbdcde;
+  --stats-btn-color: #89868d;
+  --stats-text-color: #b4b2b7;
+  --focus-color: #9255FD;
+  --hover-color: #DECCFE;
+  --active-color: #6E39CB;
+  --type-color: #2dccff;
+  --type-bg: #E0F8FF;
+  --type2-color: #EBF4FF;
+  --type3-color: #1877F2;
+  --type4-color: #4285F4;
+  --type5-color: #31e2f9;
+  --type6-color: #5AC8FA;
+  --type7-color: #A7C7E7;
+  --type8-color: #007AFF;
+  --type9-color: #B3E5FC;
+  --status-color: #04CE00;
+  --status2-color: #D7FFC3;
+  --status3-color: #2AC670;
+  --status4-color: #34A853;
+  --status5-color: #13e75dad;
+  --total-color: #f93131;
+  --total-bg: #FFDFDF;
 }

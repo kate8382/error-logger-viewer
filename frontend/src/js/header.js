@@ -49,12 +49,18 @@ export class HeaderManager {
   setHeaderTitleBySection(sectionKey = null) {
     // Если sectionKey не передан или все секции видимы — основной заголовок
     if (!sectionKey) {
-      this.headerTitle.textContent = t('title') || 'Error Logger & Viewer';
+      const titleSpan = this.headerTitle.querySelector('[data-i18n="title"]');
+      if (titleSpan) {
+        titleSpan.textContent = t('title') || 'Error Logger & Viewer';
+      }
       return;
     }
     const section = this.sections[sectionKey];
     if (!section) {
-      this.headerTitle.textContent = t('title') || 'Error Logger & Viewer';
+      const titleSpan = this.headerTitle.querySelector('[data-i18n="title"]');
+      if (titleSpan) {
+        titleSpan.textContent = t('title') || 'Error Logger & Viewer';
+      }
       return;
     }
     let titleEl = null;
@@ -383,17 +389,19 @@ export class HeaderManager {
   async filterTable(query) {
     // Получаем все ошибки
     const errors = await this.api.getErrors({});
-    const lang = this.lang || getCurrentLang();
     const filtered = errors.filter(error => {
       // Локализованные значения типа и статуса через t/getLabel
       const typeText = getLabel(error.type);
       const statusText = t(error.status || 'new');
 
-      // Только дата (без времени)
+      // Только дата (без времени), всегда в формате DD.MM.YYYY
       const getDateOnly = str => {
         if (!str) return '';
         const date = new Date(str);
-        return date.toLocaleDateString(lang, { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}.${month}.${year}`;
       };
       const firstSeenDate = getDateOnly(error.firstSeen);
       const lastSeenDate = getDateOnly(error.lastSeen);

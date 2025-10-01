@@ -27,7 +27,11 @@
 <body>
   <div class="container">
     <aside class="sidebar flex">
-      <img class="sidebar__logo" src="img/logo.svg" aria-label="Logo" alt="Logo">
+      <a href="https://www.figma.com/community/file/1244293267600418871" target="_blank" rel="noopener noreferrer"
+        data-i18n-aria-label="logoFigmaAria" aria-label="Open original logo design in Figma"
+        data-i18n-title="logoFigmaTitle" title="Open original logo design in Figma">
+        <img class="sidebar__logo" src="img/logo.svg" alt="Logo">
+      </a>
 
       <ul class="sidebar__list flex" aria-label="Sidebar navigation">
         <li class="sidebar__item">
@@ -45,11 +49,11 @@
         <li class="sidebar__item">
           <a class="sidebar__item-link flex" href="#errorStats">
             <svg class="sidebar__item-icon" width="18" height="18" viewBox="0 0 32 32" fill="none">
-              <polyline points="4,28 10,18 18,22 28,8" stroke="black" stroke-width="4" fill="none" />
-              <circle cx="4" cy="28" r="3" fill="currentColor" />
-              <circle cx="10" cy="18" r="3" fill="currentColor" />
-              <circle cx="18" cy="22" r="3" fill="currentColor" />
-              <circle cx="28" cy="8" r="3" fill="currentColor" />
+              <polyline points="4,28 10,18 18,22 28,8" stroke="currentColor" stroke-width="4" fill="none"></polyline>
+              <circle cx="4" cy="28" r="3" fill="currentColor"></circle>
+              <circle cx="10" cy="18" r="3" fill="currentColor"></circle>
+              <circle cx="18" cy="22" r="3" fill="currentColor"></circle>
+              <circle cx="28" cy="8" r="3" fill="currentColor"></circle>
             </svg>
             <span class="sidebar__item-text" data-i18n="navStats">Error Statistics</span>
           </a>
@@ -89,7 +93,8 @@
 
         <li class="sidebar__item">
           <div class="sidebar__dropdown" id="sidebarDropdown">
-            <button class="sidebar__dropdown-btn flex">
+            <button class="sidebar__dropdown-btn flex" data-i18n-aria-label="sidebarDropdownAria"
+              aria-label="Open settings">
               <svg class="sidebar__item-icon" width="18" height="18" viewBox="0 0 18 18" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_1303_3752)">
@@ -113,7 +118,8 @@
 
             <div class="sidebar__dropdown-list" id="sidebarDropdownList">
               <div class="sidebar__dropdown-group">
-                <button class="sidebar__dropdown-group-btn flex" data-group="mode">
+                <button class="sidebar__dropdown-group-btn flex" data-group="mode"
+                  data-i18n-aria-label="sidebarDropdownModeAria" aria-label="Open mode list">
                   <span class="sidebar__dropdown-group-text" data-i18n="sidebarDropdownMode">Mode</span>
                   <svg class="sidebar__dropdown-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
@@ -123,14 +129,17 @@
                 </button>
                 <div class="sidebar__dropdown-sublist" data-group="mode">
                   <button class="sidebar__dropdown-option" data-i18n="sidebarDropdownServer"
-                    data-value="server"><S>Server</S></button>
+                    data-i18n-aria-label="sidebarDropdownServerAria" data-value="server"
+                    aria-label="Select server mode"><S>Server</S></button>
                   <button class="sidebar__dropdown-option" data-i18n="sidebarDropdownDemo"
-                    data-value="demo"><S>Demo</S></button>
+                    data-i18n-aria-label="sidebarDropdownDemoAria" data-value="demo"
+                    aria-label="Select demo mode"><S>Demo</S></button>
                 </div>
               </div>
 
               <div class="sidebar__dropdown-group">
-                <button class="sidebar__dropdown-group-btn flex" data-group="theme">
+                <button class="sidebar__dropdown-group-btn flex" data-group="theme"
+                  data-i18n-aria-label="sidebarDropdownThemeAria" aria-label="Open theme list">
                   <span class="sidebar__dropdown-group-text" data-i18n="sidebarDropdownTheme">Theme</span>
                   <svg class="sidebar__dropdown-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
@@ -140,14 +149,17 @@
                 </button>
                 <div class="sidebar__dropdown-sublist" data-group="theme">
                   <button class="sidebar__dropdown-option" data-i18n="sidebarDropdownLight"
-                    data-value="light">Light</button>
+                    data-i18n-aria-label="sidebarDropdownLightAria" data-value="light"
+                    aria-label="Enable light theme">Light</button>
                   <button class="sidebar__dropdown-option" data-i18n="sidebarDropdownDark"
-                    data-value="dark">Dark</button>
+                    data-i18n-aria-label="sidebarDropdownDarkAria" data-value="dark"
+                    aria-label="Enable dark theme">Dark</button>
                 </div>
               </div>
 
               <div class="sidebar__dropdown-group">
-                <button class="sidebar__dropdown-group-btn flex" data-group="language">
+                <button class="sidebar__dropdown-group-btn flex" data-group="language"
+                  data-i18n-aria-label="sidebarDropdownLanguageAria" aria-label="Open language list">
                   <span class="sidebar__dropdown-group-text" data-i18n="sidebarDropdownLanguage">Language</span>
                   <svg class="sidebar__dropdown-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
@@ -157,9 +169,11 @@
                 </button>
                 <div class="sidebar__dropdown-sublist" data-group="language">
                   <button class="sidebar__dropdown-option" data-i18n="sidebarDropdownEn"
-                    data-value="en">English</button>
+                    data-i18n-aria-label="sidebarDropdownEnAria" data-value="en"
+                    aria-label="Select English">English</button>
                   <button class="sidebar__dropdown-option" data-i18n="sidebarDropdownRu"
-                    data-value="ru">Русский</button>
+                    data-i18n-aria-label="sidebarDropdownRuAria" data-value="ru"
+                    aria-label="Select Russian">Русский</button>
                 </div>
               </div>
             </div>
@@ -169,12 +183,16 @@
     </aside>
 
     <header class="header flex">
-      <h1 class="header__title" data-i18n="title">Error Logger &amp;&nbsp;Viewer</h1>
+      <h1 class="header__title">
+        <a href="https://github.com/kate8382/error-logger-viewer" target="_blank" rel="noopener noreferrer">
+          <span data-i18n="title">Error Logger &amp;&nbsp;Viewer</span>
+        </a>
+      </h1>
       <div class="header__search flex">
         <input class="header__search-input" id="searchInput" data-i18n-placeholder="placeholder" type="text"
           placeholder="Search by application...">
         <button class="header__search-btn" id="searchBtn" aria-label="Button search">
-          <div id="searchOrExitIcon">
+          <span id="searchOrExitIcon">
             <svg class="header__search-icon" id="searchIcon" width="18" height="18" viewBox="0 0 18 18" fill="none"
               xmlns="http://www.w3.org/2000/svg">
               <g clip-path="url(#clip0_1382_5721)">
@@ -194,14 +212,15 @@
                 <path
                   d="M11.2945 5.29448C11.7339 4.85503 11.7339 4.14136 11.2945 3.7019C10.855 3.26245 10.1413 3.26245 9.70189 3.7019L5.99994 7.40737L2.29447 3.70542C1.85501 3.26597 1.14134 3.26597 0.701889 3.70542C0.262436 4.14487 0.262436 4.85854 0.701889 5.298L4.40736 8.99995L0.705405 12.7054C0.265952 13.1449 0.265952 13.8585 0.705405 14.298C1.14486 14.7375 1.85853 14.7375 2.29798 14.298L5.99994 10.5925L9.70541 14.2945C10.1449 14.7339 10.8585 14.7339 11.298 14.2945C11.7374 13.855 11.7374 13.1414 11.298 12.7019L7.59251 8.99995L11.2945 5.29448Z"
                   fill="currentColor">
+                </path>
               </g>
               <defs>
                 <clipPath id="clip0_1456_12087">
-                  <rect width="11.25" height="18" fill="white" transform="translate(0.374939)" />
+                  <rect width="11.25" height="18" fill="white" transform="translate(0.374939)"></rect>
                 </clipPath>
               </defs>
             </svg>
-          </div>
+          </span>
         </button>
       </div>
       <div class="header__lang-switch flex">
@@ -211,7 +230,9 @@
     </header>
 
     <main class="main flex">
-      <section class="about-section flex" id="aboutSection" style="display:none"></section>
+      <section class="about-section flex" id="aboutSection" style="display:none">
+        <h2 class="about-section__title" data-i18n="aboutTitle">About</h2>
+      </section>
 
       <section class="stats flex" id="errorStats">
         <h2 class="stats__title" data-i18n="statsTitle">Error Statistics</h2>
@@ -254,8 +275,8 @@
                   d="M2 70L13.4458 59.9932L17.7954 41.7993L23.9761 49.077L43.4339 32.2475L50.0724 2L60.6025 43.6187L76.1687 2L80.747 51.1237L86.9277 30.4281L97 46.8027"
                   stroke="#2DCCFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
               </svg>
-              <h3 class="stats__header-title" data-i18n="statsTypeTitle"></h3>
-              <div class="stats__header-btns flex" role="group" aria-label="Statistics view toggle">
+              <h3 class="stats__header-title" data-i18n="statsTypeTitle">Error Types</h3>
+              <div class="stats__header-btns flex" aria-label="Statistics view toggle" role="group">
                 <button class="stats__btn stats__btn--percent" id="btnStatsTypePercent">%</button>
                 <button class="stats__btn stats__btn--count" id="btnStatsTypeCount">#</button>
               </div>
@@ -274,8 +295,8 @@
                   d="M2 70L14.961 63.518L19.0971 53L25.026 57.8921L42.5369 2L52.4644 43.705L61.9782 24.8705L75.3527 53L81.971 44.4389L87.2104 47.741L97 28.4173"
                   stroke="#04CE00" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
               </svg>
-              <h3 class="stats__header-title" data-i18n="statsStatusTitle"></h3>
-              <div class="stats__header-btns flex" role="group" aria-label="Statistics view toggle">
+              <h3 class="stats__header-title" data-i18n="statsStatusTitle">Error Statuses</h3>
+              <div class="stats__header-btns flex" aria-label="Statistics view toggle" role="group">
                 <button class="stats__btn stats__btn--percent" id="btnStatsStatusPercent">%</button>
                 <button class="stats__btn stats__btn--count" id="btnStatsStatusCount">#</button>
               </div>
@@ -290,7 +311,7 @@
 
       <section class="chart flex" id="errorsChart">
         <div class="chart__header flex">
-          <h3 class="chart__title" data-i18n="chartTitle"></h3>
+          <h2 class="chart__title" data-i18n="chartTitle">Error chart</h2>
           <div class="chart__sort flex">
             <button class="chart__sort-btn" id="errorsChartSortWeek" data-i18n="statsPeriodWeek" data-period="week"
               aria-label="Week"></button>
@@ -378,6 +399,7 @@
       </section>
 
       <div class="modal" id="modal" aria-labelledby="modalTitle" aria-modal="true" role="dialog">
+        <h2 id="modalTitle" class="visually-hidden" data-i18n="modalTitle">Modal window</h2>
         <div class="modal__content flex" id="modalContent"></div>
       </div>
     </main>

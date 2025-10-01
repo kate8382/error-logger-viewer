@@ -5,6 +5,11 @@ export class Aside {
   constructor() {
     this.api = new ErrorApi();
     this.lang = getCurrentLang();
+    // Установить тему при инициализации (из localStorage или по умолчанию)
+    // По умолчанию всегда светлая тема, если не сохранено явно
+    let savedTheme = localStorage.getItem('theme');
+    if (savedTheme !== 'dark') savedTheme = 'light';
+    this.setTheme(savedTheme);
     this.initControls();
     this.initDropdowns();
     this.initHashHandler();
@@ -70,6 +75,32 @@ export class Aside {
   }
 
   initControls() {
+    // Смена режима работы (сервер/демо)
+    const modeOptions = document.querySelectorAll('.sidebar__dropdown-sublist[data-group="mode"] .sidebar__dropdown-option');
+    modeOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        const mode = option.dataset.value;
+        if (window.app && window.app.errorApi && window.app.updateErrorTable) {
+          window.app.errorApi.setMode(mode);
+          if (window.errorTableInstance && typeof window.errorTableInstance.setMode === 'function') {
+            window.errorTableInstance.setMode(mode);
+          }
+          window.app.updateErrorTable();
+          // Триггерим кастомное событие для обновления UI (например, кнопки тестовой ошибки)
+          window.dispatchEvent(new CustomEvent('modeChanged'));
+        }
+      });
+    });
+
+    // Смена темы
+    const themeOptions = document.querySelectorAll('.sidebar__dropdown-sublist[data-group="theme"] .sidebar__dropdown-option');
+    themeOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        const theme = option.dataset.value;
+        this.setTheme(theme);
+      });
+    });
+
     // Смена языка — обработчики только в header.js, здесь только реакция на смену
     onLangChange((lang) => {
       this.lang = lang;
@@ -85,32 +116,6 @@ export class Aside {
       btn.addEventListener('click', () => {
         const lang = btn.dataset.value;
         setLang(lang);
-      });
-    });
-
-    // Смена темы
-    const themeOptions = document.querySelectorAll('.sidebar__dropdown-sublist[data-group="theme"] .sidebar__dropdown-option');
-    themeOptions.forEach(option => {
-      option.addEventListener('click', () => {
-        const theme = option.dataset.value;
-        this.setTheme(theme);
-      });
-    });
-
-    // Смена режима работы (сервер/демо)
-    const modeOptions = document.querySelectorAll('.sidebar__dropdown-sublist[data-group="mode"] .sidebar__dropdown-option');
-    modeOptions.forEach(option => {
-      option.addEventListener('click', () => {
-        const mode = option.dataset.value;
-        if (window.app && window.app.errorApi && window.app.updateErrorTable) {
-          window.app.errorApi.setMode(mode);
-          if (window.errorTableInstance && typeof window.errorTableInstance.setMode === 'function') {
-            window.errorTableInstance.setMode(mode);
-          }
-          window.app.updateErrorTable();
-          // Триггерим кастомное событие для обновления UI (например, кнопки тестовой ошибки)
-          window.dispatchEvent(new CustomEvent('modeChanged'));
-        }
       });
     });
   }
@@ -156,8 +161,22 @@ export class Aside {
   }
 
   setTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('theme', 'light');
+    }
+    // Обновить активное состояние кнопок темы (если есть)
+    const themeOptions = document.querySelectorAll('.sidebar__dropdown-sublist[data-group="theme"] .sidebar__dropdown-option');
+    themeOptions.forEach(option => {
+      if (option.dataset.value === theme) {
+        option.classList.add('active');
+      } else {
+        option.classList.remove('active');
+      }
+    });
   }
 
   translatePage() {

@@ -336,6 +336,19 @@
         "unknown"
       ],
       "lastSeen": "2025-09-30T17:19:41.505Z"
+    },
+    {
+      "id": "13f82be3-56ab-4f57-889a-53fabfc0fae5",
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "status": "new",
+      "comment": "",
+      "count": 3,
+      "firstSeen": "2025-10-01T14:48:31.084Z",
+      "lastSeen": "2025-10-01T15:00:41.406Z",
+      "users": [
+        "unknown"
+      ]
     }
   ]
 }

@@ -5,7 +5,6 @@ import { t, getLabel, getCurrentLang, onLangChange } from './utils/i18n.js';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 
 export class ErrorTable {
-
   constructor(mode = 'server') {
     this.errors = [];
     this.errorApi = new ErrorApi(mode);

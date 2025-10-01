@@ -5,7 +5,6 @@ import { StatsManager } from './stats';
 import ChartManager from './charts.js';
 import { ErrorTable } from './table';
 import { t, getCurrentLang, onLangChange } from './utils/i18n.js';
-import { showCenterSpinner, hideCenterSpinner } from './utils/loading.js';
 
 // Инициализация таблицы ошибок и статистики
 window.errorTableInstance = new ErrorTable('server');
