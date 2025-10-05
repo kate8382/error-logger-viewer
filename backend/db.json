@@ -349,6 +349,88 @@
       "users": [
         "unknown"
       ]
+    },
+    {
+      "id": "4e6e47d6-ffea-40c5-a190-7b6f3933d11d",
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "status": "fixed",
+      "comment": "",
+      "count": 4,
+      "firstSeen": "2025-10-04T13:26:29.634Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2025-10-04T16:15:06.704Z"
+    },
+    {
+      "id": "6e5dea7e-5662-4752-a414-79f404b4e878",
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:201:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:13:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:14:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:20:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:21:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:61:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "status": "in_progress",
+      "comment": "",
+      "count": 3,
+      "firstSeen": "2025-10-04T14:42:30.408Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2025-10-04T16:15:07.701Z"
+    },
+    {
+      "id": "4b0ac327-6987-4f20-82b3-3bba01abd4a1",
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "status": "new",
+      "comment": "",
+      "count": 4,
+      "firstSeen": "2025-10-05T14:56:56.478Z",
+      "lastSeen": "2025-10-05T16:42:32.302Z",
+      "users": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "9e4903c9-5871-41b4-9fbf-1f1e86baa5fe",
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:201:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:13:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:14:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:20:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:21:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:61:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "status": "new",
+      "comment": "",
+      "count": 2,
+      "firstSeen": "2025-10-05T16:07:30.547Z",
+      "lastSeen": "2025-10-05T16:28:53.767Z",
+      "users": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "10e747a4-b5ea-4abf-8c53-99f7f49f8e83",
+      "type": "RangeError",
+      "message": "Uncaught RangeError: Maximum call stack size exceeded",
+      "stack": "RangeError: Maximum call stack size exceeded\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1918:25)\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1854:42)\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1918:25)\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1854:42)\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1918:25)\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1854:42)\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1918:25)\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1854:42)\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1918:25)\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1854:42)",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-10-05T16:09:43.157Z",
+      "lastSeen": "2025-10-05T16:09:43.157Z",
+      "users": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "32920c9a-4e2f-4a6c-abd7-188d1554044a",
+      "type": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": "RangeError: Maximum call stack size exceeded\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1918:25)\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1854:42)\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1918:25)\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1854:42)\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1918:25)\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1854:42)\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1918:25)\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1854:42)\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1918:25)\n    at Object.set (webpack://error-logger-viewer/./node_modules/chart.js/dist/chunks/helpers.dataset.js?:1854:42)",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-10-05T16:09:43.730Z",
+      "lastSeen": "2025-10-05T16:09:43.730Z",
+      "users": [
+        "unknown"
+      ]
     }
   ]
 }

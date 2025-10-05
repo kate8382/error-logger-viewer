@@ -1,3 +1,5 @@
+   @use 'variables' as *;
+
    .sidebar {
      grid-area: sidebar;
      flex-direction: column;
@@ -11,267 +13,280 @@
        width: 78px;
        height: 54px;
        margin-bottom: 50px;
+
+       @media (max-width: #{$desktop}) {
+         width: 58px;
+         height: 54px;
+         margin-bottom: 40px;
+       }
      }
-   }
 
-   // Миксины для общих стилей
-   @mixin item-link {
-     flex-direction: row;
-     align-items: center;
-     gap: var(--min-gap);
-     width: 100%;
-     min-height: 40px;
-     padding: 11px 8px 11px 5px;
-     color: currentColor;
-     border-radius: var(--card-radius);
-     transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
-
-     &:focus,
-     &:hover,
-     &:active {
-       color: var(--active-color);
-       background-color: var(--hover-color);
-     }
-   }
-
-   @mixin item-icon {
-     width: 18px;
-     height: 18px;
-     flex-shrink: 0;
-   }
-
-   @mixin item-text {
-     align-self: flex-end;
-     height: 18px;
-     font-weight: 700;
-   }
-
-   @mixin dropdown-arrow {
-     width: 14px;
-     height: 14px;
-     margin-left: auto;
-     transition: transform 0.2s;
-   }
-
-   .sidebar__list {
-     flex-direction: column;
-     gap: var(--max-gap);
-     width: 100%;
-
-     .sidebar__item {
+     // Миксины для общих стилей
+     @mixin item-link {
+       flex-direction: row;
+       align-items: center;
+       gap: var(--min-gap);
        width: 100%;
        min-height: 40px;
-       padding: 12px 26px;
+       padding: 11px 8px 11px 5px;
+       color: currentColor;
+       border-radius: var(--card-radius);
+       transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 
-       .sidebar__item-link {
-         @include item-link;
-
-         .sidebar__item-icon {
-           @include item-icon;
-         }
-
-         .sidebar__item-text {
-           @include item-text;
-         }
+       &:focus,
+       &:hover,
+       &:active {
+         color: var(--active-color);
+         background-color: var(--hover-color);
        }
      }
 
-     .sidebar__dropdown {
-       position: relative;
-       user-select: none;
-       z-index: 1;
+     @mixin item-icon {
+       width: 18px;
+       height: 18px;
+       flex-shrink: 0;
+     }
+
+     @mixin item-text {
+       align-self: flex-end;
+       height: 18px;
+       font-weight: 700;
+     }
+
+     @mixin dropdown-arrow {
+       width: 14px;
+       height: 14px;
+       margin-left: auto;
+       transition: transform 0.2s;
+     }
+
+     .sidebar__list {
+       flex-direction: column;
+       gap: var(--max-gap);
        width: 100%;
 
-       .sidebar__dropdown-btn {
-         @include item-link;
-         position: relative;
-         transition: background 0.2s;
-
-         .sidebar__item-icon {
-           @include item-icon;
-         }
-
-         .sidebar__item-text {
-           @include item-text;
-         }
-
-         .sidebar__dropdown-arrow {
-           @include dropdown-arrow;
-         }
-       }
-
-       .sidebar__dropdown-list {
-         position: absolute;
-         left: 0;
-         top: 100%;
-         display: none;
-         flex-direction: column;
-         gap: var(--body-font);
+       .sidebar__item {
          width: 100%;
-         padding: var(--small-font);
-         background: var(--white-color);
-         opacity: 0;
-         visibility: hidden;
-         transition: opacity 0.2s, visibility 0.2s;
-       }
+         min-height: 40px;
+         padding: 12px 26px;
 
-       &.open .sidebar__dropdown-list {
-         display: flex;
-         opacity: 1;
-         visibility: visible;
-       }
+         @media (max-width: #{$desktop}) {
+           padding: 10px 10px 10px 20px;
+         }
 
-       &.open>.sidebar__dropdown-btn .sidebar__dropdown-arrow {
-         transform: rotate(180deg);
-       }
-
-       .sidebar__dropdown-group {
-
-         .sidebar__dropdown-group-btn {
+         .sidebar__item-link {
            @include item-link;
-           @include item-text;
-           justify-content: space-evenly;
-           align-items: center;
-           width: 75%;
-           padding-left: 18px;
-           font-weight: 700;
-           text-align: left;
-           transition: background 0.2s;
+
+           .sidebar__item-icon {
+             @include item-icon;
+           }
+
+           .sidebar__item-text {
+             @include item-text;
+           }
+
+           @media (max-width: #{$desktop}) {
+             padding: 11px 5px;
+           }
+         }
+       }
+
+       .sidebar__dropdown {
+         position: relative;
+         user-select: none;
+         z-index: 1;
+         width: 100%;
+
+         .sidebar__dropdown-btn {
+           @include item-link;
+           position: relative;
+
+           .sidebar__item-icon {
+             @include item-icon;
+           }
+
+           .sidebar__item-text {
+             @include item-text;
+           }
+
+           .sidebar__dropdown-arrow {
+             @include dropdown-arrow;
+           }
          }
 
-         .sidebar__dropdown-arrow {
-           @include dropdown-arrow;
-         }
-
-         .sidebar__dropdown-sublist {
+         .sidebar__dropdown-list {
+           position: absolute;
+           left: 0;
+           top: 100%;
            display: none;
            flex-direction: column;
            gap: var(--body-font);
            width: 100%;
-           padding: var(--small-font) var(--h3-font);
+           padding: var(--small-font);
+           background: var(--white-color);
+           opacity: 0;
+           visibility: hidden;
+           transition: opacity 0.2s, visibility 0.2s;
+         }
 
-           .sidebar__dropdown-option {
+         &.open .sidebar__dropdown-list {
+           display: flex;
+           opacity: 1;
+           visibility: visible;
+         }
+
+         &.open>.sidebar__dropdown-btn .sidebar__dropdown-arrow {
+           transform: rotate(180deg);
+         }
+
+         .sidebar__dropdown-group {
+
+           .sidebar__dropdown-group-btn {
              @include item-link;
-             padding: 11px 8px;
-             text-align: left;
+             @include item-text;
+             justify-content: space-evenly;
+             align-items: center;
+             width: 75%;
+             padding-left: 18px;
              font-weight: 700;
+             text-align: left;
              transition: background 0.2s;
            }
-         }
 
-         &.open .sidebar__dropdown-sublist {
-           display: flex;
-         }
+           .sidebar__dropdown-arrow {
+             @include dropdown-arrow;
+           }
 
-         &.open>.sidebar__dropdown-group-btn .sidebar__dropdown-arrow {
-           transform: rotate(180deg);
+           .sidebar__dropdown-sublist {
+             display: none;
+             flex-direction: column;
+             gap: var(--body-font);
+             width: 100%;
+             padding: var(--small-font) var(--h3-font);
+
+             .sidebar__dropdown-option {
+               @include item-link;
+               padding: 11px 8px;
+               text-align: left;
+               font-weight: 700;
+               transition: background 0.2s;
+             }
+           }
+
+           &.open .sidebar__dropdown-sublist {
+             display: flex;
+           }
+
+           &.open>.sidebar__dropdown-group-btn .sidebar__dropdown-arrow {
+             transform: rotate(180deg);
+           }
+         }
+       }
+     }
+   }
+
+   // About
+   .about-section {
+     position: relative;
+     flex-direction: column;
+     align-items: flex-start;
+     width: 100%;
+     margin-top: auto;
+     padding: var(--max-gap);
+     font-size: var(--body-font);
+     line-height: 1.4;
+     border-radius: var(--card-radius);
+     background-color: var(--white-color);
+     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+     .about-btn-close {
+       position: absolute;
+       top: 15px;
+       right: 25px;
+       width: 30px;
+       height: 30px;
+       margin: 0;
+       color: var(--black-color);
+       transition: color 0.3s ease-in-out;
+
+       &:hover {
+         color: var(--grey-color);
+       }
+
+       &:active {
+         color: var(--black-color);
+       }
+     }
+
+     .about-title {
+       margin-bottom: var(--max-gap);
+       font-size: var(--h2-font);
+     }
+
+     .about-description {
+       margin-bottom: var(--min-gap);
+
+       &-highlight {
+         font-weight: 700;
+       }
+     }
+
+     .about-subtitle {
+       margin: 0;
+       margin-bottom: var(--min-gap);
+       font-size: var(--h3-font);
+     }
+
+     .about-features {
+       flex-direction: column;
+       gap: var(--min-gap);
+       margin-bottom: var(--max-gap);
+       padding-left: 20px;
+       list-style: disc;
+
+       .about-feature {
+         font-size: var(--body-font);
+
+         &-bold {
+           font-weight: 700;
          }
        }
      }
 
-     // About
-     .about-section {
-       position: relative;
-       flex-direction: column;
-       align-items: flex-start;
-       width: 100%;
-       margin-top: auto;
-       padding: var(--max-gap);
-       font-size: var(--body-font);
-       line-height: 1.4;
-       border-radius: var(--card-radius);
-       background-color: var(--white-color);
-       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+     .about-steps {
+       margin: 0;
+       margin-bottom: var(--max-gap);
+       padding-left: var(--max-gap);
+       padding-right: 16px;
+       list-style: decimal;
+       line-height: 1;
 
-       .about-btn-close {
-         position: absolute;
-         top: 15px;
-         right: 25px;
-         width: 30px;
-         height: 30px;
-         margin: 0;
-         color: var(--black-color);
+       .about-step {
+         margin-bottom: var(--min-gap);
+       }
+     }
+
+     .about-steps li::marker {
+       font-weight: bold;
+     }
+
+     .about-text {
+       font-style: italic;
+
+       .about-link {
+         color: var(--type8-color);
          transition: color 0.3s ease-in-out;
 
+         &:focus {
+           color: var(--type3-color);
+         }
+
          &:hover {
-           color: var(--grey-color);
+           color: var(--type7-color);
          }
 
          &:active {
-           color: var(--black-color);
-         }
-       }
-
-       .about-title {
-         margin-bottom: var(--max-gap);
-         font-size: var(--h2-font);
-       }
-
-       .about-description {
-         margin-bottom: var(--min-gap);
-
-         &-highlight {
-           font-weight: 700;
-         }
-       }
-
-       .about-subtitle {
-         margin: 0;
-         margin-bottom: var(--min-gap);
-         font-size: var(--h3-font);
-       }
-
-       .about-features {
-         flex-direction: column;
-         gap: var(--min-gap);
-         margin-bottom: var(--max-gap);
-         padding-left: 20px;
-         list-style: disc;
-
-         .about-feature {
-           font-size: var(--body-font);
-
-           &-bold {
-             font-weight: 700;
-           }
-         }
-       }
-
-       .about-steps {
-         margin: 0;
-         margin-bottom: var(--max-gap);
-         padding-left: var(--max-gap);
-         padding-right: 16px;
-         list-style: decimal;
-         line-height: 1;
-
-         .about-step {
-           margin-bottom: var(--min-gap);
-         }
-       }
-
-       .about-steps li::marker {
-         font-weight: bold;
-       }
-
-       .about-text {
-         font-style: italic;
-
-         .about-link {
            color: var(--type8-color);
-           transition: color 0.3s ease-in-out;
-
-           &:focus {
-             color: var(--type3-color);
-           }
-
-           &:hover {
-             color: var(--type7-color);
-           }
-
-           &:active {
-             color: var(--type8-color);
-           }
          }
        }
      }

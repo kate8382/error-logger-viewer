@@ -17,11 +17,54 @@ export default class ChartManager {
     this.initFilterHandlers();
     this.renderChart();
     this.initLangHandlers();
+
     // Подписка на смену языка для автоматического обновления графика и aria-label
     onLangChange(() => {
       this.renderChart();
       this.updateAriaLabels();
     });
+
+    // Подписка на resize для динамического изменения размера шрифта
+    window.addEventListener('resize', () => this.updateFontSize());
+  }
+
+  // Форматирует дату для оси X по дням: короткий или длинный год
+  formatDayLabel(dateStr) {
+    const d = new Date(dateStr);
+    const day = d.getDate().toString().padStart(2, '0');
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    const year = d.getFullYear().toString();
+    // Если ширина экрана <= desktop, сокращаем год
+    if (window.innerWidth <= 1140) {
+      return `${day}.${month}.${year.slice(-2)}`;
+    } else {
+      return `${day}.${month}.${year}`;
+    }
+  }
+
+  // Возвращает размер шрифта для графика в зависимости от ширины экрана
+  getResponsiveFontSize() {
+    if (window.innerWidth <= 480) return 8;
+    if (window.innerWidth <= 768) return 10;
+    if (window.innerWidth <= 1140) return 11;
+    return 12;
+  }
+
+  // Обновляет размер шрифта на графике и перерисовывает его
+  updateFontSize() {
+    if (this.chart && this.chart.options && this.chart.options.plugins && this.chart.options.plugins.legend && this.chart.options.plugins.legend.labels) {
+      if (this.chart.options.plugins.legend.labels.font) {
+        this.chart.options.plugins.legend.labels.font.size = this.getResponsiveFontSize();
+      } else {
+        this.chart.options.plugins.legend.labels.font = { size: this.getResponsiveFontSize() };
+      }
+      // Если график по дням — перерисовываем полностью, чтобы обновить формат дат
+      if (this.currentType === 'day' || this.currentType === 'date') {
+        this.renderChart();
+      } else {
+        this.chart.update();
+      }
+    }
   }
 
   async renderChart() {
@@ -174,7 +217,7 @@ export default class ChartManager {
                   ticks: {
                     display: true,
                     color: '#89868d',
-                    font: { size: 12 },
+                    font: { size: this.getResponsiveFontSize() },
                     padding: 5,
                     major: { enabled: false } // Выключаем выделение крупных меток
                   }
@@ -214,9 +257,9 @@ export default class ChartManager {
   }
 
   /**
-   * Универсальная подготовка данных для bar chart (labels, datasets, стили, форматирование)
-   * Используется и для demo, и для server режима
-   */
+* Универсальная подготовка данных для bar chart (labels, datasets, стили, форматирование)
+* Используется и для demo, и для server режима
+*/
   prepareBarChartData(statsType, statsStatus, byParam, currentType) {
     // Собираем все ключи периодов
     let periodKeys = Object.keys(statsType).filter(date => {
@@ -247,7 +290,7 @@ export default class ChartManager {
     // Форматированные подписи для оси X
     let labels = periodKeys;
     if (currentType === 'date' || currentType === 'day') {
-      labels = periodKeys.map(date => new Date(date).toLocaleDateString());
+      labels = periodKeys.map(date => this.formatDayLabel(date));
     }
     if (currentType === 'week') {
       // Поддержка periodKeys: '2025-W39' и '2025-39'

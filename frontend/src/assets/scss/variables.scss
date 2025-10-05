@@ -5,11 +5,6 @@
   --max-gap: 30px;
   --min-gap: 8px;
 
-  // Breakpoints
-  --mobile: 480px;
-  --tablet: 768px;
-  --desktop: 1024px;
-
   // Theme
   color-scheme: light dark;
   --body-color: #dbdcde;
@@ -81,4 +76,46 @@
   --status5-color: #13e75dad;
   --total-color: #f93131;
   --total-bg: #FFDFDF;
+}
+
+// Медиа-переопределения переменных
+$desktop: 1140px;
+$tablet: 768px;
+$mobile: 480px;
+
+@media (max-width: #{$desktop}) {
+  :root {
+    --container-width: 100vw;
+    --max-gap: 20px;
+    --h1-font: 28px;
+    --h2-font: 24px;
+    --h3-font: 20px;
+    --h4-font: 18px;
+    --body-font: 14px;
+    --small-font: 12px;
+  }
+}
+
+@media (max-width: #{$tablet}) {
+  :root {
+    --container-width: 100vw;
+    --max-gap: 12px;
+    --h1-font: 24px;
+    --h2-font: 20px;
+    --h3-font: 18px;
+    --body-font: 12px;
+    --small-font: 10px;
+  }
+}
+
+@media (max-width: #{$mobile}) {
+  :root {
+    --container-width: 100vw;
+    --max-gap: 12px;
+    --h1-font: 24px;
+    --h2-font: 20px;
+    --h3-font: 18px;
+    --body-font: 12px;
+    --small-font: 10px;
+  }
 }

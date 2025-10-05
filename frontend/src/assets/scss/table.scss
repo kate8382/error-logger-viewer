@@ -1,3 +1,5 @@
+@use 'variables' as *;
+
 .error-table {
   position: relative;
   max-width: 100%;
@@ -107,11 +109,11 @@
 
             .error-table__dropdown-btn {
               align-items: center;
-              justify-content: center;
-              min-width: 38px;
+              justify-content: flex-start;
+              min-width: 50px;
               min-height: 38px;
               padding: var(--min-gap);
-              font-size: 22px;
+              font-size: var(--h3-font);
               font-weight: 700;
               transition: color 0.3s ease-in-out;
 
@@ -139,6 +141,10 @@
               box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
             }
 
+            @media (max-width: #{$desktop}) {
+              min-width: 100px;
+            }
+
             .error-table__btn {
               display: flex;
               align-items: center;
@@ -148,7 +154,7 @@
               min-height: 32px;
               padding: 8px 6px;
               color: var(--white-color);
-              font-size: 12px;
+              font-size: var(--small-font);
               border-radius: var(--button-radius);
               transition: background-color 0.3s ease-in-out;
 
@@ -174,6 +180,11 @@
                 &:active {
                   background-color: var(--total-color);
                 }
+              }
+
+              @media (max-width: #{$desktop}) {
+                min-width: 80px;
+                padding: 6px;
               }
             }
           }

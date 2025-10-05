@@ -1,3 +1,5 @@
+ @use 'variables' as *;
+
  .chart {
    flex-direction: column;
    gap: 16px;
@@ -20,7 +22,7 @@
 
      .chart__title {
        margin: 0;
-       font-size: var(--h3-font);
+       font-size: var(--h2-font);
      }
 
      .chart__sort {
@@ -39,7 +41,6 @@
          min-height: 25px;
          padding: 8px 10px;
          text-align: center;
-         font-size: var(--small-font);
          border-radius: var(--button-radius);
          transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 
