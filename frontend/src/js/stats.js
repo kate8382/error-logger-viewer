@@ -21,7 +21,7 @@ export class StatsManager {
   get todayCount() {
     const today = new Date().toISOString().slice(0, 10);
     return this.errors.filter(e => {
-      const date = e.lastSeen || e.firstSeen;
+      const date = e.firstSeen;
       return date && date.slice(0, 10) === today;
     }).length;
   }

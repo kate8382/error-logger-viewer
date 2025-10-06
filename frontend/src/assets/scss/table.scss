@@ -26,7 +26,7 @@
 
     .error-table__head {
       display: grid;
-      grid-template-columns: 16% 16% 10% 16% 16% 16% 10%;
+      grid-template-columns: 16% 18% 8% 17% 17% 16% 8%;
       align-items: center;
       justify-items: flex-start;
       width: 100%;
@@ -62,6 +62,11 @@
       .sort-icon {
         width: 18px;
         height: 18px;
+
+        @media (max-width: #{$tablet}) {
+          width: 16px;
+          height: 16px;
+        }
       }
 
       .error-table__cell--actions {
@@ -74,7 +79,7 @@
 
       .error-table__row {
         display: grid;
-        grid-template-columns: 16% 16% 10% 16% 16% 16% 10%;
+        grid-template-columns: 16% 18% 8% 17% 17% 16% 8%;
         align-items: center;
         padding: var(--max-gap) var(--min-gap);
         font-size: var(--small-font);
@@ -109,7 +114,7 @@
 
             .error-table__dropdown-btn {
               align-items: center;
-              justify-content: flex-start;
+              justify-content: flex-end;
               min-width: 50px;
               min-height: 38px;
               padding: var(--min-gap);
@@ -125,6 +130,14 @@
               &:active {
                 color: var(--active-color);
               }
+
+              @media (max-width: #{$desktop}) {
+                min-width: 60px;
+              }
+
+              @media (max-width: #{$tablet}) {
+                min-width: 70px;
+              }
             }
 
             .error-table__dropdown-menu {
@@ -139,10 +152,16 @@
               background: var(--white-color);
               border-radius: var(--card-radius);
               box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-            }
 
-            @media (max-width: #{$desktop}) {
-              min-width: 100px;
+              @media (max-width: #{$desktop}) {
+                right: -5px;
+                min-width: 100px;
+              }
+
+              @media (max-width: #{$tablet}) {
+                right: -8px;
+                min-width: 90px;
+              }
             }
 
             .error-table__btn {

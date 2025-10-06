@@ -20,7 +20,7 @@ export const translations = {
     aboutClose: 'Close about section',
     aboutText_en: `
      <button class="about-btn-close" id="aboutCloseBtn" data-i18n-aria-label="aboutClose">
-          <svg width="12" height="18" viewBox="0 0 12 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg class="about-btn-close-icon" width="12" height="18" viewBox="0 0 12 18" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g clip-path="url(#clip0_1456_12087)">
               <path
                 d="M11.2945 5.29448C11.7339 4.85503 11.7339 4.14136 11.2945 3.7019C10.855 3.26245 10.1413 3.26245 9.70189 3.7019L5.99994 7.40737L2.29447 3.70542C1.85501 3.26597 1.14134 3.26597 0.701889 3.70542C0.262436 4.14487 0.262436 4.85854 0.701889 5.298L4.40736 8.99995L0.705405 12.7054C0.265952 13.1449 0.265952 13.8585 0.705405 14.298C1.14486 14.7375 1.85853 14.7375 2.29798 14.298L5.99994 10.5925L9.70541 14.2945C10.1449 14.7339 10.8585 14.7339 11.298 14.2945C11.7374 13.855 11.7374 13.1414 11.298 12.7019L7.59251 8.99995L11.2945 5.29448Z"
@@ -172,7 +172,7 @@ export const translations = {
     aboutClose: 'Закрыть раздел о программе',
     aboutText_ru: `
      <button class="about-btn-close" id="aboutCloseBtn" data-i18n-aria-label="aboutClose">
-          <svg width="12" height="18" viewBox="0 0 12 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg class="about-btn-close-icon" width="12" height="18" viewBox="0 0 12 18" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g clip-path="url(#clip0_1456_12087)">
               <path
                 d="M11.2945 5.29448C11.7339 4.85503 11.7339 4.14136 11.2945 3.7019C10.855 3.26245 10.1413 3.26245 9.70189 3.7019L5.99994 7.40737L2.29447 3.70542C1.85501 3.26597 1.14134 3.26597 0.701889 3.70542C0.262436 4.14487 0.262436 4.85854 0.701889 5.298L4.40736 8.99995L0.705405 12.7054C0.265952 13.1449 0.265952 13.8585 0.705405 14.298C1.14486 14.7375 1.85853 14.7375 2.29798 14.298L5.99994 10.5925L9.70541 14.2945C10.1449 14.7339 10.8585 14.7339 11.298 14.2945C11.7374 13.855 11.7374 13.1414 11.298 12.7019L7.59251 8.99995L11.2945 5.29448Z"

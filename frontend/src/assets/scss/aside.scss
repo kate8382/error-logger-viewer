@@ -9,6 +9,10 @@
      padding-top: 26px;
      background: var(--white-color);
 
+     @media (max-width: #{$desktop}) {
+       padding-top: 35px;
+     }
+
      .sidebar__logo {
        width: 78px;
        height: 54px;
@@ -18,6 +22,12 @@
          width: 58px;
          height: 54px;
          margin-bottom: 40px;
+       }
+
+       @media (max-width: #{$tablet}) {
+         width: 48px;
+         height: 34px;
+         margin-bottom: 30px;
        }
      }
 
@@ -42,15 +52,24 @@
      }
 
      @mixin item-icon {
-       width: 18px;
-       height: 18px;
+       width: 20px;
+       height: 20px;
        flex-shrink: 0;
+
+       @media (max-width: #{$desktop}) {
+         width: 18px;
+         height: 18px;
+       }
+
+       @media (max-width: #{$tablet}) {
+         width: 16px;
+         height: 16px;
+       }
      }
 
      @mixin item-text {
-       align-self: flex-end;
-       height: 18px;
        font-weight: 700;
+       line-height: 1.2;
      }
 
      @mixin dropdown-arrow {
@@ -58,6 +77,11 @@
        height: 14px;
        margin-left: auto;
        transition: transform 0.2s;
+
+       @media (max-width: #{$tablet}) {
+         width: 12px;
+         height: 12px;
+       }
      }
 
      .sidebar__list {
@@ -215,6 +239,22 @@
 
        &:active {
          color: var(--black-color);
+       }
+
+       .about-btn-close-icon {
+         width: 18px;
+         height: 18px;
+         color: currentColor;
+
+         @media (max-width: #{$desktop}) {
+           width: 16px;
+           height: 16px;
+         }
+
+         @media (max-width: #{$tablet}) {
+           width: 14px;
+           height: 14px;
+         }
        }
      }
 

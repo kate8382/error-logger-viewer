@@ -24,6 +24,10 @@
       border: 1px solid var(--body-color);
       border-radius: var(--card-radius);
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      @media (max-width: #{$desktop}) {
+        min-height: auto;
+      }
     }
 
     .stats__item {
@@ -35,6 +39,11 @@
       min-height: 80px;
       padding: var(--min-gap) var(--max-gap);
 
+      @media (max-width: #{$tablet}) {
+        width: 45%;
+        min-height: 60px;
+      }
+
       &:not(:last-child)::after {
         content: '';
         position: absolute;
@@ -44,6 +53,10 @@
         height: 100%;
         background: var(--body-color);
         transform: translateX(50%);
+
+        @media (max-width: #{$tablet}) {
+          right: -5%;
+        }
       }
 
       .stats__icon-wrapper {
@@ -61,8 +74,8 @@
         }
 
         @media (max-width: #{$desktop}) {
-          width: 40px;
-          height: 40px;
+          width: 38px;
+          height: 38px;
         }
 
         .stats__icon {
@@ -118,16 +131,28 @@
       align-items: flex-start;
       width: 100%;
 
+      @media (max-width: #{$tablet}) {
+        flex-direction: column;
+        gap: var(--max-gap);
+      }
+
       .stats__group {
         flex-direction: column;
         gap: var(--min-gap);
-        width: 47%;
-        min-height: 320px;
+        width: 49%;
+        min-height: 350px;
         padding: var(--max-gap);
         background-color: var(--white-color);
         border: 1px solid var(--body-color);
         border-radius: var(--card-radius);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+        @media (max-width: #{$tablet}) {
+          flex-wrap: wrap;
+          justify-content: center;
+          width: 100%;
+          padding: 30px;
+        }
 
         .stats__header {
           align-items: center;
@@ -182,6 +207,11 @@
               @media (max-width: #{$desktop}) {
                 font-size: var(--body-font);
               }
+
+              @media (max-width: #{$tablet}) {
+                width: 18px;
+                height: 18px;
+              }
             }
           }
         }
@@ -192,7 +222,7 @@
           flex-direction: column;
           gap: 16px;
           width: 100%;
-          min-height: 180px;
+          min-height: 240px;
         }
 
         .stats__chart-canvas {
@@ -213,8 +243,9 @@
           justify-content: space-between;
           align-items: center;
           flex-wrap: wrap;
-          gap: 12px;
+          gap: var(--body-font);
           width: 100%;
+          min-height: 90px;
 
           .stat__card {
             justify-content: flex-start;
@@ -236,7 +267,6 @@
 
             .stat__value {
               color: var(--black-color);
-              font-weight: 500;
               text-align: center;
             }
 

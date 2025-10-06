@@ -80,7 +80,7 @@
 
 // Медиа-переопределения переменных
 $desktop: 1140px;
-$tablet: 768px;
+$tablet: 980px;
 $mobile: 480px;
 
 @media (max-width: #{$desktop}) {
@@ -99,10 +99,11 @@ $mobile: 480px;
 @media (max-width: #{$tablet}) {
   :root {
     --container-width: 100vw;
-    --max-gap: 12px;
+    --max-gap: 16px;
     --h1-font: 24px;
     --h2-font: 20px;
     --h3-font: 18px;
+    --h4-font: 16px;
     --body-font: 12px;
     --small-font: 10px;
   }

@@ -53,6 +53,14 @@
            color: var(--active-color);
            background-color: var(--white-color);
          }
+
+         @media (max-width: #{$desktop}) {
+           padding: 5px 3px;
+         }
+
+         @media (max-width: #{$tablet}) {
+           padding: 5px;
+         }
        }
 
        &__canvas {

@@ -77,13 +77,21 @@ app.get('/errors/stats', async (req, res) => {
     result = {};
     errors.forEach(e => {
       // Используем lastSeen для группировки по периоду
-      const dateStr = e.lastSeen || e.firstSeen || e.createdAt || '';
+      const dateStr = e.firstSeen || '';
       const periodKey = getPeriodKey(dateStr, by);
       if (!periodKey) return;
       if (!result[periodKey]) result[periodKey] = {};
       const key = group === 'type' ? (e.type || 'Unknown') : (e.status || 'new');
       result[periodKey][key] = (result[periodKey][key] || 0) + 1;
     });
+    // Оставить только последние 7 дней, если by === 'day'
+    if (by === 'day') {
+      const sortedKeys = Object.keys(result).sort();
+      const last7 = sortedKeys.slice(-7);
+      const filtered = {};
+      last7.forEach(k => { filtered[k] = result[k]; });
+      return res.json(filtered);
+    }
     // ВАЖНО: не переходим к else, всегда возвращаем periods!
     return res.json(result);
   }

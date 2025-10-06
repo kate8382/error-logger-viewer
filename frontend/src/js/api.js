@@ -82,7 +82,7 @@ export class ErrorApi {
       if (by === 'day') {
         const dayCounts = {};
         errors.forEach(e => {
-          const day = (e.lastSeen || e.firstSeen || '').slice(0, 10);
+          const day = (e.firstSeen || '').slice(0, 10);
           if (!day) return;
           if (!dayCounts[day]) dayCounts[day] = {};
           const status = e.status || 'new';
