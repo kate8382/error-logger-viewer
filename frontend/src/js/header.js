@@ -468,4 +468,30 @@ export class HeaderManager {
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
   window.headerManager = new HeaderManager();
+
+  // Логика открытия/закрытия sidebar на мобильном
+  const burger = document.getElementById('headerBurgerBtn');
+  const sidebar = document.querySelector('.sidebar');
+
+  if (burger && sidebar) {
+    burger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      sidebar.style.display = 'flex';
+      sidebar.classList.add('sidebar--active');
+      document.body.classList.add('sidebar-open');
+    });
+
+    // Закрытие по клику вне sidebar 
+    document.addEventListener('click', (e) => {
+      if (
+        sidebar.classList.contains('sidebar--active') &&
+        !sidebar.contains(e.target) &&
+        e.target !== burger
+      ) {
+        sidebar.classList.remove('sidebar--active');
+        document.body.classList.remove('sidebar-open');
+        sidebar.style.display = 'none';
+      }
+    });
+  }
 });

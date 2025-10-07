@@ -220,7 +220,7 @@
           position: relative;
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: var(--body-font);
           width: 100%;
           min-height: 240px;
         }

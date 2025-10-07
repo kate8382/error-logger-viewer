@@ -27,9 +27,9 @@
 <body>
   <div class="container">
     <aside class="sidebar flex">
-      <a href="https://www.figma.com/community/file/1244293267600418871" target="_blank" rel="noopener noreferrer"
-        data-i18n-aria-label="logoFigmaAria" aria-label="Open original logo design in Figma"
-        data-i18n-title="logoFigmaTitle" title="Open original logo design in Figma">
+      <a href="https://www.figma.com/community/file/1244293267600418871" data-i18n-aria-label="logoFigmaAria"
+        data-i18n-title="logoFigmaTitle" aria-label="Open original logo design in Figma" target="_blank"
+        rel="noopener noreferrer" title="Open original logo design in Figma">
         <img class="sidebar__logo" src="img/logo.svg" alt="Logo">
       </a>
 
@@ -183,6 +183,15 @@
     </aside>
 
     <header class="header flex">
+      <button class="header__burger" id="headerBurgerBtn" data-i18n-aria-label="headerBurgerAria"
+        aria-label="Open menu">
+        <svg class="header__burger-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <rect y="7" width="32" height="3" rx="1.5" fill="currentColor"></rect>
+          <rect y="14" width="32" height="3" rx="1.5" fill="currentColor"></rect>
+          <rect y="21" width="32" height="3" rx="1.5" fill="currentColor"></rect>
+        </svg>
+      </button>
+
       <h1 class="header__title">
         <a href="https://github.com/kate8382/error-logger-viewer" target="_blank" rel="noopener noreferrer">
           <span data-i18n="title">Error Logger &amp;&nbsp;Viewer</span>
@@ -399,7 +408,7 @@
       </section>
 
       <div class="modal" id="modal" aria-labelledby="modalTitle" aria-modal="true" role="dialog">
-        <h2 id="modalTitle" class="visually-hidden" data-i18n="modalTitle">Modal window</h2>
+        <h2 class="visually-hidden" id="modalTitle" data-i18n="modalTitle">Modal window</h2>
         <div class="modal__content flex" id="modalContent"></div>
       </div>
     </main>

@@ -1,3 +1,5 @@
+@use 'variables' as *;
+
 .modal {
   display: none;
   position: fixed;
@@ -106,14 +108,19 @@
     cursor: pointer;
     transition: border-color 0.3s;
     user-select: none;
+
+    @media (max-width: #{$tablet}) {
+      width: 40%;
+      padding: 6px 20px 6px 12px;
+    }
   }
 
   &__status-arrow {
     position: absolute;
     top: 50%;
     right: 12px;
-    width: 16px;
-    height: 16px;
+    width: var(--body-font);
+    height: var(--body-font);
     transform: translateY(-50%);
     pointer-events: none;
     background-image: url('../img/down.svg');
@@ -173,6 +180,10 @@
     background: var(--white-color);
     resize: vertical;
     transition: border-color 0.2s;
+
+    @media (max-width: #{$tablet}) {
+      width: 70%;
+    }
   }
 
   &__button,

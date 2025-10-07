@@ -5,6 +5,7 @@ export const translations = {
     createTestErrorBtn: 'Create test error',
     // Header
     loading: 'Loading...',
+    headerBurgerAria: 'Open menu',
     title: 'Error Logger & Viewer',
     placeholder: 'Search by application...',
     ariaInput: 'Search by application',
@@ -157,6 +158,7 @@ export const translations = {
     createTestErrorBtn: 'Создать тестовую ошибку',
     // Header
     loading: 'Загрузка...',
+    headerBurgerAria: 'Открыть меню',
     title: 'Error Logger & Viewer',
     placeholder: 'Поиск по приложению...',
     ariaInput: 'Поиск ошибок',

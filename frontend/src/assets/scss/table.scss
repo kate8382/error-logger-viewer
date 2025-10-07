@@ -26,7 +26,7 @@
 
     .error-table__head {
       display: grid;
-      grid-template-columns: 16% 18% 8% 17% 17% 16% 8%;
+      grid-template-columns: 16% 16% 10% 17% 17% 16% 8%;
       align-items: center;
       justify-items: flex-start;
       width: 100%;
@@ -34,7 +34,7 @@
       padding: var(--max-gap) var(--min-gap);
       text-align: left;
       font-size: var(--small-font);
-      // font-weight: 500;
+      font-weight: 500;
       border-top: 1px solid var(--body-color);
       border-bottom: 1px solid var(--body-color);
 
@@ -79,7 +79,7 @@
 
       .error-table__row {
         display: grid;
-        grid-template-columns: 16% 18% 8% 17% 17% 16% 8%;
+        grid-template-columns: 16% 16% 10% 17% 17% 16% 8%;
         align-items: center;
         padding: var(--max-gap) var(--min-gap);
         font-size: var(--small-font);
@@ -100,6 +100,10 @@
             color: var(--grey-color);
           }
 
+          &--count {
+            text-align: center;
+          }
+
           &--data,
           &--status {
             font-weight: 600;
@@ -113,14 +117,17 @@
             width: 100%;
 
             .error-table__dropdown-btn {
+              position: relative;
+              z-index: 2;
               align-items: center;
-              justify-content: flex-end;
-              min-width: 50px;
-              min-height: 38px;
-              padding: var(--min-gap);
+              justify-content: center;
+              min-width: 44px;
+              min-height: 44px;
+              padding: 12px;
               font-size: var(--h3-font);
               font-weight: 700;
-              transition: color 0.3s ease-in-out;
+              background: transparent;
+              transition: color 0.3s ease-in-out, background 0.3s;
 
               &:hover,
               &:focus {
@@ -132,21 +139,32 @@
               }
 
               @media (max-width: #{$desktop}) {
-                min-width: 60px;
+                min-width: 48px;
+                min-height: 48px;
+                padding: 10px;
               }
 
               @media (max-width: #{$tablet}) {
-                min-width: 70px;
+                min-width: 56px;
+                min-height: 56px;
+                padding: 14px;
+              }
+
+              @media (max-width: #{$mobile}) {
+                min-width: 60px;
+                min-height: 60px;
+                padding: 16px;
               }
             }
 
             .error-table__dropdown-menu {
               position: absolute;
               z-index: 10;
-              top: -26px;
-              right: 10px;
+              top: -22px;
+              right: -5px;
               display: none;
               flex-direction: column;
+              gap: var(--min-gap);
               padding: var(--min-gap);
               min-width: 110px;
               background: var(--white-color);
@@ -154,13 +172,18 @@
               box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 
               @media (max-width: #{$desktop}) {
-                right: -5px;
+                gap: 4px;
                 min-width: 100px;
               }
 
               @media (max-width: #{$tablet}) {
-                right: -8px;
+                top: -16px;
+                gap: 2px;
                 min-width: 90px;
+              }
+
+              @media (max-width: #{$mobile}) {
+                min-width: 80px;
               }
             }
 
@@ -171,7 +194,7 @@
               gap: var(--min-gap);
               min-width: 90px;
               min-height: 32px;
-              padding: 8px 6px;
+              padding: var(--min-gap);
               color: var(--white-color);
               font-size: var(--small-font);
               border-radius: var(--button-radius);

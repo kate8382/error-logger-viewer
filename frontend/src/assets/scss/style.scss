@@ -98,7 +98,8 @@ img {
 }
 
 body {
-  min-width: var(--mobile);
+  min-width: 480px;
+  max-width: 100vw;
   min-height: 100vh; //Высота экрана
   margin: 0;
   padding: 0;
@@ -177,27 +178,32 @@ body {
 
 @media (max-width: #{$desktop}) {
   .container {
-    grid-template-columns: 210px 1fr;
+    width: 100vw;
+    grid-template-columns: 250px 1fr;
   }
 }
 
 @media (max-width: #{$tablet}) {
-  // .container {
-  //   // grid-template-columns: 210px 1fr;
-  //   // grid-template-rows: 100px 1fr 50px;
-  //   // grid-template-areas:
-  //   //   "header"
-  //   //   "main"
-  //   //   "footer";
-  // }
+  .container {
+    width: 100vw;
+    grid-template-columns: 210px 1fr;
+  }
 }
 
 @media (max-width: #{$mobile}) {
   .container {
-    grid-template-rows: 60px 1fr 60px;
-    grid-template-areas:
-      "header"
-      "main"
-      "footer";
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100vw;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  body.sidebar-open {
+    overflow: hidden;
   }
 }

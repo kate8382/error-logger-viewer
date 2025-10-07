@@ -13,6 +13,19 @@
        padding-top: 35px;
      }
 
+     @media (max-width:#{$mobile}) {
+       &--active {
+         position: fixed;
+         top: 0;
+         left: 0;
+         z-index: 10;
+         width: 210px;
+         height: 100vh;
+         overflow-y: scroll;
+         box-shadow: 2px 0 8px rgba(0, 0, 0, 0.12);
+       }
+     }
+
      .sidebar__logo {
        width: 78px;
        height: 54px;
@@ -25,9 +38,9 @@
        }
 
        @media (max-width: #{$tablet}) {
-         width: 48px;
-         height: 34px;
-         margin-bottom: 30px;
+         width: 54px;
+         height: 54px;
+         margin-bottom: 20px;
        }
      }
 
@@ -38,7 +51,8 @@
        gap: var(--min-gap);
        width: 100%;
        min-height: 40px;
-       padding: 11px 8px 11px 5px;
+       padding: var(--min-gap);
+       padding-left: 11px;
        color: currentColor;
        border-radius: var(--card-radius);
        transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
