@@ -9,6 +9,7 @@
   padding: var(--max-gap);
 
   .header__burger {
+    display: none;
     width: 32px;
     height: 32px;
     color: var(--black-color);
@@ -26,14 +27,6 @@
       color: var(---color);
     }
 
-    @media (max-width: #{$desktop}) {
-      display: none;
-    }
-
-    @media (max-width: #{$tablet}) {
-      display: none;
-    }
-
     @media (max-width: #{$mobile}) {
       display: flex;
       justify-content: center;
@@ -48,7 +41,6 @@
   }
 
   .header__title {
-    margin: 0;
     font-size: var(--h1-font);
   }
 
@@ -61,6 +53,10 @@
     color: var(--grey-color);
     background-color: var(--white-color);
     border-radius: var(--max-gap);
+
+    @media (max-width: #{$mobile}) {
+      width: 45%;
+    }
 
     .header__search-btn {
 

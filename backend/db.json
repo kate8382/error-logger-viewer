@@ -8,10 +8,10 @@
       "comment": "",
       "count": 1,
       "firstSeen": "2025-09-15T15:31:12.647Z",
-      "lastSeen": "2025-09-15T15:31:12.647Z",
       "users": [
         "unknown"
-      ]
+      ],
+      "lastSeen": "2025-10-08T14:11:03.954Z"
     },
     {
       "id": "a9ae8f10-8ff1-48d7-805a-13696fbb3142",
@@ -527,6 +527,73 @@
         "unknown"
       ],
       "lastSeen": "2025-10-07T17:26:11.637Z"
+    },
+    {
+      "id": "1198ffa1-cdd6-4805-8d56-88ecfbdb6b7b",
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: Cannot read properties of undefined (reading 'fixed')",
+      "stack": "TypeError: Cannot read properties of undefined (reading 'fixed')\n    at eval (webpack://error-logger-viewer/./src/js/charts.js?:461:37)\n    at Array.map (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/charts.js?:460:28)\n    at Array.map (<anonymous>)\n    at ChartManager.prepareBarChartData (webpack://error-logger-viewer/./src/js/charts.js?:457:40)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:210:44)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/charts.js?:14:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/charts.js?:15:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/charts.js?:22:70)\n    at _next (webpack://error-logger-viewer/./src/js/charts.js?:23:163)",
+      "status": "fixed",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-10-08T13:21:16.796Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2025-10-08T14:07:20.466Z"
+    },
+    {
+      "id": "b5003edd-035c-4228-a3eb-5a99b36c4237",
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "status": "in_progress",
+      "comment": "",
+      "count": 2,
+      "firstSeen": "2025-10-08T13:57:21.965Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2025-10-08T16:43:07.077Z"
+    },
+    {
+      "id": "febfdc40-aa33-401a-988d-38f08e3ae24d",
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:195:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:13:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:14:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:20:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:21:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:21:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:61:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:6:1660)",
+      "status": "fixed",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-10-08T13:57:22.218Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2025-10-08T14:07:08.792Z"
+    },
+    {
+      "id": "975a70a0-379c-47a6-98af-091dfd34eee8",
+      "type": "TestError",
+      "message": "Тестовая ошибка для проверки дат",
+      "status": "ignored",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-10-08T14:02:20.728Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2025-10-08T14:06:57.245Z"
+    },
+    {
+      "id": "c08f69a1-7cc9-4b50-b818-7bf9c0615ca6",
+      "type": "ResourceLoadError",
+      "message": "Failed to load resource: SCRIPT",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-10-08T16:51:53.231Z",
+      "lastSeen": "2025-10-08T16:51:53.231Z",
+      "users": [
+        "unknown"
+      ]
     }
   ]
 }

@@ -4,7 +4,8 @@ import './header.js';
 import { StatsManager } from './stats';
 import ChartManager from './charts.js';
 import { ErrorTable } from './table';
-import { t, getCurrentLang, onLangChange } from './utils/i18n.js';
+import { getCurrentLang, onLangChange } from './utils/i18n.js';
+import { updateTestErrorButtonVisibility } from './utils/testErrorButton.js';
 
 // Инициализация таблицы ошибок и статистики
 window.errorTableInstance = new ErrorTable('server');
@@ -14,7 +15,7 @@ async function initStatsManager() {
   try {
     errors = await (new ErrorApi()).getErrors({});
   } catch (e) {
-    console.error('[StatsManager] Ошибка загрузки ошибок:', e);
+    console.error('[StatsManager] Error loading errors:', e);
   }
   window.statsManager = new StatsManager(errors);
   window.statsManager.renderErrorCards();
@@ -49,8 +50,25 @@ class ErrorLoggerApp {
 
   async updateErrorTable() {
     if (window.renderErrorTable) {
-      this.errorApi.getErrors({}).then(errors => window.renderErrorTable(errors));
+      this.errorApi.getErrors({}).then(errors => {
+        window.renderErrorTable(errors);
+        if (window.statsManager) {
+          window.statsManager.errors = errors;
+          window.statsManager.renderErrorCards();
+        }
+        if (window.chartManager) {
+          window.chartManager.renderChart();
+        }
+      });
     }
+  }
+
+  // Универсальный обработчик создания ошибки и обновления UI
+  handleErrorCreate(errorData) {
+    return this.errorApi.createError(errorData).then((created) => {
+      this.updateErrorTable();
+      return created;
+    });
   }
 
   setupErrorListeners() {
@@ -60,25 +78,20 @@ class ErrorLoggerApp {
       if (target && (target instanceof HTMLScriptElement || target instanceof HTMLLinkElement || target instanceof HTMLImageElement)) {
         const src = target.src || target.href || target.currentSrc || '';
         const tag = target.tagName;
-        this.errorApi.createError({
+        this.handleErrorCreate({
           type: 'ResourceLoadError',
           message: `Failed to load resource: ${tag}`,
           source: src,
           firstSeen: new Date().toISOString(),
           lastSeen: new Date().toISOString()
-        }).then((created) => {
-          if (created && created.id) {
-            this.updateErrorTable();
-          } else {
-            setTimeout(() => this.updateErrorTable(), 500);
-          }
         });
       }
     }, true);
+
     // Глобальный обработчик ошибок JavaScript (onerror: message - ошибка в коде, source - файл, lineno - строка, colno - столбец)
     window.onerror = (message, source, lineno, colno, error) => {
       console.log('[ErrorLogger] Creating JS error:', message);
-      this.errorApi.createError({
+      this.handleErrorCreate({
         type: error && error.name ? error.name : 'Error',
         message: String(message),
         source: String(source),
@@ -87,29 +100,18 @@ class ErrorLoggerApp {
         stack: error && error.stack ? error.stack : '',
         firstSeen: new Date().toISOString(),
         lastSeen: new Date().toISOString()
-      }).then((created) => {
-        if (created && created.id) {
-          this.updateErrorTable();
-        } else {
-          setTimeout(() => this.updateErrorTable(), 500);
-        }
       });
     };
+
     // Глобальный обработчик необработанных промиссов (unhandledrejection)
     window.onunhandledrejection = (event) => {
       console.log('[ErrorLogger] Creating Promise error:', event.reason);
-      this.errorApi.createError({
+      this.handleErrorCreate({
         type: 'UnhandledPromiseRejection',
         message: event.reason ? String(event.reason) : 'Promise rejected',
         stack: event.reason && event.reason.stack ? event.reason.stack : '',
         firstSeen: new Date().toISOString(),
         lastSeen: new Date().toISOString()
-      }).then((created) => {
-        if (created && created.id) {
-          this.updateErrorTable();
-        } else {
-          setTimeout(() => this.updateErrorTable(), 500);
-        }
       });
     };
 
@@ -120,36 +122,24 @@ class ErrorLoggerApp {
         const response = await origFetch(...args);
         if (!response.ok) {
           console.log('[ErrorLogger] Creating Fetch error:', response.status, response.statusText);
-          this.errorApi.createError({
+          this.handleErrorCreate({
             type: 'FetchError',
             message: `Fetch failed: ${response.status} ${response.statusText}`,
             source: args[0],
             firstSeen: new Date().toISOString(),
             lastSeen: new Date().toISOString()
-          }).then((created) => {
-            if (created && created.id) {
-              this.updateErrorTable();
-            } else {
-              setTimeout(() => this.updateErrorTable(), 500);
-            }
           });
         }
         return response;
       } catch (error) {
         console.log('[ErrorLogger] Creating Fetch error:', error.message);
-        this.errorApi.createError({
+        this.handleErrorCreate({
           type: 'FetchError',
           message: error.message,
           source: args[0],
           stack: error.stack,
           firstSeen: new Date().toISOString(),
           lastSeen: new Date().toISOString()
-        }).then((created) => {
-          if (created && created.id) {
-            this.updateErrorTable();
-          } else {
-            setTimeout(() => this.updateErrorTable(), 500);
-          }
         });
         throw error;
       }
@@ -204,59 +194,18 @@ const app = new ErrorLoggerApp('server');
 window.app = app;
 app.flushLocalErrors();
 
-// Кнопка для тестовой генерации ошибки (только для demo-режима)
-let testErrorBtn = null;
-function showTestErrorButton() {
-  if (testErrorBtn) return;
-  const btn = document.createElement('button');
-  testErrorBtn = btn;
-  const setBtnText = () => { btn.textContent = t('createTestErrorBtn') || 'Создать тестовую ошибку'; };
-  setBtnText();
-  btn.style.position = 'fixed';
-  btn.style.bottom = '20px';
-  btn.style.right = '20px';
-  btn.style.zIndex = 10000;
-  btn.style.background = '#a0a0ff';
-  btn.style.color = '#222';
-  btn.style.padding = '10px 20px';
-  btn.style.borderRadius = '8px';
-  btn.style.border = 'none';
-  btn.style.cursor = 'pointer';
-  btn.onclick = async () => {
-    const { ErrorApi } = await import('./api.js');
-    const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
-    const api = new ErrorApi(mode);
-    await api.createError({
-      type: 'TestError',
-      message: t('testErrorMsg') || 'Тестовая ошибка для проверки дат',
-      firstSeen: new Date().toISOString(),
-      lastSeen: new Date().toISOString()
-    });
-    if (window.app && typeof window.app.updateErrorTable === 'function') {
-      window.app.updateErrorTable();
-    }
-    alert(t('testErrorCreated') || 'Тестовая ошибка создана! Обновите таблицу.');
-  };
-  document.body.appendChild(btn);
-  onLangChange(setBtnText);
-}
-function hideTestErrorButton() {
-  if (testErrorBtn && testErrorBtn.parentNode) {
-    testErrorBtn.parentNode.removeChild(testErrorBtn);
-    testErrorBtn = null;
-  }
-}
-
-function updateTestErrorButtonVisibility() {
-  const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
-  if (mode === 'demo') {
-    showTestErrorButton();
-  } else {
-    hideTestErrorButton();
-  }
-}
-
+// Инициализация кнопки создания тестовой ошибки
+// Показываем кнопку, если режим demo
 document.addEventListener('DOMContentLoaded', updateTestErrorButtonVisibility);
 
 // Следим за сменой режима (через aside)
-window.addEventListener('modeChanged', updateTestErrorButtonVisibility);
+window.addEventListener('modeChanged', async () => {
+  updateTestErrorButtonVisibility();
+  const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
+  if (mode === 'server' && window.app && typeof window.app.flushLocalErrors === 'function') {
+    await window.app.flushLocalErrors();
+    if (typeof window.app.updateErrorTable === 'function') {
+      window.app.updateErrorTable();
+    }
+  }
+});

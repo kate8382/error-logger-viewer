@@ -112,5 +112,10 @@ $mobile: 780px;
 @media (max-width: #{$mobile}) {
   :root {
     --max-gap: 20px;
+    --h1-font: 22px;
+    --h3-font: 16px;
+    --h4-font: 14px;
+    --body-font: 10px;
+    --small-font: 8px;
   }
 }

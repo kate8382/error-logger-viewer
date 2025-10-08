@@ -3,6 +3,9 @@ export const translations = {
   en: {
     // Main
     createTestErrorBtn: 'Create test error',
+    createTestErrorBtn_aria: 'Create a test error for checking dates',
+    testErrorMsg: 'Test error for checking dates',
+    testErrorCreated: 'Test error created! Please refresh the table.',
     // Header
     loading: 'Loading...',
     headerBurgerAria: 'Open menu',
@@ -156,6 +159,9 @@ export const translations = {
   ru: {
     // Main
     createTestErrorBtn: 'Создать тестовую ошибку',
+    createTestErrorBtn_aria: 'Создать тестовую ошибку для проверки дат',
+    testErrorMsg: 'Тестовая ошибка для проверки дат',
+    testErrorCreated: 'Тестовая ошибка создана! Обновите таблицу.',
     // Header
     loading: 'Загрузка...',
     headerBurgerAria: 'Открыть меню',

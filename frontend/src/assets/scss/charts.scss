@@ -21,7 +21,6 @@
      padding-left: var(--max-gap);
 
      .chart__title {
-       margin: 0;
        font-size: var(--h2-font);
      }
 
@@ -35,6 +34,10 @@
        font-size: var(--body-font);
        background-color: var(--stats-btn-color);
        border-radius: var(--button-radius);
+
+       @media (max-width: #{$desktop}) {
+         width: 35%;
+       }
 
        .chart__sort-btn {
          width: 30%;

@@ -261,13 +261,17 @@ export default class ChartManager {
 * Используется и для demo, и для server режима
 */
   prepareBarChartData(statsType, statsStatus, byParam, currentType) {
-    // Собираем все ключи периодов
-    let periodKeys = Object.keys(statsType).filter(date => {
-      const typeVals = Object.values(statsType[date] || {});
-      const statusVals = Object.values(statsStatus[date] || {});
-      const total = [...typeVals, ...statusVals].reduce((sum, v) => sum + v, 0);
-      return total > 0;
-    });
+    // Собираем все ключи периодов, фильтруем только валидные
+    let periodKeys = Object.keys(statsType)
+      .filter(date => {
+        if (!date || typeof date !== 'string') return false;
+        const typeVals = Object.values(statsType[date] || {});
+        const statusVals = Object.values(statsStatus[date] || {});
+        const total = [...typeVals, ...statusVals].reduce((sum, v) => sum + v, 0);
+        return total > 0;
+      });
+    // Защита от некорректных periodKeys
+    if (!Array.isArray(periodKeys)) periodKeys = [];
     // Ограничиваем количество отображаемых периодов и настраиваем ширину баров
     let barPerc = 0.8;
     let catPerc = 0.6;

@@ -99,7 +99,12 @@ export class Modal {
     // Универсальный select для всех статусов
     let statusSelect = el('div', { className: 'modal__status-select is-close' }, [
       el('span', { className: 'modal__status-current' }, currentStatus.label),
-      el('span', { className: 'modal__status-arrow' }),
+      // Вставляем SVG через innerHTML, как в aside
+      (() => {
+        const svg = document.createElement('span');
+        svg.innerHTML = '<svg class="modal__status-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 5.4975L2.12175 3.375L9.003 10.3792L15.8783 3.375L18 5.4975L9.003 14.625L0 5.4975Z" fill="currentColor"/></svg>';
+        return svg.firstChild;
+      })(),
       el('ul', { className: 'modal__status-list', style: 'display: none;' },
         ...statusOptions
           .filter(opt => opt.value !== currentStatus.value)
@@ -108,15 +113,16 @@ export class Modal {
     ]);
     const currentSpan = statusSelect.querySelector('.modal__status-current');
     const list = statusSelect.querySelector('.modal__status-list');
-    // Обработчик для закрытия по клику вне select
-    function closeCustomSelect(e) {
+
+    // Вынесено в приватный метод класса
+    this._closeCustomSelect = (e) => {
       if (!statusSelect.contains(e.target)) {
         statusSelect.classList.remove('is-open');
         statusSelect.classList.add('is-close');
         list.style.display = 'none';
-        document.removeEventListener('mousedown', closeCustomSelect);
+        document.removeEventListener('mousedown', this._closeCustomSelect);
       }
-    }
+    };
     statusSelect.addEventListener('click', (e) => {
       e.stopPropagation();
       e.preventDefault();
@@ -124,12 +130,12 @@ export class Modal {
         statusSelect.classList.remove('is-open');
         statusSelect.classList.add('is-close');
         list.style.display = 'none';
-        document.removeEventListener('mousedown', closeCustomSelect);
+        document.removeEventListener('mousedown', this._closeCustomSelect);
       } else {
         statusSelect.classList.add('is-open');
         statusSelect.classList.remove('is-close');
         list.style.display = 'block';
-        document.addEventListener('mousedown', closeCustomSelect);
+        document.addEventListener('mousedown', this._closeCustomSelect);
       }
     });
     // Выбор опции

@@ -36,6 +36,10 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     overflow-y: auto; // Добавлено для прокрутки содержимого
     animation: slideUp 0.3s ease-in-out, scaleUp 0.3s ease-in-out;
+
+    @media (max-width: #{$mobile}) {
+      width: 70%;
+    }
   }
 
   &__close {
@@ -60,16 +64,14 @@
   }
 
   &__title {
-    margin: 0;
     margin-bottom: var(--body-font);
     font-size: var(--h3-font);
     color: var(--black-color);
   }
 
   &__message {
-    margin: 0;
     margin-bottom: var(--body-font);
-    font-size: var(--h4-font);
+    font-size: var(--body-font);
     color: var(--black-color);
   }
 
@@ -99,7 +101,7 @@
   &__status-select {
     position: relative;
     width: 30%;
-    padding: 6px 32px 6px 12px;
+    padding: 6px 12px;
     font-size: var(--body-font);
     color: var(--black-color);
     border-radius: var(--button-radius);
@@ -108,11 +110,6 @@
     cursor: pointer;
     transition: border-color 0.3s;
     user-select: none;
-
-    @media (max-width: #{$tablet}) {
-      width: 40%;
-      padding: 6px 20px 6px 12px;
-    }
   }
 
   &__status-arrow {
@@ -121,21 +118,26 @@
     right: 12px;
     width: var(--body-font);
     height: var(--body-font);
-    transform: translateY(-50%);
+    color: var(--black-color);
+    transform: translateY(-50%) rotate(0deg);
     pointer-events: none;
-    background-image: url('../img/down.svg');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 14px 14px;
-    transition: background-image 0.3s;
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
   }
 
-  &__status-select.is-open .modal__status-arrow {
-    background-image: url('../img/up-active.svg');
+  .modal__status-select:focus .modal__status-arrow {
+    color: var(--active-color);
   }
 
-  &__status-select.is-close .modal__status-arrow {
-    background-image: url('../img/down.svg');
+  .modal__status-select:hover .modal__status-arrow {
+    color: var(--focus-color);
+  }
+
+  .modal__status-select:active .modal__status-arrow {
+    color: var(--active-color);
+  }
+
+  .modal__status-select.is-open .modal__status-arrow {
+    transform: translateY(-50%) rotate(180deg);
   }
 
   &__status-list {
@@ -180,10 +182,6 @@
     background: var(--white-color);
     resize: vertical;
     transition: border-color 0.2s;
-
-    @media (max-width: #{$tablet}) {
-      width: 70%;
-    }
   }
 
   &__button,
