@@ -278,6 +278,7 @@ export class Modal {
     ]);
 
     this.modal.classList.add('modal--open');
+    document.body.classList.add('modal-open');
   }
 
   deleteError(errorId) {
@@ -327,6 +328,7 @@ export class Modal {
   close() {
     if (this.modal) {
       this.modal.classList.remove('modal--open');
+      document.body.classList.remove('modal-open');
       // Удаляем обработчик клика по фону при закрытии
       this.modal.removeEventListener('click', this._outsideClickHandler);
       // Снимаем .is-open у select при закрытии модалки

@@ -37,6 +37,10 @@
     overflow-y: auto; // Добавлено для прокрутки содержимого
     animation: slideUp 0.3s ease-in-out, scaleUp 0.3s ease-in-out;
 
+    @media (max-width: #{$tablet}) {
+      width: 55%;
+    }
+
     @media (max-width: #{$mobile}) {
       width: 70%;
     }
@@ -167,7 +171,7 @@
 
   &__status-option:hover,
   &__status-option.selected {
-    background: var(--body-color);
+    background: var(--hover-color);
   }
 
   &__comment-area {

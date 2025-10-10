@@ -1,5 +1,9 @@
 # Error Logger & Viewer
 
+**Status:** Production / Stable / Released
+
+**Demo:** _Add your production/demo link here if available_
+
 **Error Logger & Viewer** is a modern SPA for collecting, storing, analyzing, and visualizing JavaScript errors in web projects. It is designed for developers and teams who need to quickly identify, group, and track errors in production or test environments.
 
 ---
@@ -30,6 +34,19 @@ The application allows you to:
 	Server (Node.js + Express + LowDB) and demo (localStorage).
 - **Edit and delete errors:**
 	Through modals with comments and status change support.
+- **Responsive design:**
+	Adapts to any device and screen size.
+- **Accessibility:**
+	ARIA-labels, keyboard navigation for better usability.		
+
+---
+
+## Screenshots
+
+![Main dashboard](screenshots/dashboard-light-en.png)
+![Error table with filter](screenshots/table-filter-dark-ru.png)
+![Chart view](screenshots/chart-views.png)
+![Modal edit](screenshots/modal-views.png)
 
 ---
 
@@ -123,6 +140,20 @@ The application allows you to:
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## Acknowledgements
+
+- UI design: [M. Ali, Free Admin Dashboard UI Kit](https://www.figma.com/community/file/1244293267600418871)
+- Application development: kate8382 (main developer) together with GitHub Copilot (AI assistant)
+
+---
+
+## Project Structure
+
+- `frontend/` — SPA in pure JavaScript (ES6+), OOP architecture, SCSS, Webpack
+- `backend/` — Node.js + Express + LowDB (JSON)
 
 ---
 

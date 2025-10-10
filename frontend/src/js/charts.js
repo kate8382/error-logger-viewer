@@ -67,6 +67,33 @@ export default class ChartManager {
     }
   }
 
+  // Форматируем даты 
+  getPeriodKey(dateStr, by) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    if (by === 'day') return d.toISOString().slice(0, 10);
+    if (by === 'week') {
+      const year = d.getFullYear();
+      const firstJan = new Date(year, 0, 1);
+      const days = Math.floor((d - firstJan) / 86400000);
+      const week = Math.ceil((days + firstJan.getDay() + 1) / 7);
+      return `${year}-W${week.toString().padStart(2, '0')}`;
+    }
+    if (by === 'month') return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    if (by === 'year') return d.getFullYear().toString();
+    return '';
+  }
+
+  // Обновляем размер шагов на оси Y в зависимости от maxY
+  getStepSize(maxY) {
+    if (maxY <= 10) return 2;
+    if (maxY <= 50) return 10;
+    if (maxY <= 100) return 20;
+    if (maxY <= 200) return 50;
+    if (maxY <= 1000) return 100;
+    return Math.ceil(maxY / 10);
+  }
+
   async renderChart() {
     if (this.isRendering) return;
     this.isRendering = true;
@@ -102,25 +129,10 @@ export default class ChartManager {
         } catch (e) {
           errors = [];
         }
-        function getPeriodKey(dateStr, by) {
-          if (!dateStr) return '';
-          const d = new Date(dateStr);
-          if (by === 'day') return d.toISOString().slice(0, 10);
-          if (by === 'week') {
-            const year = d.getFullYear();
-            const firstJan = new Date(year, 0, 1);
-            const days = Math.floor((d - firstJan) / 86400000);
-            const week = Math.ceil((days + firstJan.getDay() + 1) / 7);
-            return `${year}-W${week.toString().padStart(2, '0')}`;
-          }
-          if (by === 'month') return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
-          if (by === 'year') return d.getFullYear().toString();
-          return '';
-        }
         statsType = {};
         statsStatus = {};
         errors.forEach(e => {
-          const key = getPeriodKey(e.lastSeen || e.firstSeen, byParam);
+          const key = this.getPeriodKey(e.lastSeen || e.firstSeen, byParam);
           if (!key) return;
           const type = e.type || 'Unknown';
           if (!statsType[key]) statsType[key] = {};
@@ -164,16 +176,7 @@ export default class ChartManager {
           }
           const maxY = getNiceMax(rawMax);
           // stepSize зависит от диапазона
-          function getStepSize(maxY) {
-            if (maxY <= 10) return 2;
-            if (maxY <= 50) return 10;
-            if (maxY <= 100) return 20;
-            if (maxY <= 200) return 50;
-            if (maxY <= 1000) return 100;
-            // Для больших значений — делим на 10
-            return Math.ceil(maxY / 10);
-          }
-          const stepSize = getStepSize(maxY);
+          const stepSize = this.getStepSize(maxY);
           this.chart = new Chart(this.canvas, {
             type: 'bar',
             data: {

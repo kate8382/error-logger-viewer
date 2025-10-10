@@ -222,6 +222,10 @@
                 width: 18px;
                 height: 18px;
               }
+
+              @media (max-width: #{$mobile}) {
+                font-size: 12px;
+              }
             }
           }
         }
@@ -278,12 +282,21 @@
               font-size: 12px;
               font-weight: 700;
               text-align: center;
+
+              @media (max-width: #{$mobile}) {
+                font-size: var(--body-font);
+                font-weight: 600;
+              }
             }
 
             .stat__title {
               width: 80px;
               font-size: 10px;
               text-align: left;
+
+              @media (max-width: #{$mobile}) {
+                font-size: var(--small-font);
+              }
             }
           }
         }

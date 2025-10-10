@@ -318,7 +318,7 @@ export const translations = {
 // Используем глобальный объект translations
 let currentLang = (window.app && window.app.lang)
   ? window.app.lang
-  : ((navigator.language || navigator.userLanguage).startsWith('ru') ? 'ru' : 'en');
+  : ((navigator.language || navigator.userLanguage).startsWith('en') ? 'en' : 'ru');
 
 let listeners = [];
 

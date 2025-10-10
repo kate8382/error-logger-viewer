@@ -594,6 +594,33 @@
       "users": [
         "unknown"
       ]
+    },
+    {
+      "id": "8cbb7b28-8772-45d7-a191-7da7874b94d3",
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "status": "new",
+      "comment": "",
+      "count": 2,
+      "firstSeen": "2025-10-10T16:34:09.583Z",
+      "lastSeen": "2025-10-10T17:32:05.691Z",
+      "users": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "78211971-243a-457a-bfe6-a2b98d18866c",
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: Cannot read properties of undefined (reading 'new')",
+      "stack": "TypeError: Cannot read properties of undefined (reading 'new')\n    at eval (webpack://error-logger-viewer/./src/js/charts.js?:464:37)\n    at Array.map (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/charts.js?:463:28)\n    at Array.map (<anonymous>)\n    at ChartManager.prepareBarChartData (webpack://error-logger-viewer/./src/js/charts.js?:460:40)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:210:44)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/charts.js?:14:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/charts.js?:15:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/charts.js?:22:70)\n    at _next (webpack://error-logger-viewer/./src/js/charts.js?:23:163)",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-10-10T16:34:10.473Z",
+      "lastSeen": "2025-10-10T16:34:10.473Z",
+      "users": [
+        "unknown"
+      ]
     }
   ]
 }

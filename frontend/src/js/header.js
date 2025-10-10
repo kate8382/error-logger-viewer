@@ -49,9 +49,12 @@ export class HeaderManager {
   setHeaderTitleBySection(sectionKey = null) {
     // Если sectionKey не передан или все секции видимы — основной заголовок
     if (!sectionKey) {
-      const titleSpan = this.headerTitle.querySelector('[data-i18n="title"]');
+      let titleSpan = this.headerTitle.querySelector('[data-i18n="title"]');
       if (titleSpan) {
         titleSpan.textContent = t('title') || 'Error Logger & Viewer';
+      } else {
+        // Пересоздаём структуру заголовка, если span отсутствует
+        this.headerTitle.innerHTML = `<a href="https://github.com/kate8382/error-logger-viewer" target="_blank" rel="noopener noreferrer"><span data-i18n="title">${t('title') || 'Error Logger & Viewer'}</span></a>`;
       }
       return;
     }
@@ -225,7 +228,7 @@ export class HeaderManager {
               // Второй клик: выход на главную
               this.filteredErrors = null;
               this.showAllSections();
-              this.setHeaderTitleBySection();
+              this.setHeaderTitleBySection(null); // Явно возвращаем основной заголовок
               this.searchIcon.style.display = '';
               this.exitIcon.style.display = 'none';
               this.setSearchPlaceholder('default');
@@ -238,7 +241,7 @@ export class HeaderManager {
             this.searchInput.value = '';
             this.filteredErrors = null;
             this.showAllSections();
-            this.setHeaderTitleBySection();
+            this.setHeaderTitleBySection(null); // Явно возвращаем основной заголовок
             this.searchIcon.style.display = '';
             this.exitIcon.style.display = 'none';
             this.setSearchPlaceholder('default');
