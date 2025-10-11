@@ -621,6 +621,33 @@
       "users": [
         "unknown"
       ]
+    },
+    {
+      "id": "5fbb7d96-4c81-402b-8b98-28793507ceea",
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "status": "ignored",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-10-11T15:29:02.521Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2025-10-11T15:29:31.094Z"
+    },
+    {
+      "id": "94e05a73-d453-4db6-802c-588f63af5d96",
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: Cannot read properties of undefined (reading 'fixed')",
+      "stack": "TypeError: Cannot read properties of undefined (reading 'fixed')\n    at eval (webpack://error-logger-viewer/./src/js/charts.js?:471:37)\n    at Array.map (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/charts.js?:470:28)\n    at Array.map (<anonymous>)\n    at ChartManager.prepareBarChartData (webpack://error-logger-viewer/./src/js/charts.js?:467:40)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:227:44)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/charts.js?:14:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/charts.js?:15:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/charts.js?:22:70)\n    at _next (webpack://error-logger-viewer/./src/js/charts.js?:23:163)",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-10-11T15:29:03.177Z",
+      "lastSeen": "2025-10-11T15:29:03.177Z",
+      "users": [
+        "unknown"
+      ]
     }
   ]
 }

@@ -270,7 +270,14 @@ export default class ChartManager {
         if (!date || typeof date !== 'string') return false;
         const typeVals = Object.values(statsType[date] || {});
         const statusVals = Object.values(statsStatus[date] || {});
-        const total = [...typeVals, ...statusVals].reduce((sum, v) => sum + v, 0);
+        // Защита от ошибки, если v может быть undefined или объектом
+        const total = [...typeVals, ...statusVals].reduce((sum, v) => {
+          // Если v объект и есть свойство fixed, берём v.fixed, иначе v
+          if (v && typeof v === 'object' && 'fixed' in v) {
+            return sum + (typeof v.fixed === 'number' ? v.fixed : 0);
+          }
+          return sum + (typeof v === 'number' ? v : 0);
+        }, 0);
         return total > 0;
       });
     // Защита от некорректных periodKeys

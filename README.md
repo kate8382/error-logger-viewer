@@ -43,7 +43,7 @@ The application allows you to:
 
 ## Screenshots
 
-![Main dashboard](screenshots/dashboard.png)
+![Main dashboard](screenshots/dashboard-light-en.png)
 ![Error table with filter](screenshots/table-filter-dark-ru.png)
 ![Chart view](screenshots/chart-views.png)
 ![Modal edit](screenshots/modal-views.png)

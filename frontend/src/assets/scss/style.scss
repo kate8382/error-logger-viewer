@@ -109,16 +109,16 @@ img {
 }
 
 body {
-  min-width: 580px;
   max-width: var(--container-width);
+  min-width: 580px;
   min-height: 100vh; //Высота экрана
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
   font-size: var(--body-font);
   font-family: 'Lato', sans-serif;
   color: var(--black-color);
   background-color: var(--body-color);
-  overflow-x: auto;
+  overflow-x: hidden;
 }
 
 body.modal-open .container {
@@ -138,13 +138,15 @@ body.modal-open .modal {
     "sidebar header"
     "sidebar main"
     "sidebar footer";
+  width: 100vw;
   min-height: 100vh;
-  overflow-x: auto;
 
   .main {
     grid-area: main;
     flex-direction: column;
     gap: var(--max-gap);
+    width: 100%;
+    min-height: 100vh;
     padding: var(--max-gap);
   }
 
