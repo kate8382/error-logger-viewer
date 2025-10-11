@@ -97,8 +97,20 @@ img {
   display: flex;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 body {
   min-width: 580px;
+  max-width: var(--container-width);
   min-height: 100vh; //Высота экрана
   margin: 0;
   padding: 0;
@@ -116,17 +128,6 @@ body.modal-open .container {
 body.modal-open .modal {
   pointer-events: auto;
   z-index: 10;
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
 }
 
 .container {
@@ -184,6 +185,12 @@ body.modal-open .modal {
   }
 }
 
+@media (max-width: #{$desktop}) {
+  .container {
+    grid-template-columns: 250px 1fr;
+  }
+}
+
 @media (max-width: #{$tablet}) {
   .container {
     grid-template-columns: 210px 1fr;
@@ -195,17 +202,20 @@ body.modal-open .modal {
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
+    grid-template-columns: none;
+    grid-template-rows: auto;
+    grid-template-areas: none;
 
-  .main {
-    width: 100%;
-  }
+    .main {
+      width: 100%;
+    }
 
-  .sidebar {
-    display: none;
-  }
+    .sidebar {
+      display: none;
+    }
 
-  body.sidebar-open {
-    overflow: hidden;
+    body.sidebar-open {
+      overflow: hidden;
+    }
   }
 }

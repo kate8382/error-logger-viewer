@@ -42,7 +42,7 @@
     }
 
     @media (max-width: #{$mobile}) {
-      width: 70%;
+      width: 65%;
     }
   }
 
@@ -114,6 +114,10 @@
     cursor: pointer;
     transition: border-color 0.3s;
     user-select: none;
+
+    @media (max-width: #{$mobile}) {
+      width: 35%;
+    }
   }
 
   &__status-arrow {
