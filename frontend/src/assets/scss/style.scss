@@ -6,7 +6,6 @@
 @use 'charts';
 @use 'table';
 @use 'modal';
-@use 'footer';
 
 html {
   box-sizing: border-box;
@@ -70,6 +69,8 @@ a {
   color: var(--black-color);
   text-decoration: none;
   cursor: pointer;
+  outline: none;
+  border: none;
 }
 
 ul {
@@ -110,7 +111,7 @@ img {
 
 body {
   max-width: var(--container-width);
-  min-width: 580px;
+  min-width: #{$mobile};
   min-height: 100vh; //Высота экрана
   margin: 0 auto;
   padding: 0;
@@ -138,7 +139,7 @@ body.modal-open .modal {
     "sidebar header"
     "sidebar main"
     "sidebar footer";
-  width: 100vw;
+  width: 100%;
   min-height: 100vh;
 
   .main {
@@ -190,16 +191,15 @@ body.modal-open .modal {
 @media (max-width: #{$desktop}) {
   .container {
     grid-template-columns: 250px 1fr;
-  }
-}
-
-@media (max-width: #{$tablet}) {
-  .container {
-    grid-template-columns: 210px 1fr;
+    width: 100vw;
   }
 }
 
 @media (max-width: #{$mobile}) {
+  body {
+    overflow-x: scroll;
+  }
+
   .container {
     display: flex;
     flex-direction: column;
@@ -207,17 +207,28 @@ body.modal-open .modal {
     grid-template-columns: none;
     grid-template-rows: auto;
     grid-template-areas: none;
-
-    .main {
-      width: 100%;
-    }
-
-    .sidebar {
-      display: none;
-    }
-
-    body.sidebar-open {
-      overflow: hidden;
-    }
+    min-width: #{$mobile};
   }
+
+  .main {
+    width: 100%;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  body.sidebar-open {
+    overflow: hidden;
+  }
+}
+
+.footer {
+  grid-area: footer;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--body-font);
+  color: var(--grey-color);
+  min-width: 0;
+  min-height: 0;
 }

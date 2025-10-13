@@ -42,6 +42,21 @@ export class Modal {
     Modal._instance = this;
   }
 
+  // Устанавливает фокус на первый фокусируемый элемент в модалке
+  _setInitialModalFocus() {
+    const focusableSelectors = [
+      'button:not([disabled])',
+      '[href]',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      'textarea:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])'
+    ];
+    const focusable = this.modalContent.querySelectorAll(focusableSelectors.join(','));
+    const focusableArr = Array.from(focusable).filter(el => el.offsetParent !== null);
+    if (focusableArr.length) focusableArr[0].focus();
+  }
+
   addEscListener() {
     if (!this.addedEsc) {
       document.addEventListener('keydown', (event) => {
@@ -54,7 +69,7 @@ export class Modal {
   }
 
   createCloseBtn() {
-    const closeBtn = el('span', { className: 'modal__close', 'aria-hidden': 'true' }, '×');
+    const closeBtn = el('span', { className: 'modal__close', 'aria-hidden': 'true', 'aria-label': t('modalCloseBtn') }, '×');
     closeBtn.addEventListener('click', () => this.close());
     return closeBtn;
   }
@@ -97,7 +112,7 @@ export class Modal {
     let currentStatus = statusOptions.find(opt => opt.value === error.status);
     if (!currentStatus) currentStatus = statusOptions[0];
     // Универсальный select для всех статусов
-    let statusSelect = el('div', { className: 'modal__status-select is-close' }, [
+    let statusSelect = el('div', { className: 'modal__status-select is-close', tabindex: '0', role: 'button', 'aria-haspopup': 'listbox', 'aria-expanded': 'false', 'aria-label': t('modalField_status') }, [
       el('span', { className: 'modal__status-current' }, currentStatus.label),
       // Вставляем SVG через innerHTML, как в aside
       (() => {
@@ -105,10 +120,10 @@ export class Modal {
         svg.innerHTML = '<svg class="modal__status-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 5.4975L2.12175 3.375L9.003 10.3792L15.8783 3.375L18 5.4975L9.003 14.625L0 5.4975Z" fill="currentColor"/></svg>';
         return svg.firstChild;
       })(),
-      el('ul', { className: 'modal__status-list', style: 'display: none;' },
+      el('ul', { className: 'modal__status-list', style: 'display: none;', role: 'listbox' },
         ...statusOptions
           .filter(opt => opt.value !== currentStatus.value)
-          .map(opt => el('li', { 'data-value': opt.value, className: 'modal__status-option' }, opt.label))
+          .map(opt => el('li', { 'data-value': opt.value, className: 'modal__status-option', tabindex: '0', role: 'option' }, opt.label))
       )
     ]);
     const currentSpan = statusSelect.querySelector('.modal__status-current');
@@ -130,12 +145,68 @@ export class Modal {
         statusSelect.classList.remove('is-open');
         statusSelect.classList.add('is-close');
         list.style.display = 'none';
+        statusSelect.setAttribute('aria-expanded', 'false');
         document.removeEventListener('mousedown', this._closeCustomSelect);
       } else {
         statusSelect.classList.add('is-open');
         statusSelect.classList.remove('is-close');
         list.style.display = 'block';
+        statusSelect.setAttribute('aria-expanded', 'true');
         document.addEventListener('mousedown', this._closeCustomSelect);
+        // Фокус на первую опцию
+        const firstOption = list.querySelector('.modal__status-option');
+        if (firstOption) firstOption.focus();
+      }
+    });
+
+    // Открытие селекта по Enter/Space
+    statusSelect.addEventListener('keydown', (e) => {
+      if ((e.key === 'Enter' || e.key === ' ') && !statusSelect.classList.contains('is-open')) {
+        e.preventDefault();
+        statusSelect.classList.add('is-open');
+        statusSelect.classList.remove('is-close');
+        list.style.display = 'block';
+        statusSelect.setAttribute('aria-expanded', 'true');
+        const firstOption = list.querySelector('.modal__status-option');
+        if (firstOption) firstOption.focus();
+      }
+    });
+
+    // Навигация по опциям селекта с помощью Tab/Shift+Tab и стрелок
+    list.addEventListener('keydown', (e) => {
+      const options = Array.from(list.querySelectorAll('.modal__status-option'));
+      const idx = options.indexOf(document.activeElement);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (idx < options.length - 1) {
+          options[idx + 1].focus();
+        } else {
+          options[0].focus();
+        }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (idx > 0) {
+          options[idx - 1].focus();
+        } else {
+          options[options.length - 1].focus();
+        }
+      } else if (e.key === 'Tab') {
+        if (!e.shiftKey && idx === options.length - 1) {
+          e.preventDefault();
+          options[0].focus();
+        } else if (e.shiftKey && idx === 0) {
+          e.preventDefault();
+          options[options.length - 1].focus();
+        }
+      } else if (e.key === 'Escape') {
+        statusSelect.classList.remove('is-open');
+        statusSelect.classList.add('is-close');
+        list.style.display = 'none';
+        statusSelect.setAttribute('aria-expanded', 'false');
+        statusSelect.focus();
+      } else if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        document.activeElement.click();
       }
     });
     // Выбор опции
@@ -167,7 +238,7 @@ export class Modal {
       }
     });
 
-    const commentArea = el('textarea', { className: 'modal__comment-area', rows: 3, placeholder: `${commentLabel} ...` }, comment);
+    const commentArea = el('textarea', { className: 'modal__comment-area', rows: 3, placeholder: `${commentLabel} ...`, 'aria-label': t('modalField_comment') }, comment);
 
     // Обработчик событий Enter для сохранения комментария
     commentArea.addEventListener('keydown', (e) => {
@@ -279,6 +350,7 @@ export class Modal {
 
     this.modal.classList.add('modal--open');
     document.body.classList.add('modal-open');
+    this._setInitialModalFocus();
   }
 
   deleteError(errorId) {
@@ -316,7 +388,9 @@ export class Modal {
       cancelBtn
     ]);
     this.modal.classList.add('modal--open');
+    this._setInitialModalFocus();
   }
+
   // Форматирование даты в стиле дд.мм.гггг чч:мм
   _formatDate(dateStr) {
     const date = new Date(dateStr);

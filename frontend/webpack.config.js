@@ -70,6 +70,7 @@ module.exports = (env = {}) => ({
     hot: true,
     port: 8080,
     open: true,
-    compress: true
+    compress: true,
+    host: '0.0.0.0'
   }
 });

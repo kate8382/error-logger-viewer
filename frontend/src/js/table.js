@@ -1,7 +1,7 @@
 import { el, setChildren } from 'redom';
 import { ErrorApi } from './api';
 import { StatsManager } from './stats';
-import { t, getLabel, getCurrentLang, onLangChange } from './utils/i18n.js';
+import { t, getCurrentLang, onLangChange } from './utils/i18n.js';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 
 export class ErrorTable {
@@ -59,7 +59,7 @@ export class ErrorTable {
       const actionsCell = el('td', { className: 'error-table__cell error-table__cell--actions flex' });
       const dropdownBtn = el('button', {
         className: 'error-table__dropdown-btn flex',
-        'aria-label': 'Actions'
+        'aria-label': t('tableActions') || 'Actions'
       }, '⋮');
       const editBtn = this.createEditButton(error);
       const deleteBtn = this.createDeleteButton(error);
@@ -110,7 +110,7 @@ export class ErrorTable {
   }
 
   createEditButton(error) {
-    const btn = el('button', { className: 'error-table__btn error-table__btn--edit', 'data-i18n': 'tableEditBtn', 'aria-label': getLabel('tableEditBtn') || 'Edit' }, 'Edit');
+    const btn = el('button', { className: 'error-table__btn error-table__btn--edit', 'data-i18n': 'tableEditBtn', 'aria-label': t('tableEditBtn') || 'Edit' }, t('tableEditBtn'));
     btn.addEventListener('click', async () => {
       const { showLoading, hideLoading } = await import('./utils/loading');
       showLoading(btn, 'save');
@@ -130,7 +130,7 @@ export class ErrorTable {
   }
 
   createDeleteButton(error) {
-    const btn = el('button', { className: 'error-table__btn error-table__btn--delete', 'data-i18n': 'tableDeleteBtn', 'aria-label': getLabel('tableDeleteBtn') || 'Delete' }, 'Delete');
+    const btn = el('button', { className: 'error-table__btn error-table__btn--delete', 'data-i18n': 'tableDeleteBtn', 'aria-label': t('tableDeleteBtn') || 'Delete' }, t('tableDeleteBtn'));
     btn.addEventListener('click', async () => {
       const { showLoading, hideLoading } = await import('./utils/loading');
       showLoading(btn, 'delete');

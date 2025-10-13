@@ -22,7 +22,16 @@ console.log('db.data:', db.data);
 // Создание приложения Express
 const app = express();
 
-app.use(cors());
+// Настройка CORS: разрешать все в разработке, только нужные origin в продакшене
+const isProd = process.env.NODE_ENV === 'production';
+const allowedOrigins = [
+  'https://kate8382.github.io' // для публикации на GitHub Pages
+];
+if (isProd) {
+  app.use(cors({ origin: allowedOrigins }));
+} else {
+  app.use(cors()); // разрешить все в разработке
+}
 app.use(express.json()); // для обработки JSON-запросов
 
 // Маршрут для получения статистики ошибок
@@ -289,8 +298,8 @@ app.delete('/errors/:id', async (req, res) => {
 
 // Запуск сервера
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running on http://0.0.0.0:${PORT}`);
 });
 
 // Экспорт приложения для тестирования

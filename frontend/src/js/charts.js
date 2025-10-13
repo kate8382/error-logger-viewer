@@ -1,4 +1,5 @@
 import Chart from 'chart.js/auto';
+import { API_BASE_URL } from './api.js';
 import { t, getLabel, onLangChange, setLang } from './utils/i18n.js';
 import { typeColors, statusColors } from './utils/colors';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
@@ -6,6 +7,7 @@ import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 export default class ChartManager {
   constructor() {
     this.canvas = document.getElementById('chartCanvas');
+    this.baseUrl = API_BASE_URL;
     // Язык теперь всегда берём через getCurrentLang()
     this.chart = null;
     // Всегда отображаем график по дням при загрузке страницы
@@ -143,9 +145,9 @@ export default class ChartManager {
         });
       } else {
         // Получаем статистику по выбранному периоду и типам
-        const resType = await fetch(`http://localhost:3000/errors/stats?by=${byParam}&group=type`);
+        const resType = await fetch(`${API_BASE_URL}/errors/stats?by=${byParam}&group=type`);
         statsType = await resType.json();
-        const resStatus = await fetch(`http://localhost:3000/errors/stats?by=${byParam}&group=status`);
+        const resStatus = await fetch(`${API_BASE_URL}/errors/stats?by=${byParam}&group=status`);
         statsStatus = await resStatus.json();
       }
 

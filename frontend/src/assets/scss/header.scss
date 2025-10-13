@@ -59,8 +59,15 @@
     }
 
     .header__search-btn {
-      width: 20px;
-      height: 20px;
+      width: 15%;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+
+      // для табуляции
+      &:focus {
+        color: var(--focus-color);
+      }
 
       .header__search-icon,
       .header__exit-icon {
@@ -72,6 +79,11 @@
         @media (max-width: #{$tablet}) {
           width: 16px;
           height: 16px;
+        }
+
+        @media (max-width: #{$mobile}) {
+          width: 14px;
+          height: 14px;
         }
 
         &:focus {

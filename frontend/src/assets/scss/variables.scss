@@ -99,23 +99,12 @@ $mobile: 780px;
 @media (max-width: #{$tablet}) {
   :root {
     --container-width: 100vw;
-    --max-gap: 16px;
+    --max-gap: 20px;
     --h1-font: 24px;
     --h2-font: 20px;
     --h3-font: 18px;
     --h4-font: 16px;
     --body-font: 12px;
     --small-font: 10px;
-  }
-}
-
-@media (max-width: #{$mobile}) {
-  :root {
-    --max-gap: 20px;
-    --h1-font: 22px;
-    --h3-font: 16px;
-    --h4-font: 14px;
-    --body-font: 10px;
-    --small-font: 8px;
   }
 }

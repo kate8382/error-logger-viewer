@@ -246,6 +246,7 @@ export class StatsManager {
     const btnPercent = document.getElementById(btnPercentId);
     const btnCount = document.getElementById(btnCountId);
     if (btnPercent) {
+      btnPercent.setAttribute('aria-label', t('ariaStatsBtnPercent'));
       btnPercent.onclick = () => {
         btnPercent.setAttribute('aria-label', t('ariaStatsBtnPercent'));
         this.renderStatCards(
@@ -262,6 +263,7 @@ export class StatsManager {
       };
     }
     if (btnCount) {
+      btnCount.setAttribute('aria-label', t('ariaStatsBtnCount'));
       btnCount.onclick = () => {
         btnCount.setAttribute('aria-label', t('ariaStatsBtnCount'));
         this.renderStatCards(

@@ -648,6 +648,45 @@
       "users": [
         "unknown"
       ]
+    },
+    {
+      "id": "bf85b9c4-185c-4060-90ec-3fd8badb4285",
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "status": "in_progress",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-10-12T15:42:13.096Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2025-10-12T16:17:15.694Z"
+    },
+    {
+      "id": "45fe8a69-affa-4bf0-bd51-47a6565adb05",
+      "type": "ResourceLoadError",
+      "message": "Failed to load resource: IMG",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-10-12T16:41:23.261Z",
+      "lastSeen": "2025-10-12T16:41:23.261Z",
+      "users": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "344c760f-c224-40ea-808c-eb4ebf8a2379",
+      "type": "TestError",
+      "message": "Тестовая ошибка для проверки дат",
+      "status": "in_progress",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-10-13T16:07:50.038Z",
+      "lastSeen": "2025-10-13T16:07:50.038Z",
+      "users": [
+        "unknown"
+      ]
     }
   ]
 }
