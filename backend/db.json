@@ -687,6 +687,33 @@
       "users": [
         "unknown"
       ]
+    },
+    {
+      "id": "cb44ec18-1714-4423-b2a2-b0a411820ab0",
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-10-15T16:14:50.278Z",
+      "lastSeen": "2025-10-15T16:14:50.278Z",
+      "users": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "2733749f-4c11-42b6-bb30-f2d9d95ca1d3",
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:197:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:14:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:15:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:21:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:22:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:22:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:22:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/js/api.js?:134:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/api.js?:7:1660)",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-10-15T16:14:53.381Z",
+      "lastSeen": "2025-10-15T16:14:53.381Z",
+      "users": [
+        "unknown"
+      ]
     }
   ]
 }
