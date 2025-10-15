@@ -155,6 +155,8 @@ export class ErrorTable {
 
   formatDate(dateStr) {
     const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return '';
+
     // Формат: дд.мм.гггг  чч:мм
     const d = date;
     const day = d.getDate().toString().padStart(2, '0');

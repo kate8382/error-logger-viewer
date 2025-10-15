@@ -1,6 +1,7 @@
 // eslint.config.js
 import js from '@eslint/js';
 import globals from 'globals';
+import jestPlugin from 'eslint-plugin-jest'; // установили плагин, т.к. в проекте используются тесты на Jest
 import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
@@ -29,8 +30,16 @@ export default defineConfig([
     }
   },
   {
-    files: ['webpack.config.js'],
-    languageOptions: { globals: globals.node },
+    files: ['webpack.config.js', 'cypress.config.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        require: 'readonly',
+        module: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+      }
+    },
     rules: {
       'no-console': 'off',
       'no-unused-vars': 'off',
@@ -39,6 +48,33 @@ export default defineConfig([
       'no-undef': 'off',
       'no-restricted-syntax': 'off',
       'import/no-extraneous-dependencies': 'off',
+    }
+  },
+  {
+    files: ['**/__tests__/**/*.js', '**/*.test.js', '**/*.spec.js'], // все тестовые файлы
+    languageOptions: { globals: globals.jest }, // добавляем глобальные переменные Jest
+    plugins: { jest: jestPlugin }, // подключаем плагин eslint-plugin-jest
+    rules: {
+      'jest/no-disabled-tests': 'warn', // предупреждение для отключённых тестов
+      'jest/no-focused-tests': 'error', // ошибка для focused тестов
+      'jest/no-identical-title': 'error', // ошибка для тестов с одинаковыми названиями
+      'jest/valid-expect': 'error', // проверка правильности использования expect
+      'jest/no-test-return-statement': 'warn' // предупреждение для return в тестах
+    }
+  },
+  {
+    files: ['cypress/e2e/**/*.js', '**/*.cy.js'],
+    languageOptions: {
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        cy: 'readonly',
+      }
+    },
+    rules: {
+      'no-undef': 'off',
     }
   }
 ]);

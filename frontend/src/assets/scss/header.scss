@@ -42,6 +42,17 @@
 
   .header__title {
     font-size: var(--h1-font);
+
+    &-text {
+      outline: none;
+      border: none;
+      transition: color 0.3s ease-in-out;
+
+      // для табуляции
+      &:focus {
+        color: var(--focus-color);
+      }
+    }
   }
 
   .header__search {

@@ -392,7 +392,7 @@ export class HeaderManager {
   async filterTable(query) {
     // Получаем все ошибки
     const errors = await this.api.getErrors({});
-    const filtered = errors.filter(error => {
+    const filtered = (Array.isArray(errors) ? errors : []).filter(error => {
       // Локализованные значения типа и статуса через t/getLabel
       const typeText = getLabel(error.type);
       const statusText = t(error.status || 'new');
@@ -417,7 +417,7 @@ export class HeaderManager {
         lastSeenDate
       ].some(val => val && String(val).toLowerCase().includes(query.toLowerCase()));
     });
-    this.filteredErrors = filtered.length < errors.length ? filtered : null;
+    this.filteredErrors = (Array.isArray(filtered) && Array.isArray(errors) && filtered.length < errors.length) ? filtered : null;
     this.table.renderErrors(filtered);
   }
 
