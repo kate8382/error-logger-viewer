@@ -69,7 +69,7 @@ export class Modal {
   }
 
   createCloseBtn() {
-    const closeBtn = el('span', { className: 'modal__close', 'aria-hidden': 'true', 'aria-label': t('modalCloseBtn') }, '×');
+    const closeBtn = el('button', { className: 'modal__close', 'aria-hidden': 'true', 'aria-label': t('modalCloseBtn') }, '×');
     closeBtn.addEventListener('click', () => this.close());
     return closeBtn;
   }

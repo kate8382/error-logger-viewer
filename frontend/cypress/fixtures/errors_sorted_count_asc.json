@@ -1,0 +1,18 @@
+[
+  {
+    "id": "err-2",
+    "type": "ReferenceError",
+    "count": 1,
+    "firstSeen": "2025-09-30T09:00:00Z",
+    "lastSeen": "2025-10-01T11:00:00Z",
+    "status": "fixed"
+  },
+  {
+    "id": "err-1",
+    "type": "TypeError",
+    "count": 3,
+    "firstSeen": "2025-10-01T10:00:00Z",
+    "lastSeen": "2025-10-02T12:00:00Z",
+    "status": "new"
+  }
+]

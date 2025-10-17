@@ -55,11 +55,11 @@
     transition: color 0.3s ease-in-out;
 
     &:hover {
-      color: var(--grey-color);
+      color: var(--hover-color);
     }
 
     &:active {
-      color: var(--black-color);
+      color: var(--active-color);
     }
   }
 

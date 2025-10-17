@@ -11,7 +11,7 @@ module.exports = defineConfig({
     videosFolder: 'cypress/videos', // папка для видео
     fixturesFolder: 'cypress/fixtures', // папка для фикстур
     integrationFolder: 'cypress/e2e', // папка для тестов
-    supportFile: false,
+    supportFile: 'cypress/support/e2e.js',
     excludeSpecPattern: ['**/coverage/**'], // исключить папки с покрытием
     defaultCommandTimeout: 8000,
     pageLoadTimeout: 60000,

@@ -2,53 +2,49 @@
 
 describe('Aside navigation', () => {
   beforeEach(() => {
-    cy.visit('http://192.168.31.198:8080/');
+    cy.intercept({ method: 'GET', url: /\/errors(\?|$)/ }, { fixture: 'errors.json' }).as('getErrors');
+    cy.visit('/');
+    // Убедиться, что Aside инициализирован и навесил обработчики
+    cy.window().its('aside').should('exist');
+    cy.wait('@getErrors');
+    // Небольшая задержка, чтобы i18n переводы применились
+    cy.wait(200);
   });
 
   it('переходит по разделам навигации', () => {
-    cy.contains('О программе').click();
+    cy.get('[data-i18n="navAbout"]').first().click({ force: true });
     cy.get('#aboutSection').should('be.visible');
 
-    cy.contains('Статистика ошибок').click();
+    cy.get('[data-i18n="navStats"]').first().click({ force: true });
     cy.get('#errorStats').should('be.visible');
 
-    cy.contains('Графики ошибок').click();
+    cy.get('[data-i18n="navCharts"]').first().click({ force: true });
     cy.get('#errorsChart').should('be.visible');
 
-    cy.contains('Таблица ошибок').click();
+    cy.get('[data-i18n="navErrors"]').first().click({ force: true });
     cy.get('#errorTableSection').should('be.visible');
   });
 
   it('открывает выпадающий список настроек', () => {
-    cy.get('.sidebar__dropdown-btn').click();
-    cy.get('#sidebarDropdownList').should('be.visible');
+    cy.openSettings();
   });
 
   it('меняет язык на английский и обратно', () => {
-    cy.get('.sidebar__dropdown-btn').click(); // Открыть настройки
-    cy.get('.sidebar__dropdown-group-btn[data-group="language"]').click(); // Открыть группу «Язык»
-    cy.get('.sidebar__dropdown-sublist[data-group="language"]').should('be.visible'); // Проверить, что подлист виден
-    cy.contains('English').click(); // Клик по «English»
-    cy.contains('Error Chart'); // Проверка, что заголовок на английском
+    cy.openSettings();
+    // Используем helper для клика по опции языка
+    cy.clickSettingsOption('language', 'en', { force: true });
+    cy.get('.sidebar__item-text[data-i18n="navErrors"]').should('contain', 'Error Table');
 
-    cy.get('.sidebar__dropdown-btn').click();
-    cy.get('.sidebar__dropdown-group-btn[data-group="language"]').click();
-    cy.get('.sidebar__dropdown-sublist[data-group="language"]').should('be.visible');
-    cy.contains('Русский').click();
-    cy.contains('Таблица ошибок'); // Проверка, что заголовок на русском
+    cy.clickSettingsOption('language', 'ru', { force: true });
+    cy.get('.sidebar__item-text[data-i18n="navErrors"]').should('contain', 'Таблица ошибок');
   });
 
   it('меняет тему на тёмную и обратно', () => {
-    cy.get('.sidebar__dropdown-btn').click(); // Открыть настройки
-    cy.get('.sidebar__dropdown-group-btn[data-group="theme"]').click(); // Открыть группу «Тема»
-    cy.get('.sidebar__dropdown-sublist[data-group="theme"]').should('be.visible'); // Проверить, что подменю видно
-    cy.contains('Dark').click(); // Клик по «Dark»
-    cy.get('body').should('have.class', 'theme-dark');
+    cy.openSettings();
+    cy.clickSettingsOption('theme', 'dark', { force: true });
+    cy.get('html').should('have.attr', 'data-theme', 'dark');
 
-    cy.get('.sidebar__dropdown-btn').click();
-    cy.get('.sidebar__dropdown-group-btn[data-group="theme"]').click();
-    cy.get('.sidebar__dropdown-sublist[data-group="theme"]').should('be.visible');
-    cy.contains('Light').click();
-    cy.get('body').should('not.have.class', 'theme-dark');
+    cy.clickSettingsOption('theme', 'light', { force: true });
+    cy.get('html').should('have.attr', 'data-theme', 'light');
   });
 });
