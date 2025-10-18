@@ -13,6 +13,9 @@ export class HeaderManager {
     this.lang = getCurrentLang();
     this.justSwitchedToTable = false;
     this.filteredErrors = null; // Храним отфильтрованные ошибки
+    // для избежания гонок при асинхронной фильтрации
+    this._debounceTimers = {};
+    this._lastFilterRequestId = 0;
     this.init();
   }
 
@@ -49,12 +52,27 @@ export class HeaderManager {
   setHeaderTitleBySection(sectionKey = null) {
     // Если sectionKey не передан или все секции видимы — основной заголовок
     if (!sectionKey) {
-      let titleSpan = this.headerTitle.querySelector('[data-i18n="title"]');
+      // предполагаем, что заголовок уже существует
+      let titleSpan = this.headerTitle.querySelector('.header__title-text[data-i18n="title"]') || this.headerTitle.querySelector('[data-i18n="title"]');
       if (titleSpan) {
         titleSpan.textContent = t('title') || 'Error Logger & Viewer';
       } else {
-        // Пересоздаём структуру заголовка, если span отсутствует
-        this.headerTitle.innerHTML = `<a href="https://github.com/kate8382/error-logger-viewer" target="_blank" rel="noopener noreferrer"><span data-i18n="title">${t('title') || 'Error Logger & Viewer'}</span></a>`;
+        // если заголовок не найден, создаём новый
+        const existingAnchor = this.headerTitle.querySelector('a');
+        const span = document.createElement('span');
+        span.className = 'header__title-text';
+        span.setAttribute('data-i18n', 'title');
+        span.textContent = t('title') || 'Error Logger & Viewer';
+        if (existingAnchor) {
+          existingAnchor.appendChild(span);
+        } else {
+          const a = document.createElement('a');
+          a.href = 'https://github.com/kate8382/error-logger-viewer';
+          a.setAttribute('target', '_blank');
+          a.setAttribute('rel', 'noopener noreferrer');
+          a.appendChild(span);
+          this.headerTitle.appendChild(a);
+        }
       }
       return;
     }
@@ -78,13 +96,15 @@ export class HeaderManager {
     }
     if (titleEl) {
       const i18nKey = titleEl.getAttribute('data-i18n');
+      const titleSpan = this.headerTitle.querySelector('[data-i18n="title"]');
       if (i18nKey && t(i18nKey)) {
-        this.headerTitle.textContent = t(i18nKey);
+        if (titleSpan) titleSpan.textContent = t(i18nKey); else this.headerTitle.textContent = t(i18nKey);
       } else {
-        this.headerTitle.textContent = titleEl.textContent || t('title');
+        if (titleSpan) titleSpan.textContent = titleEl.textContent || t('title'); else this.headerTitle.textContent = titleEl.textContent || t('title');
       }
     } else {
-      this.headerTitle.textContent = t('title') || 'Error Logger & Viewer';
+      const titleSpan = this.headerTitle.querySelector('[data-i18n="title"]');
+      if (titleSpan) titleSpan.textContent = t('title') || 'Error Logger & Viewer'; else this.headerTitle.textContent = t('title') || 'Error Logger & Viewer';
     }
   }
 
@@ -177,13 +197,14 @@ export class HeaderManager {
       this.resetAllViews();
     });
 
-    // Фильтрация при вводе
+    // Фильтрация при вводе (debounced)
     if (this.searchInput) {
+      const debouncedSearch = this._debounce((value) => this.handleSearch(value), 250, 'searchInput');
       this.searchInput.addEventListener('input', e => {
-        this.handleSearch(e.target.value);
+        debouncedSearch(e.target.value);
       });
 
-      // Фильтрация по Enter
+      // Фильтрация по Enter (немедленно)
       this.searchInput.addEventListener('keydown', e => {
         if (e.key === 'Enter') {
           this.handleSearch(this.searchInput.value);
@@ -268,6 +289,17 @@ export class HeaderManager {
         }
       });
     }
+  }
+
+  // Простая debounce-обёртка (храним таймеры по ключу на инстансе)
+  _debounce(fn, wait = 200, key = '__default') {
+    return (...args) => {
+      if (this._debounceTimers[key]) clearTimeout(this._debounceTimers[key]);
+      this._debounceTimers[key] = setTimeout(() => {
+        fn(...args);
+        delete this._debounceTimers[key];
+      }, wait);
+    };
   }
 
   // Основная логика поиска и фильтрации
@@ -390,8 +422,12 @@ export class HeaderManager {
   }
 
   async filterTable(query) {
+    // запрос id чтобы избежать гонок: только последний ответ должен обновлять UI
+    const requestId = ++this._lastFilterRequestId;
     // Получаем все ошибки
     const errors = await this.api.getErrors({});
+    // Если был запущен новый запрос после этого, игнорируем этот ответ
+    if (requestId !== this._lastFilterRequestId) return;
     const filtered = (Array.isArray(errors) ? errors : []).filter(error => {
       // Локализованные значения типа и статуса через t/getLabel
       const typeText = getLabel(error.type);

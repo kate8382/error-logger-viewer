@@ -58,4 +58,40 @@ describe('HeaderManager фильтрация', () => {
     expect(header.filteredErrors[0].status).toBe('new');
     expect(header.filteredErrors[1].status).toBe('new');
   });
+
+  it('игнорирует устаревшие ответы (requestId)', async () => {
+    // контролируемые промисы
+    let resolveFirst, resolveSecond;
+    const p1 = new Promise(res => { resolveFirst = res; });
+    const p2 = new Promise(res => { resolveSecond = res; });
+    // первый вызов вернёт p1, второй — p2
+    let call = 0;
+    header.api.getErrors = () => {
+      call++;
+      return call === 1 ? p1 : p2;
+    };
+
+    // Запускаем два запроса подряд
+    const first = header.filterTable('a');
+    const second = header.filterTable('b');
+
+    // Разрешаем второй промис сначала
+    resolveSecond([
+      { id: '2', type: 'bType', status: 'fixed' }
+    ]);
+    await second;
+    // ожидаем, что table.renderErrors был вызван с данными второго ответа
+    expect(header.table.renderErrors).toHaveBeenCalled();
+    const lastCallArgAfterSecond = header.table.renderErrors.mock.calls[header.table.renderErrors.mock.calls.length - 1][0];
+    expect(Array.isArray(lastCallArgAfterSecond)).toBe(true);
+    expect(lastCallArgAfterSecond[0].id).toBe('2');
+    // Теперь разрешаем первый (старый) — он не должен перезаписать результат
+    resolveFirst([
+      { id: '1', type: 'aType', status: 'new' }
+    ]);
+    await first;
+    // последний вызов всё ещё должен ссылаться на данные второго ответа
+    const lastCallArgAfterFirst = header.table.renderErrors.mock.calls[header.table.renderErrors.mock.calls.length - 1][0];
+    expect(lastCallArgAfterFirst[0].id).toBe('2');
+  });
 });

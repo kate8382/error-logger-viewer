@@ -1,6 +1,14 @@
 import { StatsManager } from '../stats';
 
 describe('StatsManager', () => {
+  // фиксируем системную дату, чтобы todayCount был детерминирован
+  beforeAll(() => {
+    jest.useFakeTimers('modern');
+    jest.setSystemTime(new Date('2025-10-15T16:00:00.000Z'));
+  });
+  afterAll(() => {
+    jest.useRealTimers();
+  });
   const mockErrors = [
     { type: 'TypeError', status: 'new', firstSeen: '2025-10-15T10:00:00.000Z' },
     { type: 'ReferenceError', status: 'fixed', firstSeen: '2025-10-15T12:00:00.000Z' },
