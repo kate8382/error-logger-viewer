@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  frontend-tests:
+    name: Frontend: tests & e2e
+    runs-on: ubuntu-latest
+    services: {}
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install frontend deps
+        run: npm ci
+
+      - name: Run unit tests (Jest)
+        run: npm test --silent
+
+      - name: Build production bundle
+        run: npm run build
+
+      - name: Serve production build in background
+        run: |
+          npx http-server ./dist -p 8080 -c-1 &
+          echo "waiting for server..." && sleep 2
+
+      - name: Start backend server
+        working-directory: ./backend
+        run: |
+          npm ci
+          nohup node server.js &
+          echo "waiting for backend..." && sleep 2
+
+      - name: Install Cypress
+        run: npm i cypress@15 --no-save
+
+      - name: Run Cypress headless
+        env:
+          CYPRESS_baseUrl: http://localhost:8080
+        run: npx cypress run --browser electron
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install deps
+        run: npm ci
+      - name: Run ESLint
+        run: npm run lint || true

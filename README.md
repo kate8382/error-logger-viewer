@@ -1,12 +1,26 @@
 # Error Logger & Viewer
 
-**Status:** Production / Stable / Released
+[![CI](https://github.com/kate8382/error-logger-viewer/actions/workflows/ci.yml/badge.svg)](https://github.com/kate8382/error-logger-viewer/actions)
+[![Pages](https://github.com/kate8382/error-logger-viewer/actions/workflows/deploy-gh-pages.yml/badge.svg)](https://github.com/kate8382/error-logger-viewer/actions)
 
-**Demo:** _Add your production/demo link here if available_
+**Status:** Production / Stable / Released
 
 **Error Logger & Viewer** is a modern SPA for collecting, storing, analyzing, and visualizing JavaScript errors in web projects. It is designed for developers and teams who need to quickly identify, group, and track errors in production or test environments.
 
 ---
+
+## Tests
+
+ CI: the repository includes a GitHub Actions workflow at `.github/workflows/ci.yml` that runs Jest, builds the frontend, starts a simple static server and the backend, and runs Cypress headless.
+
+ - Added and stabilized Cypress end-to-end specs (modal, header filters, table CRUD) and custom Cypress helpers (`cy.openRowActions()`, `cy.confirmDelete()`). See `frontend/cypress` for test specs and fixtures.
+- Centralized dynamic-import error handling via `frontend/src/js/utils/moduleLoad.js` and added translated fallback message `moduleLoadFailed` in `i18n.js`.
+- Fixed runtime bug in charts generation (`charts.js`) to avoid accessing undefined nested properties.
+- Added GitHub Actions workflow (`.github/workflows/ci.yml`) to run Jest, build the frontend, and execute headless Cypress tests in CI.
+
+For detailed test instructions and helper descriptions see `frontend/TESTS.md`.
+ 
+ ---
 
 ## Purpose
 

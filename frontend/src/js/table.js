@@ -2,6 +2,7 @@ import { el, setChildren } from 'redom';
 import { ErrorApi } from './api';
 import { StatsManager } from './stats';
 import { t, getCurrentLang, onLangChange } from './utils/i18n.js';
+import { handleModuleLoadError } from './utils/moduleLoad.js';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 
 export class ErrorTable {
@@ -112,19 +113,21 @@ export class ErrorTable {
   createEditButton(error) {
     const btn = el('button', { className: 'error-table__btn error-table__btn--edit', 'data-i18n': 'tableEditBtn', 'aria-label': t('tableEditBtn') || 'Edit' }, t('tableEditBtn'));
     btn.addEventListener('click', async () => {
-      const { showLoading, hideLoading } = await import('./utils/loading');
-      showLoading(btn, 'save');
-      // await new Promise(resolve => setTimeout(resolve, 5000));
+      try {
+        const { showLoading, hideLoading } = await import('./utils/loading');
+        showLoading(btn, 'save');
 
-      import('./modal').then(({ Modal }) => {
-        const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
-        window.appModal = new Modal(mode);
-        window.appModal.openEdit(error);
-        hideLoading(btn);
-      }).catch(error => {
-        console.error('Ошибка при открытии модального окна редактирования:', error);
-        hideLoading(btn);
-      });
+        import('./modal').then(({ Modal }) => {
+          const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
+          window.appModal = new Modal(mode);
+          window.appModal.openEdit(error);
+          hideLoading(btn);
+        }).catch(error => {
+          handleModuleLoadError('Ошибка при открытии модального окно редактирования:', error, hideLoading, btn);
+        });
+      } catch (impErr) {
+        handleModuleLoadError('Failed to load loading utils for edit', impErr);
+      }
     });
     return btn;
   }
@@ -132,19 +135,22 @@ export class ErrorTable {
   createDeleteButton(error) {
     const btn = el('button', { className: 'error-table__btn error-table__btn--delete', 'data-i18n': 'tableDeleteBtn', 'aria-label': t('tableDeleteBtn') || 'Delete' }, t('tableDeleteBtn'));
     btn.addEventListener('click', async () => {
-      const { showLoading, hideLoading } = await import('./utils/loading');
-      showLoading(btn, 'delete');
+      try {
+        const { showLoading, hideLoading } = await import('./utils/loading');
+        showLoading(btn, 'delete');
 
-      import('./modal').then(({ Modal }) => {
-        const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
-        window.appModal = new Modal(mode);
-        window.appModal.deleteError(error.id);
-        // После завершения действия скрываем спиннер
-        hideLoading(btn);
-      }).catch(error => {
-        console.error('Ошибка при открытии модального окна удаления:', error);
-        hideLoading(btn); // Скрываем спиннер в случае ошибки
-      });
+        import('./modal').then(({ Modal }) => {
+          const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
+          window.appModal = new Modal(mode);
+          window.appModal.deleteError(error.id);
+          // После завершения действия скрываем спиннер
+          hideLoading(btn);
+        }).catch(error => {
+          handleModuleLoadError('Ошибка при открытии модального окна удаления:', error, hideLoading, btn);
+        });
+      } catch (impErr) {
+        handleModuleLoadError('Failed to load loading utils for delete (table)', impErr);
+      }
     });
     return btn;
   }

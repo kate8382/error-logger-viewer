@@ -72,6 +72,8 @@ Useful Cypress helpers and recommendations
   - `cy.waitForTable({ timeout = 20000 })` — wait for `#errorTableBody` to appear.
   - `cy.getFirstRow()` — get the first `tr` inside `#errorTableBody`.
   - `cy.clickSettingsOption(group, value, opts = { force:false })` — open settings, group and click option with `data-value`.
+  - `cy.openRowActions(index = 0)` — open the actions menu (edit/delete) for the row at `index` (default 0). Use before clicking `.error-table__btn--edit` or `.error-table__btn--delete` to ensure the action buttons are visible.
+  - `cy.confirmDelete()` — click the delete confirmation button (`#deleteErrorButton`) inside the modal and wait for the modal to close.
 
 Examples (short):
 ```powershell
@@ -87,6 +89,12 @@ cy.clickSettingsOption('language', 'en');
 
 # change theme and force the click if submenu is animated
 cy.clickSettingsOption('theme', 'dark', { force: true });
+
+# Open actions on first row and confirm deletion using helpers
+cy.waitForTable();
+cy.openRowActions(0);
+cy.getFirstRow().find('.error-table__btn--delete').click({ force: true });
+cy.confirmDelete();
 ```
 
 Troubleshooting
@@ -172,6 +180,8 @@ npx cypress run --config baseUrl="http://localhost:8080" --spec "cypress/e2e/hea
   - `cy.waitForTable({ timeout = 20000 })` — ждёт появления `#errorTableBody`.
   - `cy.getFirstRow()` — получает первый `tr` внутри `#errorTableBody`.
   - `cy.clickSettingsOption(group, value, opts = { force:false })` — открывает настройки, группу и кликает опцию с `data-value`.
+  - `cy.openRowActions(index = 0)` — открыть меню действий (edit/delete) для строки по индексу (по умолчанию 0). Используйте перед кликом `.error-table__btn--edit` или `.error-table__btn--delete`.
+  - `cy.confirmDelete()` — нажать кнопку подтверждения удаления (`#deleteErrorButton`) в модалке и дождаться закрытия модального окна.
 
 Примеры (коротко):
 ```powershell
@@ -187,6 +197,12 @@ cy.clickSettingsOption('language', 'en');
 
 # изменить тему и принудительно щелкнуть, если подменю анимировано
 cy.clickSettingsOption('theme', 'dark', { force: true });
+
+# Открыть меню действий первой строки и подтвердить удаление через хелперы
+cy.waitForTable();
+cy.openRowActions(0);
+cy.getFirstRow().find('.error-table__btn--delete').click({ force: true });
+cy.confirmDelete();
 ```
 
 Устранение неполадок

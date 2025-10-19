@@ -1,4 +1,5 @@
 import { t } from './i18n.js';
+import handleModuleLoadError from './moduleLoad.js';
 
 let testErrorBtn = null;
 
@@ -19,19 +20,24 @@ export function showTestErrorButton() {
   btn.style.border = 'none';
   btn.style.cursor = 'pointer';
   btn.onclick = async () => {
-    const { ErrorApi } = await import('../api.js');
-    const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
-    const api = new ErrorApi(mode);
-    await api.createError({
-      type: 'TestError',
-      message: t('testErrorMsg') || 'Тестовая ошибка для проверки дат',
-      firstSeen: new Date().toISOString(),
-      lastSeen: new Date().toISOString()
-    });
-    if (window.app && typeof window.app.updateErrorTable === 'function') {
-      window.app.updateErrorTable();
+    try {
+      const { ErrorApi } = await import('../api.js');
+      const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
+      const api = new ErrorApi(mode);
+      await api.createError({
+        type: 'TestError',
+        message: t('testErrorMsg') || 'Тестовая ошибка для проверки дат',
+        firstSeen: new Date().toISOString(),
+        lastSeen: new Date().toISOString()
+      });
+      if (window.app && typeof window.app.updateErrorTable === 'function') {
+        window.app.updateErrorTable();
+      }
+      alert(t('testErrorCreated') || 'Тестовая ошибка создана! Обновите таблицу.');
+    } catch (err) {
+      console.error('Failed to load ErrorApi module', err);
+      handleModuleLoadError('Failed to load ErrorApi module', err);
     }
-    alert(t('testErrorCreated') || 'Тестовая ошибка создана! Обновите таблицу.');
   };
   document.body.appendChild(btn);
   if (typeof window.onLangChange === 'function') {

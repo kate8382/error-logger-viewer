@@ -48,10 +48,8 @@ describe('Table of Errors', () => {
     cy.wait('@getErrorsInit2');
     // Ждём рендер таблицы и используем helper для первой строки
     cy.waitForTable();
-    cy.getFirstRow().within(() => {
-      cy.get('.error-table__dropdown-btn').click();
-      cy.get('.error-table__btn--delete').click({ force: true });
-    });
+    cy.openRowActions(0);
+    cy.getFirstRow().find('.error-table__btn--delete').click({ force: true });
 
     // Ждём появления кнопки удаления в модалке (dynamic import + рендер модалки может быть асинхронным)
     cy.get('#deleteErrorButton', { timeout: 20000 }).should('exist');

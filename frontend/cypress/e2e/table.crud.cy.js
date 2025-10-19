@@ -36,13 +36,9 @@ describe('Table - CRUD operations', () => {
   });
 
   it('редактирует первую ошибку через модальное окно', () => {
-    // откроем меню действий в первой строке и нажмём Edit
-    cy.getFirstRow().within(() => {
-      cy.get('.error-table__dropdown-btn').click();
-      // Принудительно покажем меню и кликнем по Edit (на случай, если CSS анимация скрывает меню)
-      cy.get('.error-table__dropdown-menu').invoke('show');
-      cy.get('.error-table__btn--edit', { timeout: 10000 }).click({ force: true });
-    });
+    // откроем меню действий в первой строке и нажмём Edit (используем helper)
+    cy.openRowActions(0);
+    cy.getFirstRow().find('.error-table__btn--edit', { timeout: 10000 }).click({ force: true });
 
     // дождёмся открытия модалки (иногда модалка рендерится но остаётся скрытой до установки класса)
     cy.get('#modal', { timeout: 15000 }).should('have.class', 'modal--open');
@@ -66,22 +62,15 @@ describe('Table - CRUD operations', () => {
 
   it('удаляет первую ошибку', () => {
     // откроем меню действий и нажмём Delete
-    cy.getFirstRow().within(() => {
-      cy.get('.error-table__dropdown-btn').click();
-      cy.get('.error-table__dropdown-menu').invoke('show');
-      cy.get('.error-table__btn--delete', { timeout: 10000 }).click({ force: true });
-    });
+    // откроем меню действий и нажмём Delete (используем helper), затем подтвердим в модалке
+    cy.openRowActions(0);
+    cy.getFirstRow().find('.error-table__btn--delete', { timeout: 10000 }).click({ force: true });
 
     // Ожидаем, что модалка откроется (динамический импорт может быть медленным), затем подтверждаем
     cy.get('#modal', { timeout: 15000 }).should('have.class', 'modal--open');
-    // Кликаем по кнопке удаления внутри модалки
-    cy.get('#modal').within(() => {
-      cy.get('#deleteErrorButton', { timeout: 15000 }).should('be.visible').click();
-    });
+    cy.confirmDelete();
 
-    // Не делаем жёсткого ожидания сетевого алиаса — в demo режиме удаление происходит в localStorage
-    // Подождём коротко на UI-обновление и убедимся, что модалка закрылась
-    cy.wait(500);
+    // Убедимся, что модалка закрылась и таблица на месте
     cy.get('#modal', { timeout: 10000 }).should('not.have.class', 'modal--open');
     cy.get('body').should('not.have.class', 'modal-open');
     cy.get('#errorTableBody').should('exist');

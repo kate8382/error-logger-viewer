@@ -347,7 +347,7 @@ export default class ChartManager {
     // Формируем datasets для типов
     const typeDatasets = allTypes.map((type, idx) => ({
       label: getLabel(type),
-      data: periodKeys.map(date => statsType[date][type] || 0),
+      data: periodKeys.map(date => (statsType[date] && statsType[date][type]) ? statsType[date][type] : 0),
       backgroundColor: typeColors[idx % typeColors.length],
       borderWidth: 0,
       borderRadius: 8,
@@ -358,7 +358,7 @@ export default class ChartManager {
     // Для статусов используем t(status)
     const statusDatasets = allStatuses.map((status, idx) => ({
       label: t(status),
-      data: periodKeys.map(date => statsStatus[date][status] || 0),
+      data: periodKeys.map(date => (statsStatus[date] && statsStatus[date][status]) ? statsStatus[date][status] : 0),
       backgroundColor: statusColors[idx % statusColors.length],
       borderWidth: 0,
       borderRadius: 8,

@@ -1,6 +1,7 @@
 import { el, setChildren } from 'redom';
 import { ErrorApi } from './api.js';
 import { t, getLabel, onLangChange } from './utils/i18n.js';
+import { handleModuleLoadError } from './utils/moduleLoad.js';
 
 export class Modal {
   constructor(mode = 'server') {
@@ -323,19 +324,23 @@ export class Modal {
         // Для server-режима удаляем lastSeen, чтобы сервер выставил новое значение
         if ('lastSeen' in updated) delete updated.lastSeen;
       }
-      const { showLoading, hideLoading } = await import('./utils/loading');
-      showLoading(saveBtn, 'save');
-
       try {
-        await this.errorApi.updateError(error.id, updated);
-        this.close();
-        if (window.errorTableInstance && typeof window.errorTableInstance.fetchErrors === 'function') {
-          window.errorTableInstance.fetchErrors();
+        const { showLoading, hideLoading } = await import('./utils/loading');
+        showLoading(saveBtn, 'save');
+
+        try {
+          await this.errorApi.updateError(error.id, updated);
+          this.close();
+          if (window.errorTableInstance && typeof window.errorTableInstance.fetchErrors === 'function') {
+            window.errorTableInstance.fetchErrors();
+          }
+          hideLoading(saveBtn);
+        } catch (e) {
+          console.error('Ошибка при сохранении изменений:', e);
+          hideLoading(saveBtn);
         }
-        hideLoading(saveBtn);
-      } catch (e) {
-        console.error('Ошибка при сохранении изменений:', e);
-        hideLoading(saveBtn);
+      } catch (impErr) {
+        handleModuleLoadError('Failed to load loading utils for save', impErr);
       }
     });
 
@@ -359,19 +364,23 @@ export class Modal {
 
     const deleteBtn = el('button', { className: 'modal__delete-btn', id: 'deleteErrorButton', 'data-i18n': 'modalDeleteBtn', 'aria-label': t('modalDeleteBtn') }, t('modalDeleteBtn'));
     deleteBtn.addEventListener('click', async () => {
-      const { showLoading, hideLoading } = await import('./utils/loading');
-      showLoading(deleteBtn, 'delete');
+      try {
+        const { showLoading, hideLoading } = await import('./utils/loading');
+        showLoading(deleteBtn, 'delete');
 
-      this.errorApi.deleteError(errorId).then(() => {
-        this.close();
-        if (window.errorTableInstance && typeof window.errorTableInstance.fetchErrors === 'function') {
-          window.errorTableInstance.fetchErrors();
-        }
-        hideLoading(deleteBtn);
-      }).catch(error => {
-        console.error('Ошибка при удалении ошибки:', error);
-        hideLoading(deleteBtn);
-      });
+        this.errorApi.deleteError(errorId).then(() => {
+          this.close();
+          if (window.errorTableInstance && typeof window.errorTableInstance.fetchErrors === 'function') {
+            window.errorTableInstance.fetchErrors();
+          }
+          hideLoading(deleteBtn);
+        }).catch(error => {
+          console.error('Ошибка при удалении ошибки:', error);
+          hideLoading(deleteBtn);
+        });
+      } catch (impErr) {
+        handleModuleLoadError('Failed to load loading utils for delete', impErr, null, null);
+      }
     });
 
     const cancelBtn = el('button', { className: 'modal__cancel-btn', id: 'cancelDeleteButton', 'data-i18n': 'modalCancelBtn', 'aria-label': t('modalCancelBtn') }, t('modalCancelBtn'));

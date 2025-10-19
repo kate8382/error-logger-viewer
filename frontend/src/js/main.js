@@ -6,6 +6,7 @@ import ChartManager from './charts.js';
 import { ErrorTable } from './table';
 import { getCurrentLang, onLangChange } from './utils/i18n.js';
 import { updateTestErrorButtonVisibility } from './utils/testErrorButton.js';
+import handleModuleLoadError from './utils/moduleLoad.js';
 
 // Инициализация таблицы ошибок и статистики
 window.errorTableInstance = new ErrorTable('server');
@@ -39,6 +40,8 @@ class ErrorLoggerApp {
           window.aside.translatePage(getCurrentLang());
           onLangChange(() => window.aside.translatePage(getCurrentLang()));
         }
+      }).catch(err => {
+        handleModuleLoadError('Failed to load aside module', err);
       });
       this.setupErrorListeners();
       // Инициализация ChartManager только один раз глобально

@@ -156,6 +156,8 @@ export const translations = {
     modalDeleteMessage: 'Are you sure you want to delete this error?',
     modalCancelBtn: 'Cancel',
     modalDeleteBtn: 'Delete',
+    // Dynamic import/load errors
+    moduleLoadFailed: 'Failed to load UI module. Please reload the page.',
   },
   ru: {
     // Main
@@ -314,6 +316,8 @@ export const translations = {
     modalDeleteMessage: 'Вы уверены, что хотите удалить эту ошибку?',
     modalCancelBtn: 'Отмена',
     modalDeleteBtn: 'Удалить',
+    // Ошибка загрузки динамического импорта
+    moduleLoadFailed: 'Не удалось загрузить модуль интерфейса. Пожалуйста, перезагрузите страницу.',
   }
 };
 

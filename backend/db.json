@@ -733,28 +733,55 @@
       "id": "573ba19a-eef8-4d1d-a5b0-9d7baf96dacc",
       "type": "ResourceLoadError",
       "message": "Failed to load resource: IMG",
-      "status": "new",
+      "status": "ignored",
       "comment": "",
       "count": 1,
       "firstSeen": "2025-10-18T16:20:47.460Z",
-      "lastSeen": "2025-10-18T16:20:47.460Z",
       "users": [
         "unknown"
-      ]
+      ],
+      "lastSeen": "2025-10-18T17:01:28.200Z"
     },
     {
       "id": "9d6337c0-fc45-436a-8574-433059e9f75c",
       "type": "FetchError",
       "message": "Failed to fetch",
       "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:197:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/main.js?:14:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/main.js?:15:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/main.js?:21:70)\n    at _next (webpack://error-logger-viewer/./src/js/main.js?:22:163)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:22:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/main.js?:22:90)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:213:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/charts.js?:15:1660)",
-      "status": "new",
+      "status": "fixed",
       "comment": "",
       "count": 1,
       "firstSeen": "2025-10-18T16:48:22.793Z",
-      "lastSeen": "2025-10-18T16:48:22.793Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2025-10-18T17:01:40.820Z"
+    },
+    {
+      "id": "3bdde30d-0ac5-4ec2-a143-2d46b695beef",
+      "type": "TestError",
+      "message": "Тестовая ошибка для проверки дат",
+      "status": "in_progress",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-10-19T14:16:29.645Z",
+      "lastSeen": "2025-10-19T14:16:29.645Z",
       "users": [
         "unknown"
       ]
+    },
+    {
+      "id": "64289b0b-152b-410b-8189-393a690c452c",
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: Cannot read properties of undefined (reading 'ignored')",
+      "stack": "TypeError: Cannot read properties of undefined (reading 'ignored')\n    at eval (webpack://error-logger-viewer/./src/js/charts.js?:479:37)\n    at Array.map (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/js/charts.js?:478:28)\n    at Array.map (<anonymous>)\n    at ChartManager.prepareBarChartData (webpack://error-logger-viewer/./src/js/charts.js?:475:40)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/js/charts.js?:230:44)\n    at Generator.eval (webpack://error-logger-viewer/./src/js/charts.js?:15:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/js/charts.js?:16:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/js/charts.js?:23:70)\n    at _next (webpack://error-logger-viewer/./src/js/charts.js?:24:163)",
+      "status": "in_progress",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-10-19T14:16:30.466Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2025-10-19T15:36:59.951Z"
     }
   ]
 }
