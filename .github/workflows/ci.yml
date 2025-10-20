@@ -63,7 +63,20 @@ jobs:
       - name: Run Cypress headless
         env:
           CYPRESS_baseUrl: http://localhost:8080
-        run: npx cypress run --browser electron
+        run: |
+          # save full cypress stdout/stderr to a file for later upload
+          npx cypress run --browser electron 2>&1 | tee cypress-run.log
+
+      - name: Upload Cypress artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-artifacts
+          path: |
+            frontend/cypress/screenshots
+            frontend/cypress/videos
+            frontend/cypress/logs
+            frontend/cypress-run.log
 
   lint:
     name: Lint
