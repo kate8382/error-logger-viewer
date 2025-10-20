@@ -18,10 +18,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Use Node.js 18
+      - name: Use Node.js 18.16.0
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '18.16.0'
 
       - name: Install frontend deps
         run: npm ci
@@ -73,10 +73,10 @@ jobs:
         working-directory: frontend
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js
+      - name: Use Node.js 18.16.0
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '18.16.0'
       - name: Install deps
         run: npm ci
       - name: Run ESLint
