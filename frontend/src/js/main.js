@@ -193,7 +193,10 @@ class ErrorLoggerApp {
 }
 
 // Инициализация приложения
-const app = new ErrorLoggerApp('server');
+// Автоматически выбираем режим: на локальной машине используем 'server',
+// на публичном хостинге (gh-pages и т.п.) — 'demo', чтобы не пытаться обращаться к localhost:3000
+const defaultMode = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) ? 'server' : 'demo';
+const app = new ErrorLoggerApp(defaultMode);
 window.app = app;
 app.flushLocalErrors();
 

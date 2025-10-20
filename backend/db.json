@@ -782,6 +782,20 @@
         "unknown"
       ],
       "lastSeen": "2025-10-19T15:36:59.951Z"
+    },
+    {
+      "id": "9fdf5d8f-7c6a-4806-b29f-4b80b1bfaf4c",
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "stack": "TypeError: Failed to fetch\n    at http://127.0.0.1:8080/main.d6d3a204cfaeb5e81c5e.js:2:300965\n    at Generator.<anonymous> (http://127.0.0.1:8080/main.d6d3a204cfaeb5e81c5e.js:2:296173)\n    at Generator.next (http://127.0.0.1:8080/main.d6d3a204cfaeb5e81c5e.js:2:297016)\n    at ka (http://127.0.0.1:8080/main.d6d3a204cfaeb5e81c5e.js:2:297648)\n    at s (http://127.0.0.1:8080/main.d6d3a204cfaeb5e81c5e.js:2:297851)\n    at http://127.0.0.1:8080/main.d6d3a204cfaeb5e81c5e.js:2:297912\n    at new Promise (<anonymous>)\n    at http://127.0.0.1:8080/main.d6d3a204cfaeb5e81c5e.js:2:297792\n    at t.<anonymous> (http://127.0.0.1:8080/main.d6d3a204cfaeb5e81c5e.js:2:7412)\n    at Generator.<anonymous> (http://127.0.0.1:8080/main.d6d3a204cfaeb5e81c5e.js:2:3965)",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-10-20T15:06:49.888Z",
+      "lastSeen": "2025-10-20T15:06:49.888Z",
+      "users": [
+        "unknown"
+      ]
     }
   ]
 }

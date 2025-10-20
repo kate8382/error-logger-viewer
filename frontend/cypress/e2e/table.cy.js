@@ -3,7 +3,7 @@
 describe('Table of Errors', () => {
   it('открывает главную страницу и видит заголовок таблицы', () => {
     cy.intercept({ method: 'GET', url: /\/errors(\?|$)/ }, { fixture: 'errors.json' }).as('getErrorsHome');
-    cy.visit('http://192.168.31.198:8080/');
+    cy.visit('/');
     cy.wait('@getErrorsHome');
     cy.get('.error-table__title').should('be.visible');
   });
@@ -11,7 +11,7 @@ describe('Table of Errors', () => {
   it('рендерит строки таблицы из API', () => {
     // Перехватываем запрос за ошибками и возвращаем фикстуру
     cy.intercept('GET', '**/errors*', { fixture: 'errors.json' }).as('getErrors');
-    cy.visit('http://192.168.31.198:8080/');
+    cy.visit('/');
     cy.wait('@getErrors');
     // Ждём таблицу и проверяем строки
     cy.waitForTable();
@@ -26,7 +26,7 @@ describe('Table of Errors', () => {
     // Перехват сортировочного запроса по count: возвращаем заранее отсортированную фикстуру
     cy.intercept({ method: 'GET', url: /\/errors.*(\?|&)sort=count(&|$)/ }, { fixture: 'errors_sorted_count_asc.json' }).as('getErrorsSorted');
 
-    cy.visit('http://192.168.31.198:8080/');
+    cy.visit('/');
     cy.wait('@getErrorsInit');
 
     // Кликаем по кнопке сортировки и ждём сетевой вызов сортировки
@@ -44,7 +44,7 @@ describe('Table of Errors', () => {
     // Перехватываем начальный список
     cy.intercept('GET', '**/errors*', { fixture: 'errors.json' }).as('getErrorsInit2');
 
-    cy.visit('http://192.168.31.198:8080/');
+    cy.visit('/');
     cy.wait('@getErrorsInit2');
     // Ждём рендер таблицы и используем helper для первой строки
     cy.waitForTable();

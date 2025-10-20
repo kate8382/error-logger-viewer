@@ -8,7 +8,7 @@ on:
 
 jobs:
   frontend-tests:
-    name: Frontend: tests & e2e
+    name: "Frontend: tests & e2e"
     runs-on: ubuntu-latest
     services: {}
     defaults:
@@ -42,7 +42,20 @@ jobs:
         run: |
           npm ci
           nohup node server.js &
-          echo "waiting for backend..." && sleep 2
+          echo "waiting for backend..."
+          # Wait for backend to respond on /errors (max ~10 seconds)
+          for i in 1 2 3 4 5; do
+            if curl -sS http://localhost:3000/errors >/dev/null 2>&1; then
+              echo "backend ready"
+              break
+            fi
+            echo "waiting for backend... ($i)"
+            sleep 2
+          done
+          if ! curl -sS http://localhost:3000/errors >/dev/null 2>&1; then
+            echo "Backend did not become ready in time" >&2
+            exit 1
+          fi
 
       - name: Install Cypress
         run: npm i cypress@15 --no-save
