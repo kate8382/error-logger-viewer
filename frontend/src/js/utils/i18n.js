@@ -322,9 +322,25 @@ export const translations = {
 };
 
 // Используем глобальный объект translations
-let currentLang = (window.app && window.app.lang)
-  ? window.app.lang
-  : ((navigator.language || navigator.userLanguage).startsWith('en') ? 'en' : 'ru');
+// Try to restore previously selected language from localStorage, then fall back to window.app or navigator
+let currentLang;
+try {
+  const savedLang = localStorage.getItem('lang');
+  if (savedLang) {
+    currentLang = savedLang;
+  } else if (window.app && window.app.lang) {
+    currentLang = window.app.lang;
+  } else {
+    currentLang = ((navigator.language || navigator.userLanguage).startsWith('en') ? 'en' : 'ru');
+  }
+} catch {
+  // Если localStorage недоступен, используем app или navigator
+  if (window.app && window.app.lang) {
+    currentLang = window.app.lang;
+  } else {
+    currentLang = ((navigator.language || navigator.userLanguage).startsWith('en') ? 'en' : 'ru');
+  }
+}
 
 let listeners = [];
 
@@ -337,7 +353,12 @@ export function setLang(lang) {
     currentLang = lang;
     if (window.app) window.app.lang = lang;
     listeners.forEach(fn => fn(lang));
-    // Можно добавить сохранение в localStorage, если нужно
+    // Сохраняем выбор языка, как делаем для темы
+    try {
+      localStorage.setItem('lang', lang);
+    } catch {
+      // игнорируем (localStorage может быть недоступен)
+    }
   }
 }
 
