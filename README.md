@@ -56,15 +56,15 @@ The application allows you to:
 
 <p align="center">
 	<figure style="display:inline-block; margin:12px;">
-		<img src="screenshots/chart-views.png" alt="Chart view" width="1000">
-		<figcaption align="center">Charts view — stacked bar charts and period selector (week/month/year) for error dynamics.</figcaption>
+		<img src="screenshots/modal-view.png" alt="Modal edit" width="1000">
+		<figcaption align="center">Error details modal — view full stack, change status and add comments.</figcaption>
 	</figure>
 </p>
 
 <p align="center">
 	<figure style="display:inline-block; margin:12px;">
-		<img src="screenshots/modal-views.png" alt="Modal edit" width="1000">
-		<figcaption align="center">Error details modal — view full stack, change status and add comments.</figcaption>
+		<img src="screenshots/chart-view.png" alt="Chart view" width="1000">
+		<figcaption align="center">Charts view — stacked bar charts and period selector (week/month/year) for error dynamics.</figcaption>
 	</figure>
 </p>
 
