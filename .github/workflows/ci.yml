@@ -34,7 +34,7 @@ jobs:
 
       - name: Serve production build in background
         run: |
-          npx http-server ./dist -p 8080 -c-1 &
+          npm run serve:dist &
           echo "waiting for server..." && sleep 2
 
       - name: Start backend server

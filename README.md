@@ -40,10 +40,33 @@ The application allows you to:
 
 ## Screenshots
 
-![Main dashboard](screenshots/dashboard-light-en.png)
-![Error table with filter](screenshots/table-filter-dark-ru.png)
-![Chart view](screenshots/chart-views.png)
-![Modal edit](screenshots/modal-views.png)
+<p align="center">
+	<figure style="display:inline-block; margin:12px;">
+		<img src="screenshots/dashboard-view.png" alt="Main dashboard" width="1000">
+		<figcaption align="center">Main dashboard — overview of error statistics, quick filters and light/dark theme examples.</figcaption>
+	</figure>
+</p>
+
+<p align="center">
+	<figure style="display:inline-block; margin:12px;">
+		<img src="screenshots/table-filter-view.png" alt="Error table with filter" width="1000">
+		<figcaption align="center">Error table with search and filter — showing sortable columns and action menu for each row.</figcaption>
+	</figure>
+</p>
+
+<p align="center">
+	<figure style="display:inline-block; margin:12px;">
+		<img src="screenshots/chart-views.png" alt="Chart view" width="1000">
+		<figcaption align="center">Charts view — stacked bar charts and period selector (week/month/year) for error dynamics.</figcaption>
+	</figure>
+</p>
+
+<p align="center">
+	<figure style="display:inline-block; margin:12px;">
+		<img src="screenshots/modal-views.png" alt="Modal edit" width="1000">
+		<figcaption align="center">Error details modal — view full stack, change status and add comments.</figcaption>
+	</figure>
+</p>
 
 ---
 
@@ -53,6 +76,14 @@ The application allows you to:
 	 - Backend: Node.js, Express, LowDB (db.json file).
 	 - Frontend: SPA in pure JS, built with Webpack.
 	 - Start server and frontend (`npm start` in respective folders).
+
+	Note: to reproduce the exact production-like environment used in CI (build + static server), you can run the following in the `frontend` folder after building:
+
+	```powershell
+	# build and serve the production bundle
+	npm run build
+	npm run serve:dist
+	```
 
 2. **Error collection**
 	 - All errors are automatically logged when they occur on the page.

@@ -1,3 +1,4 @@
+
 import '../assets/scss/style.scss';
 import { ErrorApi } from './api';
 import './header.js';
@@ -193,14 +194,13 @@ class ErrorLoggerApp {
 }
 
 // Инициализация приложения
-// По умолчанию запускаем приложение в режиме 'server' (как было ранее).
-const defaultMode = 'server';
+/* Автоматически выбираем режим: на локальной машине используем 'server', на публичном хостинге (gh-pages и т.п.) — 'demo', чтобы не пытаться обращаться к localhost:3000 */
+const defaultMode = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) ? 'server' : 'demo';
 const app = new ErrorLoggerApp(defaultMode);
 window.app = app;
 app.flushLocalErrors();
 
 // Инициализация кнопки создания тестовой ошибки
-// Показываем кнопку, если режим demo
 document.addEventListener('DOMContentLoaded', updateTestErrorButtonVisibility);
 
 // Следим за сменой режима (через aside)
