@@ -81,13 +81,7 @@ The application allows you to:
 	 - Frontend: SPA in pure JS, built with Webpack.
 	 - Start server and frontend (`npm start` in respective folders).
 
-	Note: to reproduce the exact production-like environment used in CI (build + static server), you can run the following in the `frontend` folder after building:
-
-	```powershell
-	# build and serve the production bundle
-	npm run build
-	npm run serve:dist
-	```
+	To preview a production build locally run `npm run build` and `npm run serve:dist` in the `frontend` folder — see [frontend/README.md](frontend/README.md) for details.
 
 2. **Error collection**
 	 - All errors are automatically logged when they occur on the page.
