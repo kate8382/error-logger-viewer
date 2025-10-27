@@ -12,8 +12,9 @@
     "serve:dist": "npx http-server ./dist -p 8080 -c-1"
   },
   "author": "Ecaterina Sevciuc",
-  "license": "ISC",
+  "license": "MIT",
   "description": "Error logger viewer application",
+  "homepage": "https://kate8382.github.io/error-logger-viewer",
   "devDependencies": {
     "@babel/core": "^7.28.0",
     "@babel/preset-env": "^7.28.0",

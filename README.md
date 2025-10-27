@@ -4,6 +4,10 @@
 [![Pages](https://github.com/kate8382/error-logger-viewer/actions/workflows/deploy-gh-pages.yml/badge.svg)](https://github.com/kate8382/error-logger-viewer/actions)
 
 **Error Logger & Viewer** is a modern SPA for collecting, storing, analyzing, and visualizing JavaScript errors in web projects. It is designed for developers and teams who need to quickly identify, group, and track errors in production or test environments.
+ 
+Live demo: https://kate8382.github.io/error-logger-viewer/ — try the "Create test error" button on the demo page to see the app in action.
+
+Quick start: see [frontend/README.md](frontend/README.md) and [backend/README.md](backend/README.md) for detailed setup and test instructions.
 
 ## Purpose
 
@@ -166,7 +170,7 @@ The application allows you to:
 - Fixed runtime bug in charts generation (`charts.js`) to avoid accessing undefined nested properties.
 - Added GitHub Actions workflow (`.github/workflows/ci.yml`) to run Jest, build the frontend, and execute headless Cypress tests in CI.
 
-For detailed test instructions and helper descriptions see `frontend/TESTS.md`.
+For detailed test instructions and helper descriptions see [frontend/TESTS.md](frontend/TESTS.md).
  
  ---
 
