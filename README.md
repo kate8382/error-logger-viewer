@@ -7,6 +7,8 @@
  
 Live demo: https://kate8382.github.io/error-logger-viewer/ — try the "Create test error" button on the demo page to see the app in action.
 
+Read the short case study on Dev.to: https://dev.to/kate8382/error-logger-viewer-tiny-spa-for-tracking-js-errors-12mk
+
 Quick start: see [frontend/README.md](frontend/README.md) and [backend/README.md](backend/README.md) for detailed setup and test instructions.
 
 ## Purpose
