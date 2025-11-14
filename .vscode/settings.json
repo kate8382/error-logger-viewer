@@ -1,0 +1,54 @@
+{
+  "// Performance settings to prevent extension host issues": "",
+  "extensions.autoCheckUpdates": false,
+  "extensions.autoUpdate": false,
+  
+  "// Disable features that might cause conflicts with Copilot": "",
+  "git.openRepositoryInParentFolders": "never",
+  
+  "// Optimize search and file watching": "",
+  "search.followSymlinks": false,
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/coverage/**": true,
+    "**/.nyc_output/**": true
+  },
+  
+  "// Editor settings for this project": "",
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  
+  "// Language-specific settings": "",
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  
+  "// ESLint configuration": "",
+  "eslint.workingDirectories": [
+    "./frontend",
+    "./backend"
+  ],
+  
+  "// Exclude folders from VS Code search": "",
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/coverage": true,
+    "**/.nyc_output": true,
+    "**/cypress/videos": true,
+    "**/cypress/screenshots": true
+  },
+  
+  "// Terminal settings": "",
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.defaultProfile.osx": "bash",
+  "terminal.integrated.defaultProfile.windows": "Command Prompt"
+}

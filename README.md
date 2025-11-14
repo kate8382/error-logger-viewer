@@ -170,6 +170,25 @@ For detailed test instructions and helper descriptions see [frontend/TESTS.md](f
  
  ---
 
+## VS Code Development
+
+If you're using VS Code for development, this repository includes optimized workspace settings to prevent common issues:
+
+- **Workspace settings** (`.vscode/settings.json`) - Performance optimizations and recommended configurations
+- **Recommended extensions** (`.vscode/extensions.json`) - ESLint, GitHub Copilot, and more
+
+**Experiencing issues with VS Code or Copilot?** See troubleshooting guides for solutions to common problems:
+- [VSCODE_TROUBLESHOOTING.md](VSCODE_TROUBLESHOOTING.md) (English)
+- [VSCODE_TROUBLESHOOTING_RU.md](VSCODE_TROUBLESHOOTING_RU.md) (Русский)
+
+Common issues covered:
+- Copilot chat not opening
+- Extension host becoming unresponsive  
+- High CPU usage from language features
+- Extension conflicts and installation issues
+
+---
+
 ## How to contribute
 
 1. Fork the repository.
