@@ -11,9 +11,17 @@ describe('StatsManager', () => {
   });
   const mockErrors = [
     { type: 'TypeError', status: 'new', firstSeen: '2025-10-15T10:00:00.000Z' },
-    { type: 'ReferenceError', status: 'fixed', firstSeen: '2025-10-15T12:00:00.000Z' },
+    {
+      type: 'ReferenceError',
+      status: 'fixed',
+      firstSeen: '2025-10-15T12:00:00.000Z',
+    },
     { type: 'TypeError', status: 'new', firstSeen: '2025-10-14T09:00:00.000Z' },
-    { type: 'RangeError', status: 'deleted', firstSeen: '2025-10-15T13:00:00.000Z' }
+    {
+      type: 'RangeError',
+      status: 'deleted',
+      firstSeen: '2025-10-15T13:00:00.000Z',
+    },
   ];
 
   it('считает общее количество ошибок (без deleted)', () => {
@@ -30,7 +38,7 @@ describe('StatsManager', () => {
     const stats = new StatsManager(mockErrors);
     expect(stats.typeStats).toEqual([
       ['TypeError', 2],
-      ['ReferenceError', 1]
+      ['ReferenceError', 1],
     ]);
   });
 
@@ -38,7 +46,7 @@ describe('StatsManager', () => {
     const stats = new StatsManager(mockErrors);
     expect(stats.statusStats).toEqual([
       ['new', 2],
-      ['fixed', 1]
+      ['fixed', 1],
     ]);
   });
 

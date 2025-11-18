@@ -317,8 +317,9 @@ export const translations = {
     modalCancelBtn: 'Отмена',
     modalDeleteBtn: 'Удалить',
     // Ошибка загрузки динамического импорта
-    moduleLoadFailed: 'Не удалось загрузить модуль интерфейса. Пожалуйста, перезагрузите страницу.',
-  }
+    moduleLoadFailed:
+      'Не удалось загрузить модуль интерфейса. Пожалуйста, перезагрузите страницу.',
+  },
 };
 
 // Используем глобальный объект translations
@@ -331,14 +332,22 @@ try {
   } else if (window.app && window.app.lang) {
     currentLang = window.app.lang;
   } else {
-    currentLang = ((navigator.language || navigator.userLanguage).startsWith('en') ? 'en' : 'ru');
+    currentLang = (navigator.language || navigator.userLanguage).startsWith(
+      'en',
+    )
+      ? 'en'
+      : 'ru';
   }
 } catch {
   // Если localStorage недоступен, используем app или navigator
   if (window.app && window.app.lang) {
     currentLang = window.app.lang;
   } else {
-    currentLang = ((navigator.language || navigator.userLanguage).startsWith('en') ? 'en' : 'ru');
+    currentLang = (navigator.language || navigator.userLanguage).startsWith(
+      'en',
+    )
+      ? 'en'
+      : 'ru';
   }
 }
 
@@ -352,7 +361,7 @@ export function setLang(lang) {
   if (lang !== currentLang) {
     currentLang = lang;
     if (window.app) window.app.lang = lang;
-    listeners.forEach(fn => fn(lang));
+    listeners.forEach((fn) => fn(lang));
     // Сохраняем выбор языка, как делаем для темы
     try {
       localStorage.setItem('lang', lang);
@@ -368,7 +377,7 @@ export function onLangChange(fn) {
 
 // Получить перевод по ключу (универсально)
 export function t(key, vars = {}) {
-  let str = (translations?.[currentLang]?.[key]) || key;
+  let str = translations?.[currentLang]?.[key] || key;
   // Поддержка шаблонов вида "Hello, {name}!"
   Object.entries(vars).forEach(([k, v]) => {
     str = str.replace(new RegExp(`{${k}}`, 'g'), v);
@@ -385,7 +394,7 @@ export function getLabel(key) {
 
 // Получить все переводы для текущего языка
 export function getTranslations() {
-  return (translations?.[currentLang]) || {};
+  return translations?.[currentLang] || {};
 }
 
 // Экспортируем объект для удобства
@@ -395,6 +404,6 @@ const i18n = {
   onLangChange,
   t,
   getLabel,
-  getTranslations
+  getTranslations,
 };
 export default i18n;

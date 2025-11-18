@@ -1,0 +1,8 @@
+{
+  "prettier.prettierPath": "./frontend/node_modules/prettier",
+  "prettier.requireConfig": true,
+  "eslint.workingDirectories": [
+    { "directory": "frontend", "changeProcessCWD": true },
+    { "directory": "backend", "changeProcessCWD": true }
+  ]
+}

@@ -54,11 +54,20 @@ export default class ChartManager {
 
   // Обновляет размер шрифта на графике и перерисовывает его
   updateFontSize() {
-    if (this.chart && this.chart.options && this.chart.options.plugins && this.chart.options.plugins.legend && this.chart.options.plugins.legend.labels) {
+    if (
+      this.chart &&
+      this.chart.options &&
+      this.chart.options.plugins &&
+      this.chart.options.plugins.legend &&
+      this.chart.options.plugins.legend.labels
+    ) {
       if (this.chart.options.plugins.legend.labels.font) {
-        this.chart.options.plugins.legend.labels.font.size = this.getResponsiveFontSize();
+        this.chart.options.plugins.legend.labels.font.size =
+          this.getResponsiveFontSize();
       } else {
-        this.chart.options.plugins.legend.labels.font = { size: this.getResponsiveFontSize() };
+        this.chart.options.plugins.legend.labels.font = {
+          size: this.getResponsiveFontSize(),
+        };
       }
       // Если график по дням — перерисовываем полностью, чтобы обновить формат дат
       if (this.currentType === 'day' || this.currentType === 'date') {
@@ -69,7 +78,7 @@ export default class ChartManager {
     }
   }
 
-  // Форматируем даты 
+  // Форматируем даты
   getPeriodKey(dateStr, by) {
     if (!dateStr) return '';
     const d = new Date(dateStr);
@@ -81,7 +90,8 @@ export default class ChartManager {
       const week = Math.ceil((days + firstJan.getDay() + 1) / 7);
       return `${year}-W${week.toString().padStart(2, '0')}`;
     }
-    if (by === 'month') return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    if (by === 'month')
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
     if (by === 'year') return d.getFullYear().toString();
     return '';
   }
@@ -133,7 +143,7 @@ export default class ChartManager {
         }
         statsType = {};
         statsStatus = {};
-        errors.forEach(e => {
+        errors.forEach((e) => {
           const key = this.getPeriodKey(e.lastSeen || e.firstSeen, byParam);
           if (!key) return;
           const type = e.type || 'Unknown';
@@ -141,29 +151,43 @@ export default class ChartManager {
           statsType[key][type] = (statsType[key][type] || 0) + (e.count || 1);
           const status = e.status || 'new';
           if (!statsStatus[key]) statsStatus[key] = {};
-          statsStatus[key][status] = (statsStatus[key][status] || 0) + (e.count || 1);
+          statsStatus[key][status] =
+            (statsStatus[key][status] || 0) + (e.count || 1);
         });
       } else {
         // Получаем статистику по выбранному периоду и типам
-        const resType = await fetch(`${API_BASE_URL}/errors/stats?by=${byParam}&group=type`);
+        const resType = await fetch(
+          `${API_BASE_URL}/errors/stats?by=${byParam}&group=type`,
+        );
         statsType = await resType.json();
-        const resStatus = await fetch(`${API_BASE_URL}/errors/stats?by=${byParam}&group=status`);
+        const resStatus = await fetch(
+          `${API_BASE_URL}/errors/stats?by=${byParam}&group=status`,
+        );
         statsStatus = await resStatus.json();
       }
 
       // Универсальная подготовка данных для графика (labels, datasets, стили)
-      const { labels, datasets } = this.prepareBarChartData(statsType, statsStatus, byParam, this.currentType);
+      const { labels, datasets } = this.prepareBarChartData(
+        statsType,
+        statsStatus,
+        byParam,
+        this.currentType,
+      );
 
       try {
         if (!labels.length || !datasets.length) {
           // Если нет данных для графика
-          this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
-          this.canvas.parentElement.querySelector('.chart__title').textContent = t('noChartData');
+          this.canvas
+            .getContext('2d')
+            .clearRect(0, 0, this.canvas.width, this.canvas.height);
+          this.canvas.parentElement.querySelector('.chart__title').textContent =
+            t('noChartData');
         } else {
           // Есть данные — рендерим график
-          this.canvas.parentElement.querySelector('.chart__title').textContent = t('chartTitle');
+          this.canvas.parentElement.querySelector('.chart__title').textContent =
+            t('chartTitle');
           // Автоматический max для оси Y с округлением и динамическим шагом
-          const allData = datasets.flatMap(ds => ds.data);
+          const allData = datasets.flatMap((ds) => ds.data);
           let rawMax = Math.max(1, ...allData) || 1;
           // Округляем maxY вверх до "красивого" значения
           function getNiceMax(val) {
@@ -183,23 +207,24 @@ export default class ChartManager {
             type: 'bar',
             data: {
               labels,
-              datasets
+              datasets,
             },
             options: {
               responsive: true,
               plugins: {
-                legend: { // Отображать легенду
+                legend: {
+                  // Отображать легенду
                   display: false,
                   position: 'top', // Положение легенды
                   labels: {
                     boxWidth: 12, // Ширина бокса
-                    padding: 20
-                  }
+                    padding: 20,
+                  },
                 },
                 tooltip: {
                   callbacks: {
-                    label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y}` // ctx - контекст, где ctx.dataset.label - отвечает за название набора данных (label), а ctx.parsed.y - за значение по оси Y
-                  }
+                    label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y}`, // ctx - контекст, где ctx.dataset.label - отвечает за название набора данных (label), а ctx.parsed.y - за значение по оси Y
+                  },
                 },
               },
               // Паддинги
@@ -208,8 +233,8 @@ export default class ChartManager {
                   left: 30,
                   right: 30,
                   top: 30,
-                  bottom: 30
-                }
+                  bottom: 30,
+                },
               },
               scales: {
                 x: {
@@ -224,8 +249,8 @@ export default class ChartManager {
                     color: '#89868d',
                     font: { size: this.getResponsiveFontSize() },
                     padding: 5,
-                    major: { enabled: false } // Выключаем выделение крупных меток
-                  }
+                    major: { enabled: false }, // Выключаем выделение крупных меток
+                  },
                 },
                 y: {
                   stacked: true, // Стэк для баров
@@ -233,7 +258,7 @@ export default class ChartManager {
                     drawTicks: false, // Отключаем рисование засечек
                   },
                   border: {
-                    display: false // Отключаем линию оси Y
+                    display: false, // Отключаем линию оси Y
                   },
                   min: 0,
                   suggestedMax: maxY,
@@ -243,9 +268,9 @@ export default class ChartManager {
                     stepSize: stepSize,
                     callback: function (value) {
                       return value;
-                    }
-                  }
-                }
+                    },
+                  },
+                },
               },
             },
           });
@@ -262,26 +287,25 @@ export default class ChartManager {
   }
 
   /**
-* Универсальная подготовка данных для bar chart (labels, datasets, стили, форматирование)
-* Используется и для demo, и для server режима
-*/
+   * Универсальная подготовка данных для bar chart (labels, datasets, стили, форматирование)
+   * Используется и для demo, и для server режима
+   */
   prepareBarChartData(statsType, statsStatus, byParam, currentType) {
     // Собираем все ключи периодов, фильтруем только валидные
-    let periodKeys = Object.keys(statsType)
-      .filter(date => {
-        if (!date || typeof date !== 'string') return false;
-        const typeVals = Object.values(statsType[date] || {});
-        const statusVals = Object.values(statsStatus[date] || {});
-        // Защита от ошибки, если v может быть undefined или объектом
-        const total = [...typeVals, ...statusVals].reduce((sum, v) => {
-          // Если v объект и есть свойство fixed, берём v.fixed, иначе v
-          if (v && typeof v === 'object' && 'fixed' in v) {
-            return sum + (typeof v.fixed === 'number' ? v.fixed : 0);
-          }
-          return sum + (typeof v === 'number' ? v : 0);
-        }, 0);
-        return total > 0;
-      });
+    let periodKeys = Object.keys(statsType).filter((date) => {
+      if (!date || typeof date !== 'string') return false;
+      const typeVals = Object.values(statsType[date] || {});
+      const statusVals = Object.values(statsStatus[date] || {});
+      // Защита от ошибки, если v может быть undefined или объектом
+      const total = [...typeVals, ...statusVals].reduce((sum, v) => {
+        // Если v объект и есть свойство fixed, берём v.fixed, иначе v
+        if (v && typeof v === 'object' && 'fixed' in v) {
+          return sum + (typeof v.fixed === 'number' ? v.fixed : 0);
+        }
+        return sum + (typeof v === 'number' ? v : 0);
+      }, 0);
+      return total > 0;
+    });
     // Защита от некорректных periodKeys
     if (!Array.isArray(periodKeys)) periodKeys = [];
     // Ограничиваем количество отображаемых периодов и настраиваем ширину баров
@@ -306,11 +330,11 @@ export default class ChartManager {
     // Форматированные подписи для оси X
     let labels = periodKeys;
     if (currentType === 'date' || currentType === 'day') {
-      labels = periodKeys.map(date => this.formatDayLabel(date));
+      labels = periodKeys.map((date) => this.formatDayLabel(date));
     }
     if (currentType === 'week') {
       // Поддержка periodKeys: '2025-W39' и '2025-39'
-      labels = periodKeys.map(isoWeek => {
+      labels = periodKeys.map((isoWeek) => {
         let yearStr, weekStr;
         if (/^\d{4}-W\d{2}$/.test(isoWeek)) {
           [yearStr, weekStr] = isoWeek.split('-W');
@@ -328,26 +352,39 @@ export default class ChartManager {
         const ISOweekStart = new Date(simple);
         if (dow <= 4)
           ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
-        else
-          ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+        else ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
         const ISOweekEnd = new Date(ISOweekStart);
         ISOweekEnd.setDate(ISOweekStart.getDate() + 6);
         // Форматирование: дд.мм.гг
-        const fmt = d => `${d.getDate().toString().padStart(2, '0')}.${(d.getMonth() + 1).toString().padStart(2, '0')}.${d.getFullYear().toString().slice(-2)}`;
+        const fmt = (d) =>
+          `${d.getDate().toString().padStart(2, '0')}.${(d.getMonth() + 1).toString().padStart(2, '0')}.${d.getFullYear().toString().slice(-2)}`;
         return `${fmt(ISOweekStart)} – ${fmt(ISOweekEnd)}`;
       });
     }
     if (currentType === 'month') {
-      labels = periodKeys.map(date => new Date(date).toLocaleString('default', { month: 'numeric', year: 'numeric' }));
+      labels = periodKeys.map((date) =>
+        new Date(date).toLocaleString('default', {
+          month: 'numeric',
+          year: 'numeric',
+        }),
+      );
     }
     // year: 2025 → 2025 (оставляем как есть)
     // Собираем все типы и статусы
-    const allTypes = Array.from(new Set(periodKeys.flatMap(date => Object.keys(statsType[date] || {}))));
-    const allStatuses = Array.from(new Set(periodKeys.flatMap(date => Object.keys(statsStatus[date] || {}))));
+    const allTypes = Array.from(
+      new Set(periodKeys.flatMap((date) => Object.keys(statsType[date] || {}))),
+    );
+    const allStatuses = Array.from(
+      new Set(
+        periodKeys.flatMap((date) => Object.keys(statsStatus[date] || {})),
+      ),
+    );
     // Формируем datasets для типов
     const typeDatasets = allTypes.map((type, idx) => ({
       label: getLabel(type),
-      data: periodKeys.map(date => (statsType[date] && statsType[date][type]) ? statsType[date][type] : 0),
+      data: periodKeys.map((date) =>
+        statsType[date] && statsType[date][type] ? statsType[date][type] : 0,
+      ),
       backgroundColor: typeColors[idx % typeColors.length],
       borderWidth: 0,
       borderRadius: 8,
@@ -358,7 +395,11 @@ export default class ChartManager {
     // Для статусов используем t(status)
     const statusDatasets = allStatuses.map((status, idx) => ({
       label: t(status),
-      data: periodKeys.map(date => (statsStatus[date] && statsStatus[date][status]) ? statsStatus[date][status] : 0),
+      data: periodKeys.map((date) =>
+        statsStatus[date] && statsStatus[date][status]
+          ? statsStatus[date][status]
+          : 0,
+      ),
       backgroundColor: statusColors[idx % statusColors.length],
       borderWidth: 0,
       borderRadius: 8,
@@ -377,7 +418,7 @@ export default class ChartManager {
     const btnWeek = document.getElementById('errorsChartSortWeek');
     const btnMonth = document.getElementById('errorsChartSortMonth');
     const btnYear = document.getElementById('errorsChartSortYear');
-    [btnWeek, btnMonth, btnYear].forEach(btn => {
+    [btnWeek, btnMonth, btnYear].forEach((btn) => {
       if (btn) btn.classList.remove('chart__sort-btn--active');
     });
     this.renderChart();
@@ -386,7 +427,7 @@ export default class ChartManager {
 
   prepareChartData(stats) {
     // stats: { "type1": count, "type2": count, ... }
-    const labels = Object.keys(stats).map(key => getLabel(key));
+    const labels = Object.keys(stats).map((key) => getLabel(key));
     const data = Object.values(stats);
     return { labels, data };
   }
@@ -398,7 +439,7 @@ export default class ChartManager {
     const btnYear = document.getElementById('errorsChartSortYear');
 
     if (btnWeek) {
-      btnWeek.addEventListener('click', e => {
+      btnWeek.addEventListener('click', (e) => {
         e.preventDefault();
         this.currentType = 'week';
         if (typeof localStorage !== 'undefined') {
@@ -408,7 +449,7 @@ export default class ChartManager {
       });
     }
     if (btnMonth) {
-      btnMonth.addEventListener('click', e => {
+      btnMonth.addEventListener('click', (e) => {
         e.preventDefault();
         this.currentType = 'month';
         if (typeof localStorage !== 'undefined') {
@@ -419,7 +460,7 @@ export default class ChartManager {
     }
     // Если есть кнопка "год", добавляем обработчик
     if (btnYear) {
-      btnYear.addEventListener('click', e => {
+      btnYear.addEventListener('click', (e) => {
         e.preventDefault();
         this.currentType = 'year';
         if (typeof localStorage !== 'undefined') {

@@ -14,15 +14,15 @@ export class StatsManager {
 
   // Общее количество ошибок
   get totalCount() {
-    return this.errors.filter(e => e.status !== 'deleted').length;
+    return this.errors.filter((e) => e.status !== 'deleted').length;
   }
 
   // Количество ошибок за сегодня, за исключением deleted
   get todayCount() {
     const today = new Date().toISOString().slice(0, 10);
     return this.errors
-      .filter(e => e.status !== 'deleted')
-      .filter(e => {
+      .filter((e) => e.status !== 'deleted')
+      .filter((e) => {
         const date = e.firstSeen;
         return date && date.slice(0, 10) === today;
       }).length;
@@ -31,20 +31,24 @@ export class StatsManager {
   // Статистика по типам ошибок: [['TypeError', 25], ...]
   get typeStats() {
     const typeStats = {};
-    this.errors.filter(e => e.status !== 'deleted').forEach(e => {
-      const type = e.type || 'Unknown';
-      typeStats[type] = (typeStats[type] || 0) + 1;
-    });
+    this.errors
+      .filter((e) => e.status !== 'deleted')
+      .forEach((e) => {
+        const type = e.type || 'Unknown';
+        typeStats[type] = (typeStats[type] || 0) + 1;
+      });
     return Object.entries(typeStats);
   }
 
   // Статистика по статусам ошибок: [['new', 10], ...]
   get statusStats() {
     const statusStats = {};
-    this.errors.filter(e => e.status !== 'deleted').forEach(e => {
-      const status = e.status || 'new';
-      statusStats[status] = (statusStats[status] || 0) + 1;
-    });
+    this.errors
+      .filter((e) => e.status !== 'deleted')
+      .forEach((e) => {
+        const status = e.status || 'new';
+        statusStats[status] = (statusStats[status] || 0) + 1;
+      });
     return Object.entries(statusStats);
   }
 
@@ -91,9 +95,7 @@ export class StatsManager {
     canvas.height = 130;
     canvasWrapper.appendChild(canvas);
     const ctx = canvas.getContext('2d');
-    const data = view === 'percent'
-      ? stats.percents
-      : stats.counts;
+    const data = view === 'percent' ? stats.percents : stats.counts;
     if (!data.length) return;
     const cx = canvas.width / 2;
     const cy = canvas.height * 0.98;
@@ -106,7 +108,7 @@ export class StatsManager {
     let currentAngle = startAngle;
     data.forEach((value, i) => {
       const color = colors[i % colors.length];
-      let segmentAngle = (Math.PI * value / total) - gap;
+      let segmentAngle = (Math.PI * value) / total - gap;
       if (segmentAngle < minSegment) segmentAngle = minSegment;
       ctx.save();
       ctx.lineWidth = thickness;
@@ -128,11 +130,7 @@ export class StatsManager {
       const color = colors[idx % colors.length];
       const li = el('li', { className: 'stat__card flex' });
       const colorBox = el('span', { className: 'stat__color-box', style: `background:${color}` });
-      setChildren(li, [
-        colorBox,
-        el('span', { className: valueClass }, getValue(idx, value)),
-        el('span', { className: 'stat__title' }, itemLabel)
-      ]);
+      setChildren(li, [colorBox, el('span', { className: valueClass }, getValue(idx, value)), el('span', { className: 'stat__title' }, itemLabel)]);
       listElem.appendChild(li);
     });
   }
@@ -166,10 +164,10 @@ export class StatsManager {
             doughnutMethod: (view) => {
               const stats = {
                 percents: this.typePercentStats,
-                counts: this.typeStats.map(([, count]) => count)
+                counts: this.typeStats.map(([, count]) => count),
               };
               this.renderDoughnut({ chartId: 'statsChartType', stats, colors: typeColors, view });
-            }
+            },
           });
           hideCenterSpinner(groupTypeContent);
         }
@@ -187,14 +185,14 @@ export class StatsManager {
             doughnutMethod: (view) => {
               const stats = {
                 percents: this.statusPercentStats,
-                counts: this.statusStats.map(([, count]) => count)
+                counts: this.statusStats.map(([, count]) => count),
               };
               this.renderDoughnut({ chartId: 'statsChartStatus', stats, colors: statusColors, view });
-            }
+            },
           });
           hideCenterSpinner(groupStatusContent);
         }
-      })()
+      })(),
     ]);
 
     // Динамическое выравнивание высоты .stats__group
@@ -202,22 +200,13 @@ export class StatsManager {
       const groups = document.querySelectorAll('.stats__group');
       if (groups.length < 2) return;
       // Сброс высоты перед измерением
-      groups.forEach(g => g.style.height = 'auto');
-      const maxHeight = Math.max(...Array.from(groups).map(g => g.offsetHeight));
-      groups.forEach(g => g.style.height = maxHeight + 'px');
+      groups.forEach((g) => (g.style.height = 'auto'));
+      const maxHeight = Math.max(...Array.from(groups).map((g) => g.offsetHeight));
+      groups.forEach((g) => (g.style.height = maxHeight + 'px'));
     }, 0);
   }
   // Универсальный рендер секции статистики (тип/статус)
-  renderSection({
-    chartId,
-    listId,
-    getStats,
-    getPercents,
-    colors,
-    btnPercentId,
-    btnCountId,
-    doughnutMethod
-  }) {
+  renderSection({ chartId, listId, getStats, getPercents, colors, btnPercentId, btnCountId, doughnutMethod }) {
     const chartElem = document.getElementById(chartId);
     const listElem = document.getElementById(listId);
     if (!chartElem || !listElem) return;
@@ -232,14 +221,7 @@ export class StatsManager {
     const statsArr = getStats.call(this);
     // Определяем, что это секция статусов, если listId содержит 'Status'
     const isStatus = listId && listId.toLowerCase().includes('status');
-    this.renderStatCards(
-      listElem,
-      statsArr,
-      (idx) => `${percentStats[idx]} %`,
-      'stat__value',
-      colors,
-      isStatus
-    );
+    this.renderStatCards(listElem, statsArr, (idx) => `${percentStats[idx]} %`, 'stat__value', colors, isStatus);
     if (typeof doughnutMethod === 'function') {
       doughnutMethod('percent');
     }
@@ -251,14 +233,7 @@ export class StatsManager {
       btnPercent.setAttribute('aria-label', t('ariaStatsBtnPercent'));
       btnPercent.onclick = () => {
         btnPercent.setAttribute('aria-label', t('ariaStatsBtnPercent'));
-        this.renderStatCards(
-          listElem,
-          statsArr,
-          (idx) => `${percentStats[idx]} %`,
-          'stat__value',
-          colors,
-          isStatus
-        );
+        this.renderStatCards(listElem, statsArr, (idx) => `${percentStats[idx]} %`, 'stat__value', colors, isStatus);
         if (typeof doughnutMethod === 'function') {
           doughnutMethod('percent');
         }
@@ -268,14 +243,7 @@ export class StatsManager {
       btnCount.setAttribute('aria-label', t('ariaStatsBtnCount'));
       btnCount.onclick = () => {
         btnCount.setAttribute('aria-label', t('ariaStatsBtnCount'));
-        this.renderStatCards(
-          listElem,
-          statsArr,
-          (idx) => statsArr[idx][1],
-          'stat__value',
-          colors,
-          isStatus
-        );
+        this.renderStatCards(listElem, statsArr, (idx) => statsArr[idx][1], 'stat__value', colors, isStatus);
         if (typeof doughnutMethod === 'function') {
           doughnutMethod('count');
         }

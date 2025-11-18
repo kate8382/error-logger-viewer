@@ -30,7 +30,9 @@ export class ErrorApi {
     if (this.mode === 'server') {
       const res = await fetch(`${this.baseUrl}/errors/stats?by=${by}`);
       if (!res.ok) {
-        console.error(`[ErrorApi] Ошибка запроса статистики: ${res.status} ${res.statusText}`);
+        console.error(
+          `[ErrorApi] Ошибка запроса статистики: ${res.status} ${res.statusText}`,
+        );
         return {};
       }
       return await res.json();
@@ -45,7 +47,7 @@ export class ErrorApi {
       const res = await fetch(`${this.baseUrl}/errors`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
       return await res.json();
     } else {
@@ -63,7 +65,7 @@ export class ErrorApi {
       await fetch(`${this.baseUrl}/errors/${id}`, { method: 'DELETE' });
     } else {
       let errors = JSON.parse(localStorage.getItem(this.localKey) || '[]');
-      errors = errors.filter(e => e.id !== id);
+      errors = errors.filter((e) => e.id !== id);
       localStorage.setItem(this.localKey, JSON.stringify(errors));
     }
     return true;
@@ -74,12 +76,12 @@ export class ErrorApi {
       const res = await fetch(`${this.baseUrl}/errors/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
       return await res.json();
     } else {
       let errors = JSON.parse(localStorage.getItem(this.localKey) || '[]');
-      const idx = errors.findIndex(e => e.id === id);
+      const idx = errors.findIndex((e) => e.id === id);
       if (idx !== -1) {
         data.id = id;
         data.updatedAt = new Date().toISOString();

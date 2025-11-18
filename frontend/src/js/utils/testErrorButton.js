@@ -7,7 +7,9 @@ export function showTestErrorButton() {
   if (testErrorBtn) return;
   const btn = document.createElement('button');
   testErrorBtn = btn;
-  const setBtnText = () => { btn.textContent = t('createTestErrorBtn') || 'Создать тестовую ошибку'; };
+  const setBtnText = () => {
+    btn.textContent = t('createTestErrorBtn') || 'Создать тестовую ошибку';
+  };
   setBtnText();
   btn.style.position = 'fixed';
   btn.style.bottom = '20px';
@@ -22,18 +24,21 @@ export function showTestErrorButton() {
   btn.onclick = async () => {
     try {
       const { ErrorApi } = await import('../api.js');
-      const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
+      const mode =
+        window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
       const api = new ErrorApi(mode);
       await api.createError({
         type: 'TestError',
         message: t('testErrorMsg') || 'Тестовая ошибка для проверки дат',
         firstSeen: new Date().toISOString(),
-        lastSeen: new Date().toISOString()
+        lastSeen: new Date().toISOString(),
       });
       if (window.app && typeof window.app.updateErrorTable === 'function') {
         window.app.updateErrorTable();
       }
-      alert(t('testErrorCreated') || 'Тестовая ошибка создана! Обновите таблицу.');
+      alert(
+        t('testErrorCreated') || 'Тестовая ошибка создана! Обновите таблицу.',
+      );
     } catch (err) {
       console.error('Failed to load ErrorApi module', err);
       handleModuleLoadError('Failed to load ErrorApi module', err);
@@ -53,7 +58,8 @@ export function hideTestErrorButton() {
 }
 
 export function updateTestErrorButtonVisibility() {
-  const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
+  const mode =
+    window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
   if (mode === 'demo') {
     showTestErrorButton();
   } else {

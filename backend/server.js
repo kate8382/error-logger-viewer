@@ -19,6 +19,13 @@ await db.read();
 await db.write();
 console.log('db.data:', db.data);
 
+// Инициализация структуры данных, если она отсутствует
+if (!db.data) db.data = { errors: [], projects: [] };
+else {
+  db.data.errors = db.data.errors || [];
+  db.data.projects = db.data.projects || [];
+}
+
 // Создание приложения Express
 const app = express();
 
@@ -33,6 +40,73 @@ if (isProd) {
   app.use(cors()); // разрешить все в разработке
 }
 app.use(express.json()); // для обработки JSON-запросов
+
+// Helper функции для проектов
+// 1. Генерация API ключа
+function generateApiKey() {
+  return uuidv4();
+}
+
+// 2. Поиск проекта по API ключу
+function findProjectByApiKey(key) {
+  if (!key) return null;
+  return db.data.projects.find(p => p.apiKey === key) || null;
+}
+
+// 3. Поиск проекта по ID
+function findProjectById(id) {
+  if (!id) return null;
+  return db.data.projects.find(p => p.id === id) || null;
+}
+
+// 4. Поиск проекта по владельцу или участнику
+function findProjectByOwnerOrMember(email) {
+  if (!email) return null;
+  return db.data.projects.find(p => (p.owner === email) || (Array.isArray(p.members) && p.members.includes(email))) || null;
+}
+
+// 5. Построение сниппета с заданным API ключом
+function buildSnippet(apiKey) {
+  const escapedKey = String(apiKey || '');
+  return `<script>(function(){const API_KEY='${escapedKey}';const ENDPOINT=window.__ERROR_LOGGER_ENDPOINT__||location.protocol+'//'+location.host+'/errors';function send(payload){try{fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign(payload,{apiKey:API_KEY}))});}catch(e){}}window.addEventListener('error',function(e){send({message:e.message,stack:(e.error&&e.error.stack)||e.message,type:'error',user:navigator.userAgent});});window.addEventListener('unhandledrejection',function(e){send({message:(e.reason&&e.reason.message)||String(e.reason),stack:e.reason&&e.reason.stack,type:'unhandledrejection',user:navigator.userAgent});});})();</script>`;
+}
+
+// Маршрут для создания нового проекта
+app.post('/projects', async (req, res) => {
+  const { name, owner, members } = req.body || {};
+  if (!name || !owner) {
+    return res.status(400).json({ error: 'Project name and owner are required' });
+  }
+  await db.read();
+  if (!db.data) db.data = { errors: [], projects: [] };
+  db.data.errors = db.data.errors || [];
+  db.data.projects = db.data.projects || [];
+  const id = uuidv4();
+  const apiKey = generateApiKey();
+  const project = {
+    id,
+    name,
+    owner,
+    members: Array.isArray(members) ? members : (members ? [members] : []),
+    apiKey,
+    snippet: buildSnippet(apiKey),
+    createdAt: new Date().toISOString()
+  };
+  db.data.projects.push(project);
+  await db.write();
+  // Возвращаем без раскрытия массива участников, если только владелец не запрашивает (пока возвращаем полный объект)
+  return res.status(201).json(project);
+});
+
+app.get('/projects', async (req, res) => {
+  await db.read();
+  let projects = db.data.projects || [];
+  if (req.query.owner) {
+    projects = projects.filter(p => p.owner === req.query.owner || (p.members && p.members.includes(req.query.owner)));
+  }
+  res.json(projects);
+});
+
 
 // Маршрут для получения статистики ошибок
 app.get('/errors/stats', async (req, res) => {
@@ -189,9 +263,27 @@ app.post('/errors', async (req, res) => {
   }
 
   await db.read();
-  if (!db.data || !db.data.errors) {
-    db.data = { errors: [] };
+  if (!db.data) db.data = { errors: [], projects: [] };
+  db.data.errors = db.data.errors || [];
+  db.data.projects = db.data.projects || [];
+
+  // Разрешение проекта: заголовок X-API-KEY -> body.apiKey -> body.projectId -> email владельца в body или пользователя
+  const headerApiKey = (req.headers['x-api-key'] || req.headers['X-API-KEY'] || '').toString();
+  const bodyApiKey = newError.apiKey || newError.key || '';
+  const bodyProjectId = newError.projectId || '';
+  let project = null;
+  if (headerApiKey) project = findProjectByApiKey(headerApiKey);
+  if (!project && bodyApiKey) project = findProjectByApiKey(bodyApiKey);
+  if (!project && bodyProjectId) project = findProjectById(bodyProjectId);
+  //  Попытка разрешения email владельца/участника (используйте newError.owner || newError.user, если похоже на email)
+  if (!project) {
+    const maybeEmail = newError.owner || newError.user || '';
+    if (typeof maybeEmail === 'string' && maybeEmail.includes('@')) {
+      project = findProjectByOwnerOrMember(maybeEmail);
+    }
   }
+  // Если все еще не найден — помечаем как неизвестный (мягкий режим)
+  const projectId = project ? project.id : 'unknown';
 
   // Ключи для группировки + дата
   const groupKeys = ['type', 'message', 'stack'];
@@ -206,6 +298,8 @@ app.post('/errors', async (req, res) => {
   }
 
   let found = db.data.errors.find(e =>
+    // группируем только в рамках одного проекта (или оба неизвестны)
+    (String(e.projectId || 'unknown') === String(projectId)) &&
     groupKeys.every(k => normalize(e[k]) === normalize(newError[k])) &&
     (e.firstSeen && e.firstSeen.slice(0, 10) === day)
   );
@@ -216,12 +310,15 @@ app.post('/errors', async (req, res) => {
     found.lastSeen = now;
     if (!found.users) found.users = [];
     if (!found.users.includes(user)) found.users.push(user);
+    // проверяем наличие projectId у найденной ошибки
+    if (!found.projectId) found.projectId = projectId;
     await db.write();
     return res.status(200).json(found);
   } else {
     // Создаём новую уникальную ошибку (на этот день)
     const errorObj = {
       id: uuidv4(),
+      projectId: projectId,
       type: newError.type,
       message: newError.message,
       stack: newError.stack,

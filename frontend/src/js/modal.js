@@ -25,7 +25,7 @@ export class Modal {
     if (!this.modal || !this.modalContent) return;
 
     this.modalClose = document.querySelectorAll('.modal__close');
-    Array.from(this.modalClose).forEach(closeBtn => {
+    Array.from(this.modalClose).forEach((closeBtn) => {
       closeBtn.addEventListener('click', () => this.close());
     });
 
@@ -51,10 +51,14 @@ export class Modal {
       'input:not([disabled])',
       'select:not([disabled])',
       'textarea:not([disabled])',
-      '[tabindex]:not([tabindex="-1"])'
+      '[tabindex]:not([tabindex="-1"])',
     ];
-    const focusable = this.modalContent.querySelectorAll(focusableSelectors.join(','));
-    const focusableArr = Array.from(focusable).filter(el => el.offsetParent !== null);
+    const focusable = this.modalContent.querySelectorAll(
+      focusableSelectors.join(','),
+    );
+    const focusableArr = Array.from(focusable).filter(
+      (el) => el.offsetParent !== null,
+    );
     if (focusableArr.length) focusableArr[0].focus();
   }
 
@@ -70,7 +74,15 @@ export class Modal {
   }
 
   createCloseBtn() {
-    const closeBtn = el('button', { className: 'modal__close', 'aria-hidden': 'true', 'aria-label': t('modalCloseBtn') }, '×');
+    const closeBtn = el(
+      'button',
+      {
+        className: 'modal__close',
+        'aria-hidden': 'true',
+        'aria-label': t('modalCloseBtn'),
+      },
+      '×',
+    );
     closeBtn.addEventListener('click', () => this.close());
     return closeBtn;
   }
@@ -91,14 +103,24 @@ export class Modal {
     const statusLabel = t('modalField_status');
     const commentLabel = t('modalField_comment');
 
-    const title = el('h2', { className: 'modal__title', id: 'modalTitle', 'data-i18n': 'modalTitle' }, t('modalTitle'));
+    const title = el(
+      'h2',
+      {
+        className: 'modal__title',
+        id: 'modalTitle',
+        'data-i18n': 'modalTitle',
+      },
+      t('modalTitle'),
+    );
 
     // Для типа ошибки используем перевод
     let type = error.type || '';
     type = getLabel(type) || type;
     const id = error.id || '';
     // Формат даты: дд.мм.гггг чч:мм
-    let firstSeenValue = error.firstSeen ? this._formatDate(error.firstSeen) : '';
+    let firstSeenValue = error.firstSeen
+      ? this._formatDate(error.firstSeen)
+      : '';
     let lastSeenValue = error.lastSeen ? this._formatDate(error.lastSeen) : '';
     const countValue = typeof error.count === 'number' ? error.count : 1;
     const usersValue = Array.isArray(error.users) ? error.users.join(', ') : '';
@@ -108,25 +130,54 @@ export class Modal {
       { value: 'new', label: t('new') },
       { value: 'in_progress', label: t('in_progress') },
       { value: 'fixed', label: t('fixed') },
-      { value: 'ignored', label: t('ignored') }
+      { value: 'ignored', label: t('ignored') },
     ];
-    let currentStatus = statusOptions.find(opt => opt.value === error.status);
+    let currentStatus = statusOptions.find((opt) => opt.value === error.status);
     if (!currentStatus) currentStatus = statusOptions[0];
     // Универсальный select для всех статусов
-    let statusSelect = el('div', { className: 'modal__status-select is-close', tabindex: '0', role: 'button', 'aria-haspopup': 'listbox', 'aria-expanded': 'false', 'aria-label': t('modalField_status') }, [
-      el('span', { className: 'modal__status-current' }, currentStatus.label),
-      // Вставляем SVG через innerHTML, как в aside
-      (() => {
-        const svg = document.createElement('span');
-        svg.innerHTML = '<svg class="modal__status-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 5.4975L2.12175 3.375L9.003 10.3792L15.8783 3.375L18 5.4975L9.003 14.625L0 5.4975Z" fill="currentColor"/></svg>';
-        return svg.firstChild;
-      })(),
-      el('ul', { className: 'modal__status-list', style: 'display: none;', role: 'listbox' },
-        ...statusOptions
-          .filter(opt => opt.value !== currentStatus.value)
-          .map(opt => el('li', { 'data-value': opt.value, className: 'modal__status-option', tabindex: '0', role: 'option' }, opt.label))
-      )
-    ]);
+    let statusSelect = el(
+      'div',
+      {
+        className: 'modal__status-select is-close',
+        tabindex: '0',
+        role: 'button',
+        'aria-haspopup': 'listbox',
+        'aria-expanded': 'false',
+        'aria-label': t('modalField_status'),
+      },
+      [
+        el('span', { className: 'modal__status-current' }, currentStatus.label),
+        // Вставляем SVG через innerHTML, как в aside
+        (() => {
+          const svg = document.createElement('span');
+          svg.innerHTML =
+            '<svg class="modal__status-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 5.4975L2.12175 3.375L9.003 10.3792L15.8783 3.375L18 5.4975L9.003 14.625L0 5.4975Z" fill="currentColor"/></svg>';
+          return svg.firstChild;
+        })(),
+        el(
+          'ul',
+          {
+            className: 'modal__status-list',
+            style: 'display: none;',
+            role: 'listbox',
+          },
+          ...statusOptions
+            .filter((opt) => opt.value !== currentStatus.value)
+            .map((opt) =>
+              el(
+                'li',
+                {
+                  'data-value': opt.value,
+                  className: 'modal__status-option',
+                  tabindex: '0',
+                  role: 'option',
+                },
+                opt.label,
+              ),
+            ),
+        ),
+      ],
+    );
     const currentSpan = statusSelect.querySelector('.modal__status-current');
     const list = statusSelect.querySelector('.modal__status-list');
 
@@ -162,7 +213,10 @@ export class Modal {
 
     // Открытие селекта по Enter/Space
     statusSelect.addEventListener('keydown', (e) => {
-      if ((e.key === 'Enter' || e.key === ' ') && !statusSelect.classList.contains('is-open')) {
+      if (
+        (e.key === 'Enter' || e.key === ' ') &&
+        !statusSelect.classList.contains('is-open')
+      ) {
         e.preventDefault();
         statusSelect.classList.add('is-open');
         statusSelect.classList.remove('is-close');
@@ -175,7 +229,9 @@ export class Modal {
 
     // Навигация по опциям селекта с помощью Tab/Shift+Tab и стрелок
     list.addEventListener('keydown', (e) => {
-      const options = Array.from(list.querySelectorAll('.modal__status-option'));
+      const options = Array.from(
+        list.querySelectorAll('.modal__status-option'),
+      );
       const idx = options.indexOf(document.activeElement);
       if (e.key === 'ArrowDown') {
         e.preventDefault();
@@ -215,13 +271,19 @@ export class Modal {
       if (e.target && e.target.matches('li')) {
         const value = e.target.getAttribute('data-value');
         const label = e.target.textContent;
-        currentStatus = statusOptions.find(opt => opt.value === value) || statusOptions[0];
+        currentStatus =
+          statusOptions.find((opt) => opt.value === value) || statusOptions[0];
         currentSpan.textContent = label;
         // Пересоздать список без выбранной опции
         list.innerHTML = '';
-        statusOptions.filter(opt => opt.value !== currentStatus.value)
-          .forEach(opt => {
-            const li = el('li', { 'data-value': opt.value, className: 'modal__status-option' }, opt.label);
+        statusOptions
+          .filter((opt) => opt.value !== currentStatus.value)
+          .forEach((opt) => {
+            const li = el(
+              'li',
+              { 'data-value': opt.value, className: 'modal__status-option' },
+              opt.label,
+            );
             list.appendChild(li);
           });
         // закрыть список
@@ -239,7 +301,16 @@ export class Modal {
       }
     });
 
-    const commentArea = el('textarea', { className: 'modal__comment-area', rows: 3, placeholder: `${commentLabel} ...`, 'aria-label': t('modalField_comment') }, comment);
+    const commentArea = el(
+      'textarea',
+      {
+        className: 'modal__comment-area',
+        rows: 3,
+        placeholder: `${commentLabel} ...`,
+        'aria-label': t('modalField_comment'),
+      },
+      comment,
+    );
 
     // Обработчик событий Enter для сохранения комментария
     commentArea.addEventListener('keydown', (e) => {
@@ -251,9 +322,29 @@ export class Modal {
 
     // Остальные поля (только для просмотра)
     // Исключаем устаревшие и служебные поля
-    const exclude = ['type', 'id', 'message', 'status', 'comment', 'firstSeen', 'lastSeen', 'count', 'users', 'createdAt', 'updatedAt', 'modalField_createdAt'];
+    const exclude = [
+      'type',
+      'id',
+      'message',
+      'status',
+      'comment',
+      'firstSeen',
+      'lastSeen',
+      'count',
+      'users',
+      'createdAt',
+      'updatedAt',
+      'modalField_createdAt',
+    ];
     const otherRows = Object.entries(error)
-      .filter(([key, value]) => !exclude.includes(key) && typeof value !== 'object' && value !== '' && value !== null && value !== undefined)
+      .filter(
+        ([key, value]) =>
+          !exclude.includes(key) &&
+          typeof value !== 'object' &&
+          value !== '' &&
+          value !== null &&
+          value !== undefined,
+      )
       .map(([key, value]) => {
         let label;
         if (key === 'source') {
@@ -262,55 +353,68 @@ export class Modal {
           label = stackLabel;
         } else {
           const labelKey = 'modalField_' + key;
-          label = t(labelKey) || (key.charAt(0).toUpperCase() + key.slice(1));
+          label = t(labelKey) || key.charAt(0).toUpperCase() + key.slice(1);
         }
         return el('div', { className: 'modal__row' }, [
           el('span', { className: 'modal__field-title' }, label + ': '),
-          el('span', { className: 'modal__field-value' }, value)
+          el('span', { className: 'modal__field-value' }, value),
         ]);
       });
 
     const rows = [
       el('div', { className: 'modal__row' }, [
         el('span', { className: 'modal__field-title' }, typeLabel + ': '),
-        el('span', { className: 'modal__field-value', 'data-type': error.type }, type)
+        el(
+          'span',
+          { className: 'modal__field-value', 'data-type': error.type },
+          type,
+        ),
       ]),
       el('div', { className: 'modal__row' }, [
         el('span', { className: 'modal__field-title' }, idLabel + ': '),
-        el('span', { className: 'modal__field-value' }, id)
+        el('span', { className: 'modal__field-value' }, id),
       ]),
       el('div', { className: 'modal__row' }, [
         el('span', { className: 'modal__field-title' }, firstSeenLabel + ': '),
-        el('span', { className: 'modal__field-value' }, firstSeenValue)
+        el('span', { className: 'modal__field-value' }, firstSeenValue),
       ]),
       el('div', { className: 'modal__row' }, [
         el('span', { className: 'modal__field-title' }, lastSeenLabel + ': '),
-        el('span', { className: 'modal__field-value' }, lastSeenValue)
+        el('span', { className: 'modal__field-value' }, lastSeenValue),
       ]),
       el('div', { className: 'modal__row' }, [
         el('span', { className: 'modal__field-title' }, countLabel + ': '),
-        el('span', { className: 'modal__field-value' }, countValue)
+        el('span', { className: 'modal__field-value' }, countValue),
       ]),
       el('div', { className: 'modal__row' }, [
         el('span', { className: 'modal__field-title' }, usersLabel + ': '),
-        el('span', { className: 'modal__field-value' }, usersValue)
+        el('span', { className: 'modal__field-value' }, usersValue),
       ]),
       ...otherRows,
       el('div', { className: 'modal__row' }, [
         el('span', { className: 'modal__field-title' }, messageLabel + ': '),
-        el('span', { className: 'modal__field-value' }, message)
+        el('span', { className: 'modal__field-value' }, message),
       ]),
       el('div', { className: 'modal__row' }, [
         el('span', { className: 'modal__field-title' }, statusLabel + ': '),
-        statusSelect
+        statusSelect,
       ]),
       el('div', { className: 'modal__row' }, [
         el('span', { className: 'modal__field-title' }, commentLabel + ': '),
-        commentArea
-      ])
+        commentArea,
+      ]),
     ];
 
-    const saveBtn = el('button', { className: 'modal__button', id: 'saveModalButton', 'data-i18n': 'modalSaveBtn', 'aria-label': t('modalSaveBtn') }, t('modalSaveBtn'));
+    const saveBtn = el(
+      'button',
+      {
+        className: 'modal__button',
+        id: 'saveModalButton',
+        'data-i18n': 'modalSaveBtn',
+        'aria-label': t('modalSaveBtn'),
+      },
+      t('modalSaveBtn'),
+    );
     saveBtn.addEventListener('click', async () => {
       const newStatus = currentStatus.value;
       const newComment = commentArea.value;
@@ -331,7 +435,10 @@ export class Modal {
         try {
           await this.errorApi.updateError(error.id, updated);
           this.close();
-          if (window.errorTableInstance && typeof window.errorTableInstance.fetchErrors === 'function') {
+          if (
+            window.errorTableInstance &&
+            typeof window.errorTableInstance.fetchErrors === 'function'
+          ) {
             window.errorTableInstance.fetchErrors();
           }
           hideLoading(saveBtn);
@@ -350,7 +457,7 @@ export class Modal {
       this.createCloseBtn(),
       title,
       ...rows,
-      saveBtn
+      saveBtn,
     ]);
 
     this.modal.classList.add('modal--open');
@@ -362,28 +469,57 @@ export class Modal {
     if (!this.modal || !this.modalContent) return;
     this._lastErrorIdForDelete = errorId;
 
-    const deleteBtn = el('button', { className: 'modal__delete-btn', id: 'deleteErrorButton', 'data-i18n': 'modalDeleteBtn', 'aria-label': t('modalDeleteBtn') }, t('modalDeleteBtn'));
+    const deleteBtn = el(
+      'button',
+      {
+        className: 'modal__delete-btn',
+        id: 'deleteErrorButton',
+        'data-i18n': 'modalDeleteBtn',
+        'aria-label': t('modalDeleteBtn'),
+      },
+      t('modalDeleteBtn'),
+    );
     deleteBtn.addEventListener('click', async () => {
       try {
         const { showLoading, hideLoading } = await import('./utils/loading');
         showLoading(deleteBtn, 'delete');
 
-        this.errorApi.deleteError(errorId).then(() => {
-          this.close();
-          if (window.errorTableInstance && typeof window.errorTableInstance.fetchErrors === 'function') {
-            window.errorTableInstance.fetchErrors();
-          }
-          hideLoading(deleteBtn);
-        }).catch(error => {
-          console.error('Ошибка при удалении ошибки:', error);
-          hideLoading(deleteBtn);
-        });
+        this.errorApi
+          .deleteError(errorId)
+          .then(() => {
+            this.close();
+            if (
+              window.errorTableInstance &&
+              typeof window.errorTableInstance.fetchErrors === 'function'
+            ) {
+              window.errorTableInstance.fetchErrors();
+            }
+            hideLoading(deleteBtn);
+          })
+          .catch((error) => {
+            console.error('Ошибка при удалении ошибки:', error);
+            hideLoading(deleteBtn);
+          });
       } catch (impErr) {
-        handleModuleLoadError('Failed to load loading utils for delete', impErr, null, null);
+        handleModuleLoadError(
+          'Failed to load loading utils for delete',
+          impErr,
+          null,
+          null,
+        );
       }
     });
 
-    const cancelBtn = el('button', { className: 'modal__cancel-btn', id: 'cancelDeleteButton', 'data-i18n': 'modalCancelBtn', 'aria-label': t('modalCancelBtn') }, t('modalCancelBtn'));
+    const cancelBtn = el(
+      'button',
+      {
+        className: 'modal__cancel-btn',
+        id: 'cancelDeleteButton',
+        'data-i18n': 'modalCancelBtn',
+        'aria-label': t('modalCancelBtn'),
+      },
+      t('modalCancelBtn'),
+    );
     cancelBtn.addEventListener('click', () => this.close());
 
     // Добавляем обработчик клика по фону только при открытии
@@ -391,10 +527,18 @@ export class Modal {
 
     setChildren(this.modalContent, [
       this.createCloseBtn(),
-      el('h2', { className: 'modal__title', 'data-i18n': 'modalDeleteTitle' }, t('modalDeleteTitle')),
-      el('p', { className: 'modal__message', 'data-i18n': 'modalDeleteMessage' }, t('modalDeleteMessage')),
+      el(
+        'h2',
+        { className: 'modal__title', 'data-i18n': 'modalDeleteTitle' },
+        t('modalDeleteTitle'),
+      ),
+      el(
+        'p',
+        { className: 'modal__message', 'data-i18n': 'modalDeleteMessage' },
+        t('modalDeleteMessage'),
+      ),
       deleteBtn,
-      cancelBtn
+      cancelBtn,
     ]);
     this.modal.classList.add('modal--open');
     this._setInitialModalFocus();
@@ -404,7 +548,7 @@ export class Modal {
   _formatDate(dateStr) {
     const date = new Date(dateStr);
     if (isNaN(date)) return '';
-    const pad = n => n.toString().padStart(2, '0');
+    const pad = (n) => n.toString().padStart(2, '0');
     return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
   }
 
@@ -419,7 +563,10 @@ export class Modal {
       if (select) select.classList.remove('is-open');
       // Удаляем обработчик document.mousedown для кастомного select
       if (window.closeCustomSelectModal) {
-        document.removeEventListener('mousedown', window.closeCustomSelectModal);
+        document.removeEventListener(
+          'mousedown',
+          window.closeCustomSelectModal,
+        );
         window.closeCustomSelectModal = null;
       }
       // Сброс последних сохранённых ошибок для обновления

@@ -4,8 +4,8 @@ import { HeaderManager } from '../header';
 jest.mock('../api', () => {
   return {
     ErrorApi: jest.fn().mockImplementation(() => ({
-      getErrors: () => Promise.resolve(mockErrors)
-    }))
+      getErrors: () => Promise.resolve(mockErrors),
+    })),
   };
 });
 
@@ -32,7 +32,7 @@ describe('HeaderManager фильтрация', () => {
     header.sections = {
       stats: document.getElementById('errorStats'),
       chart: document.getElementById('errorsChart'),
-      table: document.getElementById('errorTableSection')
+      table: document.getElementById('errorTableSection'),
     };
     // Запускаем фильтрацию по секции "Таблица ошибок"
     header.handleSearch('Таблица ошибок');
@@ -45,7 +45,7 @@ describe('HeaderManager фильтрация', () => {
     mockErrors = [
       { id: '1', type: 'TypeError', status: 'new' },
       { id: '2', type: 'ReferenceError', status: 'fixed' },
-      { id: '3', type: 'TypeError', status: 'new' }
+      { id: '3', type: 'TypeError', status: 'new' },
     ];
     header.api.getErrors = () => Promise.resolve(mockErrors);
     await header.filterTable('Type Error');
@@ -62,8 +62,12 @@ describe('HeaderManager фильтрация', () => {
   it('игнорирует устаревшие ответы (requestId)', async () => {
     // контролируемые промисы
     let resolveFirst, resolveSecond;
-    const p1 = new Promise(res => { resolveFirst = res; });
-    const p2 = new Promise(res => { resolveSecond = res; });
+    const p1 = new Promise((res) => {
+      resolveFirst = res;
+    });
+    const p2 = new Promise((res) => {
+      resolveSecond = res;
+    });
     // первый вызов вернёт p1, второй — p2
     let call = 0;
     header.api.getErrors = () => {
@@ -76,22 +80,26 @@ describe('HeaderManager фильтрация', () => {
     const second = header.filterTable('b');
 
     // Разрешаем второй промис сначала
-    resolveSecond([
-      { id: '2', type: 'bType', status: 'fixed' }
-    ]);
+    resolveSecond([{ id: '2', type: 'bType', status: 'fixed' }]);
     await second;
     // ожидаем, что table.renderErrors был вызван с данными второго ответа
     expect(header.table.renderErrors).toHaveBeenCalled();
-    const lastCallArgAfterSecond = header.table.renderErrors.mock.calls[header.table.renderErrors.mock.calls.length - 1][0];
+    // prettier-ignore
+    const lastCallArgAfterSecond =
+      header.table.renderErrors.mock.calls[
+      header.table.renderErrors.mock.calls.length - 1
+      ][0];
     expect(Array.isArray(lastCallArgAfterSecond)).toBe(true);
     expect(lastCallArgAfterSecond[0].id).toBe('2');
     // Теперь разрешаем первый (старый) — он не должен перезаписать результат
-    resolveFirst([
-      { id: '1', type: 'aType', status: 'new' }
-    ]);
+    resolveFirst([{ id: '1', type: 'aType', status: 'new' }]);
     await first;
     // последний вызов всё ещё должен ссылаться на данные второго ответа
-    const lastCallArgAfterFirst = header.table.renderErrors.mock.calls[header.table.renderErrors.mock.calls.length - 1][0];
+    // prettier-ignore
+    const lastCallArgAfterFirst =
+      header.table.renderErrors.mock.calls[
+      header.table.renderErrors.mock.calls.length - 1
+      ][0];
     expect(lastCallArgAfterFirst[0].id).toBe('2');
   });
 });

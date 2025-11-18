@@ -13,7 +13,11 @@ export function handleModuleLoadError(context, err, hideLoading, btn) {
     try {
       hideLoading(btn);
     } catch (hideErr) {
-      try { console.warn('hideLoading failed:', hideErr); } catch (e) { /* ignore */ }
+      try {
+        console.warn('hideLoading failed:', hideErr);
+      } catch (e) {
+        /* ignore */
+      }
     }
   }
 
@@ -21,7 +25,11 @@ export function handleModuleLoadError(context, err, hideLoading, btn) {
   try {
     alert(t('moduleLoadFailed'));
   } catch (alertErr) {
-    try { alert('Failed to load UI module. Please reload the page.'); } catch (e) { /* ignore */ }
+    try {
+      alert('Failed to load UI module. Please reload the page.');
+    } catch (e) {
+      /* ignore */
+    }
   }
 }
 

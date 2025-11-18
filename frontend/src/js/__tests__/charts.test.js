@@ -1,9 +1,11 @@
 import ChartManager from '../charts';
 
 // Мокаем fetch для Node.js среды
-globalThis.fetch = jest.fn(() => Promise.resolve({
-  json: () => Promise.resolve({ data: [] })
-}));
+globalThis.fetch = jest.fn(() =>
+  Promise.resolve({
+    json: () => Promise.resolve({ data: [] }),
+  }),
+);
 
 // Мокаем getContext для canvas, чтобы избежать ошибок jsdom
 beforeAll(() => {
@@ -27,7 +29,9 @@ describe('ChartManager', () => {
   });
 
   it('корректно форматирует дату для оси X', () => {
-    expect(chartManager.formatDayLabel('2025-10-15')).toMatch(/15\.10\.2025|15\.10\.25/);
+    expect(chartManager.formatDayLabel('2025-10-15')).toMatch(
+      /15\.10\.2025|15\.10\.25/,
+    );
   });
 
   it('возвращает корректный ключ периода для дня', () => {

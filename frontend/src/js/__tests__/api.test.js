@@ -22,13 +22,16 @@ describe('ErrorApi', () => {
     const error = await api.createError({ message: 'To delete' });
     await api.deleteError(error.id);
     const errors = await api.getErrors();
-    expect(errors.find(e => e.id === error.id)).toBeUndefined();
+    expect(errors.find((e) => e.id === error.id)).toBeUndefined();
   });
 
   it('должен обновлять ошибку в demo-режиме', async () => {
     const api = new ErrorApi('demo');
     const error = await api.createError({ message: 'To update' });
-    const updated = await api.updateError(error.id, { ...error, message: 'Updated message' });
+    const updated = await api.updateError(error.id, {
+      ...error,
+      message: 'Updated message',
+    });
     expect(updated.message).toBe('Updated message');
   });
 });

@@ -1,0 +1,15 @@
+# Обязательна, если мы находимся в корне проекта
+root = true
+
+# Общие настройки для всех файлов
+[*]
+charset = utf-8
+# Использование LF для окончания строк
+end_of_line = lf
+# Добавление новой строки в конце файла
+insert_final_newline = true
+# Удаление пробелов в конце строк
+trim_trailing_whitespace = true
+# Отступы в 2 пробела
+indent_style = space
+indent_size = 2

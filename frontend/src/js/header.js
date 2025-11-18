@@ -2,7 +2,13 @@ import { ErrorApi } from './api';
 import { ErrorTable } from './table';
 import { StatsManager } from './stats';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading.js';
-import { t, getCurrentLang, getLabel, setLang, onLangChange } from './utils/i18n.js';
+import {
+  t,
+  getCurrentLang,
+  getLabel,
+  setLang,
+  onLangChange,
+} from './utils/i18n.js';
 
 export class HeaderManager {
   constructor() {
@@ -21,7 +27,7 @@ export class HeaderManager {
 
   // Универсальный сброс всех секций (показать все)
   showAllSections() {
-    Object.values(this.sections).forEach(section => {
+    Object.values(this.sections).forEach((section) => {
       if (section) section.style.display = '';
     });
   }
@@ -36,14 +42,24 @@ export class HeaderManager {
 
   // Универсальный сброс таблицы, статистики, графика
   resetAllViews() {
-    if (this.table && typeof this.table.getErrors === 'function' && typeof this.table.renderErrors === 'function') {
+    if (
+      this.table &&
+      typeof this.table.getErrors === 'function' &&
+      typeof this.table.renderErrors === 'function'
+    ) {
       const allErrors = this.table.getErrors();
       this.table.renderErrors(allErrors);
     }
-    if (window.statsManager && typeof window.statsManager.renderErrorCards === 'function') {
+    if (
+      window.statsManager &&
+      typeof window.statsManager.renderErrorCards === 'function'
+    ) {
       window.statsManager.renderErrorCards();
     }
-    if (window.chartManager && typeof window.chartManager.resetToDefault === 'function') {
+    if (
+      window.chartManager &&
+      typeof window.chartManager.resetToDefault === 'function'
+    ) {
       window.chartManager.resetToDefault();
     }
   }
@@ -53,7 +69,10 @@ export class HeaderManager {
     // Если sectionKey не передан или все секции видимы — основной заголовок
     if (!sectionKey) {
       // предполагаем, что заголовок уже существует
-      let titleSpan = this.headerTitle.querySelector('.header__title-text[data-i18n="title"]') || this.headerTitle.querySelector('[data-i18n="title"]');
+      let titleSpan =
+        this.headerTitle.querySelector(
+          '.header__title-text[data-i18n="title"]',
+        ) || this.headerTitle.querySelector('[data-i18n="title"]');
       if (titleSpan) {
         titleSpan.textContent = t('title') || 'Error Logger & Viewer';
       } else {
@@ -98,13 +117,18 @@ export class HeaderManager {
       const i18nKey = titleEl.getAttribute('data-i18n');
       const titleSpan = this.headerTitle.querySelector('[data-i18n="title"]');
       if (i18nKey && t(i18nKey)) {
-        if (titleSpan) titleSpan.textContent = t(i18nKey); else this.headerTitle.textContent = t(i18nKey);
+        if (titleSpan) titleSpan.textContent = t(i18nKey);
+        else this.headerTitle.textContent = t(i18nKey);
       } else {
-        if (titleSpan) titleSpan.textContent = titleEl.textContent || t('title'); else this.headerTitle.textContent = titleEl.textContent || t('title');
+        if (titleSpan)
+          titleSpan.textContent = titleEl.textContent || t('title');
+        else this.headerTitle.textContent = titleEl.textContent || t('title');
       }
     } else {
       const titleSpan = this.headerTitle.querySelector('[data-i18n="title"]');
-      if (titleSpan) titleSpan.textContent = t('title') || 'Error Logger & Viewer'; else this.headerTitle.textContent = t('title') || 'Error Logger & Viewer';
+      if (titleSpan)
+        titleSpan.textContent = t('title') || 'Error Logger & Viewer';
+      else this.headerTitle.textContent = t('title') || 'Error Logger & Viewer';
     }
   }
 
@@ -112,11 +136,19 @@ export class HeaderManager {
   setSearchPlaceholder(mode = 'default') {
     if (!this.searchInput) return;
     if (mode === 'table') {
-      this.searchInput.placeholder = t('placeholderTable') || t('Search in table...');
-      this.searchInput.setAttribute('aria-label', t('ariaInputTable') || t('Search in table'));
+      this.searchInput.placeholder =
+        t('placeholderTable') || t('Search in table...');
+      this.searchInput.setAttribute(
+        'aria-label',
+        t('ariaInputTable') || t('Search in table'),
+      );
     } else {
-      this.searchInput.placeholder = t('placeholder') || t('Search by application...');
-      this.searchInput.setAttribute('aria-label', t('ariaInput') || t('Search by application'));
+      this.searchInput.placeholder =
+        t('placeholder') || t('Search by application...');
+      this.searchInput.setAttribute(
+        'aria-label',
+        t('ariaInput') || t('Search by application'),
+      );
     }
   }
 
@@ -152,7 +184,9 @@ export class HeaderManager {
   // Обновление заголовка и плейсхолдера
   updateHeaderUI() {
     // Если видна только одна секция — её заголовок, иначе основной
-    const visibleSections = Object.entries(this.sections).filter(([, sec]) => sec && sec.style.display !== 'none');
+    const visibleSections = Object.entries(this.sections).filter(
+      ([, sec]) => sec && sec.style.display !== 'none',
+    );
     const key = visibleSections.length === 1 ? visibleSections[0][0] : null;
     const mode = key === 'table' ? 'table' : 'default';
     this.setHeaderTitleBySection(key);
@@ -166,7 +200,7 @@ export class HeaderManager {
     this.sections = {
       stats: document.getElementById('errorStats'),
       chart: document.getElementById('errorsChart'),
-      table: document.getElementById('errorTableSection')
+      table: document.getElementById('errorTableSection'),
     };
 
     // Локализация при инициализации
@@ -199,13 +233,17 @@ export class HeaderManager {
 
     // Фильтрация при вводе (debounced)
     if (this.searchInput) {
-      const debouncedSearch = this._debounce((value) => this.handleSearch(value), 250, 'searchInput');
-      this.searchInput.addEventListener('input', e => {
+      const debouncedSearch = this._debounce(
+        (value) => this.handleSearch(value),
+        250,
+        'searchInput',
+      );
+      this.searchInput.addEventListener('input', (e) => {
         debouncedSearch(e.target.value);
       });
 
       // Фильтрация по Enter (немедленно)
-      this.searchInput.addEventListener('keydown', e => {
+      this.searchInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
           this.handleSearch(this.searchInput.value);
         }
@@ -226,13 +264,25 @@ export class HeaderManager {
     this.searchOrExitIcon = document.getElementById('searchOrExitIcon');
     this.searchIcon = document.getElementById('searchIcon');
     this.exitIcon = document.getElementById('exitIcon');
-    if (this.searchBtn && this.searchInput && this.searchOrExitIcon && this.searchIcon && this.exitIcon) {
+    if (
+      this.searchBtn &&
+      this.searchInput &&
+      this.searchOrExitIcon &&
+      this.searchIcon &&
+      this.exitIcon
+    ) {
       // Клик по exitIcon — всегда полный выход из фильтрации
       this.searchBtn.addEventListener('click', () => {
         if (this.exitIcon.style.display !== 'none') {
-          const visibleSections = Object.entries(this.sections).filter(([, sec]) => sec && sec.style.display !== 'none');
-          const onlyTableVisible = visibleSections.length === 1 && this.sections.table.style.display !== 'none';
-          const isTableFilterMode = this.searchInput.placeholder === (t('placeholderTable') || t('Search in table...'));
+          const visibleSections = Object.entries(this.sections).filter(
+            ([, sec]) => sec && sec.style.display !== 'none',
+          );
+          const onlyTableVisible =
+            visibleSections.length === 1 &&
+            this.sections.table.style.display !== 'none';
+          const isTableFilterMode =
+            this.searchInput.placeholder ===
+            (t('placeholderTable') || t('Search in table...'));
 
           // 1. Фильтрация по таблице — двухэтапная логика
           if (onlyTableVisible && isTableFilterMode) {
@@ -278,7 +328,10 @@ export class HeaderManager {
       });
       // Переключение иконки при вводе
       this.searchInput.addEventListener('input', () => {
-        const onlyTableVisible = Object.entries(this.sections).filter(([, sec]) => sec && sec.style.display !== 'none').length === 1 && this.sections.table.style.display !== 'none';
+        const onlyTableVisible =
+          Object.entries(this.sections).filter(
+            ([, sec]) => sec && sec.style.display !== 'none',
+          ).length === 1 && this.sections.table.style.display !== 'none';
         // Показываем крестик если есть текст или только таблица видна
         if (this.searchInput.value.trim() || onlyTableVisible) {
           this.searchIcon.style.display = 'none';
@@ -308,7 +361,9 @@ export class HeaderManager {
     let anyVisible = false;
     let onlyTableVisible = false;
     // Проверяем, отображается ли только таблица
-    const visibleSections = Object.entries(this.sections).filter(([, sec]) => sec && sec.style.display !== 'none');
+    const visibleSections = Object.entries(this.sections).filter(
+      ([, sec]) => sec && sec.style.display !== 'none',
+    );
     if (visibleSections.length === 1 && visibleSections[0][0] === 'table') {
       onlyTableVisible = true;
     }
@@ -375,18 +430,27 @@ export class HeaderManager {
       this.sections = {
         stats: document.getElementById('errorStats'),
         chart: document.getElementById('errorsChart'),
-        table: document.getElementById('errorTableSection')
+        table: document.getElementById('errorTableSection'),
       };
       // Логируем видимость секций
       Object.entries(this.sections).forEach(([k, sec]) => {
         if (sec) {
-          console.debug('[Header] Секция', k, 'display:', sec.style.display, 'exists:', !!sec);
+          console.debug(
+            '[Header] Секция',
+            k,
+            'display:',
+            sec.style.display,
+            'exists:',
+            !!sec,
+          );
         } else {
           console.warn('[Header] Секция', k, 'не найдена!');
         }
       });
       // Определяем сколько секций реально видимо
-      const visibleSections = Object.entries(this.sections).filter(([, sec]) => sec && sec.style.display !== 'none');
+      const visibleSections = Object.entries(this.sections).filter(
+        ([, sec]) => sec && sec.style.display !== 'none',
+      );
       if (visibleSections.length === Object.keys(this.sections).length) {
         // Все секции видимы — основной заголовок
         this.setHeaderTitleBySection(null);
@@ -395,13 +459,20 @@ export class HeaderManager {
         const key = visibleSections.length === 1 ? visibleSections[0][0] : null;
         this.setHeaderTitleBySection(key);
       }
-      if (window.chartManager && typeof window.chartManager.resetToDefault === 'function') {
+      if (
+        window.chartManager &&
+        typeof window.chartManager.resetToDefault === 'function'
+      ) {
         window.chartManager.resetToDefault();
       }
     } else {
       // Показываем заголовок первой видимой секции
-      const firstVisible = Object.values(this.sections).find(sec => sec && sec.style.display !== 'none');
-      const key = Object.entries(this.sections).find(([, sec]) => sec === firstVisible)?.[0];
+      const firstVisible = Object.values(this.sections).find(
+        (sec) => sec && sec.style.display !== 'none',
+      );
+      const key = Object.entries(this.sections).find(
+        ([, sec]) => sec === firstVisible,
+      )?.[0];
       this.setHeaderTitleBySection(key);
     }
 
@@ -428,13 +499,13 @@ export class HeaderManager {
     const errors = await this.api.getErrors({});
     // Если был запущен новый запрос после этого, игнорируем этот ответ
     if (requestId !== this._lastFilterRequestId) return;
-    const filtered = (Array.isArray(errors) ? errors : []).filter(error => {
+    const filtered = (Array.isArray(errors) ? errors : []).filter((error) => {
       // Локализованные значения типа и статуса через t/getLabel
       const typeText = getLabel(error.type);
       const statusText = t(error.status || 'new');
 
       // Только дата (без времени), всегда в формате DD.MM.YYYY
-      const getDateOnly = str => {
+      const getDateOnly = (str) => {
         if (!str) return '';
         const date = new Date(str);
         const day = String(date.getDate()).padStart(2, '0');
@@ -445,15 +516,17 @@ export class HeaderManager {
       const firstSeenDate = getDateOnly(error.firstSeen);
       const lastSeenDate = getDateOnly(error.lastSeen);
       // Сравниваем по строке и по числу
-      return [
-        error.id,
-        typeText,
-        statusText,
-        firstSeenDate,
-        lastSeenDate
-      ].some(val => val && String(val).toLowerCase().includes(query.toLowerCase()));
+      return [error.id, typeText, statusText, firstSeenDate, lastSeenDate].some(
+        (val) => val && String(val).toLowerCase().includes(query.toLowerCase()),
+      );
     });
-    this.filteredErrors = (Array.isArray(filtered) && Array.isArray(errors) && filtered.length < errors.length) ? filtered : null;
+    // prettier-ignore
+    this.filteredErrors =
+      Array.isArray(filtered) &&
+        Array.isArray(errors) &&
+        filtered.length < errors.length
+        ? filtered
+        : null;
     this.table.renderErrors(filtered);
   }
 
@@ -465,7 +538,7 @@ export class HeaderManager {
       { id: 'sortByCount', field: 'count' },
       { id: 'sortByFirstSeen', field: 'firstSeen' },
       { id: 'sortByLastSeen', field: 'lastSeen' },
-      { id: 'sortByStatus', field: 'status' }
+      { id: 'sortByStatus', field: 'status' },
     ];
     this.sortOrder = {
       id: 'asc',
@@ -473,12 +546,12 @@ export class HeaderManager {
       count: 'asc',
       firstSeen: 'asc',
       lastSeen: 'asc',
-      status: 'asc'
+      status: 'asc',
     };
     sortFields.forEach(({ id, field }) => {
       const btn = document.getElementById(id);
       if (btn) {
-        btn.addEventListener('click', e => {
+        btn.addEventListener('click', (e) => {
           e.preventDefault();
           this.handleTableSort(field);
         });
@@ -493,7 +566,11 @@ export class HeaderManager {
     if (!errorsToSort || !errorsToSort.length) {
       errorsToSort = this.table.getErrors();
     }
-    const sorted = this.table.sortErrors([...errorsToSort], field, this.sortOrder[field]);
+    const sorted = this.table.sortErrors(
+      [...errorsToSort],
+      field,
+      this.sortOrder[field],
+    );
     this.table.renderErrors(sorted);
     // Переключаем направление для следующего клика
     this.sortOrder[field] = this.sortOrder[field] === 'asc' ? 'desc' : 'asc';
@@ -520,7 +597,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.classList.add('sidebar-open');
     });
 
-    // Закрытие по клику вне sidebar 
+    // Закрытие по клику вне sidebar
     document.addEventListener('click', (e) => {
       if (
         sidebar.classList.contains('sidebar--active') &&

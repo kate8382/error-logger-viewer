@@ -1,4 +1,3 @@
-
 import '../assets/scss/style.scss';
 import { ErrorApi } from './api';
 import './header.js';
@@ -15,7 +14,7 @@ window.errorTableInstance = new ErrorTable('server');
 async function initStatsManager() {
   let errors = [];
   try {
-    errors = await (new ErrorApi()).getErrors({});
+    errors = await new ErrorApi().getErrors({});
   } catch (e) {
     console.error('[StatsManager] Error loading errors:', e);
   }
@@ -35,15 +34,21 @@ class ErrorLoggerApp {
   // Инициализация приложения
   init() {
     document.addEventListener('DOMContentLoaded', () => {
-      import('./aside').then(({ Aside }) => { // Динамический импорт (lazy loading) для отложенной загрузки aside
-        window.aside = new Aside(this);
-        if (window.aside && typeof window.aside.translatePage === 'function') {
-          window.aside.translatePage(getCurrentLang());
-          onLangChange(() => window.aside.translatePage(getCurrentLang()));
-        }
-      }).catch(err => {
-        handleModuleLoadError('Failed to load aside module', err);
-      });
+      import('./aside')
+        .then(({ Aside }) => {
+          // Динамический импорт (lazy loading) для отложенной загрузки aside
+          window.aside = new Aside(this);
+          if (
+            window.aside &&
+            typeof window.aside.translatePage === 'function'
+          ) {
+            window.aside.translatePage(getCurrentLang());
+            onLangChange(() => window.aside.translatePage(getCurrentLang()));
+          }
+        })
+        .catch((err) => {
+          handleModuleLoadError('Failed to load aside module', err);
+        });
       this.setupErrorListeners();
       // Инициализация ChartManager только один раз глобально
       if (!window.chartManager) {
@@ -54,7 +59,7 @@ class ErrorLoggerApp {
 
   async updateErrorTable() {
     if (window.renderErrorTable) {
-      this.errorApi.getErrors({}).then(errors => {
+      this.errorApi.getErrors({}).then((errors) => {
         window.renderErrorTable(errors);
         if (window.statsManager) {
           window.statsManager.errors = errors;
@@ -77,20 +82,29 @@ class ErrorLoggerApp {
 
   setupErrorListeners() {
     // Глобальный обработчик ошибок загрузки ресурсов (скрипты, стили, изображения)
-    window.addEventListener('error', (event) => {
-      const target = event.target || event.srcElement;
-      if (target && (target instanceof HTMLScriptElement || target instanceof HTMLLinkElement || target instanceof HTMLImageElement)) {
-        const src = target.src || target.href || target.currentSrc || '';
-        const tag = target.tagName;
-        this.handleErrorCreate({
-          type: 'ResourceLoadError',
-          message: `Failed to load resource: ${tag}`,
-          source: src,
-          firstSeen: new Date().toISOString(),
-          lastSeen: new Date().toISOString()
-        });
-      }
-    }, true);
+    window.addEventListener(
+      'error',
+      (event) => {
+        const target = event.target || event.srcElement;
+        if (
+          target &&
+          (target instanceof HTMLScriptElement ||
+            target instanceof HTMLLinkElement ||
+            target instanceof HTMLImageElement)
+        ) {
+          const src = target.src || target.href || target.currentSrc || '';
+          const tag = target.tagName;
+          this.handleErrorCreate({
+            type: 'ResourceLoadError',
+            message: `Failed to load resource: ${tag}`,
+            source: src,
+            firstSeen: new Date().toISOString(),
+            lastSeen: new Date().toISOString(),
+          });
+        }
+      },
+      true,
+    );
 
     // Глобальный обработчик ошибок JavaScript (onerror: message - ошибка в коде, source - файл, lineno - строка, colno - столбец)
     window.onerror = (message, source, lineno, colno, error) => {
@@ -103,7 +117,7 @@ class ErrorLoggerApp {
         colno,
         stack: error && error.stack ? error.stack : '',
         firstSeen: new Date().toISOString(),
-        lastSeen: new Date().toISOString()
+        lastSeen: new Date().toISOString(),
       });
     };
 
@@ -115,7 +129,7 @@ class ErrorLoggerApp {
         message: event.reason ? String(event.reason) : 'Promise rejected',
         stack: event.reason && event.reason.stack ? event.reason.stack : '',
         firstSeen: new Date().toISOString(),
-        lastSeen: new Date().toISOString()
+        lastSeen: new Date().toISOString(),
       });
     };
 
@@ -125,13 +139,17 @@ class ErrorLoggerApp {
       try {
         const response = await origFetch(...args);
         if (!response.ok) {
-          console.log('[ErrorLogger] Creating Fetch error:', response.status, response.statusText);
+          console.log(
+            '[ErrorLogger] Creating Fetch error:',
+            response.status,
+            response.statusText,
+          );
           this.handleErrorCreate({
             type: 'FetchError',
             message: `Fetch failed: ${response.status} ${response.statusText}`,
             source: args[0],
             firstSeen: new Date().toISOString(),
-            lastSeen: new Date().toISOString()
+            lastSeen: new Date().toISOString(),
           });
         }
         return response;
@@ -143,30 +161,34 @@ class ErrorLoggerApp {
           source: args[0],
           stack: error.stack,
           firstSeen: new Date().toISOString(),
-          lastSeen: new Date().toISOString()
+          lastSeen: new Date().toISOString(),
         });
         throw error;
       }
     };
 
     // Дополнительный глобальный обработчик ошибок через addEventListener
-    window.addEventListener('error', function (event) {
-      if (event.error) {
-        // Это JS-ошибка (TypeError, SyntaxError и др.)
-        if (window.app && window.app.errorApi) {
-          window.app.errorApi.createError({
-            type: event.error.name || 'Error',
-            message: event.error.message || String(event.message),
-            source: event.filename,
-            lineno: event.lineno,
-            colno: event.colno,
-            stack: event.error.stack || '',
-            firstSeen: new Date().toISOString(),
-            lastSeen: new Date().toISOString()
-          });
+    window.addEventListener(
+      'error',
+      function (event) {
+        if (event.error) {
+          // Это JS-ошибка (TypeError, SyntaxError и др.)
+          if (window.app && window.app.errorApi) {
+            window.app.errorApi.createError({
+              type: event.error.name || 'Error',
+              message: event.error.message || String(event.message),
+              source: event.filename,
+              lineno: event.lineno,
+              colno: event.colno,
+              stack: event.error.stack || '',
+              firstSeen: new Date().toISOString(),
+              lastSeen: new Date().toISOString(),
+            });
+          }
         }
-      }
-    }, true);
+      },
+      true,
+    );
   }
 
   // Получаем ошибки из localStorage
@@ -176,7 +198,10 @@ class ErrorLoggerApp {
     try {
       errors = JSON.parse(localStorage.getItem(key) || '[]');
     } catch (e) {
-      console.error('[ErrorLogger] Failed to parse pending errors from localStorage:', e);
+      console.error(
+        '[ErrorLogger] Failed to parse pending errors from localStorage:',
+        e,
+      );
       return;
     }
     if (!errors.length) return;
@@ -192,10 +217,16 @@ class ErrorLoggerApp {
     this.updateErrorTable();
   }
 }
-
 // Инициализация приложения
 /* Автоматически выбираем режим: на локальной машине используем 'server', на публичном хостинге (gh-pages и т.п.) — 'demo', чтобы не пытаться обращаться к localhost:3000 */
-const defaultMode = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) ? 'server' : 'demo';
+// prettier-ignore
+const defaultMode =
+  typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1')
+    ? 'server'
+    : 'demo';
+
 const app = new ErrorLoggerApp(defaultMode);
 window.app = app;
 app.flushLocalErrors();
@@ -206,8 +237,13 @@ document.addEventListener('DOMContentLoaded', updateTestErrorButtonVisibility);
 // Следим за сменой режима (через aside)
 window.addEventListener('modeChanged', async () => {
   updateTestErrorButtonVisibility();
-  const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
-  if (mode === 'server' && window.app && typeof window.app.flushLocalErrors === 'function') {
+  const mode =
+    window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
+  if (
+    mode === 'server' &&
+    window.app &&
+    typeof window.app.flushLocalErrors === 'function'
+  ) {
     await window.app.flushLocalErrors();
     if (typeof window.app.updateErrorTable === 'function') {
       window.app.updateErrorTable();
