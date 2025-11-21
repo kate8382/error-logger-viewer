@@ -52,6 +52,7 @@ export default defineConfig([
   },
   {
     files: ['**/__tests__/**/*.js', '**/*.test.js', '**/*.spec.js'], // все тестовые файлы
+    env: { 'jest/globals': true }, // устанавливаем окружение Jest
     languageOptions: { globals: globals.jest }, // добавляем глобальные переменные Jest
     plugins: { jest: jestPlugin }, // подключаем плагин eslint-plugin-jest
     rules: {

@@ -1,9 +1,9 @@
 // настройки Jest для фронтенда
-/* eslint-disable no-undef */
+
 module.exports = {
   testEnvironment: 'jsdom', // имитация браузерной среды
   transform: {
-    '^.+\\.js$': 'babel-jest' // трансформация JS с помощью Babel
+    '^.+\\.js$': 'babel-jest', // трансформация JS с помощью Babel
   },
   moduleFileExtensions: ['js'], // расширения файлов
   moduleDirectories: ['node_modules', 'src/js'], // где искать модули
@@ -12,5 +12,5 @@ module.exports = {
   coverageDirectory: '<rootDir>/coverage', // папка для отчётов о покрытии
   coverageReporters: ['text', 'lcov'], // форматы отчётов о покрытии
   testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)'], // шаблоны имён файлов тестов
-  verbose: true // подробный вывод результатов тестов
+  verbose: true, // подробный вывод результатов тестов
 };

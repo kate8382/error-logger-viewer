@@ -15,6 +15,7 @@ describe('ErrorApi', () => {
     const errors = await api.getErrors();
     expect(Array.isArray(errors)).toBe(true);
     expect(errors.length).toBeGreaterThan(0);
+    expect(errors[0]).toHaveProperty('id');
   });
 
   it('должен удалять ошибку в demo-режиме', async () => {
