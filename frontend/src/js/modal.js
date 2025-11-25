@@ -53,12 +53,14 @@ export class Modal {
       'textarea:not([disabled])',
       '[tabindex]:not([tabindex="-1"])',
     ];
+
     const focusable = this.modalContent.querySelectorAll(
       focusableSelectors.join(','),
     );
     const focusableArr = Array.from(focusable).filter(
       (el) => el.offsetParent !== null,
     );
+
     if (focusableArr.length) focusableArr[0].focus();
   }
 

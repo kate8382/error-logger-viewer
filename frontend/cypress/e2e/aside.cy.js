@@ -1,8 +1,12 @@
 /* eslint-env cypress */
+// / <reference types="cypress" />
 
 describe('Aside navigation', () => {
   beforeEach(() => {
-    cy.intercept({ method: 'GET', url: /\/errors(\?|$)/ }, { fixture: 'errors.json' }).as('getErrors');
+    cy.intercept(
+      { method: 'GET', url: /\/errors(\?|$)/ },
+      { fixture: 'errors.json' },
+    ).as('getErrors');
     cy.visit('/');
     // Убедиться, что Aside инициализирован и навесил обработчики
     cy.window().its('aside').should('exist');
@@ -33,10 +37,16 @@ describe('Aside navigation', () => {
     cy.openSettings();
     // Используем helper для клика по опции языка
     cy.clickSettingsOption('language', 'en', { force: true });
-    cy.get('.sidebar__item-text[data-i18n="navErrors"]').should('contain', 'Error Table');
+    cy.get('.sidebar__item-text[data-i18n="navErrors"]').should(
+      'contain',
+      'Error Table',
+    );
 
     cy.clickSettingsOption('language', 'ru', { force: true });
-    cy.get('.sidebar__item-text[data-i18n="navErrors"]').should('contain', 'Таблица ошибок');
+    cy.get('.sidebar__item-text[data-i18n="navErrors"]').should(
+      'contain',
+      'Таблица ошибок',
+    );
   });
 
   it('меняет тему на тёмную и обратно', () => {

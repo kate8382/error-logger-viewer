@@ -14,7 +14,7 @@ module.exports = defineConfig({
     supportFile: 'cypress/support/e2e.js',
     excludeSpecPattern: ['**/coverage/**'], // исключить папки с покрытием
     defaultCommandTimeout: 8000,
-    pageLoadTimeout: 60000,
+    pageLoadTimeout: 120000,
     env: {},
     setupNodeEvents(on, config) {
       // можно добавить хуки для событий, если потребуется

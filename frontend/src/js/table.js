@@ -60,6 +60,7 @@ export class ErrorTable {
       const actionsCell = el('td', {
         className: 'error-table__cell error-table__cell--actions flex',
       });
+
       const dropdownBtn = el(
         'button',
         {
@@ -74,11 +75,10 @@ export class ErrorTable {
       deleteBtn.style.margin = '2px 0';
       const dropdownMenu = el(
         'div',
-        {
-          className: 'error-table__dropdown-menu',
-        },
+        { className: 'error-table__dropdown-menu' },
         [editBtn, deleteBtn],
       );
+
       // Открытие/закрытие меню
       dropdownBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -159,6 +159,7 @@ export class ErrorTable {
       },
       t('tableEditBtn'),
     );
+
     btn.addEventListener('click', async () => {
       try {
         const { showLoading, hideLoading } = await import('./utils/loading');
@@ -199,6 +200,7 @@ export class ErrorTable {
       },
       t('tableDeleteBtn'),
     );
+
     btn.addEventListener('click', async () => {
       try {
         const { showLoading, hideLoading } = await import('./utils/loading');
