@@ -19,19 +19,12 @@ describe('ChartManager', () => {
   let chartManager;
   beforeEach(() => {
     // Мокаем DOM-элементы, необходимые для конструктора
-    document.body.innerHTML =
-      '<canvas id="chartCanvas"></canvas>' +
-      '<div class="chart__title"></div>' +
-      '<div id="errorsChartSortWeek"></div>' +
-      '<div id="errorsChartSortMonth"></div>' +
-      '<div id="errorsChartSortYear"></div>';
+    document.body.innerHTML = '<canvas id="chartCanvas"></canvas>' + '<div class="chart__title"></div>' + '<div id="errorsChartSortWeek"></div>' + '<div id="errorsChartSortMonth"></div>' + '<div id="errorsChartSortYear"></div>';
     chartManager = new ChartManager();
   });
 
   it('корректно форматирует дату для оси X', () => {
-    expect(chartManager.formatDayLabel('2025-10-15')).toMatch(
-      /15\.10\.2025|15\.10\.25/,
-    );
+    expect(chartManager.formatDayLabel('2025-10-15')).toMatch(/15\.10\.2025|15\.10\.25/);
   });
 
   it('возвращает корректный ключ периода для дня', () => {

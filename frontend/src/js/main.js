@@ -38,10 +38,7 @@ class ErrorLoggerApp {
         .then(({ Aside }) => {
           // Динамический импорт (lazy loading) для отложенной загрузки aside
           window.aside = new Aside(this);
-          if (
-            window.aside &&
-            typeof window.aside.translatePage === 'function'
-          ) {
+          if (window.aside && typeof window.aside.translatePage === 'function') {
             window.aside.translatePage(getCurrentLang());
             onLangChange(() => window.aside.translatePage(getCurrentLang()));
           }
@@ -86,12 +83,7 @@ class ErrorLoggerApp {
       'error',
       (event) => {
         const target = event.target || event.srcElement;
-        if (
-          target &&
-          (target instanceof HTMLScriptElement ||
-            target instanceof HTMLLinkElement ||
-            target instanceof HTMLImageElement)
-        ) {
+        if (target && (target instanceof HTMLScriptElement || target instanceof HTMLLinkElement || target instanceof HTMLImageElement)) {
           const src = target.src || target.href || target.currentSrc || '';
           const tag = target.tagName;
           this.handleErrorCreate({
@@ -139,11 +131,7 @@ class ErrorLoggerApp {
       try {
         const response = await origFetch(...args);
         if (!response.ok) {
-          console.log(
-            '[ErrorLogger] Creating Fetch error:',
-            response.status,
-            response.statusText,
-          );
+          console.log('[ErrorLogger] Creating Fetch error:', response.status, response.statusText);
           this.handleErrorCreate({
             type: 'FetchError',
             message: `Fetch failed: ${response.status} ${response.statusText}`,
@@ -198,10 +186,7 @@ class ErrorLoggerApp {
     try {
       errors = JSON.parse(localStorage.getItem(key) || '[]');
     } catch (e) {
-      console.error(
-        '[ErrorLogger] Failed to parse pending errors from localStorage:',
-        e,
-      );
+      console.error('[ErrorLogger] Failed to parse pending errors from localStorage:', e);
       return;
     }
     if (!errors.length) return;
@@ -237,13 +222,8 @@ document.addEventListener('DOMContentLoaded', updateTestErrorButtonVisibility);
 // Следим за сменой режима (через aside)
 window.addEventListener('modeChanged', async () => {
   updateTestErrorButtonVisibility();
-  const mode =
-    window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
-  if (
-    mode === 'server' &&
-    window.app &&
-    typeof window.app.flushLocalErrors === 'function'
-  ) {
+  const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
+  if (mode === 'server' && window.app && typeof window.app.flushLocalErrors === 'function') {
     await window.app.flushLocalErrors();
     if (typeof window.app.updateErrorTable === 'function') {
       window.app.updateErrorTable();

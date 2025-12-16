@@ -24,8 +24,7 @@ export function showTestErrorButton() {
   btn.onclick = async () => {
     try {
       const { ErrorApi } = await import('../api.js');
-      const mode =
-        window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
+      const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
       const api = new ErrorApi(mode);
       await api.createError({
         type: 'TestError',
@@ -36,9 +35,7 @@ export function showTestErrorButton() {
       if (window.app && typeof window.app.updateErrorTable === 'function') {
         window.app.updateErrorTable();
       }
-      alert(
-        t('testErrorCreated') || 'Тестовая ошибка создана! Обновите таблицу.',
-      );
+      alert(t('testErrorCreated') || 'Тестовая ошибка создана! Обновите таблицу.');
     } catch (err) {
       console.error('Failed to load ErrorApi module', err);
       handleModuleLoadError('Failed to load ErrorApi module', err);
@@ -58,8 +55,7 @@ export function hideTestErrorButton() {
 }
 
 export function updateTestErrorButtonVisibility() {
-  const mode =
-    window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
+  const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
   if (mode === 'demo') {
     showTestErrorButton();
   } else {

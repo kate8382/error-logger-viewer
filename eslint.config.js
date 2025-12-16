@@ -1,16 +1,20 @@
-// eslint.config.js
-import js from '@eslint/js';
-import globals from 'globals';
-import jestPlugin from 'eslint-plugin-jest'; // установили плагин, т.к. в проекте используются тесты на Jest
-import prettierPlugin from 'eslint-plugin-prettier'; // плагин для запуска Prettier как правила ESLint
-import prettierConfig from 'eslint-config-prettier/flat'; // конфиг для отключения конфликтующих правил (flat)
-import { defineConfig } from 'eslint/config';
+const js = require('@eslint/js');
+const globals = require('globals');
+const jestPlugin = require('eslint-plugin-jest'); // установили плагин, т.к. в проекте используются тесты на Jest
+const prettierPlugin = require('eslint-plugin-prettier'); // плагин для запуска Prettier как правила ESLint
+const prettierConfig = require('eslint-config-prettier/flat'); // конфиг для отключения конфликтующих правил (flat)
+const { defineConfig } = require('eslint/config');
 
-export default defineConfig([
+module.exports = defineConfig([
+  { ignores: ['**/node_modules/**', '**/dist/**', '**/coverage/**'] },
   js.configs.recommended,
   {
-    files: ['**/*.js'],
-    languageOptions: { globals: globals.browser },
+    files: ['**/*.{js,mjs,cjs,ts,tsx}'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: { ...globals.node, ...globals.browser },
+    },
     plugins: { prettier: prettierPlugin },
     rules: {
       'no-console': 'off',
@@ -18,7 +22,7 @@ export default defineConfig([
       'spaced-comment': ['error', 'always'],
       'no-inline-comments': 'off',
       'multiline-comment-style': 'off',
-      // Let Prettier control quote style; disable ESLint's quotes rule
+      // Prettier контролирует стиль кавычек; отключаем правило ESLint для кавычек
       quotes: 'off',
       semi: ['error', 'always'],
       'no-unused-vars': ['warn'],
@@ -41,6 +45,8 @@ export default defineConfig([
   {
     files: ['webpack.config.js', 'cypress.config.js'],
     languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'script',
       globals: {
         ...globals.node,
         require: 'readonly',
@@ -52,7 +58,6 @@ export default defineConfig([
   },
   {
     files: ['**/__tests__/**/*.js', '**/*.test.js', '**/*.spec.js'], // все тестовые файлы
-    env: { 'jest/globals': true }, // устанавливаем окружение Jest
     languageOptions: { globals: globals.jest }, // добавляем глобальные переменные Jest
     plugins: { jest: jestPlugin }, // подключаем плагин eslint-plugin-jest
     rules: {
@@ -66,6 +71,8 @@ export default defineConfig([
   {
     files: ['cypress/e2e/**/*.js', '**/*.cy.js'],
     languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'script',
       globals: {
         describe: 'readonly',
         it: 'readonly',
@@ -75,7 +82,7 @@ export default defineConfig([
       },
     },
     rules: {
-      'no-undef': 'off',
+      'no-undef': 'off', // отключение правила для глобальных переменных Cypress
     },
   },
   // Prettier config должен быть последним, чтобы он мог отключить правила форматирования, которые конфликтуют с Prettier

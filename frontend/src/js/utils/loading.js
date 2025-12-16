@@ -4,12 +4,7 @@ export function showCenterSpinner(container, type = 'page') {
   if (container.querySelector('.center-spinner')) return;
   const spinnerDiv = document.createElement('div');
   spinnerDiv.className = 'center-spinner';
-  spinnerDiv.innerHTML =
-    type === 'page'
-      ? '<img src="img/loading.svg" data-i18n="loading" alt="Loading">'
-      : type === 'delete'
-        ? '<img src="img/load-delete.svg" data-i18n="loading" alt="Loading">'
-        : '<img src="img/load-save.svg" data-i18n="loading" alt="Loading">';
+  spinnerDiv.innerHTML = type === 'page' ? '<img src="img/loading.svg" data-i18n="loading" alt="Loading">' : type === 'delete' ? '<img src="img/load-delete.svg" data-i18n="loading" alt="Loading">' : '<img src="img/load-save.svg" data-i18n="loading" alt="Loading">';
   // Ставим абсолютное позиционирование относительно контейнера
   spinnerDiv.style.position = 'absolute';
   spinnerDiv.style.top = '50%';
@@ -38,12 +33,7 @@ export function showLoading(button, type) {
   spinner.classList.add('spinner');
   button.appendChild(spinner);
 
-  spinner.innerHTML =
-    type === 'page'
-      ? '<img src="img/loading.svg" data-i18n="loading" alt="Loading">'
-      : type === 'delete'
-        ? '<img src="img/load-delete.svg" data-i18n="loading" alt="Loading">'
-        : '<img src="img/load-save.svg" data-i18n="loading" alt="Loading">';
+  spinner.innerHTML = type === 'page' ? '<img src="img/loading.svg" data-i18n="loading" alt="Loading">' : type === 'delete' ? '<img src="img/load-delete.svg" data-i18n="loading" alt="Loading">' : '<img src="img/load-save.svg" data-i18n="loading" alt="Loading">';
 
   // Вставляем спиннер перед текстом кнопки
   button.insertBefore(spinner, button.firstChild);

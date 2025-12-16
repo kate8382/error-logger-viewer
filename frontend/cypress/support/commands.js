@@ -1,11 +1,10 @@
-/* eslint-env cypress */
 /* global Cypress, cy */
 // For more comprehensive examples of custom commands please read more here:
 // https://on.cypress.io/custom-commands
 
 // Открыть основной выпадающий список настроек (Settings) в сайдбаре
 Cypress.Commands.add('openSettings', () => {
-  cy.get('.sidebar__dropdown').then($d => {
+  cy.get('.sidebar__dropdown').then(($d) => {
     if (!$d.hasClass('open')) {
       cy.wrap($d).find('.sidebar__dropdown-btn').click();
     }
@@ -19,7 +18,6 @@ Cypress.Commands.add('openSettingsGroup', (group) => {
   cy.get(`.sidebar__dropdown-group-btn[data-group="${group}"]`).scrollIntoView().click();
   cy.get(`.sidebar__dropdown-sublist[data-group="${group}"]`).should('exist');
 });
-
 
 // Ожидать, что таблица ошибок (tbody) будет отрисована
 // options: { timeout } - время ожидания в ms (по умолчанию 20000)
@@ -48,12 +46,13 @@ Cypress.Commands.add('clickSettingsOption', (group, value, opts = {}) => {
 // Открыть меню действий (edit/delete) для строки таблицы по индексу (по умолчанию 0)
 Cypress.Commands.add('openRowActions', (index = 0) => {
   // Найти строку и кнопку выпадающего меню внутри неё
-  return cy.get('#errorTableBody')
+  return cy
+    .get('#errorTableBody')
     .find('tr')
     .eq(index)
     .within(() => {
       // Ищем явную кнопку dropdown внутри ячейки действий
-      cy.get('td.error-table__cell--actions').then($cell => {
+      cy.get('td.error-table__cell--actions').then(($cell) => {
         const $dropdownBtn = $cell.find('.error-table__dropdown-btn');
         if ($dropdownBtn.length) {
           cy.wrap($dropdownBtn).click({ force: true });
@@ -79,9 +78,11 @@ Cypress.Commands.add('openRowActions', (index = 0) => {
 // В модальном окне нажать кнопку подтверждения удаления и дождаться закрытия модалки
 Cypress.Commands.add('confirmDelete', () => {
   // Ожидаем, что модал присутствует и содержит кнопку с id deleteErrorButton
-  cy.get('#modal').should('exist').within(() => {
-    cy.get('#deleteErrorButton').click({ force: true });
-  });
+  cy.get('#modal')
+    .should('exist')
+    .within(() => {
+      cy.get('#deleteErrorButton').click({ force: true });
+    });
   // После клика modal должен закрыться — ждём отсутсвия класса open или отсутствия #modal
   cy.get('#modal', { timeout: 10000 }).should('not.have.class', 'modal--open');
 });

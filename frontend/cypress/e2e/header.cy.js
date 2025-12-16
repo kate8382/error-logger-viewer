@@ -3,9 +3,7 @@
 describe('Header - search & filters', () => {
   beforeEach(() => {
     // Перехватываем все запросы на /errors и возвращаем фикстуру
-    cy.intercept('GET', '**/errors*', { fixture: 'errors.json' }).as(
-      'getErrors',
-    );
+    cy.intercept('GET', '**/errors*', { fixture: 'errors.json' }).as('getErrors');
     cy.visit('/');
     cy.wait('@getErrors');
   });
@@ -23,15 +21,9 @@ describe('Header - search & filters', () => {
     cy.wait('@getErrors').its('request.url').should('exist');
 
     // Таблица должна содержать хотя бы одну строку после рендера и содержать отфильтрованный тип
-    cy.get('#errorTableBody')
-      .should('exist')
-      .find('tr')
-      .should('have.length.greaterThan', 0);
+    cy.get('#errorTableBody').should('exist').find('tr').should('have.length.greaterThan', 0);
     // Проверяем детерминированное значение из фикстуры — id первой ошибки
-    cy.get('#errorTableBody tr')
-      .first()
-      .find('td.error-table__cell--id')
-      .should('contain.text', 'err-1');
+    cy.get('#errorTableBody tr').first().find('td.error-table__cell--id').should('contain.text', 'err-1');
   });
 
   it('переключает язык без поломки UI поиска', () => {

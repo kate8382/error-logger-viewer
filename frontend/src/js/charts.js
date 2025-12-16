@@ -54,16 +54,9 @@ export default class ChartManager {
 
   // Обновляет размер шрифта на графике и перерисовывает его
   updateFontSize() {
-    if (
-      this.chart &&
-      this.chart.options &&
-      this.chart.options.plugins &&
-      this.chart.options.plugins.legend &&
-      this.chart.options.plugins.legend.labels
-    ) {
+    if (this.chart && this.chart.options && this.chart.options.plugins && this.chart.options.plugins.legend && this.chart.options.plugins.legend.labels) {
       if (this.chart.options.plugins.legend.labels.font) {
-        this.chart.options.plugins.legend.labels.font.size =
-          this.getResponsiveFontSize();
+        this.chart.options.plugins.legend.labels.font.size = this.getResponsiveFontSize();
       } else {
         this.chart.options.plugins.legend.labels.font = {
           size: this.getResponsiveFontSize(),
@@ -90,8 +83,7 @@ export default class ChartManager {
       const week = Math.ceil((days + firstJan.getDay() + 1) / 7);
       return `${year}-W${week.toString().padStart(2, '0')}`;
     }
-    if (by === 'month')
-      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    if (by === 'month') return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
     if (by === 'year') return d.getFullYear().toString();
     return '';
   }
@@ -151,41 +143,27 @@ export default class ChartManager {
           statsType[key][type] = (statsType[key][type] || 0) + (e.count || 1);
           const status = e.status || 'new';
           if (!statsStatus[key]) statsStatus[key] = {};
-          statsStatus[key][status] =
-            (statsStatus[key][status] || 0) + (e.count || 1);
+          statsStatus[key][status] = (statsStatus[key][status] || 0) + (e.count || 1);
         });
       } else {
         // Получаем статистику по выбранному периоду и типам
-        const resType = await fetch(
-          `${API_BASE_URL}/errors/stats?by=${byParam}&group=type`,
-        );
+        const resType = await fetch(`${API_BASE_URL}/errors/stats?by=${byParam}&group=type`);
         statsType = await resType.json();
-        const resStatus = await fetch(
-          `${API_BASE_URL}/errors/stats?by=${byParam}&group=status`,
-        );
+        const resStatus = await fetch(`${API_BASE_URL}/errors/stats?by=${byParam}&group=status`);
         statsStatus = await resStatus.json();
       }
 
       // Универсальная подготовка данных для графика (labels, datasets, стили)
-      const { labels, datasets } = this.prepareBarChartData(
-        statsType,
-        statsStatus,
-        byParam,
-        this.currentType,
-      );
+      const { labels, datasets } = this.prepareBarChartData(statsType, statsStatus, byParam, this.currentType);
 
       try {
         if (!labels.length || !datasets.length) {
           // Если нет данных для графика
-          this.canvas
-            .getContext('2d')
-            .clearRect(0, 0, this.canvas.width, this.canvas.height);
-          this.canvas.parentElement.querySelector('.chart__title').textContent =
-            t('noChartData');
+          this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
+          this.canvas.parentElement.querySelector('.chart__title').textContent = t('noChartData');
         } else {
           // Есть данные — рендерим график
-          this.canvas.parentElement.querySelector('.chart__title').textContent =
-            t('chartTitle');
+          this.canvas.parentElement.querySelector('.chart__title').textContent = t('chartTitle');
           // Автоматический max для оси Y с округлением и динамическим шагом
           const allData = datasets.flatMap((ds) => ds.data);
           let rawMax = Math.max(1, ...allData) || 1;
@@ -350,14 +328,12 @@ export default class ChartManager {
         const simple = new Date(year, 0, 1 + (week - 1) * 7);
         const dow = simple.getDay();
         const ISOweekStart = new Date(simple);
-        if (dow <= 4)
-          ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+        if (dow <= 4) ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
         else ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
         const ISOweekEnd = new Date(ISOweekStart);
         ISOweekEnd.setDate(ISOweekStart.getDate() + 6);
         // Форматирование: дд.мм.гг
-        const fmt = (d) =>
-          `${d.getDate().toString().padStart(2, '0')}.${(d.getMonth() + 1).toString().padStart(2, '0')}.${d.getFullYear().toString().slice(-2)}`;
+        const fmt = (d) => `${d.getDate().toString().padStart(2, '0')}.${(d.getMonth() + 1).toString().padStart(2, '0')}.${d.getFullYear().toString().slice(-2)}`;
         return `${fmt(ISOweekStart)} – ${fmt(ISOweekEnd)}`;
       });
     }
@@ -371,20 +347,12 @@ export default class ChartManager {
     }
     // year: 2025 → 2025 (оставляем как есть)
     // Собираем все типы и статусы
-    const allTypes = Array.from(
-      new Set(periodKeys.flatMap((date) => Object.keys(statsType[date] || {}))),
-    );
-    const allStatuses = Array.from(
-      new Set(
-        periodKeys.flatMap((date) => Object.keys(statsStatus[date] || {})),
-      ),
-    );
+    const allTypes = Array.from(new Set(periodKeys.flatMap((date) => Object.keys(statsType[date] || {}))));
+    const allStatuses = Array.from(new Set(periodKeys.flatMap((date) => Object.keys(statsStatus[date] || {}))));
     // Формируем datasets для типов
     const typeDatasets = allTypes.map((type, idx) => ({
       label: getLabel(type),
-      data: periodKeys.map((date) =>
-        statsType[date] && statsType[date][type] ? statsType[date][type] : 0,
-      ),
+      data: periodKeys.map((date) => (statsType[date] && statsType[date][type] ? statsType[date][type] : 0)),
       backgroundColor: typeColors[idx % typeColors.length],
       borderWidth: 0,
       borderRadius: 8,
@@ -395,11 +363,7 @@ export default class ChartManager {
     // Для статусов используем t(status)
     const statusDatasets = allStatuses.map((status, idx) => ({
       label: t(status),
-      data: periodKeys.map((date) =>
-        statsStatus[date] && statsStatus[date][status]
-          ? statsStatus[date][status]
-          : 0,
-      ),
+      data: periodKeys.map((date) => (statsStatus[date] && statsStatus[date][status] ? statsStatus[date][status] : 0)),
       backgroundColor: statusColors[idx % statusColors.length],
       borderWidth: 0,
       borderRadius: 8,

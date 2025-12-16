@@ -45,21 +45,10 @@ export class Modal {
 
   // Устанавливает фокус на первый фокусируемый элемент в модалке
   _setInitialModalFocus() {
-    const focusableSelectors = [
-      'button:not([disabled])',
-      '[href]',
-      'input:not([disabled])',
-      'select:not([disabled])',
-      'textarea:not([disabled])',
-      '[tabindex]:not([tabindex="-1"])',
-    ];
+    const focusableSelectors = ['button:not([disabled])', '[href]', 'input:not([disabled])', 'select:not([disabled])', 'textarea:not([disabled])', '[tabindex]:not([tabindex="-1"])'];
 
-    const focusable = this.modalContent.querySelectorAll(
-      focusableSelectors.join(','),
-    );
-    const focusableArr = Array.from(focusable).filter(
-      (el) => el.offsetParent !== null,
-    );
+    const focusable = this.modalContent.querySelectorAll(focusableSelectors.join(','));
+    const focusableArr = Array.from(focusable).filter((el) => el.offsetParent !== null);
 
     if (focusableArr.length) focusableArr[0].focus();
   }
@@ -120,9 +109,7 @@ export class Modal {
     type = getLabel(type) || type;
     const id = error.id || '';
     // Формат даты: дд.мм.гггг чч:мм
-    let firstSeenValue = error.firstSeen
-      ? this._formatDate(error.firstSeen)
-      : '';
+    let firstSeenValue = error.firstSeen ? this._formatDate(error.firstSeen) : '';
     let lastSeenValue = error.lastSeen ? this._formatDate(error.lastSeen) : '';
     const countValue = typeof error.count === 'number' ? error.count : 1;
     const usersValue = Array.isArray(error.users) ? error.users.join(', ') : '';
@@ -152,8 +139,7 @@ export class Modal {
         // Вставляем SVG через innerHTML, как в aside
         (() => {
           const svg = document.createElement('span');
-          svg.innerHTML =
-            '<svg class="modal__status-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 5.4975L2.12175 3.375L9.003 10.3792L15.8783 3.375L18 5.4975L9.003 14.625L0 5.4975Z" fill="currentColor"/></svg>';
+          svg.innerHTML = '<svg class="modal__status-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 5.4975L2.12175 3.375L9.003 10.3792L15.8783 3.375L18 5.4975L9.003 14.625L0 5.4975Z" fill="currentColor"/></svg>';
           return svg.firstChild;
         })(),
         el(
@@ -215,10 +201,7 @@ export class Modal {
 
     // Открытие селекта по Enter/Space
     statusSelect.addEventListener('keydown', (e) => {
-      if (
-        (e.key === 'Enter' || e.key === ' ') &&
-        !statusSelect.classList.contains('is-open')
-      ) {
+      if ((e.key === 'Enter' || e.key === ' ') && !statusSelect.classList.contains('is-open')) {
         e.preventDefault();
         statusSelect.classList.add('is-open');
         statusSelect.classList.remove('is-close');
@@ -231,9 +214,7 @@ export class Modal {
 
     // Навигация по опциям селекта с помощью Tab/Shift+Tab и стрелок
     list.addEventListener('keydown', (e) => {
-      const options = Array.from(
-        list.querySelectorAll('.modal__status-option'),
-      );
+      const options = Array.from(list.querySelectorAll('.modal__status-option'));
       const idx = options.indexOf(document.activeElement);
       if (e.key === 'ArrowDown') {
         e.preventDefault();
@@ -273,19 +254,14 @@ export class Modal {
       if (e.target && e.target.matches('li')) {
         const value = e.target.getAttribute('data-value');
         const label = e.target.textContent;
-        currentStatus =
-          statusOptions.find((opt) => opt.value === value) || statusOptions[0];
+        currentStatus = statusOptions.find((opt) => opt.value === value) || statusOptions[0];
         currentSpan.textContent = label;
         // Пересоздать список без выбранной опции
         list.innerHTML = '';
         statusOptions
           .filter((opt) => opt.value !== currentStatus.value)
           .forEach((opt) => {
-            const li = el(
-              'li',
-              { 'data-value': opt.value, className: 'modal__status-option' },
-              opt.label,
-            );
+            const li = el('li', { 'data-value': opt.value, className: 'modal__status-option' }, opt.label);
             list.appendChild(li);
           });
         // закрыть список
@@ -324,29 +300,9 @@ export class Modal {
 
     // Остальные поля (только для просмотра)
     // Исключаем устаревшие и служебные поля
-    const exclude = [
-      'type',
-      'id',
-      'message',
-      'status',
-      'comment',
-      'firstSeen',
-      'lastSeen',
-      'count',
-      'users',
-      'createdAt',
-      'updatedAt',
-      'modalField_createdAt',
-    ];
+    const exclude = ['type', 'id', 'message', 'status', 'comment', 'firstSeen', 'lastSeen', 'count', 'users', 'createdAt', 'updatedAt', 'modalField_createdAt'];
     const otherRows = Object.entries(error)
-      .filter(
-        ([key, value]) =>
-          !exclude.includes(key) &&
-          typeof value !== 'object' &&
-          value !== '' &&
-          value !== null &&
-          value !== undefined,
-      )
+      .filter(([key, value]) => !exclude.includes(key) && typeof value !== 'object' && value !== '' && value !== null && value !== undefined)
       .map(([key, value]) => {
         let label;
         if (key === 'source') {
@@ -357,54 +313,20 @@ export class Modal {
           const labelKey = 'modalField_' + key;
           label = t(labelKey) || key.charAt(0).toUpperCase() + key.slice(1);
         }
-        return el('div', { className: 'modal__row' }, [
-          el('span', { className: 'modal__field-title' }, label + ': '),
-          el('span', { className: 'modal__field-value' }, value),
-        ]);
+        return el('div', { className: 'modal__row' }, [el('span', { className: 'modal__field-title' }, label + ': '), el('span', { className: 'modal__field-value' }, value)]);
       });
 
     const rows = [
-      el('div', { className: 'modal__row' }, [
-        el('span', { className: 'modal__field-title' }, typeLabel + ': '),
-        el(
-          'span',
-          { className: 'modal__field-value', 'data-type': error.type },
-          type,
-        ),
-      ]),
-      el('div', { className: 'modal__row' }, [
-        el('span', { className: 'modal__field-title' }, idLabel + ': '),
-        el('span', { className: 'modal__field-value' }, id),
-      ]),
-      el('div', { className: 'modal__row' }, [
-        el('span', { className: 'modal__field-title' }, firstSeenLabel + ': '),
-        el('span', { className: 'modal__field-value' }, firstSeenValue),
-      ]),
-      el('div', { className: 'modal__row' }, [
-        el('span', { className: 'modal__field-title' }, lastSeenLabel + ': '),
-        el('span', { className: 'modal__field-value' }, lastSeenValue),
-      ]),
-      el('div', { className: 'modal__row' }, [
-        el('span', { className: 'modal__field-title' }, countLabel + ': '),
-        el('span', { className: 'modal__field-value' }, countValue),
-      ]),
-      el('div', { className: 'modal__row' }, [
-        el('span', { className: 'modal__field-title' }, usersLabel + ': '),
-        el('span', { className: 'modal__field-value' }, usersValue),
-      ]),
+      el('div', { className: 'modal__row' }, [el('span', { className: 'modal__field-title' }, typeLabel + ': '), el('span', { className: 'modal__field-value', 'data-type': error.type }, type)]),
+      el('div', { className: 'modal__row' }, [el('span', { className: 'modal__field-title' }, idLabel + ': '), el('span', { className: 'modal__field-value' }, id)]),
+      el('div', { className: 'modal__row' }, [el('span', { className: 'modal__field-title' }, firstSeenLabel + ': '), el('span', { className: 'modal__field-value' }, firstSeenValue)]),
+      el('div', { className: 'modal__row' }, [el('span', { className: 'modal__field-title' }, lastSeenLabel + ': '), el('span', { className: 'modal__field-value' }, lastSeenValue)]),
+      el('div', { className: 'modal__row' }, [el('span', { className: 'modal__field-title' }, countLabel + ': '), el('span', { className: 'modal__field-value' }, countValue)]),
+      el('div', { className: 'modal__row' }, [el('span', { className: 'modal__field-title' }, usersLabel + ': '), el('span', { className: 'modal__field-value' }, usersValue)]),
       ...otherRows,
-      el('div', { className: 'modal__row' }, [
-        el('span', { className: 'modal__field-title' }, messageLabel + ': '),
-        el('span', { className: 'modal__field-value' }, message),
-      ]),
-      el('div', { className: 'modal__row' }, [
-        el('span', { className: 'modal__field-title' }, statusLabel + ': '),
-        statusSelect,
-      ]),
-      el('div', { className: 'modal__row' }, [
-        el('span', { className: 'modal__field-title' }, commentLabel + ': '),
-        commentArea,
-      ]),
+      el('div', { className: 'modal__row' }, [el('span', { className: 'modal__field-title' }, messageLabel + ': '), el('span', { className: 'modal__field-value' }, message)]),
+      el('div', { className: 'modal__row' }, [el('span', { className: 'modal__field-title' }, statusLabel + ': '), statusSelect]),
+      el('div', { className: 'modal__row' }, [el('span', { className: 'modal__field-title' }, commentLabel + ': '), commentArea]),
     ];
 
     const saveBtn = el(
@@ -437,10 +359,7 @@ export class Modal {
         try {
           await this.errorApi.updateError(error.id, updated);
           this.close();
-          if (
-            window.errorTableInstance &&
-            typeof window.errorTableInstance.fetchErrors === 'function'
-          ) {
+          if (window.errorTableInstance && typeof window.errorTableInstance.fetchErrors === 'function') {
             window.errorTableInstance.fetchErrors();
           }
           hideLoading(saveBtn);
@@ -455,12 +374,7 @@ export class Modal {
 
     this.modal.addEventListener('click', this._outsideClickHandler);
 
-    setChildren(this.modalContent, [
-      this.createCloseBtn(),
-      title,
-      ...rows,
-      saveBtn,
-    ]);
+    setChildren(this.modalContent, [this.createCloseBtn(), title, ...rows, saveBtn]);
 
     this.modal.classList.add('modal--open');
     document.body.classList.add('modal-open');
@@ -490,10 +404,7 @@ export class Modal {
           .deleteError(errorId)
           .then(() => {
             this.close();
-            if (
-              window.errorTableInstance &&
-              typeof window.errorTableInstance.fetchErrors === 'function'
-            ) {
+            if (window.errorTableInstance && typeof window.errorTableInstance.fetchErrors === 'function') {
               window.errorTableInstance.fetchErrors();
             }
             hideLoading(deleteBtn);
@@ -503,12 +414,7 @@ export class Modal {
             hideLoading(deleteBtn);
           });
       } catch (impErr) {
-        handleModuleLoadError(
-          'Failed to load loading utils for delete',
-          impErr,
-          null,
-          null,
-        );
+        handleModuleLoadError('Failed to load loading utils for delete', impErr, null, null);
       }
     });
 
@@ -527,21 +433,7 @@ export class Modal {
     // Добавляем обработчик клика по фону только при открытии
     this.modal.addEventListener('click', this._outsideClickHandler);
 
-    setChildren(this.modalContent, [
-      this.createCloseBtn(),
-      el(
-        'h2',
-        { className: 'modal__title', 'data-i18n': 'modalDeleteTitle' },
-        t('modalDeleteTitle'),
-      ),
-      el(
-        'p',
-        { className: 'modal__message', 'data-i18n': 'modalDeleteMessage' },
-        t('modalDeleteMessage'),
-      ),
-      deleteBtn,
-      cancelBtn,
-    ]);
+    setChildren(this.modalContent, [this.createCloseBtn(), el('h2', { className: 'modal__title', 'data-i18n': 'modalDeleteTitle' }, t('modalDeleteTitle')), el('p', { className: 'modal__message', 'data-i18n': 'modalDeleteMessage' }, t('modalDeleteMessage')), deleteBtn, cancelBtn]);
     this.modal.classList.add('modal--open');
     this._setInitialModalFocus();
   }
@@ -565,10 +457,7 @@ export class Modal {
       if (select) select.classList.remove('is-open');
       // Удаляем обработчик document.mousedown для кастомного select
       if (window.closeCustomSelectModal) {
-        document.removeEventListener(
-          'mousedown',
-          window.closeCustomSelectModal,
-        );
+        document.removeEventListener('mousedown', window.closeCustomSelectModal);
         window.closeCustomSelectModal = null;
       }
       // Сброс последних сохранённых ошибок для обновления

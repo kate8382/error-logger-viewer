@@ -1,12 +1,8 @@
-/* eslint-env cypress */
 // / <reference types="cypress" />
 
 describe('Table of Errors', () => {
   it('открывает главную страницу и видит заголовок таблицы', () => {
-    cy.intercept(
-      { method: 'GET', url: /\/errors(\?|$)/ },
-      { fixture: 'errors.json' },
-    ).as('getErrorsHome');
+    cy.intercept({ method: 'GET', url: /\/errors(\?|$)/ }, { fixture: 'errors.json' }).as('getErrorsHome');
     cy.visit('/');
     cy.wait('@getErrorsHome');
     cy.get('.error-table__title').should('be.visible');
@@ -14,30 +10,20 @@ describe('Table of Errors', () => {
 
   it('рендерит строки таблицы из API', () => {
     // Перехватываем запрос за ошибками и возвращаем фикстуру
-    cy.intercept('GET', '**/errors*', { fixture: 'errors.json' }).as(
-      'getErrors',
-    );
+    cy.intercept('GET', '**/errors*', { fixture: 'errors.json' }).as('getErrors');
     cy.visit('/');
     cy.wait('@getErrors');
     // Ждём таблицу и проверяем строки
     cy.waitForTable();
     cy.get('#errorTableBody tr', { timeout: 20000 }).should('have.length', 2);
-    cy.get('#errorTableBody')
-      .should('contain', 'err-1')
-      .and('contain', 'err-2');
+    cy.get('#errorTableBody').should('contain', 'err-1').and('contain', 'err-2');
   });
 
   it('сортирует по count (серверная сортировка) и отображает порядок', () => {
     // Перехват начального запроса (возвращаем базовую фикстуру)
-    cy.intercept(
-      { method: 'GET', url: /\/errors(\?|$)/ },
-      { fixture: 'errors.json' },
-    ).as('getErrorsInit');
+    cy.intercept({ method: 'GET', url: /\/errors(\?|$)/ }, { fixture: 'errors.json' }).as('getErrorsInit');
     // Перехват сортировочного запроса по count: возвращаем заранее отсортированную фикстуру
-    cy.intercept(
-      { method: 'GET', url: /\/errors.*(\?|&)sort=count(&|$)/ },
-      { fixture: 'errors_sorted_count_asc.json' },
-    ).as('getErrorsSorted');
+    cy.intercept({ method: 'GET', url: /\/errors.*(\?|&)sort=count(&|$)/ }, { fixture: 'errors_sorted_count_asc.json' }).as('getErrorsSorted');
 
     cy.visit('/');
     cy.wait('@getErrorsInit');
@@ -48,18 +34,14 @@ describe('Table of Errors', () => {
 
     // Проверяем порядок строк после получения отсортированных данных
     cy.get('#errorTableBody tr', { timeout: 20000 }).then(($rows) => {
-      const ids = $rows
-        .map((i, el) => Cypress.$(el).find('td').first().text().trim())
-        .get();
+      const ids = $rows.map((i, el) => Cypress.$(el).find('td').first().text().trim()).get();
       expect(ids).to.deep.equal(['err-2', 'err-1']);
     });
   });
 
   it('показывает модальное окно при нажатии Delete (открытие модалки)', () => {
     // Перехватываем начальный список
-    cy.intercept('GET', '**/errors*', { fixture: 'errors.json' }).as(
-      'getErrorsInit2',
-    );
+    cy.intercept('GET', '**/errors*', { fixture: 'errors.json' }).as('getErrorsInit2');
 
     cy.visit('/');
     cy.wait('@getErrorsInit2');

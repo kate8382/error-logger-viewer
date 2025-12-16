@@ -46,38 +46,21 @@ describe('ErrorTable', () => {
 
   describe('renderErrors', () => {
     beforeEach(() => {
-      document.body.innerHTML =
-        '<table><tbody id="errorTableBody"></tbody></table>';
+      document.body.innerHTML = '<table><tbody id="errorTableBody"></tbody></table>';
     });
     it('должен рендерить ошибки в таблицу', () => {
       const table = new ErrorTable('demo');
       table.renderErrors(mockErrors.slice(0, 2));
       const rows = document.querySelectorAll('#errorTableBody tr');
       expect(rows.length).toBe(2);
-      expect(
-        rows[0].querySelector('.error-table__cell--id').textContent,
-      ).toContain('12345678-...cdef');
-      expect(
-        rows[1].querySelector('.error-table__cell--id').textContent,
-      ).toContain('abcdef12-...7890');
-      expect(
-        rows[0].querySelector('.error-table__cell--data').textContent,
-      ).toContain('Type Error');
-      expect(
-        rows[1].querySelector('.error-table__cell--data').textContent,
-      ).toContain('ReferenceError');
-      expect(
-        rows[0].querySelector('.error-table__cell--count').textContent,
-      ).toBe('2');
-      expect(
-        rows[1].querySelector('.error-table__cell--count').textContent,
-      ).toBe('1');
-      expect(
-        rows[0].querySelector('.error-table__cell--status').textContent,
-      ).toBe('New');
-      expect(
-        rows[1].querySelector('.error-table__cell--status').textContent,
-      ).toBe('Fixed');
+      expect(rows[0].querySelector('.error-table__cell--id').textContent).toContain('12345678-...cdef');
+      expect(rows[1].querySelector('.error-table__cell--id').textContent).toContain('abcdef12-...7890');
+      expect(rows[0].querySelector('.error-table__cell--data').textContent).toContain('Type Error');
+      expect(rows[1].querySelector('.error-table__cell--data').textContent).toContain('ReferenceError');
+      expect(rows[0].querySelector('.error-table__cell--count').textContent).toBe('2');
+      expect(rows[1].querySelector('.error-table__cell--count').textContent).toBe('1');
+      expect(rows[0].querySelector('.error-table__cell--status').textContent).toBe('New');
+      expect(rows[1].querySelector('.error-table__cell--status').textContent).toBe('Fixed');
     });
   });
 });

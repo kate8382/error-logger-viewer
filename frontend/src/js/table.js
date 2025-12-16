@@ -73,17 +73,12 @@ export class ErrorTable {
       const deleteBtn = this.createDeleteButton(error);
       editBtn.style.margin = '2px 0';
       deleteBtn.style.margin = '2px 0';
-      const dropdownMenu = el(
-        'div',
-        { className: 'error-table__dropdown-menu' },
-        [editBtn, deleteBtn],
-      );
+      const dropdownMenu = el('div', { className: 'error-table__dropdown-menu' }, [editBtn, deleteBtn]);
 
       // Открытие/закрытие меню
       dropdownBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        dropdownMenu.style.display =
-          dropdownMenu.style.display === 'none' ? 'flex' : 'none';
+        dropdownMenu.style.display = dropdownMenu.style.display === 'none' ? 'flex' : 'none';
       });
       // Закрытие по клику вне меню
       document.addEventListener('click', () => {
@@ -93,52 +88,24 @@ export class ErrorTable {
       actionsCell.appendChild(dropdownMenu);
 
       return el('tr', { className: 'error-table__row' }, [
-        el(
-          'td',
-          { className: 'error-table__cell error-table__cell--id' },
-          this.formatId(error.id),
-        ),
-        el(
-          'td',
-          { className: 'error-table__cell error-table__cell--data' },
-          typeText,
-        ),
-        el(
-          'td',
-          { className: 'error-table__cell error-table__cell--count' },
-          error.count || 1,
-        ),
-        el(
-          'td',
-          { className: 'error-table__cell error-table__cell--firstseen' },
-          firstSeen,
-        ),
-        el(
-          'td',
-          { className: 'error-table__cell error-table__cell--lastseen' },
-          lastSeen,
-        ),
-        el(
-          'td',
-          { className: 'error-table__cell error-table__cell--status' },
-          statusText,
-        ),
+        el('td', { className: 'error-table__cell error-table__cell--id' }, this.formatId(error.id)),
+        el('td', { className: 'error-table__cell error-table__cell--data' }, typeText),
+        el('td', { className: 'error-table__cell error-table__cell--count' }, error.count || 1),
+        el('td', { className: 'error-table__cell error-table__cell--firstseen' }, firstSeen),
+        el('td', { className: 'error-table__cell error-table__cell--lastseen' }, lastSeen),
+        el('td', { className: 'error-table__cell error-table__cell--status' }, statusText),
         actionsCell,
       ]);
     });
     setChildren(tableBody, rows);
 
     // Переводим кнопки Edit/Delete после рендера, используя актуальный язык
-    const editBtns = tableBody.querySelectorAll(
-      '.error-table__btn--edit[data-i18n]',
-    );
+    const editBtns = tableBody.querySelectorAll('.error-table__btn--edit[data-i18n]');
     editBtns.forEach((btn) => {
       const key = btn.getAttribute('data-i18n');
       btn.textContent = t(key) || key;
     });
-    const deleteBtns = tableBody.querySelectorAll(
-      '.error-table__btn--delete[data-i18n]',
-    );
+    const deleteBtns = tableBody.querySelectorAll('.error-table__btn--delete[data-i18n]');
     deleteBtns.forEach((btn) => {
       const key = btn.getAttribute('data-i18n');
       btn.textContent = t(key) || key;
@@ -167,21 +134,13 @@ export class ErrorTable {
 
         import('./modal')
           .then(({ Modal }) => {
-            const mode =
-              window.app && window.app.errorApi
-                ? window.app.errorApi.mode
-                : 'server';
+            const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
             window.appModal = new Modal(mode);
             window.appModal.openEdit(error);
             hideLoading(btn);
           })
           .catch((error) => {
-            handleModuleLoadError(
-              'Ошибка при открытии модального окно редактирования:',
-              error,
-              hideLoading,
-              btn,
-            );
+            handleModuleLoadError('Ошибка при открытии модального окно редактирования:', error, hideLoading, btn);
           });
       } catch (impErr) {
         handleModuleLoadError('Failed to load loading utils for edit', impErr);
@@ -208,28 +167,17 @@ export class ErrorTable {
 
         import('./modal')
           .then(({ Modal }) => {
-            const mode =
-              window.app && window.app.errorApi
-                ? window.app.errorApi.mode
-                : 'server';
+            const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
             window.appModal = new Modal(mode);
             window.appModal.deleteError(error.id);
             // После завершения действия скрываем спиннер
             hideLoading(btn);
           })
           .catch((error) => {
-            handleModuleLoadError(
-              'Ошибка при открытии модального окна удаления:',
-              error,
-              hideLoading,
-              btn,
-            );
+            handleModuleLoadError('Ошибка при открытии модального окна удаления:', error, hideLoading, btn);
           });
       } catch (impErr) {
-        handleModuleLoadError(
-          'Failed to load loading utils for delete (table)',
-          impErr,
-        );
+        handleModuleLoadError('Failed to load loading utils for delete (table)', impErr);
       }
     });
     return btn;
@@ -271,39 +219,21 @@ export class ErrorTable {
         } else {
           const aText = t(aStatus) || aStatus;
           const bText = t(bStatus) || bStatus;
-          return order === 'asc'
-            ? aText.localeCompare(bText)
-            : bText.localeCompare(aText);
+          return order === 'asc' ? aText.localeCompare(bText) : bText.localeCompare(aText);
         }
       }
       if (field === 'id') {
         const aValue = a.id ? a.id.toString().toLowerCase() : '';
         const bValue = b.id ? b.id.toString().toLowerCase() : '';
-        return order === 'asc'
-          ? aValue > bValue
-            ? 1
-            : aValue < bValue
-              ? -1
-              : 0
-          : aValue < bValue
-            ? 1
-            : aValue > bValue
-              ? -1
-              : 0;
+        return order === 'asc' ? (aValue > bValue ? 1 : aValue < bValue ? -1 : 0) : aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
       }
       if (field === 'count') {
-        return order === 'asc'
-          ? (a.count || 0) - (b.count || 0)
-          : (b.count || 0) - (a.count || 0);
+        return order === 'asc' ? (a.count || 0) - (b.count || 0) : (b.count || 0) - (a.count || 0);
       }
       if (field === 'firstSeen') {
         const getFirstSeen = (err) => err.firstSeen || '';
-        const aValue = getFirstSeen(a)
-          ? new Date(getFirstSeen(a)).getTime()
-          : 0;
-        const bValue = getFirstSeen(b)
-          ? new Date(getFirstSeen(b)).getTime()
-          : 0;
+        const aValue = getFirstSeen(a) ? new Date(getFirstSeen(a)).getTime() : 0;
+        const bValue = getFirstSeen(b) ? new Date(getFirstSeen(b)).getTime() : 0;
         return order === 'asc' ? aValue - bValue : bValue - aValue;
       }
       if (field === 'lastSeen') {
@@ -319,17 +249,7 @@ export class ErrorTable {
         aValue = aValue.toLowerCase();
         bValue = bValue.toLowerCase();
       }
-      return order === 'asc'
-        ? aValue > bValue
-          ? 1
-          : aValue < bValue
-            ? -1
-            : 0
-        : aValue < bValue
-          ? 1
-          : aValue > bValue
-            ? -1
-            : 0;
+      return order === 'asc' ? (aValue > bValue ? 1 : aValue < bValue ? -1 : 0) : aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
     });
   }
 }
@@ -364,11 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Если фильтр активен — сортируем только по отфильтрованным данным
     if (window.headerManager && window.headerManager.filteredErrors) {
       const filtered = window.headerManager.filteredErrors;
-      const sorted = errorTable.sortErrors(
-        [...filtered],
-        field,
-        sortOrder[field],
-      );
+      const sorted = errorTable.sortErrors([...filtered], field, sortOrder[field]);
       errorTable.renderErrors(sorted);
       // Обновляем filteredErrors, чтобы сортировка была по текущему фильтру
       window.headerManager.filteredErrors = sorted;

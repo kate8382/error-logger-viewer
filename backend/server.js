@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 // Импорт библиотек
 import express from 'express'; // ответственный за создание сервера и маршрутов
 import cors from 'cors'; // для обработки CORS (Cross-Origin Resource Sharing)
@@ -32,7 +33,7 @@ const app = express();
 // Настройка CORS: разрешать все в разработке, только нужные origin в продакшене
 const isProd = process.env.NODE_ENV === 'production';
 const allowedOrigins = [
-  'https://kate8382.github.io' // для публикации на GitHub Pages
+  'https://kate8382.github.io', // для публикации на GitHub Pages
 ];
 if (isProd) {
   app.use(cors({ origin: allowedOrigins }));
@@ -50,19 +51,19 @@ function generateApiKey() {
 // 2. Поиск проекта по API ключу
 function findProjectByApiKey(key) {
   if (!key) return null;
-  return db.data.projects.find(p => p.apiKey === key) || null;
+  return db.data.projects.find((p) => p.apiKey === key) || null;
 }
 
 // 3. Поиск проекта по ID
 function findProjectById(id) {
   if (!id) return null;
-  return db.data.projects.find(p => p.id === id) || null;
+  return db.data.projects.find((p) => p.id === id) || null;
 }
 
 // 4. Поиск проекта по владельцу или участнику
 function findProjectByOwnerOrMember(email) {
   if (!email) return null;
-  return db.data.projects.find(p => (p.owner === email) || (Array.isArray(p.members) && p.members.includes(email))) || null;
+  return db.data.projects.find((p) => p.owner === email || (Array.isArray(p.members) && p.members.includes(email))) || null;
 }
 
 // 5. Построение сниппета с заданным API ключом
@@ -87,10 +88,10 @@ app.post('/projects', async (req, res) => {
     id,
     name,
     owner,
-    members: Array.isArray(members) ? members : (members ? [members] : []),
+    members: Array.isArray(members) ? members : members ? [members] : [],
     apiKey,
     snippet: buildSnippet(apiKey),
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   };
   db.data.projects.push(project);
   await db.write();
@@ -102,11 +103,10 @@ app.get('/projects', async (req, res) => {
   await db.read();
   let projects = db.data.projects || [];
   if (req.query.owner) {
-    projects = projects.filter(p => p.owner === req.query.owner || (p.members && p.members.includes(req.query.owner)));
+    projects = projects.filter((p) => p.owner === req.query.owner || (p.members && p.members.includes(req.query.owner)));
   }
   res.json(projects);
 });
-
 
 // Маршрут для получения статистики ошибок
 app.get('/errors/stats', async (req, res) => {
@@ -146,7 +146,7 @@ app.get('/errors/stats', async (req, res) => {
         const dayNum = d.getUTCDay() || 7;
         d.setUTCDate(d.getUTCDate() + 4 - dayNum);
         const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-        const weekNum = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+        const weekNum = Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
         return `${d.getUTCFullYear()}-W${weekNum.toString().padStart(2, '0')}`;
       }
       if (by === 'month') {
@@ -158,13 +158,13 @@ app.get('/errors/stats', async (req, res) => {
       return '';
     }
     result = {};
-    errors.forEach(e => {
+    errors.forEach((e) => {
       // Используем lastSeen для группировки по периоду
       const dateStr = e.firstSeen || '';
       const periodKey = getPeriodKey(dateStr, by);
       if (!periodKey) return;
       if (!result[periodKey]) result[periodKey] = {};
-      const key = group === 'type' ? (e.type || 'Unknown') : (e.status || 'new');
+      const key = group === 'type' ? e.type || 'Unknown' : e.status || 'new';
       result[periodKey][key] = (result[periodKey][key] || 0) + 1;
     });
     // Оставить только последние 7 дней, если by === 'day'
@@ -172,7 +172,9 @@ app.get('/errors/stats', async (req, res) => {
       const sortedKeys = Object.keys(result).sort();
       const last7 = sortedKeys.slice(-7);
       const filtered = {};
-      last7.forEach(k => { filtered[k] = result[k]; });
+      last7.forEach((k) => {
+        filtered[k] = result[k];
+      });
       return res.json(filtered);
     }
     // ВАЖНО: не переходим к else, всегда возвращаем periods!
@@ -196,10 +198,10 @@ app.get('/errors', async (req, res) => {
   let errors = db.data.errors || [];
 
   // Универсальная фильтрация по любому query-параметру (кроме служебных)
-  const filterKeys = Object.keys(req.query).filter(k => !['sort', 'order', 'filter'].includes(k));
+  const filterKeys = Object.keys(req.query).filter((k) => !['sort', 'order', 'filter'].includes(k));
   if (filterKeys.length > 0) {
-    errors = errors.filter(e => {
-      return filterKeys.every(key => {
+    errors = errors.filter((e) => {
+      return filterKeys.every((key) => {
         // Приводим к строке и сравниваем без регистра
         return e[key] !== undefined && String(e[key]).toLowerCase().includes(String(req.query[key]).toLowerCase());
       });
@@ -208,7 +210,7 @@ app.get('/errors', async (req, res) => {
 
   // Фильтрация по типу ошибки (старый вариант, если используется filter)
   if (req.query.filter) {
-    errors = errors.filter(e => String(e.type).toLowerCase() === String(req.query.filter).toLowerCase());
+    errors = errors.filter((e) => String(e.type).toLowerCase() === String(req.query.filter).toLowerCase());
   }
 
   // Сортировка по полю
@@ -231,14 +233,14 @@ app.get('/errors', async (req, res) => {
         return ((a.count || 0) - (b.count || 0)) * order;
       });
     } else if (req.query.sort === 'firstSeen') {
-      const getFirstSeen = err => err.firstSeen || '';
+      const getFirstSeen = (err) => err.firstSeen || '';
       errors = errors.sort((a, b) => {
         const aValue = getFirstSeen(a) ? new Date(getFirstSeen(a)).getTime() : 0;
         const bValue = getFirstSeen(b) ? new Date(getFirstSeen(b)).getTime() : 0;
         return (aValue - bValue) * order;
       });
     } else if (req.query.sort === 'lastSeen') {
-      const getLastSeen = err => err.lastSeen || '';
+      const getLastSeen = (err) => err.lastSeen || '';
       errors = errors.sort((a, b) => {
         const aValue = getLastSeen(a) ? new Date(getLastSeen(a)).getTime() : 0;
         const bValue = getLastSeen(b) ? new Date(getLastSeen(b)).getTime() : 0;
@@ -294,14 +296,13 @@ app.post('/errors', async (req, res) => {
 
   // Нормализуем сравниваемые поля (trim, toLowerCase, пустая строка вместо undefined)
   function normalize(val) {
-    return (val === undefined || val === null) ? '' : String(val).trim().toLowerCase();
+    return val === undefined || val === null ? '' : String(val).trim().toLowerCase();
   }
 
-  let found = db.data.errors.find(e =>
-    // группируем только в рамках одного проекта (или оба неизвестны)
-    (String(e.projectId || 'unknown') === String(projectId)) &&
-    groupKeys.every(k => normalize(e[k]) === normalize(newError[k])) &&
-    (e.firstSeen && e.firstSeen.slice(0, 10) === day)
+  let found = db.data.errors.find(
+    (e) =>
+      // группируем только в рамках одного проекта (или оба неизвестны)
+      String(e.projectId || 'unknown') === String(projectId) && groupKeys.every((k) => normalize(e[k]) === normalize(newError[k])) && e.firstSeen && e.firstSeen.slice(0, 10) === day,
   );
 
   if (found) {
@@ -327,7 +328,7 @@ app.post('/errors', async (req, res) => {
       count: 1,
       firstSeen: now,
       lastSeen: now,
-      users: [user]
+      users: [user],
     };
     db.data.errors.push(errorObj);
     await db.write();
@@ -347,7 +348,7 @@ app.put('/errors/:id', async (req, res) => {
     return res.status(404).json({ error: 'No errors found' });
   }
 
-  const index = db.data.errors.findIndex(e => e.id === req.params.id);
+  const index = db.data.errors.findIndex((e) => e.id === req.params.id);
   if (index === -1) {
     return res.status(404).json({ error: 'Error not found' });
   }
@@ -368,7 +369,7 @@ app.get('/errors/:id', async (req, res) => {
     return res.status(404).json({ error: 'No errors found' });
   }
 
-  const error = db.data.errors.find(e => e.id === req.params.id);
+  const error = db.data.errors.find((e) => e.id === req.params.id);
   if (!error) {
     return res.status(404).json({ error: 'Error not found' });
   }
@@ -383,7 +384,7 @@ app.delete('/errors/:id', async (req, res) => {
     return res.status(404).json({ error: 'No errors found' });
   }
 
-  const index = db.data.errors.findIndex(e => e.id === req.params.id);
+  const index = db.data.errors.findIndex((e) => e.id === req.params.id);
   if (index === -1) {
     return res.status(404).json({ error: 'Error not found' });
   }
@@ -401,5 +402,3 @@ app.listen(PORT, '0.0.0.0', () => {
 
 // Экспорт приложения для тестирования
 export default app;
-
-

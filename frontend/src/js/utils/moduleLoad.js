@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { t } from './i18n.js';
 
 //  Универсальная функция обработки ошибок загрузки модулей

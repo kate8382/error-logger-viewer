@@ -30,9 +30,7 @@ export class ErrorApi {
     if (this.mode === 'server') {
       const res = await fetch(`${this.baseUrl}/errors/stats?by=${by}`);
       if (!res.ok) {
-        console.error(
-          `[ErrorApi] Ошибка запроса статистики: ${res.status} ${res.statusText}`,
-        );
+        console.error(`[ErrorApi] Ошибка запроса статистики: ${res.status} ${res.statusText}`);
         return {};
       }
       return await res.json();

@@ -317,8 +317,7 @@ export const translations = {
     modalCancelBtn: 'Отмена',
     modalDeleteBtn: 'Удалить',
     // Ошибка загрузки динамического импорта
-    moduleLoadFailed:
-      'Не удалось загрузить модуль интерфейса. Пожалуйста, перезагрузите страницу.',
+    moduleLoadFailed: 'Не удалось загрузить модуль интерфейса. Пожалуйста, перезагрузите страницу.',
   },
 };
 
@@ -332,22 +331,14 @@ try {
   } else if (window.app && window.app.lang) {
     currentLang = window.app.lang;
   } else {
-    currentLang = (navigator.language || navigator.userLanguage).startsWith(
-      'en',
-    )
-      ? 'en'
-      : 'ru';
+    currentLang = (navigator.language || navigator.userLanguage).startsWith('en') ? 'en' : 'ru';
   }
 } catch {
   // Если localStorage недоступен, используем app или navigator
   if (window.app && window.app.lang) {
     currentLang = window.app.lang;
   } else {
-    currentLang = (navigator.language || navigator.userLanguage).startsWith(
-      'en',
-    )
-      ? 'en'
-      : 'ru';
+    currentLang = (navigator.language || navigator.userLanguage).startsWith('en') ? 'en' : 'ru';
   }
 }
 
