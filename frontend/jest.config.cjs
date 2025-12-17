@@ -6,8 +6,8 @@ module.exports = {
     '^.+\\.js$': 'babel-jest', // трансформация JS с помощью Babel
   },
   moduleFileExtensions: ['js'], // расширения файлов
-  moduleDirectories: ['node_modules', 'src/js'], // где искать модули
-  roots: ['<rootDir>/src/js'], // корневая папка с исходным кодом
+  moduleDirectories: ['node_modules', 'src/scripts'], // где искать модули
+  roots: ['<rootDir>/src/scripts'], // корневая папка с исходным кодом
   collectCoverage: true, // сбор информации о покрытии кода тестами
   coverageDirectory: '<rootDir>/coverage', // папка для отчётов о покрытии
   coverageReporters: ['text', 'lcov'], // форматы отчётов о покрытии

@@ -1,5 +1,5 @@
 import { el, setChildren } from 'redom';
-import { ErrorApi } from './api.js';
+import { ErrorApi } from './api';
 import { t, getLabel, onLangChange } from './utils/i18n.js';
 import { handleModuleLoadError } from './utils/moduleLoad.js';
 
@@ -353,7 +353,7 @@ export class Modal {
         if ('lastSeen' in updated) delete updated.lastSeen;
       }
       try {
-        const { showLoading, hideLoading } = await import('./utils/loading');
+        const { showLoading, hideLoading } = await import('./utils/loading.js');
         showLoading(saveBtn, 'save');
 
         try {
@@ -397,7 +397,7 @@ export class Modal {
     );
     deleteBtn.addEventListener('click', async () => {
       try {
-        const { showLoading, hideLoading } = await import('./utils/loading');
+        const { showLoading, hideLoading } = await import('./utils/loading.js');
         showLoading(deleteBtn, 'delete');
 
         this.errorApi

@@ -1,32 +1,38 @@
 // Универсальный API-клиент для работы с ошибками
-export const API_BASE_URL = window.API_BASE_URL || 'http://localhost:3000';
+export const API_BASE_URL = (typeof globalThis !== 'undefined' && (globalThis as any).API_BASE_URL) || 'http://localhost:3000';
+
+export type Mode = 'server' | 'demo';
 
 export class ErrorApi {
-  constructor(mode = 'server') {
-    this.mode = mode; // 'server' или 'demo'
+  mode: Mode;
+  baseUrl: string;
+  localKey: string;
+
+  constructor(mode: Mode = 'server') {
+    this.mode = mode;
     this.baseUrl = API_BASE_URL;
     this.localKey = 'errorsLocal';
   }
 
-  async getErrors(params = {}) {
+  async getErrors(params: Record<string, any> = {}): Promise<any> {
     if (this.mode === 'server') {
       const searchParams = new URLSearchParams();
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
-          searchParams.append(key, value);
+          searchParams.append(key, value as string);
         }
       });
       const res = await fetch(`${this.baseUrl}/errors?${searchParams}`);
       return await res.json();
     } else {
-      let errors = JSON.parse(localStorage.getItem(this.localKey) || '[]');
-      // ...фильтрация и сортировка...
+      const raw = localStorage.getItem(this.localKey) || '[]';
+      const errors = JSON.parse(raw);
       return errors;
     }
   }
 
   // Получить статистику по статусу, типу или дням
-  async getStats(by = 'status') {
+  async getStats(by = 'status'): Promise<any> {
     if (this.mode === 'server') {
       const res = await fetch(`${this.baseUrl}/errors/stats?by=${by}`);
       if (!res.ok) {
@@ -34,13 +40,11 @@ export class ErrorApi {
         return {};
       }
       return await res.json();
-    } else {
-      // ...локальная агрегация...
-      return {};
     }
+    return {};
   }
 
-  async createError(data) {
+  async createError(data: Record<string, any>): Promise<any> {
     if (this.mode === 'server') {
       const res = await fetch(`${this.baseUrl}/errors`, {
         method: 'POST',
@@ -49,27 +53,30 @@ export class ErrorApi {
       });
       return await res.json();
     } else {
-      let errors = JSON.parse(localStorage.getItem(this.localKey) || '[]');
-      data.id = Date.now().toString();
-      data.createdAt = new Date().toISOString();
-      errors.push(data);
+      const raw = localStorage.getItem(this.localKey) || '[]';
+      const errors = JSON.parse(raw);
+      const id = Date.now().toString();
+      const now = new Date().toISOString();
+      const item = { ...data, id, createdAt: now };
+      errors.push(item);
       localStorage.setItem(this.localKey, JSON.stringify(errors));
-      return data;
+      return item;
     }
   }
 
-  async deleteError(id) {
+  async deleteError(id: string): Promise<boolean> {
     if (this.mode === 'server') {
       await fetch(`${this.baseUrl}/errors/${id}`, { method: 'DELETE' });
     } else {
-      let errors = JSON.parse(localStorage.getItem(this.localKey) || '[]');
-      errors = errors.filter((e) => e.id !== id);
+      const raw = localStorage.getItem(this.localKey) || '[]';
+      let errors = JSON.parse(raw);
+      errors = errors.filter((e: any) => e.id !== id);
       localStorage.setItem(this.localKey, JSON.stringify(errors));
     }
     return true;
   }
 
-  async updateError(id, data) {
+  async updateError(id: string, data: Record<string, any>): Promise<any | null> {
     if (this.mode === 'server') {
       const res = await fetch(`${this.baseUrl}/errors/${id}`, {
         method: 'PUT',
@@ -78,20 +85,21 @@ export class ErrorApi {
       });
       return await res.json();
     } else {
-      let errors = JSON.parse(localStorage.getItem(this.localKey) || '[]');
-      const idx = errors.findIndex((e) => e.id === id);
+      const raw = localStorage.getItem(this.localKey) || '[]';
+      const errors = JSON.parse(raw);
+      const idx = errors.findIndex((e: any) => e.id === id);
       if (idx !== -1) {
-        data.id = id;
-        data.updatedAt = new Date().toISOString();
-        errors[idx] = data;
+        const now = new Date().toISOString();
+        const item = { ...data, id, updatedAt: now };
+        errors[idx] = item;
         localStorage.setItem(this.localKey, JSON.stringify(errors));
-        return data;
+        return item;
       }
       return null;
     }
   }
 
-  setMode(mode) {
+  setMode(mode: Mode) {
     this.mode = mode;
   }
 }

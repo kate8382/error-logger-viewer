@@ -7,6 +7,7 @@
     "backend"
   ],
   "scripts": {
+    "lint": "concurrently \"npm --workspace=frontend run lint\" \"npm --workspace=backend run lint\"",
     "install:all": "npm install",
     "dev:backend": "npm --workspace=backend run dev",
     "dev:frontend": "npm --workspace=frontend run dev",
@@ -14,16 +15,18 @@
     "ts:check": "node node_modules/typescript/bin/tsc -p frontend/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p backend/tsconfig.json --noEmit"
   },
   "devDependencies": {
-    "@types/node": "^20.4.2",
     "@eslint/js": "^9.29.0",
-    "typescript": "^5.4.0",
-    "ts-node-dev": "^2.0.0",
+    "@types/node": "^20.4.2",
+    "@typescript-eslint/eslint-plugin": "^8.50.0",
+    "@typescript-eslint/parser": "^8.50.0",
+    "concurrently": "^7.6.0",
     "eslint": "^9.29.0",
-    "prettier": "^3.6.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-jest": "^29.0.1",
     "globals": "^16.2.0",
-    "concurrently": "^7.6.0"
+    "prettier": "^3.6.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.4.0"
   }
 }

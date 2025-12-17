@@ -1,4 +1,6 @@
 const js = require('@eslint/js');
+const ts = require('@typescript-eslint/eslint-plugin'); // подключение плагина для TypeScript
+const tsParser = require('@typescript-eslint/parser');
 const globals = require('globals');
 const jestPlugin = require('eslint-plugin-jest'); // установили плагин, т.к. в проекте используются тесты на Jest
 const prettierPlugin = require('eslint-plugin-prettier'); // плагин для запуска Prettier как правила ESLint
@@ -6,8 +8,39 @@ const prettierConfig = require('eslint-config-prettier/flat'); // конфиг �
 const { defineConfig } = require('eslint/config');
 
 module.exports = defineConfig([
-  { ignores: ['**/node_modules/**', '**/dist/**', '**/coverage/**'] },
   js.configs.recommended,
+  {
+    ignores: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/coverage/**',
+      '.github/**',
+      '.vscode/**',
+      '**/*.lock',
+      '**/*.png',
+      '**/*.jpg',
+      '**/*.jpeg',
+      '**/*.gif',
+      '**/*.ico',
+      '**/*.svg',
+      '**/*.webp',
+      '**/*.woff',
+      '**/*.woff2',
+      '**/*.ttf',
+      '**/*.eot',
+      '**/*.otf',
+      '**/*.zip',
+      '**/*.pdf',
+      '**/*.bin',
+      'frontend/src/assets/**',
+      'screenshots/**',
+      '*.lock',
+      'package-lock.json',
+      'frontend/package-lock.json',
+      'backend/package-lock.json',
+      'backend/db.json',
+    ],
+  },
   {
     files: ['**/*.{js,mjs,cjs,ts,tsx}'],
     languageOptions: {
@@ -40,6 +73,20 @@ module.exports = defineConfig([
       'no-restricted-syntax': 'off', // отключение ограничения на определённые синтаксические конструкции
       'import/no-extraneous-dependencies': 'off', // отключение правила, запрещающего использование неуказанных в package.json зависимостей
       'prettier/prettier': ['warn', { singleQuote: true, endOfLine: 'auto' }], // Prettier: использовать одинарные кавычки и автоопределение конца строки
+    },
+  },
+  {
+    files: ['**/*.{ts,tsx}'],
+    plugins: { '@typescript-eslint': ts },
+    languageOptions: {
+      parser: tsParser,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: { ...globals.node, ...globals.browser },
+    },
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['warn'], // отключаем базовое правило no-unused-vars
+      '@typescript-eslint/consistent-type-imports': ['error'], // требуем использовать импорт типов
     },
   },
   {

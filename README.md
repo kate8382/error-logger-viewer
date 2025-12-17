@@ -4,7 +4,7 @@
 [![Pages](https://github.com/kate8382/error-logger-viewer/actions/workflows/deploy-gh-pages.yml/badge.svg)](https://github.com/kate8382/error-logger-viewer/actions)
 
 **Error Logger & Viewer** is a modern SPA for collecting, storing, analyzing, and visualizing JavaScript errors in web projects. It is designed for developers and teams who need to quickly identify, group, and track errors in production or test environments.
- 
+
 Live demo: https://kate8382.github.io/error-logger-viewer/ — try the "Create test error" button on the demo page to see the app in action.
 
 Read the short case study on Dev.to: https://dev.to/kate8382/error-logger-viewer-tiny-spa-for-tracking-js-errors-12mk
@@ -40,7 +40,7 @@ The application allows you to:
 - **Responsive design:**
 	Adapts to any device and screen size.
 - **Accessibility:**
-	ARIA-labels, keyboard navigation for better usability.		
+	ARIA-labels, keyboard navigation for better usability.
 
 ---
 
@@ -105,7 +105,7 @@ The application allows you to:
 
 ## Architecture & Technical Details
 
-- **Frontend (src/js):**
+- **Frontend (src/scripts):**
 	- `main.js` — app initialization, global error handlers, API integration.
 	- `api.js` — universal API client for server/localStorage.
 	- `header.js` — header management, search, filtering, localization.
@@ -162,12 +162,12 @@ The application allows you to:
  CI: the repository includes a GitHub Actions workflow at `.github/workflows/ci.yml` that runs Jest, builds the frontend, starts a simple static server and the backend, and runs Cypress headless.
 
  - Added and stabilized Cypress end-to-end specs (modal, header filters, table CRUD) and custom Cypress helpers (`cy.openRowActions()`, `cy.confirmDelete()`). See `frontend/cypress` for test specs and fixtures.
-- Centralized dynamic-import error handling via `frontend/src/js/utils/moduleLoad.js` and added translated fallback message `moduleLoadFailed` in `i18n.js`.
+- Centralized dynamic-import error handling via `frontend/src/scripts/utils/moduleLoad.js` and added translated fallback message `moduleLoadFailed` in `i18n.js`.
 - Fixed runtime bug in charts generation (`charts.js`) to avoid accessing undefined nested properties.
 - Added GitHub Actions workflow (`.github/workflows/ci.yml`) to run Jest, build the frontend, and execute headless Cypress tests in CI.
 
 For detailed test instructions and helper descriptions see [frontend/TESTS.md](frontend/TESTS.md).
- 
+
  ---
 
 ## How to contribute

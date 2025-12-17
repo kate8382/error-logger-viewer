@@ -5,7 +5,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = (env = {}) => ({
   mode: env.prod ? 'production' : 'development',
-  entry: './src/js/main.js',
+  entry: './src/scripts/main.js',
   output: {
     filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'dist'),
@@ -14,12 +14,12 @@ module.exports = (env = {}) => ({
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.[jt]s$/,
         exclude: /(node_modules|bower_components)/,
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env']
+            presets: ['@babel/preset-env', '@babel/preset-typescript']
           }
         }
       },
@@ -62,6 +62,9 @@ module.exports = (env = {}) => ({
       ]
     })
   ],
+  resolve: {
+    extensions: ['.ts', '.js']
+  },
   devServer: {
     static: {
       directory: path.resolve(__dirname, 'dist')

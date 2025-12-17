@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "lint": "eslint ."
+    "lint": "eslint . --ext .js --cache"
   },
   "author": "Kate Sevciuc",
   "description": "Backend server for error logger viewer",
