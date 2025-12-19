@@ -3,9 +3,9 @@
 module.exports = {
   testEnvironment: 'jsdom', // имитация браузерной среды
   transform: {
-    '^.+\\.js$': 'babel-jest', // трансформация JS с помощью Babel
+    '^.+\\.[jt]sx?$': 'babel-jest', // трансформация JS/TS (и JSX/TSX) с помощью Babel
   },
-  moduleFileExtensions: ['js'], // расширения файлов
+  moduleFileExtensions: ['js', 'ts', 'tsx', 'json'], // расширения файлов
   moduleDirectories: ['node_modules', 'src/scripts'], // где искать модули
   roots: ['<rootDir>/src/scripts'], // корневая папка с исходным кодом
   collectCoverage: true, // сбор информации о покрытии кода тестами
