@@ -1,9 +1,12 @@
-import { ErrorApi, Mode } from './api';
+import type { Mode } from './api';
+import { ErrorApi } from './api';
 import { t, getCurrentLang, setLang, onLangChange } from './utils/i18n.js';
+import { qsa } from './utils/dom';
 
 export class Aside {
   api: ErrorApi;
   lang: string;
+  // eslint-disable-next-line no-unused-vars
   _aboutEscHandler: ((e: KeyboardEvent) => void) | null = null;
 
   constructor() {
@@ -51,7 +54,7 @@ export class Aside {
       document.addEventListener('keydown', this._aboutEscHandler);
     } else {
       // Показать все основные секции приложения
-      document.querySelectorAll<HTMLElement>('main > section').forEach((sec) => {
+      qsa<HTMLElement>('main > section').forEach((sec) => {
         if (sec.id !== 'aboutSection') sec.style.display = '';
       });
     }
@@ -85,11 +88,13 @@ export class Aside {
     modeOptions.forEach((option) => {
       option.addEventListener('click', () => {
         const mode = option.dataset.value as Mode;
-        const app = window.app;
+        const app = (window as Window & { app?: { errorApi?: ErrorApi, updateErrorTable?: () => void, lang?: string } }).app;
         if (app && app.errorApi && typeof app.updateErrorTable === 'function') {
           app.errorApi.setMode(mode);
-          if (window.errorTableInstance && typeof window.errorTableInstance.setMode === 'function') {
-            window.errorTableInstance.setMode(mode);
+          // eslint-disable-next-line no-unused-vars
+          const et = (window as Window & { errorTableInstance?: { setMode?: (mode: Mode) => void } }).errorTableInstance;
+          if (et && typeof et.setMode === 'function') {
+            et.setMode(mode);
           }
           app.updateErrorTable();
           // Триггерим кастомное событие для обновления UI (например, кнопки тестовой ошибки)
@@ -175,7 +180,7 @@ export class Aside {
       localStorage.setItem('theme', 'light');
     }
     // Обновить активное состояние кнопок темы (если есть)
-    const themeOptions = document.querySelectorAll<HTMLElement>('.sidebar__dropdown-sublist[data-group="theme"] .sidebar__dropdown-option');
+    const themeOptions = qsa<HTMLElement>('.sidebar__dropdown-sublist[data-group="theme"] .sidebar__dropdown-option');
     themeOptions.forEach((option) => {
       if (option.dataset.value === theme) {
         option.classList.add('active');

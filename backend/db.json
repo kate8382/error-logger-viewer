@@ -31,14 +31,14 @@
       "type": "UnhandledPromiseRejection",
       "message": "Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID 'chartCanvas' can be reused.",
       "stack": "Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID 'chartCanvas' can be reused.\n    at new Chart (webpack://error-logger-viewer/./node_modules/chart.js/dist/chart.js?:5695:19)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/scripts/charts.js?:251:30)\n    at Generator.eval (webpack://error-logger-viewer/./src/scripts/charts.js?:12:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/scripts/charts.js?:13:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/scripts/charts.js?:24:70)\n    at _next (webpack://error-logger-viewer/./src/scripts/charts.js?:25:163)",
-      "status": "fixed",
+      "status": "in_progress",
       "comment": "",
       "count": 1,
       "firstSeen": "2025-09-17T15:31:32.217Z",
-      "lastSeen": "2025-09-17T15:31:32.217Z",
       "users": [
         "unknown"
-      ]
+      ],
+      "lastSeen": "2025-12-20T17:00:14.301Z"
     },
     {
       "id": "ad8047fb-6dab-4109-b6ef-622d8397aef7",
@@ -82,32 +82,18 @@
       "lastSeen": "2025-10-20T15:59:08.106Z"
     },
     {
-      "id": "64e0a742-5deb-46d1-b379-e70406b97835",
-      "type": "FetchError",
-      "message": "Failed to fetch",
-      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/scripts/main.js?:240:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/scripts/main.js?:19:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/scripts/main.js?:20:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/scripts/main.js?:21:70)\n    at _next (webpack://error-logger-viewer/./src/scripts/main.js?:22:163)\n    at eval (webpack://error-logger-viewer/./src/scripts/main.js?:22:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/scripts/main.js?:22:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/scripts/api.js?:61:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/scripts/api.js?:6:1660)",
-      "status": "new",
-      "comment": "",
-      "count": 1,
-      "firstSeen": "2025-09-17T17:17:01.205Z",
-      "lastSeen": "2025-09-17T17:17:01.205Z",
-      "users": [
-        "unknown"
-      ]
-    },
-    {
       "id": "f9b389e0-a920-404a-a61e-b455076c275e",
       "type": "FetchError",
       "message": "Failed to fetch",
       "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/scripts/main.js?:240:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/scripts/main.js?:19:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/scripts/main.js?:20:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/scripts/main.js?:21:70)\n    at _next (webpack://error-logger-viewer/./src/scripts/main.js?:22:163)\n    at eval (webpack://error-logger-viewer/./src/scripts/main.js?:22:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/scripts/main.js?:22:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/scripts/api.js?:218:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/scripts/api.js?:6:1660)",
-      "status": "fixed",
-      "comment": "",
+      "status": "ignored",
+      "comment": "same error",
       "count": 1,
       "firstSeen": "2025-09-20T15:23:32.470Z",
-      "lastSeen": "2025-09-20T15:23:32.470Z",
       "users": [
         "unknown"
-      ]
+      ],
+      "lastSeen": "2025-12-20T17:00:58.163Z"
     },
     {
       "id": "bc50e1cf-b16f-4eca-a41d-07a5eb3a548c",

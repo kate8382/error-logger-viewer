@@ -91,7 +91,7 @@ app.post('/projects', async (req, res) => {
     members: Array.isArray(members) ? members : members ? [members] : [],
     apiKey,
     snippet: buildSnippet(apiKey),
-    createdAt: new Date().toISOString(),
+    firstSeen: new Date().toISOString(),
   };
   db.data.projects.push(project);
   await db.write();
