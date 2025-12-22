@@ -232,7 +232,7 @@ export const translations = {
     sidebarDropdownModeAria: 'Открыть список режимов',
     sidebarDropdownServer: 'Сервер',
     sidebarDropdownServerAria: 'Выбрать режим сервер',
-    sidebarDropdownDemo: 'Демо-режим',
+    sidebarDropdownDemo: 'Демо',
     sidebarDropdownDemoAria: 'Выбрать демо-режим',
     sidebarDropdownTheme: 'Тема',
     sidebarDropdownThemeAria: 'Открыть список тем',
