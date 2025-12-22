@@ -1,0 +1,42 @@
+# Ignore build and dependency folders
+node_modules/
+dist/
+coverage/
+
+# Ignore editor and CI files
+.vscode/
+.github/
+
+# Ignore static assets
+frontend/src/assets/
+frontend/src/assets/img/
+frontend/src/assets/fonts/
+screenshots/
+
+# Ignore lockfiles
+package-lock.json
+frontend/package-lock.json
+backend/package-lock.json
+
+# Ignore binaries and large files
+*.zip
+*.pdf
+*.bin
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico
+*.svg
+*.webp
+*.woff
+*.woff2
+*.ttf
+*.eot
+*.otf
+
+# Ignore compiled outputs
+**/dist/**
+
+# Ignore lowdb db file
+backend/db.json

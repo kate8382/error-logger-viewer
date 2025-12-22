@@ -23,7 +23,7 @@ export function showTestErrorButton() {
   btn.style.cursor = 'pointer';
   btn.onclick = async () => {
     try {
-      const { ErrorApi } = await import('../api.js');
+      const { ErrorApi } = await import('../api');
       const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
       const api = new ErrorApi(mode);
       await api.createError({

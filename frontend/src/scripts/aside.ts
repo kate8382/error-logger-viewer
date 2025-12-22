@@ -1,7 +1,14 @@
+import type { Mode } from './api';
 import { ErrorApi } from './api';
 import { t, getCurrentLang, setLang, onLangChange } from './utils/i18n.js';
+import { qsa } from './utils/dom';
 
 export class Aside {
+  api: ErrorApi;
+  lang: string;
+  // eslint-disable-next-line no-unused-vars
+  _aboutEscHandler: ((e: KeyboardEvent) => void) | null = null;
+
   constructor() {
     this.api = new ErrorApi();
     this.lang = getCurrentLang();
@@ -20,16 +27,18 @@ export class Aside {
   }
 
   // Показывает About-секцию и скрывает остальные main > section
-  showAboutSection(lang = this.lang) {
-    document.querySelectorAll('main > section').forEach((sec) => (sec.style.display = 'none'));
-    const aboutSection = document.getElementById('aboutSection');
+  showAboutSection(lang: string = this.lang) {
+    document.querySelectorAll<HTMLElement>('main > section').forEach((sec) => {
+      sec.style.display = 'none';
+    });
+    const aboutSection = document.getElementById('aboutSection') as HTMLElement | null;
     if (aboutSection) {
       const aboutKey = lang === 'ru' ? 'aboutText_ru' : 'aboutText_en';
       aboutSection.innerHTML = t(aboutKey) || '';
       aboutSection.style.display = '';
 
       // Обработчик для кнопки-крестика
-      const closeBtn = aboutSection.querySelector('.about-btn-close');
+      const closeBtn = aboutSection.querySelector('.about-btn-close') as HTMLElement | null;
       if (closeBtn) {
         closeBtn.addEventListener('click', () => {
           location.hash = '';
@@ -44,9 +53,8 @@ export class Aside {
       };
       document.addEventListener('keydown', this._aboutEscHandler);
     } else {
-      if (aboutSection) aboutSection.style.display = 'none';
       // Показать все основные секции приложения
-      document.querySelectorAll('main > section').forEach((sec) => {
+      qsa<HTMLElement>('main > section').forEach((sec) => {
         if (sec.id !== 'aboutSection') sec.style.display = '';
       });
     }
@@ -67,7 +75,7 @@ export class Aside {
           this._aboutEscHandler = null;
         }
         // Показать все основные секции приложения
-        document.querySelectorAll('main > section').forEach((sec) => {
+        document.querySelectorAll<HTMLElement>('main > section').forEach((sec) => {
           if (sec.id !== 'aboutSection') sec.style.display = '';
         });
       }
@@ -76,16 +84,19 @@ export class Aside {
 
   initControls() {
     // Смена режима работы (сервер/демо)
-    const modeOptions = document.querySelectorAll('.sidebar__dropdown-sublist[data-group="mode"] .sidebar__dropdown-option');
+    const modeOptions = document.querySelectorAll<HTMLElement>('.sidebar__dropdown-sublist[data-group="mode"] .sidebar__dropdown-option');
     modeOptions.forEach((option) => {
       option.addEventListener('click', () => {
-        const mode = option.dataset.value;
-        if (window.app && window.app.errorApi && window.app.updateErrorTable) {
-          window.app.errorApi.setMode(mode);
-          if (window.errorTableInstance && typeof window.errorTableInstance.setMode === 'function') {
-            window.errorTableInstance.setMode(mode);
+        const mode = option.dataset.value as Mode;
+        const app = (window as Window & { app?: { errorApi?: ErrorApi, updateErrorTable?: () => void, lang?: string } }).app;
+        if (app && app.errorApi && typeof app.updateErrorTable === 'function') {
+          app.errorApi.setMode(mode);
+          // eslint-disable-next-line no-unused-vars
+          const et = (window as Window & { errorTableInstance?: { setMode?: (mode: Mode) => void } }).errorTableInstance;
+          if (et && typeof et.setMode === 'function') {
+            et.setMode(mode);
           }
-          window.app.updateErrorTable();
+          app.updateErrorTable();
           // Триггерим кастомное событие для обновления UI (например, кнопки тестовой ошибки)
           window.dispatchEvent(new CustomEvent('modeChanged'));
         }
@@ -93,16 +104,16 @@ export class Aside {
     });
 
     // Смена темы
-    const themeOptions = document.querySelectorAll('.sidebar__dropdown-sublist[data-group="theme"] .sidebar__dropdown-option');
+    const themeOptions = document.querySelectorAll<HTMLElement>('.sidebar__dropdown-sublist[data-group="theme"] .sidebar__dropdown-option');
     themeOptions.forEach((option) => {
       option.addEventListener('click', () => {
-        const theme = option.dataset.value;
+        const theme = option.dataset.value as string;
         this.setTheme(theme);
       });
     });
 
     // Смена языка — обработчики только в header.js, здесь только реакция на смену
-    onLangChange((lang) => {
+    onLangChange((lang: string) => {
       this.lang = lang;
       this.translatePage();
       if (location.hash === '#about') {
@@ -111,10 +122,10 @@ export class Aside {
     });
 
     // Смена языка через выпадающий список
-    const langOptions = document.querySelectorAll('.sidebar__dropdown-sublist[data-group="language"] .sidebar__dropdown-option');
+    const langOptions = document.querySelectorAll<HTMLElement>('.sidebar__dropdown-sublist[data-group="language"] .sidebar__dropdown-option');
     langOptions.forEach((btn) => {
       btn.addEventListener('click', () => {
-        const lang = btn.dataset.value;
+        const lang = btn.dataset.value as string;
         setLang(lang);
       });
     });
@@ -123,26 +134,26 @@ export class Aside {
   // Инициализация выпадающих списков и подгрупп
   initDropdowns() {
     // Открытие/закрытие основного списка настроек
-    const dropdown = document.querySelector('.sidebar__dropdown');
-    const dropdownBtn = dropdown ? dropdown.querySelector('.sidebar__dropdown-btn') : null;
+    const dropdown = document.querySelector('.sidebar__dropdown') as HTMLElement | null;
+    const dropdownBtn = dropdown ? (dropdown.querySelector('.sidebar__dropdown-btn') as HTMLElement | null) : null;
     if (dropdown && dropdownBtn) {
-      dropdownBtn.addEventListener('click', (e) => {
+      dropdownBtn.addEventListener('click', (e: Event) => {
         e.stopPropagation();
         dropdown.classList.toggle('open');
       });
       // Закрытие при клике вне меню
-      document.addEventListener('click', (e) => {
-        if (!dropdown.contains(e.target)) {
+      document.addEventListener('click', (e: Event) => {
+        if (!dropdown.contains(e.target as Node)) {
           dropdown.classList.remove('open');
         }
       });
     }
 
     // Открытие/закрытие подгрупп настроек
-    const groupBtns = document.querySelectorAll('.sidebar__dropdown-group-btn');
+    const groupBtns = document.querySelectorAll<HTMLElement>('.sidebar__dropdown-group-btn');
     groupBtns.forEach((btn) => {
-      const group = btn.closest('.sidebar__dropdown-group');
-      btn.addEventListener('click', (e) => {
+      const group = btn.closest('.sidebar__dropdown-group') as HTMLElement | null;
+      btn.addEventListener('click', (e: Event) => {
         e.stopPropagation();
         if (group) {
           group.classList.toggle('open');
@@ -150,17 +161,17 @@ export class Aside {
       });
     });
     // Закрытие подгрупп при клике вне
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', (e: Event) => {
       groupBtns.forEach((btn) => {
-        const group = btn.closest('.sidebar__dropdown-group');
-        if (group && !group.contains(e.target)) {
+        const group = btn.closest('.sidebar__dropdown-group') as HTMLElement | null;
+        if (group && !group.contains(e.target as Node)) {
           group.classList.remove('open');
         }
       });
     });
   }
 
-  setTheme(theme) {
+  setTheme(theme: string) {
     if (theme === 'dark') {
       document.documentElement.setAttribute('data-theme', 'dark');
       localStorage.setItem('theme', 'dark');
@@ -169,7 +180,7 @@ export class Aside {
       localStorage.setItem('theme', 'light');
     }
     // Обновить активное состояние кнопок темы (если есть)
-    const themeOptions = document.querySelectorAll('.sidebar__dropdown-sublist[data-group="theme"] .sidebar__dropdown-option');
+    const themeOptions = qsa<HTMLElement>('.sidebar__dropdown-sublist[data-group="theme"] .sidebar__dropdown-option');
     themeOptions.forEach((option) => {
       if (option.dataset.value === theme) {
         option.classList.add('active');
@@ -180,12 +191,12 @@ export class Aside {
   }
 
   translatePage() {
-    const sidebarTexts = document.querySelectorAll('.sidebar__item-text[data-i18n]');
+    const sidebarTexts = document.querySelectorAll<HTMLElement>('.sidebar__item-text[data-i18n]');
     sidebarTexts.forEach((element) => {
-      const key = element.getAttribute('data-i18n');
+      const key = element.getAttribute('data-i18n') || '';
       let replaced = false;
       element.childNodes.forEach((node) => {
-        if (!replaced && node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '') {
+        if (!replaced && node.nodeType === Node.TEXT_NODE && (node.textContent || '').trim() !== '') {
           node.textContent = t(key) || key;
           replaced = true;
         }
@@ -195,21 +206,21 @@ export class Aside {
       }
     });
 
-    const dropdownBtns = document.querySelectorAll('.sidebar__dropdown-btn[data-i18n]');
+    const dropdownBtns = document.querySelectorAll<HTMLElement>('.sidebar__dropdown-btn[data-i18n]');
     dropdownBtns.forEach((btn) => {
-      const key = btn.getAttribute('data-i18n');
-      const textEl = btn.querySelector('.sidebar__item-text');
+      const key = btn.getAttribute('data-i18n') || '';
+      const textEl = btn.querySelector<HTMLElement>('.sidebar__item-text');
       if (textEl) {
         textEl.textContent = t(key) || key;
       }
     });
 
-    const dropdownOptions = document.querySelectorAll('.sidebar__dropdown-option[data-i18n]');
+    const dropdownOptions = document.querySelectorAll<HTMLElement>('.sidebar__dropdown-option[data-i18n]');
     dropdownOptions.forEach((el) => {
-      const key = el.getAttribute('data-i18n');
+      const key = el.getAttribute('data-i18n') || '';
       let replaced = false;
       el.childNodes.forEach((node) => {
-        if (!replaced && node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '') {
+        if (!replaced && node.nodeType === Node.TEXT_NODE && (node.textContent || '').trim() !== '') {
           node.textContent = t(key) || key;
           replaced = true;
         }
@@ -219,18 +230,18 @@ export class Aside {
       }
     });
 
-    const groupTexts = document.querySelectorAll('.sidebar__dropdown-group-text[data-i18n]');
+    const groupTexts = document.querySelectorAll<HTMLElement>('.sidebar__dropdown-group-text[data-i18n]');
     groupTexts.forEach((span) => {
-      const key = span.getAttribute('data-i18n');
+      const key = span.getAttribute('data-i18n') || '';
       span.textContent = t(key) || key;
     });
 
-    const dropdownElements = document.querySelectorAll('.sidebar__dropdown [data-i18n]:not(.sidebar__dropdown-btn):not(.sidebar__dropdown-option):not(.sidebar__dropdown-group-text)');
+    const dropdownElements = document.querySelectorAll<HTMLElement>('.sidebar__dropdown [data-i18n]:not(.sidebar__dropdown-btn):not(.sidebar__dropdown-option):not(.sidebar__dropdown-group-text)');
     dropdownElements.forEach((el) => {
-      const key = el.getAttribute('data-i18n');
+      const key = el.getAttribute('data-i18n') || '';
       let replaced = false;
       el.childNodes.forEach((node) => {
-        if (!replaced && node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '') {
+        if (!replaced && node.nodeType === Node.TEXT_NODE && (node.textContent || '').trim() !== '') {
           node.textContent = t(key) || key;
           replaced = true;
         }
@@ -240,10 +251,10 @@ export class Aside {
       }
     });
 
-    const otherElements = Array.from(document.querySelectorAll('[data-i18n]')).filter((el) => !el.classList.contains('sidebar__item-text') && !el.closest('.sidebar__dropdown'));
+    const otherElements = Array.from(document.querySelectorAll<HTMLElement>('[data-i18n]')).filter((el) => !el.classList.contains('sidebar__item-text') && !el.closest('.sidebar__dropdown'));
     otherElements.forEach((element) => {
-      const key = element.getAttribute('data-i18n');
-      const span = element.querySelector('span');
+      const key = element.getAttribute('data-i18n') || '';
+      const span = element.querySelector<HTMLElement>('span');
       if (span) {
         span.textContent = t(key) || key;
       } else {
@@ -251,15 +262,15 @@ export class Aside {
       }
     });
 
-    const placeholders = document.querySelectorAll('[data-i18n-placeholder]');
+    const placeholders = document.querySelectorAll<HTMLElement>('[data-i18n-placeholder]');
     placeholders.forEach((element) => {
-      const key = element.getAttribute('data-i18n-placeholder');
+      const key = element.getAttribute('data-i18n-placeholder') || '';
       element.setAttribute('placeholder', t(key) || key);
     });
 
-    const ariaElements = document.querySelectorAll('[data-i18n-aria-label]');
+    const ariaElements = document.querySelectorAll<HTMLElement>('[data-i18n-aria-label]');
     ariaElements.forEach((el) => {
-      const key = el.getAttribute('data-i18n-aria-label');
+      const key = el.getAttribute('data-i18n-aria-label') || '';
       el.setAttribute('aria-label', t(key));
     });
   }

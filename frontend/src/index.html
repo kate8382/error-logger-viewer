@@ -9,6 +9,7 @@
   <!-- Стили и скрипты будут автоматически подключены HtmlWebpackPlugin -->
   <!-- Мини-скрипт для раннего логирования ошибок ресурсов -->
   <script>
+    // Раннее логирование ошибок загрузки ресурсов
     window.__earlyErrors = [];
     window.addEventListener('error', function (event) {
       if (event.target && (event.target.tagName === 'SCRIPT' || event.target.tagName === 'LINK' || event.target.tagName === 'IMG')) {

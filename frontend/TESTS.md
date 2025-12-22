@@ -24,7 +24,7 @@ Unit tests (Jest)
   ```
 - Run a single test file (example):
   ```powershell
-  npm test -- src/js/__tests__/header.test.js
+  npm test -- src/scripts/__tests__/header.test.js
   ```
 - Run in watch mode:
   ```powershell
@@ -132,7 +132,7 @@ Unit тесты (Jest)
   ```
 - Запустить один тест (пример):
   ```powershell
-  npm test -- src/js/__tests__/header.test.js
+  npm test -- src/scripts/__tests__/header.test.js
   ```
 - Режим наблюдения:
   ```powershell
@@ -186,7 +186,7 @@ npx cypress run --config baseUrl="http://localhost:8080" --spec "cypress/e2e/hea
 Примеры (коротко):
 ```powershell
 # ждет таблицу и подтверждает, что есть 2 строки
-cy.waitForTable(); 
+cy.waitForTable();
 cy.get('#errorTableBody tr').should('have.length', 2);
 
 # получает первую строку и проверяет, содержит ли первая ячейка id
