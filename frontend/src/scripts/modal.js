@@ -1,7 +1,7 @@
 import { el, setChildren } from 'redom';
 import { ErrorApi } from './api';
 import { t, getLabel, onLangChange } from './utils/i18n.js';
-import { handleModuleLoadError } from './utils/moduleLoad.js';
+import { handleModuleLoadError } from './utils/moduleLoad';
 
 export class Modal {
   constructor(mode = 'server') {
@@ -353,7 +353,7 @@ export class Modal {
         if ('lastSeen' in updated) delete updated.lastSeen;
       }
       try {
-        const { showLoading, hideLoading } = await import('./utils/loading.js');
+        const { showLoading, hideLoading } = await import('./utils/loading');
         showLoading(saveBtn, 'save');
 
         try {
@@ -397,7 +397,7 @@ export class Modal {
     );
     deleteBtn.addEventListener('click', async () => {
       try {
-        const { showLoading, hideLoading } = await import('./utils/loading.js');
+        const { showLoading, hideLoading } = await import('./utils/loading');
         showLoading(deleteBtn, 'delete');
 
         this.errorApi

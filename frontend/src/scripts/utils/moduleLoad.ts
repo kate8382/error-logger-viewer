@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
 import { t } from './i18n.js';
 
 //  Универсальная функция обработки ошибок загрузки модулей
-export function handleModuleLoadError(context, err, hideLoading, btn) {
+export function handleModuleLoadError(context: string, err: unknown, hideLoading?: (btn?: HTMLElement) => void, btn?: HTMLElement) {
   try {
     console.error(context, err);
   } catch (e) {

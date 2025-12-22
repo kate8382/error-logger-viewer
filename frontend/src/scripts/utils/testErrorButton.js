@@ -1,5 +1,5 @@
 import { t } from './i18n.js';
-import handleModuleLoadError from './moduleLoad.js';
+import handleModuleLoadError from './moduleLoad';
 
 let testErrorBtn = null;
 

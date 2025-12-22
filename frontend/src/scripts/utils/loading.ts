@@ -1,5 +1,5 @@
 // Универсальный центральный спиннер для любого контейнера
-export function showCenterSpinner(container, type = 'page') {
+export function showCenterSpinner(container: HTMLElement | null, type: 'page' | 'delete' | 'save' = 'page') {
   if (!container) return; // Если уже есть спиннер — не добавляем второй
   if (container.querySelector('.center-spinner')) return;
   const spinnerDiv = document.createElement('div');
@@ -18,14 +18,14 @@ export function showCenterSpinner(container, type = 'page') {
   container.appendChild(spinnerDiv);
 }
 
-export function hideCenterSpinner(container) {
+export function hideCenterSpinner(container: HTMLElement | null) {
   if (!container) return;
   const spinnerDiv = container.querySelector('.center-spinner');
   if (spinnerDiv) spinnerDiv.remove();
 }
 
 // Спиннер для кнопок (save/delete)
-export function showLoading(button, type) {
+export function showLoading(button: HTMLElement, type?: 'page' | 'delete' | 'save') {
   button.classList.add('loading');
   button.setAttribute('aria-busy', 'true');
 
@@ -39,7 +39,7 @@ export function showLoading(button, type) {
   button.insertBefore(spinner, button.firstChild);
 }
 
-export function hideLoading(button) {
+export function hideLoading(button: HTMLElement) {
   button.classList.remove('loading');
   button.removeAttribute('aria-busy');
 
