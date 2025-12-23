@@ -137,7 +137,7 @@ export class ErrorTable {
             const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
             window.appModal = new Modal(mode);
             window.appModal.openEdit(error);
-            hideLoading(btn);
+            setTimeout(() => hideLoading(btn), 0);
           })
           .catch((error) => {
             handleModuleLoadError('Ошибка при открытии модального окно редактирования:', error, hideLoading, btn);
@@ -171,7 +171,7 @@ export class ErrorTable {
             window.appModal = new Modal(mode);
             window.appModal.deleteError(error.id);
             // После завершения действия скрываем спиннер
-            hideLoading(btn);
+            setTimeout(() => hideLoading(btn), 0);
           })
           .catch((error) => {
             handleModuleLoadError('Ошибка при открытии модального окна удаления:', error, hideLoading, btn);

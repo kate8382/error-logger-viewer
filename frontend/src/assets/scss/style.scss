@@ -186,6 +186,28 @@ body.modal-open .modal {
       transform: rotate(360deg);
     }
   }
+
+  .test-error-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10;
+    padding: 10px 20px;
+    font-size: var(--body-font);
+    color: var(--black-color);
+    background-color: var(--focus-color);
+    border-radius: var(--button-radius);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: var(--hover-color);
+    }
+
+    &:active {
+      background-color: var(--active-color);
+    }
+  }
 }
 
 @media (max-width: #{$desktop}) {

@@ -1,33 +1,32 @@
-import { t } from './i18n.js';
-import handleModuleLoadError from './moduleLoad';
+/* eslint-disable no-unused-vars */
+/* eslint-disable prettier/prettier */
+
 import type { ErrorApi } from '../api';
+import { t, onLangChange } from './i18n.js';
+import handleModuleLoadError from './moduleLoad';
+import { createElement } from './dom';
 
 let testErrorBtn: HTMLButtonElement | null = null;
 
 export function showTestErrorButton(): void {
   if (testErrorBtn) return;
-  const btn = document.createElement('button');
+  const btn = createElement('button', { className: 'test-error-btn' });
   testErrorBtn = btn;
   const setBtnText = () => {
     btn.textContent = t('createTestErrorBtn') || 'Создать тестовую ошибку';
   };
   setBtnText();
-  btn.style.position = 'fixed';
-  btn.style.bottom = '20px';
-  btn.style.right = '20px';
-  btn.style.zIndex = '10000';
-  btn.style.background = '#a0a0ff';
-  btn.style.color = '#222';
-  btn.style.padding = '10px 20px';
-  btn.style.borderRadius = '8px';
-  btn.style.border = 'none';
-  btn.style.cursor = 'pointer';
+  const container = document.querySelector('.container');
+
   btn.onclick = async (): Promise<void> => {
+    if (btn.disabled) return;
+    btn.disabled = true;
     try {
-      const mod = (await import('../api')) as unknown as { ErrorApi: typeof ErrorApi };
-      const win = window as Window & { app?: { errorApi?: ErrorApi, updateErrorTable?: () => void } };
+      const mod = await import('../api');
+      const ErrorApiCtor = (mod as { ErrorApi: new (mode?: string) => any }).ErrorApi;
+      const win = window as Window & { app?: { errorApi?: ErrorApi; updateErrorTable?: () => void } };
       const mode = win.app?.errorApi?.mode ?? 'server';
-      const api = new mod.ErrorApi(mode);
+      const api = new ErrorApiCtor(mode) as { createError: (e: any) => Promise<void> };
       await api.createError({
         type: 'TestError',
         message: t('testErrorMsg') || 'Тестовая ошибка для проверки дат',
@@ -38,13 +37,17 @@ export function showTestErrorButton(): void {
       alert(t('testErrorCreated') || 'Тестовая ошибка создана! Обновите таблицу.');
     } catch (err) {
       console.error('Failed to load ErrorApi module', err);
-      handleModuleLoadError('Failed to load ErrorApi module', err);
+      handleModuleLoadError('Failed to load ErrorApi module', err, undefined, undefined);
+    } finally {
+      btn.disabled = false;
     }
   };
-  document.body.appendChild(btn);
-  // eslint-disable-next-line no-unused-vars
-  const winLang = window as Window & { onLangChange?: (fn: (lang: string) => void) => void };
-  winLang.onLangChange?.(setBtnText);
+
+  if (container) container.appendChild(btn);
+  else document.body.appendChild(btn);
+
+  // Регистрируем слушатель смены языка через экспортированную функцию
+  onLangChange(setBtnText);
 }
 
 export function hideTestErrorButton(): void {

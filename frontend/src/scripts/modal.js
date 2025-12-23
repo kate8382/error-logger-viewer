@@ -362,10 +362,10 @@ export class Modal {
           if (window.errorTableInstance && typeof window.errorTableInstance.fetchErrors === 'function') {
             window.errorTableInstance.fetchErrors();
           }
-          hideLoading(saveBtn);
+          setTimeout(() => hideLoading(saveBtn), 0);
         } catch (e) {
           console.error('Ошибка при сохранении изменений:', e);
-          hideLoading(saveBtn);
+          setTimeout(() => hideLoading(saveBtn), 0);
         }
       } catch (impErr) {
         handleModuleLoadError('Failed to load loading utils for save', impErr);
@@ -407,11 +407,11 @@ export class Modal {
             if (window.errorTableInstance && typeof window.errorTableInstance.fetchErrors === 'function') {
               window.errorTableInstance.fetchErrors();
             }
-            hideLoading(deleteBtn);
+            setTimeout(() => hideLoading(deleteBtn), 0);
           })
           .catch((error) => {
             console.error('Ошибка при удалении ошибки:', error);
-            hideLoading(deleteBtn);
+            setTimeout(() => hideLoading(deleteBtn), 0);
           });
       } catch (impErr) {
         handleModuleLoadError('Failed to load loading utils for delete', impErr, null, null);

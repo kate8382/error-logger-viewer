@@ -159,6 +159,7 @@ export const translations = {
     // Dynamic import/load errors
     moduleLoadFailed: 'Failed to load UI module. Please reload the page.',
   },
+
   ru: {
     // Main
     createTestErrorBtn: 'Создать тестовую ошибку',
