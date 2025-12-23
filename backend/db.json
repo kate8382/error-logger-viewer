@@ -1,19 +1,6 @@
 {
   "errors": [
     {
-      "id": "dcca315d-c43a-4ca9-bf67-7da8cd1cae35",
-      "type": "FetchError",
-      "message": "Fetch failed: 500 Internal Server Error",
-      "status": "fixed",
-      "comment": "",
-      "count": 1,
-      "firstSeen": "2025-09-15T15:31:12.647Z",
-      "users": [
-        "unknown"
-      ],
-      "lastSeen": "2025-10-08T14:11:03.954Z"
-    },
-    {
       "id": "a9ae8f10-8ff1-48d7-805a-13696fbb3142",
       "type": "TestError",
       "message": "Тестовая ошибка для проверки дат",
@@ -38,7 +25,7 @@
       "users": [
         "unknown"
       ],
-      "lastSeen": "2025-12-20T17:00:14.301Z"
+      "lastSeen": "2025-12-23T17:11:39.960Z"
     },
     {
       "id": "ad8047fb-6dab-4109-b6ef-622d8397aef7",
@@ -49,10 +36,10 @@
       "comment": "",
       "count": 2,
       "firstSeen": "2025-09-17T15:33:41.871Z",
-      "lastSeen": "2025-09-17T15:37:42.833Z",
       "users": [
         "unknown"
-      ]
+      ],
+      "lastSeen": "2025-12-23T17:19:35.961Z"
     },
     {
       "id": "d1cd0f3e-37d0-49f9-9879-f8a0e5f21f3b",
@@ -63,10 +50,10 @@
       "comment": "",
       "count": 3,
       "firstSeen": "2025-09-17T15:40:16.916Z",
-      "lastSeen": "2025-09-17T15:52:54.231Z",
       "users": [
         "unknown"
-      ]
+      ],
+      "lastSeen": "2025-12-23T17:22:02.634Z"
     },
     {
       "id": "8cb19e4d-b411-4e1f-87a3-086565e06aae",
@@ -79,7 +66,7 @@
       "users": [
         "unknown"
       ],
-      "lastSeen": "2025-10-20T15:59:08.106Z"
+      "lastSeen": "2025-12-23T17:21:05.144Z"
     },
     {
       "id": "f9b389e0-a920-404a-a61e-b455076c275e",
@@ -173,7 +160,7 @@
       "users": [
         "unknown"
       ],
-      "lastSeen": "2025-09-28T15:43:47.298Z"
+      "lastSeen": "2025-12-23T16:22:24.141Z"
     },
     {
       "id": "20953818-95f9-4915-86c8-91a5cafa3fb2",
@@ -226,7 +213,7 @@
       "users": [
         "unknown"
       ],
-      "lastSeen": "2025-09-29T17:58:29.036Z"
+      "lastSeen": "2025-12-23T17:17:34.257Z"
     },
     {
       "id": "524e3e09-5a28-4b3c-b234-e6d724fc8dad",
@@ -560,6 +547,50 @@
       "users": [
         "unknown"
       ]
+    },
+    {
+      "id": "90546177-a9d5-444c-99c6-e87d938f10e9",
+      "projectId": "unknown",
+      "type": "TestError",
+      "message": "Тестовая ошибка для проверки дат",
+      "status": "in_progress",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-12-23T15:56:58.034Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2025-12-23T17:06:07.759Z"
+    },
+    {
+      "id": "504ec870-e80b-4bd8-81c2-4ed0ccea417d",
+      "projectId": "unknown",
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:201:32)\n    at Generator.eval (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:15:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:16:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:22:70)\n    at _next (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:23:163)\n    at eval (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:23:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:23:90)\n    at eval (webpack://error-logger-viewer-frontend/./src/scripts/utils/request.ts?:19:18)\n    at Generator.eval (webpack://error-logger-viewer-frontend/./src/scripts/utils/request.ts?:5:1660)",
+      "status": "fixed",
+      "comment": "",
+      "count": 18,
+      "firstSeen": "2025-12-23T16:12:34.919Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2025-12-23T16:23:33.905Z"
+    },
+    {
+      "id": "c5672ece-f3c0-4a37-96f7-e01ea06a1aa7",
+      "projectId": "unknown",
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: Failed to fetch",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:201:32)\n    at Generator.eval (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:15:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:16:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:22:70)\n    at _next (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:23:163)\n    at eval (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:23:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:23:90)\n    at eval (webpack://error-logger-viewer-frontend/./src/scripts/utils/request.ts?:19:18)\n    at Generator.eval (webpack://error-logger-viewer-frontend/./src/scripts/utils/request.ts?:5:1660)",
+      "status": "fixed",
+      "comment": "",
+      "count": 9,
+      "firstSeen": "2025-12-23T16:12:35.796Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2025-12-23T17:04:26.684Z"
     }
   ],
   "projects": [

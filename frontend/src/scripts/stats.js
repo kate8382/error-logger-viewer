@@ -1,7 +1,7 @@
 import { el, setChildren } from 'redom';
 import { t, getLabel, onLangChange } from './utils/i18n.js';
-import { typeColors, statusColors } from './utils/colors.js';
-import { showCenterSpinner, hideCenterSpinner } from './utils/loading.js';
+import { typeColors, statusColors } from './utils/colors';
+import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 
 export class StatsManager {
   constructor(errors = []) {

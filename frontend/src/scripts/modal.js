@@ -1,7 +1,7 @@
 import { el, setChildren } from 'redom';
 import { ErrorApi } from './api';
 import { t, getLabel, onLangChange } from './utils/i18n.js';
-import { handleModuleLoadError } from './utils/moduleLoad.js';
+import { handleModuleLoadError } from './utils/moduleLoad';
 
 export class Modal {
   constructor(mode = 'server') {
@@ -353,7 +353,7 @@ export class Modal {
         if ('lastSeen' in updated) delete updated.lastSeen;
       }
       try {
-        const { showLoading, hideLoading } = await import('./utils/loading.js');
+        const { showLoading, hideLoading } = await import('./utils/loading');
         showLoading(saveBtn, 'save');
 
         try {
@@ -362,10 +362,10 @@ export class Modal {
           if (window.errorTableInstance && typeof window.errorTableInstance.fetchErrors === 'function') {
             window.errorTableInstance.fetchErrors();
           }
-          hideLoading(saveBtn);
+          setTimeout(() => hideLoading(saveBtn), 0);
         } catch (e) {
           console.error('Ошибка при сохранении изменений:', e);
-          hideLoading(saveBtn);
+          setTimeout(() => hideLoading(saveBtn), 0);
         }
       } catch (impErr) {
         handleModuleLoadError('Failed to load loading utils for save', impErr);
@@ -397,7 +397,7 @@ export class Modal {
     );
     deleteBtn.addEventListener('click', async () => {
       try {
-        const { showLoading, hideLoading } = await import('./utils/loading.js');
+        const { showLoading, hideLoading } = await import('./utils/loading');
         showLoading(deleteBtn, 'delete');
 
         this.errorApi
@@ -407,11 +407,11 @@ export class Modal {
             if (window.errorTableInstance && typeof window.errorTableInstance.fetchErrors === 'function') {
               window.errorTableInstance.fetchErrors();
             }
-            hideLoading(deleteBtn);
+            setTimeout(() => hideLoading(deleteBtn), 0);
           })
           .catch((error) => {
             console.error('Ошибка при удалении ошибки:', error);
-            hideLoading(deleteBtn);
+            setTimeout(() => hideLoading(deleteBtn), 0);
           });
       } catch (impErr) {
         handleModuleLoadError('Failed to load loading utils for delete', impErr, null, null);

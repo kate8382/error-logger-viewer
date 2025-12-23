@@ -159,6 +159,7 @@ export const translations = {
     // Dynamic import/load errors
     moduleLoadFailed: 'Failed to load UI module. Please reload the page.',
   },
+
   ru: {
     // Main
     createTestErrorBtn: 'Создать тестовую ошибку',
@@ -232,7 +233,7 @@ export const translations = {
     sidebarDropdownModeAria: 'Открыть список режимов',
     sidebarDropdownServer: 'Сервер',
     sidebarDropdownServerAria: 'Выбрать режим сервер',
-    sidebarDropdownDemo: 'Демо-режим',
+    sidebarDropdownDemo: 'Демо',
     sidebarDropdownDemoAria: 'Выбрать демо-режим',
     sidebarDropdownTheme: 'Тема',
     sidebarDropdownThemeAria: 'Открыть список тем',

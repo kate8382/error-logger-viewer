@@ -5,8 +5,8 @@ import { StatsManager } from './stats';
 import ChartManager from './charts.js';
 import { ErrorTable } from './table';
 import { getCurrentLang, onLangChange } from './utils/i18n.js';
-import { updateTestErrorButtonVisibility } from './utils/testErrorButton.js';
-import handleModuleLoadError from './utils/moduleLoad.js';
+import { updateTestErrorButtonVisibility } from './utils/testErrorButton';
+import handleModuleLoadError from './utils/moduleLoad';
 
 // Инициализация таблицы ошибок и статистики
 window.errorTableInstance = new ErrorTable('server');
