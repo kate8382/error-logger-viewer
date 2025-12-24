@@ -1,5 +1,5 @@
 import { el, setChildren } from 'redom';
-import { t, getLabel, onLangChange } from './utils/i18n.js';
+import { t, getLabel, onLangChange } from './utils/i18n';
 import { typeColors, statusColors } from './utils/colors';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 

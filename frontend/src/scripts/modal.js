@@ -1,6 +1,6 @@
 import { el, setChildren } from 'redom';
 import { ErrorApi } from './api';
-import { t, getLabel, onLangChange } from './utils/i18n.js';
+import { t, getLabel, onLangChange } from './utils/i18n';
 import { handleModuleLoadError } from './utils/moduleLoad';
 
 export class Modal {

@@ -25,7 +25,7 @@ export class ErrorApi {
           searchParams.append(key, String(value));
         }
       });
-      return await request<ErrorItem[]>(`${this.baseUrl}/errors?${searchParams}`);
+      return (await request<ErrorItem[]>(`${this.baseUrl}/errors?${searchParams}`)) || [];
     } else {
       const raw = localStorage.getItem(this.localKey) || '[]';
       const errors = JSON.parse(raw) as ErrorItem[];
@@ -37,7 +37,7 @@ export class ErrorApi {
   async getStats(by: 'status' | 'type' | 'day' = 'status'): Promise<Stats> {
     if (this.mode === 'server') {
       try {
-        return await request<Stats>(`${this.baseUrl}/errors/stats?by=${by}`);
+        return (await request<Stats>(`${this.baseUrl}/errors/stats?by=${by}`)) || {};
       } catch (e) {
         console.error('[ErrorApi] Ошибка запроса статистики', e);
         return {};
@@ -48,11 +48,13 @@ export class ErrorApi {
 
   async createError(data: NewError): Promise<ErrorItem> {
     if (this.mode === 'server') {
-      return await request<ErrorItem>(`${this.baseUrl}/errors`, {
+      const res = await request<ErrorItem>(`${this.baseUrl}/errors`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       } as RequestInit);
+      if (!res) throw new Error('Empty response from createError');
+      return res;
     } else {
       const raw = localStorage.getItem(this.localKey) || '[]';
       const errors = JSON.parse(raw) as ErrorItem[];
@@ -79,11 +81,12 @@ export class ErrorApi {
 
   async updateError(id: string, data: Partial<NewError>): Promise<ErrorItem | null> {
     if (this.mode === 'server') {
-      return await request<ErrorItem>(`${this.baseUrl}/errors/${id}`, {
+      const res = await request<ErrorItem>(`${this.baseUrl}/errors/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       } as RequestInit);
+      return res || null;
     } else {
       const raw = localStorage.getItem(this.localKey) || '[]';
       const errors = JSON.parse(raw) as ErrorItem[];

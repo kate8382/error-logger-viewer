@@ -1,6 +1,6 @@
 import Chart from 'chart.js/auto';
 import { API_BASE_URL } from './api';
-import { t, getLabel, onLangChange, setLang } from './utils/i18n.js';
+import { t, getLabel, onLangChange, setLang } from './utils/i18n';
 import { typeColors, statusColors } from './utils/colors';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 

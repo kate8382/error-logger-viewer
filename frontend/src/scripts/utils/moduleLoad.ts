@@ -1,4 +1,4 @@
-import { t } from './i18n.js';
+import { t } from './i18n';
 
 // Универсальная функция обработки ошибок загрузки модулей
 // eslint-disable-next-line no-unused-vars

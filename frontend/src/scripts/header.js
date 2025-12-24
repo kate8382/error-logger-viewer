@@ -2,7 +2,7 @@ import { ErrorApi } from './api';
 import { ErrorTable } from './table';
 import { StatsManager } from './stats';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
-import { t, getCurrentLang, getLabel, setLang, onLangChange } from './utils/i18n.js';
+import { t, getCurrentLang, getLabel, setLang, onLangChange } from './utils/i18n';
 
 export class HeaderManager {
   constructor() {

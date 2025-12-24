@@ -4,7 +4,7 @@ import './header.js';
 import { StatsManager } from './stats';
 import ChartManager from './charts.js';
 import { ErrorTable } from './table';
-import { getCurrentLang, onLangChange } from './utils/i18n.js';
+import { getCurrentLang, onLangChange } from './utils/i18n';
 import { updateTestErrorButtonVisibility } from './utils/testErrorButton';
 import handleModuleLoadError from './utils/moduleLoad';
 
