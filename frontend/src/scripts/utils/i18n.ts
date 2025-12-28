@@ -322,34 +322,41 @@ export const translations = {
   },
 };
 
-// Используем глобальный объект translations
-// Try to restore previously selected language from localStorage, then fall back to window.app or navigator
-let currentLang;
+// Определяем начальный язык и сохраняем его в currentLang
+let currentLang: 'en' | 'ru' = 'en';
 try {
   const savedLang = localStorage.getItem('lang');
   if (savedLang) {
-    currentLang = savedLang;
-  } else if (window.app && window.app.lang) {
-    currentLang = window.app.lang;
+    currentLang = savedLang as 'en' | 'ru';
+  } else if (window.app?.errorApi) {
+    // window.app присутствует — используем app.lang дальше при необходимости
   } else {
-    currentLang = (navigator.language || navigator.userLanguage).startsWith('en') ? 'en' : 'ru';
+    const nav = (navigator && (navigator.language || (navigator as any).userLanguage)) || 'en';
+    currentLang = String(nav).startsWith('en') ? 'en' : 'ru';
   }
 } catch {
   // Если localStorage недоступен, используем app или navigator
   if (window.app && window.app.lang) {
     currentLang = window.app.lang;
   } else {
-    currentLang = (navigator.language || navigator.userLanguage).startsWith('en') ? 'en' : 'ru';
+    const nav = (navigator && (navigator.language || (navigator as any).userLanguage)) || 'en';
+    currentLang = String(nav).startsWith('en') ? 'en' : 'ru';
   }
 }
 
-let listeners = [];
+// Тип для определения языка
+type Lang = 'en' | 'ru';
+// eslint-disable-next-line no-unused-vars
+type LangChangeListener = (lang: Lang) => void;
+const listeners: Set<LangChangeListener> = new Set();
 
+// Получить текущий язык
 export function getCurrentLang() {
   return currentLang;
 }
 
-export function setLang(lang) {
+// Установить язык
+export function setLang(lang: Lang): void {
   if (lang !== currentLang) {
     currentLang = lang;
     if (window.app) window.app.lang = lang;
@@ -363,25 +370,39 @@ export function setLang(lang) {
   }
 }
 
-export function onLangChange(fn) {
-  if (typeof fn === 'function') listeners.push(fn);
+// Регистрация слушателя смены языка
+export function onLangChange(fn: LangChangeListener): void {
+  if (typeof fn === 'function') listeners.add(fn);
 }
 
 // Получить перевод по ключу (универсально)
-export function t(key, vars = {}) {
-  let str = translations?.[currentLang]?.[key] || key;
-  // Поддержка шаблонов вида "Hello, {name}!"
+type TranslationsMap = typeof translations;
+type TranslationKeys = keyof TranslationsMap[Lang];
+type TemplateVars = Record<string, string | number | boolean>;
+
+export function t(key: TranslationKeys | string, vars: TemplateVars = {}): string {
+  const langMap = translations[currentLang] as TranslationsMap[Lang];
+  const raw = langMap?.[key as TranslationKeys];
+  let str = typeof raw === 'string' ? raw : (key as string);
   Object.entries(vars).forEach(([k, v]) => {
-    str = str.replace(new RegExp(`{${k}}`, 'g'), v);
+    str = str.replace(new RegExp(`{${k}}`, 'g'), String(v));
   });
   return str;
 }
 
 // Получить перевод для типа/статуса ошибки (универсально)
-export function getLabel(key) {
+export function getLabel(key?: string | TranslationKeys): string | undefined {
   if (!key) return key;
-  const typeKey = key.startsWith('errorType_') ? key : 'errorType_' + key;
-  return t(typeKey) || t(key) || key;
+  const k = String(key);
+  const typeKey = k.startsWith('errorType_') ? k : 'errorType_' + k;
+  const langMap = translations[currentLang] as TranslationsMap[Lang];
+  if (Object.prototype.hasOwnProperty.call(langMap, typeKey)) {
+    return String(langMap[typeKey as TranslationKeys]);
+  }
+  if (Object.prototype.hasOwnProperty.call(langMap, k)) {
+    return String(langMap[k as TranslationKeys]);
+  }
+  return undefined;
 }
 
 // Получить все переводы для текущего языка

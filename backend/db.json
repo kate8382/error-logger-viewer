@@ -590,7 +590,35 @@
       "users": [
         "unknown"
       ],
-      "lastSeen": "2025-12-23T17:04:26.684Z"
+      "lastSeen": "2025-12-24T16:37:36.948Z"
+    },
+    {
+      "id": "d94fa55c-ab2b-4584-8bfa-6cffefa584b8",
+      "projectId": "unknown",
+      "type": "ResourceLoadError",
+      "message": "Failed to load resource: SCRIPT",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-12-24T17:47:36.967Z",
+      "lastSeen": "2025-12-24T17:47:36.967Z",
+      "users": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "7558ef25-d259-4a4b-b5f3-c6eb20e3f2ee",
+      "projectId": "unknown",
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-12-24T17:50:07.089Z",
+      "lastSeen": "2025-12-24T17:50:07.089Z",
+      "users": [
+        "unknown"
+      ]
     }
   ],
   "projects": [

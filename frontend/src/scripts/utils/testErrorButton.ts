@@ -2,7 +2,7 @@
 /* eslint-disable prettier/prettier */
 
 import type { ErrorApi } from '../api';
-import { t, onLangChange } from './i18n.js';
+import { t, onLangChange } from './i18n';
 import handleModuleLoadError from './moduleLoad';
 import { createElement } from './dom';
 

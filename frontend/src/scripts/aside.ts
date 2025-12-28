@@ -1,11 +1,11 @@
 import type { Mode } from './api';
 import { ErrorApi } from './api';
-import { t, getCurrentLang, setLang, onLangChange } from './utils/i18n.js';
-import { qsa } from './utils/dom';
+import { t, getCurrentLang, setLang, onLangChange } from './utils/i18n';
+import { qsa, qs } from './utils/dom';
 
 export class Aside {
   api: ErrorApi;
-  lang: string;
+  lang: 'en' | 'ru';
   // eslint-disable-next-line no-unused-vars
   _aboutEscHandler: ((e: KeyboardEvent) => void) | null = null;
 
@@ -27,18 +27,18 @@ export class Aside {
   }
 
   // Показывает About-секцию и скрывает остальные main > section
-  showAboutSection(lang: string = this.lang) {
-    document.querySelectorAll<HTMLElement>('main > section').forEach((sec) => {
+  showAboutSection(lang: 'en' | 'ru' = this.lang) {
+    qsa<HTMLElement>('main > section').forEach((sec) => {
       sec.style.display = 'none';
     });
-    const aboutSection = document.getElementById('aboutSection') as HTMLElement | null;
+    const aboutSection = qs<HTMLElement>('#aboutSection');
     if (aboutSection) {
       const aboutKey = lang === 'ru' ? 'aboutText_ru' : 'aboutText_en';
       aboutSection.innerHTML = t(aboutKey) || '';
       aboutSection.style.display = '';
 
       // Обработчик для кнопки-крестика
-      const closeBtn = aboutSection.querySelector('.about-btn-close') as HTMLElement | null;
+      const closeBtn = qs<HTMLElement>('.about-btn-close', aboutSection);
       if (closeBtn) {
         closeBtn.addEventListener('click', () => {
           location.hash = '';
@@ -67,7 +67,7 @@ export class Aside {
         this.showAboutSection(this.lang);
       } else {
         // Скрыть aboutSection при переходе на другие разделы
-        const aboutSection = document.getElementById('aboutSection');
+        const aboutSection = qs<HTMLElement>('#aboutSection');
         if (aboutSection) aboutSection.style.display = 'none';
         // Удалить обработчик Esc, если был добавлен
         if (this._aboutEscHandler) {
@@ -75,7 +75,7 @@ export class Aside {
           this._aboutEscHandler = null;
         }
         // Показать все основные секции приложения
-        document.querySelectorAll<HTMLElement>('main > section').forEach((sec) => {
+        qsa<HTMLElement>('main > section').forEach((sec) => {
           if (sec.id !== 'aboutSection') sec.style.display = '';
         });
       }
@@ -84,7 +84,7 @@ export class Aside {
 
   initControls() {
     // Смена режима работы (сервер/демо)
-    const modeOptions = document.querySelectorAll<HTMLElement>('.sidebar__dropdown-sublist[data-group="mode"] .sidebar__dropdown-option');
+    const modeOptions = qsa<HTMLElement>('.sidebar__dropdown-sublist[data-group="mode"] .sidebar__dropdown-option');
     modeOptions.forEach((option) => {
       option.addEventListener('click', () => {
         const mode = option.dataset.value as Mode;
@@ -104,7 +104,7 @@ export class Aside {
     });
 
     // Смена темы
-    const themeOptions = document.querySelectorAll<HTMLElement>('.sidebar__dropdown-sublist[data-group="theme"] .sidebar__dropdown-option');
+    const themeOptions = qsa<HTMLElement>('.sidebar__dropdown-sublist[data-group="theme"] .sidebar__dropdown-option');
     themeOptions.forEach((option) => {
       option.addEventListener('click', () => {
         const theme = option.dataset.value as string;
@@ -113,7 +113,7 @@ export class Aside {
     });
 
     // Смена языка — обработчики только в header.js, здесь только реакция на смену
-    onLangChange((lang: string) => {
+    onLangChange((lang: 'en' | 'ru') => {
       this.lang = lang;
       this.translatePage();
       if (location.hash === '#about') {
@@ -122,10 +122,10 @@ export class Aside {
     });
 
     // Смена языка через выпадающий список
-    const langOptions = document.querySelectorAll<HTMLElement>('.sidebar__dropdown-sublist[data-group="language"] .sidebar__dropdown-option');
+    const langOptions = qsa<HTMLElement>('.sidebar__dropdown-sublist[data-group="language"] .sidebar__dropdown-option');
     langOptions.forEach((btn) => {
       btn.addEventListener('click', () => {
-        const lang = btn.dataset.value as string;
+        const lang = (btn.dataset.value as 'en' | 'ru') || 'en';
         setLang(lang);
       });
     });
@@ -134,8 +134,8 @@ export class Aside {
   // Инициализация выпадающих списков и подгрупп
   initDropdowns() {
     // Открытие/закрытие основного списка настроек
-    const dropdown = document.querySelector('.sidebar__dropdown') as HTMLElement | null;
-    const dropdownBtn = dropdown ? (dropdown.querySelector('.sidebar__dropdown-btn') as HTMLElement | null) : null;
+    const dropdown = qs<HTMLElement>('.sidebar__dropdown');
+    const dropdownBtn = dropdown ? qs<HTMLElement>('.sidebar__dropdown-btn', dropdown) : null;
     if (dropdown && dropdownBtn) {
       dropdownBtn.addEventListener('click', (e: Event) => {
         e.stopPropagation();
@@ -150,7 +150,7 @@ export class Aside {
     }
 
     // Открытие/закрытие подгрупп настроек
-    const groupBtns = document.querySelectorAll<HTMLElement>('.sidebar__dropdown-group-btn');
+    const groupBtns = qsa<HTMLElement>('.sidebar__dropdown-group-btn');
     groupBtns.forEach((btn) => {
       const group = btn.closest('.sidebar__dropdown-group') as HTMLElement | null;
       btn.addEventListener('click', (e: Event) => {
@@ -191,7 +191,7 @@ export class Aside {
   }
 
   translatePage() {
-    const sidebarTexts = document.querySelectorAll<HTMLElement>('.sidebar__item-text[data-i18n]');
+    const sidebarTexts = qsa<HTMLElement>('.sidebar__item-text[data-i18n]');
     sidebarTexts.forEach((element) => {
       const key = element.getAttribute('data-i18n') || '';
       let replaced = false;
@@ -206,7 +206,7 @@ export class Aside {
       }
     });
 
-    const dropdownBtns = document.querySelectorAll<HTMLElement>('.sidebar__dropdown-btn[data-i18n]');
+    const dropdownBtns = qsa<HTMLElement>('.sidebar__dropdown-btn[data-i18n]');
     dropdownBtns.forEach((btn) => {
       const key = btn.getAttribute('data-i18n') || '';
       const textEl = btn.querySelector<HTMLElement>('.sidebar__item-text');
@@ -215,7 +215,7 @@ export class Aside {
       }
     });
 
-    const dropdownOptions = document.querySelectorAll<HTMLElement>('.sidebar__dropdown-option[data-i18n]');
+    const dropdownOptions = qsa<HTMLElement>('.sidebar__dropdown-option[data-i18n]');
     dropdownOptions.forEach((el) => {
       const key = el.getAttribute('data-i18n') || '';
       let replaced = false;
@@ -230,13 +230,13 @@ export class Aside {
       }
     });
 
-    const groupTexts = document.querySelectorAll<HTMLElement>('.sidebar__dropdown-group-text[data-i18n]');
+    const groupTexts = qsa<HTMLElement>('.sidebar__dropdown-group-text[data-i18n]');
     groupTexts.forEach((span) => {
       const key = span.getAttribute('data-i18n') || '';
       span.textContent = t(key) || key;
     });
 
-    const dropdownElements = document.querySelectorAll<HTMLElement>('.sidebar__dropdown [data-i18n]:not(.sidebar__dropdown-btn):not(.sidebar__dropdown-option):not(.sidebar__dropdown-group-text)');
+    const dropdownElements = qsa<HTMLElement>('.sidebar__dropdown [data-i18n]:not(.sidebar__dropdown-btn):not(.sidebar__dropdown-option):not(.sidebar__dropdown-group-text)');
     dropdownElements.forEach((el) => {
       const key = el.getAttribute('data-i18n') || '';
       let replaced = false;
@@ -251,7 +251,7 @@ export class Aside {
       }
     });
 
-    const otherElements = Array.from(document.querySelectorAll<HTMLElement>('[data-i18n]')).filter((el) => !el.classList.contains('sidebar__item-text') && !el.closest('.sidebar__dropdown'));
+    const otherElements = qsa<HTMLElement>('[data-i18n]').filter((el) => !el.classList.contains('sidebar__item-text') && !el.closest('.sidebar__dropdown'));
     otherElements.forEach((element) => {
       const key = element.getAttribute('data-i18n') || '';
       const span = element.querySelector<HTMLElement>('span');
@@ -262,13 +262,13 @@ export class Aside {
       }
     });
 
-    const placeholders = document.querySelectorAll<HTMLElement>('[data-i18n-placeholder]');
+    const placeholders = qsa<HTMLElement>('[data-i18n-placeholder]');
     placeholders.forEach((element) => {
       const key = element.getAttribute('data-i18n-placeholder') || '';
       element.setAttribute('placeholder', t(key) || key);
     });
 
-    const ariaElements = document.querySelectorAll<HTMLElement>('[data-i18n-aria-label]');
+    const ariaElements = qsa<HTMLElement>('[data-i18n-aria-label]');
     ariaElements.forEach((el) => {
       const key = el.getAttribute('data-i18n-aria-label') || '';
       el.setAttribute('aria-label', t(key));

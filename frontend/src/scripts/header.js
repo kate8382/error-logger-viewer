@@ -2,7 +2,7 @@ import { ErrorApi } from './api';
 import { ErrorTable } from './table';
 import { StatsManager } from './stats';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
-import { t, getCurrentLang, getLabel, setLang, onLangChange } from './utils/i18n.js';
+import { t, getCurrentLang, getLabel, setLang, onLangChange } from './utils/i18n';
 
 export class HeaderManager {
   constructor() {
@@ -447,8 +447,8 @@ export class HeaderManager {
       };
       const firstSeenDate = getDateOnly(error.firstSeen);
       const lastSeenDate = getDateOnly(error.lastSeen);
-      // Сравниваем по строке и по числу
-      return [error.id, typeText, statusText, firstSeenDate, lastSeenDate].some((val) => val && String(val).toLowerCase().includes(query.toLowerCase()));
+      // Сравниваем по строке и по числу — учитываем и оригинальный type/status
+      return [error.id, error.type, typeText, error.status, statusText, firstSeenDate, lastSeenDate].some((val) => val && String(val).toLowerCase().includes(query.toLowerCase()));
     });
     // prettier-ignore
     this.filteredErrors =

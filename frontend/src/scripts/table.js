@@ -1,7 +1,7 @@
 import { el, setChildren } from 'redom';
 import { ErrorApi } from './api';
 import { StatsManager } from './stats';
-import { t, getCurrentLang, onLangChange } from './utils/i18n.js';
+import { t, getCurrentLang, onLangChange } from './utils/i18n';
 import { handleModuleLoadError } from './utils/moduleLoad';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 
