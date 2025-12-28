@@ -3,6 +3,7 @@ import { ErrorTable } from './table';
 import { StatsManager } from './stats';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 import { t, getCurrentLang, getLabel, setLang, onLangChange } from './utils/i18n';
+import { createElement } from './utils/dom';
 
 export class HeaderManager {
   constructor() {
@@ -59,17 +60,11 @@ export class HeaderManager {
       } else {
         // если заголовок не найден, создаём новый
         const existingAnchor = this.headerTitle.querySelector('a');
-        const span = document.createElement('span');
-        span.className = 'header__title-text';
-        span.setAttribute('data-i18n', 'title');
-        span.textContent = t('title') || 'Error Logger & Viewer';
+        const span = createElement('span', { className: 'header__title-text', attrs: { 'data-i18n': 'title' }, text: t('title') || 'Error Logger & Viewer' });
         if (existingAnchor) {
           existingAnchor.appendChild(span);
         } else {
-          const a = document.createElement('a');
-          a.href = 'https://github.com/kate8382/error-logger-viewer';
-          a.setAttribute('target', '_blank');
-          a.setAttribute('rel', 'noopener noreferrer');
+          const a = createElement('a', { attrs: { href: 'https://github.com/kate8382/error-logger-viewer', target: '_blank', rel: 'noopener noreferrer' } });
           a.appendChild(span);
           this.headerTitle.appendChild(a);
         }
