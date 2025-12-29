@@ -1,4 +1,5 @@
 import type { ErrorItem } from '../types/errors';
+// eslint-disable-next-line prettier/prettier
 import type * as I18n from '../utils/i18n';
 
 export function getDateOnly(str?: string): string {
@@ -22,7 +23,7 @@ export function filterErrors(errors: ErrorItem[] | undefined, query: string, { g
   const list = Array.isArray(errors) ? errors : [];
   return list.filter((error) => {
     const typeText = getLabel ? getLabel(error.type) : undefined;
-    const statusText = t ? t(error.status || 'new') : (error.status || 'new');
+    const statusText = t ? t(error.status || 'new') : error.status || 'new';
     const firstSeenDate = getDateOnly(error.firstSeen);
     const lastSeenDate = getDateOnly(error.lastSeen);
     return [error.id, error.type, typeText, error.status, statusText, firstSeenDate, lastSeenDate].some((val) => val && String(val).toLowerCase().includes(q));
