@@ -14,20 +14,6 @@
       ]
     },
     {
-      "id": "1bd60354-cf6d-4846-86f9-07b44ad05221",
-      "type": "UnhandledPromiseRejection",
-      "message": "Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID 'chartCanvas' can be reused.",
-      "stack": "Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID 'chartCanvas' can be reused.\n    at new Chart (webpack://error-logger-viewer/./node_modules/chart.js/dist/chart.js?:5695:19)\n    at ChartManager.eval (webpack://error-logger-viewer/./src/scripts/charts.js?:251:30)\n    at Generator.eval (webpack://error-logger-viewer/./src/scripts/charts.js?:12:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/scripts/charts.js?:13:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/scripts/charts.js?:24:70)\n    at _next (webpack://error-logger-viewer/./src/scripts/charts.js?:25:163)",
-      "status": "in_progress",
-      "comment": "",
-      "count": 1,
-      "firstSeen": "2025-09-17T15:31:32.217Z",
-      "users": [
-        "unknown"
-      ],
-      "lastSeen": "2025-12-23T17:11:39.960Z"
-    },
-    {
       "id": "ad8047fb-6dab-4109-b6ef-622d8397aef7",
       "type": "UnhandledPromiseRejection",
       "message": "Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID 'chartCanvas' can be reused.",
@@ -66,7 +52,7 @@
       "users": [
         "unknown"
       ],
-      "lastSeen": "2025-12-23T17:21:05.144Z"
+      "lastSeen": "2025-12-29T17:53:51.889Z"
     },
     {
       "id": "f9b389e0-a920-404a-a61e-b455076c275e",
@@ -633,6 +619,20 @@
         "unknown"
       ],
       "lastSeen": "2025-12-29T16:33:03.363Z"
+    },
+    {
+      "id": "f3324615-775c-406b-8ad2-c4ae190bf3b4",
+      "projectId": "unknown",
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2025-12-29T17:38:38.784Z",
+      "lastSeen": "2025-12-29T17:38:38.784Z",
+      "users": [
+        "unknown"
+      ]
     }
   ],
   "projects": [
