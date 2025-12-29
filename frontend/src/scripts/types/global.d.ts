@@ -1,35 +1,43 @@
-/* eslint-disable no-unused-vars */
-// Этот файл расширяет глобальные типы `window` для приложения.
-// Используем простые локальные подписи, чтобы файл оставался ambient (без import/export).
+﻿import type { ErrorItem } from './errors';
 
-interface Window {
-  app?: {
-    // Ошибка API — оставляем как any, чтобы не вносить жесткие зависимости
-    errorApi?: any,
-    updateErrorTable?: () => void,
-    lang?: 'en' | 'ru',
-  };
-  onLangChange?: (fn: (lang: 'en' | 'ru') => void) => void;
-  // Интерфейс для таблицы ошибок (используется в header и прочих модулях)
-  errorTableInstance?: {
-    errors?: any[],
-    errorApi?: any,
-    lang?: 'en' | 'ru',
-    getErrors?: () => any[],
-    renderErrors?: (errs: any[]) => void,
-    fetchErrors?: () => void,
-    sortErrors?: (errs: any[], field: string, order: string) => any[],
-    setMode?: (mode: 'server' | 'demo') => void,
-  };
-  // Менеджер статистики (упрощённые подписи)
-  statsManager?: {
-    renderErrorCards?: () => void,
-  };
-  // Менеджер чарта (упрощённые подписи)
-  chartManager?: {
-    resetToDefault?: () => void,
-  };
-  headerManager?: any;
-  API_BASE_URL?: string;
-  aside?: any;
+// Этот файл расширяет глобальные типы window для приложения.
+// Здесь определяем минимальные интерфейсы для глобальных менеджеров.
+
+declare global {
+  interface ErrorTableInterface {
+    errors?: ErrorItem[];
+    errorApi?: any;
+    lang?: 'en' | 'ru';
+    getErrors?: () => ErrorItem[];
+    renderErrors?: (errs: ErrorItem[] | undefined) => void;
+    fetchErrors?: () => void;
+    sortErrors?: (errs: ErrorItem[], field: string, order: string) => ErrorItem[];
+    setMode?: (mode: 'server' | 'demo') => void;
+  }
+
+  interface StatsManagerInterface {
+    renderErrorCards?: () => void;
+  }
+
+  interface ChartManagerInterface {
+    resetToDefault?: () => void;
+    renderChart?: () => void;
+  }
+
+  interface Window {
+    app?: {
+      errorApi?: any,
+      updateErrorTable?: () => void,
+      lang?: 'en' | 'ru',
+    };
+    onLangChange?: (fn: (lang: 'en' | 'ru') => void) => void;
+    errorTableInstance?: ErrorTableInterface;
+    statsManager?: StatsManagerInterface;
+    chartManager?: ChartManagerInterface;
+    headerManager?: any;
+    API_BASE_URL?: string;
+    aside?: any;
+  }
 }
+
+export {};

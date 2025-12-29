@@ -1,41 +1,40 @@
 import { ErrorApi } from './api';
 import { ErrorTable } from './table';
 import { StatsManager } from './stats';
+import type { ErrorItem } from './types/errors';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 import { t, getCurrentLang, getLabel, setLang, onLangChange } from './utils/i18n';
+import { filterErrors } from './services/errorFilter';
 import { qs, createElement, delegate } from './utils/dom';
 
 export class HeaderManager {
-  api: ErrorApi; // Экземпляр ErrorApi
-  table: ErrorTable | any; // Экземпляр ErrorTable
-  stats: StatsManager | any; // Экземпляр StatsManager
-  chart: any; // Экземпляр ChartManager
-  lang: string; // Текущий язык
-  justSwitchedToTable: boolean; // Флаг для отслеживания перехода к таблице
-  filteredErrors: any[] | null; // Храним отфильтрованные ошибки
-  _debounceTimers: Record<string, any>; // Таймеры для debounce в виде строки или числа
-  _lastFilterRequestId: number; // ID последнего запроса фильтрации
+  api: ErrorApi;
+  table: ErrorTable; // Экземпляр ErrorTable (из `window`)
+  stats: StatsManager; // Экземпляр StatsManager (из `window`)
+  chart: ChartManagerInterface | undefined; // Экземпляр ChartManager (из `window`)
+  lang: string;
+  justSwitchedToTable: boolean;
+  filteredErrors: ErrorItem[] | null;
+  _debounceTimers: Record<string, ReturnType<typeof setTimeout> | undefined> = {};
+  _lastFilterRequestId = 0;
 
-  searchInput: HTMLInputElement | null = null; // Поле ввода для поиска/фильтрации или ничего
-  headerTitle: HTMLElement | null = null; // Заголовок в хедере
-  searchBtn: HTMLElement | null = null; // Кнопка поиска
-  sections: Record<string, HTMLElement | null> = { stats: null, chart: null, table: null }; // Секции интерфейса
-  searchOrExitIcon: HTMLElement | null = null; // Иконка поиска или выхода
-  searchIcon: HTMLElement | null = null; // Иконка поиска
+  searchInput: HTMLInputElement | null = null;
+  headerTitle: HTMLElement | null = null;
+  searchBtn: HTMLElement | null = null;
+  sections: Record<string, HTMLElement | null> = { stats: null, chart: null, table: null };
+  searchOrExitIcon: HTMLElement | null = null;
+  searchIcon: HTMLElement | null = null;
   exitIcon: HTMLElement | null = null;
   sortOrder: Record<string, string> = {};
 
   constructor() {
     this.api = new ErrorApi();
-    this.table = window.errorTableInstance || new ErrorTable(); // получаем глобальный инстанс таблицы, если есть, или создаём новый
-    this.stats = window.statsManager || new StatsManager(); // получаем глобальный инстанс статистики, если есть, или создаём новый
-    this.chart = window.chartManager; // получаем глобальный инстанс чарта, если есть
+    this.table = (window.errorTableInstance as unknown as ErrorTable) || new ErrorTable();
+    this.stats = (window.statsManager as unknown as StatsManager) || new StatsManager();
+    this.chart = window.chartManager;
     this.lang = getCurrentLang();
     this.justSwitchedToTable = false;
-    this.filteredErrors = null; // Храним отфильтрованные ошибки
-    // для избежания гонок при асинхронной фильтрации
-    this._debounceTimers = {};
-    this._lastFilterRequestId = 0;
+    this.filteredErrors = null;
     this.init();
   }
 
@@ -73,17 +72,14 @@ export class HeaderManager {
     if (!this.headerTitle) return;
     // Если sectionKey не передан или все секции видимы — основной заголовок
     if (!sectionKey) {
-      // предполагаем, что заголовок уже существует
-      let titleSpan = this.headerTitle.querySelector('.header__title-text[data-i18n="title"]') || this.headerTitle.querySelector('[data-i18n="title"]');
+      const titleSpan = this.headerTitle.querySelector('.header__title-text[data-i18n="title"]') || this.headerTitle.querySelector('[data-i18n="title"]');
       if (titleSpan) {
         titleSpan.textContent = t('title') || 'Error Logger & Viewer';
       } else {
-        // если заголовок не найден, создаём новый
         const existingAnchor = this.headerTitle.querySelector('a');
         const span = createElement('span', { className: 'header__title-text', attrs: { 'data-i18n': 'title' }, text: t('title') || 'Error Logger & Viewer' });
-        if (existingAnchor) {
-          existingAnchor.appendChild(span);
-        } else {
+        if (existingAnchor) existingAnchor.appendChild(span);
+        else {
           const a = createElement('a', { attrs: { href: 'https://github.com/kate8382/error-logger-viewer', target: '_blank', rel: 'noopener noreferrer' } });
           a.appendChild(span);
           this.headerTitle.appendChild(a);
@@ -93,31 +89,32 @@ export class HeaderManager {
     }
     const section = this.sections[sectionKey];
     if (!section) {
-      const titleSpan = this.headerTitle.querySelector('[data-i18n="title"]');
-      if (titleSpan) titleSpan.textContent = t('title') || 'Error Logger & Viewer';
+      this._applyTitleToHeader(t('title') || 'Error Logger & Viewer');
       return;
     }
-    let titleEl: Element | null = null;
-    if (sectionKey === 'chart') titleEl = section.querySelector('.chart__title');
-    else if (sectionKey === 'stats') titleEl = section.querySelector('.stats__title');
-    else if (sectionKey === 'table') titleEl = section.querySelector('.error-table__title');
-    else titleEl = section.querySelector('h2,h3');
-
+    const titleEl = this._getSectionTitle(sectionKey, section);
     if (titleEl) {
       const i18nKey = titleEl.getAttribute('data-i18n');
-      const titleSpan = this.headerTitle.querySelector('[data-i18n="title"]');
-      if (i18nKey && t(i18nKey)) {
-        if (titleSpan) titleSpan.textContent = t(i18nKey);
-        else this.headerTitle.textContent = t(i18nKey);
-      } else {
-        if (titleSpan) titleSpan.textContent = titleEl.textContent || t('title');
-        else this.headerTitle.textContent = titleEl.textContent || t('title');
-      }
+      if (i18nKey && t(i18nKey)) this._applyTitleToHeader(t(i18nKey));
+      else this._applyTitleToHeader(titleEl.textContent || t('title'));
     } else {
-      const titleSpan = this.headerTitle.querySelector('[data-i18n="title"]');
-      if (titleSpan) titleSpan.textContent = t('title') || 'Error Logger & Viewer';
-      else this.headerTitle.textContent = t('title') || 'Error Logger & Viewer';
+      this._applyTitleToHeader(t('title') || 'Error Logger & Viewer');
     }
+  }
+
+  _getSectionTitle(sectionKey: string, section: HTMLElement | null): Element | null {
+    if (!section) return null;
+    if (sectionKey === 'chart') return section.querySelector('.chart__title');
+    if (sectionKey === 'stats') return section.querySelector('.stats__title');
+    if (sectionKey === 'table') return section.querySelector('.error-table__title');
+    return section.querySelector('h2,h3');
+  }
+
+  _applyTitleToHeader(text: string) {
+    if (!this.headerTitle) return;
+    const titleSpan = this.headerTitle.querySelector('[data-i18n="title"]');
+    if (titleSpan) titleSpan.textContent = text;
+    else this.headerTitle.textContent = text;
   }
 
   // Универсальная смена плейсхолдера и aria-label
@@ -293,7 +290,8 @@ export class HeaderManager {
   // eslint-disable-next-line no-unused-vars
   _debounce(fn: (..._args: any[]) => void, wait = 200, key = '__default') {
     return (..._args: any[]) => {
-      if (this._debounceTimers[key]) clearTimeout(this._debounceTimers[key]);
+      const existing = this._debounceTimers[key];
+      if (existing) clearTimeout(existing as any);
       this._debounceTimers[key] = setTimeout(() => {
         fn(..._args);
         delete this._debounceTimers[key];
@@ -399,28 +397,9 @@ export class HeaderManager {
     const requestId = ++this._lastFilterRequestId;
     // Получаем все ошибки
     const errors = await this.api.getErrors({});
-    // Если был запущен новый запрос после этого, игнорируем этот ответ
     if (requestId !== this._lastFilterRequestId) return;
-    const filtered = (Array.isArray(errors) ? errors : []).filter((error: any) => {
-      // Локализованные значения типа и статуса через t/getLabel
-      const typeText = getLabel(error.type);
-      const statusText = t(error.status || 'new');
-
-      // Только дата (без времени), всегда в формате DD.MM.YYYY
-      const getDateOnly = (str?: string) => {
-        if (!str) return '';
-        const date = new Date(str);
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = date.getFullYear();
-        return `${day}.${month}.${year}`;
-      };
-      const firstSeenDate = getDateOnly(error.firstSeen);
-      const lastSeenDate = getDateOnly(error.lastSeen);
-      // Сравниваем по строке и по числу — учитываем и оригинальный type/status
-      return [error.id, error.type, typeText, error.status, statusText, firstSeenDate, lastSeenDate].some((val) => val && String(val).toLowerCase().includes(query.toLowerCase()));
-    });
-    this.filteredErrors = Array.isArray(filtered) && Array.isArray(errors) && filtered.length < errors.length ? filtered : null;
+    const filtered = filterErrors(errors, query, { getLabel, t });
+    this.filteredErrors = Array.isArray(filtered) && Array.isArray(errors) && filtered.length < (errors?.length || 0) ? filtered : null;
     this.table.renderErrors(filtered);
   }
 
