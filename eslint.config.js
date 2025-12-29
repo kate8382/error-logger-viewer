@@ -33,6 +33,7 @@ module.exports = defineConfig([
       '**/*.pdf',
       '**/*.bin',
       'frontend/src/assets/**',
+      'frontend/src/scripts/types/global.d.ts',
       'screenshots/**',
       '*.lock',
       'package-lock.json',

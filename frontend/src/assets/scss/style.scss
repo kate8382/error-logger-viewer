@@ -155,11 +155,21 @@ body.modal-open .modal {
   .loading {
     align-self: center;
 
-    .spinner img {
+    .spinner {
       display: inline-block;
       vertical-align: middle;
       width: 16px;
       height: 16px;
+      line-height: 0;
+    }
+
+    .spinner img,
+    .spinner svg {
+      display: inline-block;
+      vertical-align: middle;
+      width: 16px;
+      height: 16px;
+      transform-origin: center center;
       animation: spin 0.8s linear infinite;
     }
   }
@@ -171,9 +181,16 @@ body.modal-open .modal {
     justify-content: center;
   }
 
-  .center-spinner img {
+  .center-spinner {
     width: 48px;
     height: 48px;
+  }
+
+  .center-spinner img,
+  .center-spinner svg {
+    width: 48px;
+    height: 48px;
+    transform-origin: center center;
     animation: spin 0.8s linear infinite;
   }
 

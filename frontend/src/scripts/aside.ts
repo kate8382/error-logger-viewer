@@ -88,11 +88,10 @@ export class Aside {
     modeOptions.forEach((option) => {
       option.addEventListener('click', () => {
         const mode = option.dataset.value as Mode;
-        const app = (window as Window & { app?: { errorApi?: ErrorApi, updateErrorTable?: () => void, lang?: string } }).app;
+        const app = window.app;
         if (app && app.errorApi && typeof app.updateErrorTable === 'function') {
           app.errorApi.setMode(mode);
-          // eslint-disable-next-line no-unused-vars
-          const et = (window as Window & { errorTableInstance?: { setMode?: (mode: Mode) => void } }).errorTableInstance;
+          const et = window.errorTableInstance;
           if (et && typeof et.setMode === 'function') {
             et.setMode(mode);
           }

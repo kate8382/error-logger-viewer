@@ -1,6 +1,6 @@
 import '../assets/scss/style.scss';
 import { ErrorApi } from './api';
-import './header.js';
+import './header';
 import { StatsManager } from './stats';
 import ChartManager from './charts.js';
 import { ErrorTable } from './table';

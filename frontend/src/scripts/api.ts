@@ -17,7 +17,7 @@ export class ErrorApi {
     this.localKey = 'errorsLocal';
   }
 
-  async getErrors(params: Record<string, any> = {}): Promise<ErrorItem[]> {
+  async getErrors(params: Record<string, string | number | boolean | undefined> = {}): Promise<ErrorItem[]> {
     if (this.mode === 'server') {
       const searchParams = new URLSearchParams();
       Object.entries(params).forEach(([key, value]) => {
