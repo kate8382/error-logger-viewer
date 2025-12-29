@@ -7,7 +7,7 @@ function getSpinnerImg(type?: 'page' | 'delete' | 'save') {
     return (
       '<svg class="loading-svg" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
       '<path d="M2 20C2 29.941 10.059 38 20 38C29.941 38 38 29.941 38 20C38 10.059 29.941 2 20 2C17.6755 2 15.454 2.4405 13.414 3.243" stroke="#9255FD" stroke-width="4" stroke-miterlimit="10" stroke-linecap="round"/>' +
-      '<animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 20 20" to="360 20 20" dur="1s" repeatCount="indefinite"/>' +
+      '' +
       '</svg>'
     );
   }
@@ -20,7 +20,7 @@ function getSpinnerImg(type?: 'page' | 'delete' | 'save') {
       '<path d="M3.00008 8.03996C3.00008 10.8234 5.2566 13.08 8.04008 13.08C10.8236 13.08 13.0801 10.8234 13.0801 8.03996C13.0801 5.25648 10.8236 2.99996 8.04008 2.99996C7.38922 2.99996 6.7672 3.1233 6.196 3.348" stroke="#FFDFDF" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>' +
       '</g>' +
       '<defs><clipPath id="clip0_224_6321"><rect width="16" height="16" fill="white"/></clipPath></defs>' +
-      '<animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 8 8" to="360 8 8" dur="0.8s" repeatCount="indefinite"/>' +
+      '' +
       '</svg>'
     );
   }
@@ -32,7 +32,7 @@ function getSpinnerImg(type?: 'page' | 'delete' | 'save') {
     '<path d="M3.00008 8.03996C3.00008 10.8234 5.2566 13.08 8.04008 13.08C10.8236 13.08 13.0801 10.8234 13.0801 8.03996C13.0801 5.25648 10.8236 2.99996 8.04008 2.99996C7.38922 2.99996 6.7672 3.1233 6.196 3.348" stroke="#DECCFE" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>' +
     '</g>' +
     '<defs><clipPath id="clip0_224_6321"><rect width="16" height="16" fill="white"/></clipPath></defs>' +
-    '<animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 8 8" to="360 8 8" dur="0.8s" repeatCount="indefinite"/>' +
+    '' +
     '</svg>'
   );
 }
