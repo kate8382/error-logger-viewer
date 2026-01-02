@@ -1,7 +1,7 @@
 import type { Mode } from './api';
 import { ErrorApi } from './api';
 import { t, getCurrentLang, setLang, onLangChange } from './utils/i18n';
-import { qsa, qs } from './utils/dom';
+import { qsa, qs, translateNodes } from './utils/dom';
 
 export class Aside {
   api: ErrorApi;
@@ -190,21 +190,8 @@ export class Aside {
   }
 
   translatePage() {
-    const sidebarTexts = qsa<HTMLElement>('.sidebar__item-text[data-i18n]');
-    sidebarTexts.forEach((element) => {
-      const key = element.getAttribute('data-i18n') || '';
-      let replaced = false;
-      element.childNodes.forEach((node) => {
-        if (!replaced && node.nodeType === Node.TEXT_NODE && (node.textContent || '').trim() !== '') {
-          node.textContent = t(key) || key;
-          replaced = true;
-        }
-      });
-      if (!replaced) {
-        element.textContent = t(key) || key;
-      }
-    });
-
+    translateNodes(document, '.sidebar__item-text[data-i18n]');
+    // dropdown btns keep their inner .sidebar__item-text element
     const dropdownBtns = qsa<HTMLElement>('.sidebar__dropdown-btn[data-i18n]');
     dropdownBtns.forEach((btn) => {
       const key = btn.getAttribute('data-i18n') || '';
@@ -213,42 +200,9 @@ export class Aside {
         textEl.textContent = t(key) || key;
       }
     });
-
-    const dropdownOptions = qsa<HTMLElement>('.sidebar__dropdown-option[data-i18n]');
-    dropdownOptions.forEach((el) => {
-      const key = el.getAttribute('data-i18n') || '';
-      let replaced = false;
-      el.childNodes.forEach((node) => {
-        if (!replaced && node.nodeType === Node.TEXT_NODE && (node.textContent || '').trim() !== '') {
-          node.textContent = t(key) || key;
-          replaced = true;
-        }
-      });
-      if (!replaced) {
-        el.textContent = t(key) || key;
-      }
-    });
-
-    const groupTexts = qsa<HTMLElement>('.sidebar__dropdown-group-text[data-i18n]');
-    groupTexts.forEach((span) => {
-      const key = span.getAttribute('data-i18n') || '';
-      span.textContent = t(key) || key;
-    });
-
-    const dropdownElements = qsa<HTMLElement>('.sidebar__dropdown [data-i18n]:not(.sidebar__dropdown-btn):not(.sidebar__dropdown-option):not(.sidebar__dropdown-group-text)');
-    dropdownElements.forEach((el) => {
-      const key = el.getAttribute('data-i18n') || '';
-      let replaced = false;
-      el.childNodes.forEach((node) => {
-        if (!replaced && node.nodeType === Node.TEXT_NODE && (node.textContent || '').trim() !== '') {
-          node.textContent = t(key) || key;
-          replaced = true;
-        }
-      });
-      if (!replaced) {
-        el.textContent = t(key) || key;
-      }
-    });
+    translateNodes(document, '.sidebar__dropdown-option[data-i18n]');
+    translateNodes(document, '.sidebar__dropdown-group-text[data-i18n]');
+    translateNodes(document, '.sidebar__dropdown [data-i18n]:not(.sidebar__dropdown-btn):not(.sidebar__dropdown-option):not(.sidebar__dropdown-group-text)');
 
     const otherElements = qsa<HTMLElement>('[data-i18n]').filter((el) => !el.classList.contains('sidebar__item-text') && !el.closest('.sidebar__dropdown'));
     otherElements.forEach((element) => {

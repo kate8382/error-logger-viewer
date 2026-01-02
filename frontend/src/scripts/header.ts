@@ -2,10 +2,10 @@ import { ErrorApi } from './api';
 import { ErrorTable } from './table';
 import { StatsManager } from './stats';
 import type { ErrorItem } from './types/errors';
+import { filterErrors } from './services/errorFilter';
+import { qs, createElement, delegate, translateNodes } from './utils/dom';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 import { t, getCurrentLang, getLabel, setLang, onLangChange } from './utils/i18n';
-import { filterErrors } from './services/errorFilter';
-import { qs, createElement, delegate } from './utils/dom';
 
 export class HeaderManager {
   api: ErrorApi;
@@ -133,20 +133,15 @@ export class HeaderManager {
   updateSectionTitles() {
     Object.entries(this.sections).forEach(([key, section]) => {
       if (!section) return;
-      let titleEl: Element | null = null;
       if (key === 'chart') {
-        titleEl = section.querySelector('.chart__title');
-        // Всегда устанавливаем локализованный заголовок графика
+        const titleEl = section.querySelector('.chart__title');
         if (titleEl) titleEl.textContent = t('chartTitle') || 'Error Chart';
+        // перевод других узлов внутри графика
+        translateNodes(section, '[data-i18n]');
         return;
       }
-      if (key === 'stats') titleEl = section.querySelector('.stats__title');
-      else if (key === 'table') titleEl = section.querySelector('.error-table__title');
-      else titleEl = section.querySelector('h2,h3');
-      if (titleEl) {
-        const i18nKey = titleEl.getAttribute('data-i18n');
-        if (i18nKey && t(i18nKey)) titleEl.textContent = t(i18nKey);
-      }
+      // Перевод всех элементов с data-i18n в секции
+      translateNodes(section, '[data-i18n]');
     });
   }
 
