@@ -1,29 +1,38 @@
 import { el, setChildren } from 'redom';
 import { ErrorApi } from './api';
+import type { Mode } from './api';
 import { StatsManager } from './stats';
+import type { ErrorItem } from './types/errors';
+import { qs, createElement, translateNodes } from './utils/dom';
 import { t, getCurrentLang, onLangChange } from './utils/i18n';
 import { handleModuleLoadError } from './utils/moduleLoad';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 
+type FieldName = 'id' | 'type' | 'count' | 'firstSeen' | 'lastSeen' | 'status';
+
 export class ErrorTable {
-  constructor(mode = 'server') {
+  errors: ErrorItem[];
+  errorApi: ErrorApi;
+  lang: string;
+
+  constructor(mode: Mode | undefined = 'server') {
     this.errors = [];
     this.errorApi = new ErrorApi(mode);
     this.lang = getCurrentLang();
-    onLangChange((lang) => {
+    onLangChange((lang: string) => {
       this.lang = lang;
       this.renderErrors(this.errors);
     });
   }
 
-  setMode(mode) {
+  setMode(mode: Mode): void {
     if (this.errorApi && typeof this.errorApi.setMode === 'function') {
       this.errorApi.setMode(mode);
     }
   }
 
   async fetchErrors() {
-    const tableSection = document.getElementById('errorTableSection');
+    const tableSection = qs<HTMLElement>('#errorTableSection');
     showCenterSpinner(tableSection, 'page'); // сразу показываем
 
     try {
@@ -41,12 +50,12 @@ export class ErrorTable {
     return this.errors;
   }
 
-  renderErrors(errors) {
+  renderErrors(errors: ErrorItem[] | undefined): void {
     this.errors = errors || [];
-    const tableBody = document.getElementById('errorTableBody');
+    const tableBody = qs<HTMLElement>('#errorTableBody');
     if (!tableBody) return;
 
-    const rows = errors.map((error) => {
+    const rows = this.errors.map((error) => {
       // Перевод типа ошибки
       const typeKey = 'errorType_' + error.type;
       const typeText = t(typeKey) || error.type;
@@ -57,105 +66,112 @@ export class ErrorTable {
       const firstSeen = error.firstSeen ? this.formatDate(error.firstSeen) : '';
       const lastSeen = error.lastSeen ? this.formatDate(error.lastSeen) : '';
       // Выпадающее меню действий через методы
-      const actionsCell = el('td', {
-        className: 'error-table__cell error-table__cell--actions flex',
-      });
-
-      const dropdownBtn = el(
-        'button',
-        {
-          className: 'error-table__dropdown-btn flex',
-          'aria-label': t('tableActions') || 'Actions',
-        },
-        '⋮',
-      );
-      const editBtn = this.createEditButton(error);
-      const deleteBtn = this.createDeleteButton(error);
-      editBtn.style.margin = '2px 0';
-      deleteBtn.style.margin = '2px 0';
-      const dropdownMenu = el('div', { className: 'error-table__dropdown-menu' }, [editBtn, deleteBtn]);
-
-      // Открытие/закрытие меню
-      dropdownBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        dropdownMenu.style.display = dropdownMenu.style.display === 'none' ? 'flex' : 'none';
-      });
-      // Закрытие по клику вне меню
-      document.addEventListener('click', () => {
-        dropdownMenu.style.display = 'none';
-      });
-      actionsCell.appendChild(dropdownBtn);
-      actionsCell.appendChild(dropdownMenu);
+      const actionsCell = this.createActionsCell(error);
 
       return el('tr', { className: 'error-table__row' }, [
-        el('td', { className: 'error-table__cell error-table__cell--id' }, this.formatId(error.id)),
-        el('td', { className: 'error-table__cell error-table__cell--data' }, typeText),
-        el('td', { className: 'error-table__cell error-table__cell--count' }, error.count || 1),
-        el('td', { className: 'error-table__cell error-table__cell--firstseen' }, firstSeen),
-        el('td', { className: 'error-table__cell error-table__cell--lastseen' }, lastSeen),
+        createElement('td', { className: 'error-table__cell error-table__cell--id' }, this.formatId(error.id)),
+        createElement('td', { className: 'error-table__cell error-table__cell--data' }, typeText),
+        createElement('td', { className: 'error-table__cell error-table__cell--count' }, String(error.count || 1)),
+        createElement('td', { className: 'error-table__cell error-table__cell--firstseen' }, firstSeen),
+        createElement('td', { className: 'error-table__cell error-table__cell--lastseen' }, lastSeen),
         el('td', { className: 'error-table__cell error-table__cell--status' }, statusText),
         actionsCell,
       ]);
     });
     setChildren(tableBody, rows);
-
-    // Переводим кнопки Edit/Delete после рендера, используя актуальный язык
-    const editBtns = tableBody.querySelectorAll('.error-table__btn--edit[data-i18n]');
-    editBtns.forEach((btn) => {
-      const key = btn.getAttribute('data-i18n');
-      btn.textContent = t(key) || key;
-    });
-    const deleteBtns = tableBody.querySelectorAll('.error-table__btn--delete[data-i18n]');
-    deleteBtns.forEach((btn) => {
-      const key = btn.getAttribute('data-i18n');
-      btn.textContent = t(key) || key;
-    });
+    // Переводим кнопки после рендера
+    translateNodes(tableBody, '.error-table__btn--edit[data-i18n], .error-table__btn--delete[data-i18n]');
 
     // Скрываем спиннер после рендера
-    const tableSection = document.getElementById('errorTableSection');
+    const tableSection = qs<HTMLElement>('#errorTableSection');
     hideCenterSpinner(tableSection);
   }
 
-  createEditButton(error) {
-    const btn = el(
+  createActionsCell(error: ErrorItem): HTMLElement {
+    const actionsCell = createElement('td', {
+      className: 'error-table__cell error-table__cell--actions flex',
+    });
+
+    const dropdownBtn = createElement(
+      'button',
+      {
+        className: 'error-table__dropdown-btn flex',
+        ariaLabel: t('tableActions') || 'Actions',
+      },
+      '⋮',
+    );
+    const editBtn = this.createEditButton(error);
+    const deleteBtn = this.createDeleteButton(error);
+    const dropdownMenu = createElement('div', { className: 'error-table__dropdown-menu' });
+    dropdownMenu.appendChild(editBtn);
+    dropdownMenu.appendChild(deleteBtn);
+
+    dropdownBtn.addEventListener('click', (ev: Event) => {
+      ev.stopPropagation();
+      dropdownMenu.style.display = dropdownMenu.style.display === 'none' ? 'flex' : 'none';
+    });
+    // Добавляем глобальный обработчик для закрытия всех выпадающих меню один раз
+    if (!(window as any).__errorTableDropdownListenerAdded) {
+      document.body.addEventListener('click', (ev: Event) => {
+        const target = ev.target as Node;
+        document.querySelectorAll<HTMLElement>('.error-table__dropdown-menu').forEach((menu) => {
+          const toggleBtn = menu.previousElementSibling as HTMLElement | null;
+          if (!menu.contains(target) && !(toggleBtn && toggleBtn.contains(target))) {
+            menu.style.display = 'none';
+          }
+        });
+      });
+      (window as any).__errorTableDropdownListenerAdded = true;
+    }
+    actionsCell.appendChild(dropdownBtn);
+    actionsCell.appendChild(dropdownMenu);
+    return actionsCell;
+  }
+
+  createEditButton(error: ErrorItem): HTMLButtonElement {
+    const btn = createElement(
       'button',
       {
         className: 'error-table__btn error-table__btn--edit',
-        'data-i18n': 'tableEditBtn',
-        'aria-label': t('tableEditBtn') || 'Edit',
+        dataI18n: 'tableEditBtn',
+        ariaLabel: t('tableEditBtn') || 'Edit',
       },
       t('tableEditBtn'),
     );
 
     btn.addEventListener('click', async () => {
       try {
-        const { showLoading, hideLoading } = await import('./utils/loading');
+        const mod = await import('./utils/loading');
+        // eslint-disable-next-line no-unused-vars
+        const showLoading = mod.showLoading as (_btn?: HTMLElement, mode?: string) => void;
+        // eslint-disable-next-line no-unused-vars
+        const hideLoading = mod.hideLoading as (_btn?: HTMLElement | undefined) => void;
         showLoading(btn, 'save');
 
         import('./modal')
-          .then(({ Modal }) => {
+          .then(({ Modal }: { Modal: any }) => {
             const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
             window.appModal = new Modal(mode);
             window.appModal.openEdit(error);
             setTimeout(() => hideLoading(btn), 0);
           })
-          .catch((error) => {
-            handleModuleLoadError('Ошибка при открытии модального окно редактирования:', error, hideLoading, btn);
+          .catch((err: unknown) => {
+            handleModuleLoadError('Ошибка при открытии модального окно редактирования:', err, hideLoading, btn);
           });
-      } catch (impErr) {
+      } catch (impErr: unknown) {
         handleModuleLoadError('Failed to load loading utils for edit', impErr);
       }
     });
     return btn;
   }
 
-  createDeleteButton(error) {
+  createDeleteButton(error: ErrorItem): HTMLButtonElement {
     const btn = el(
       'button',
       {
         className: 'error-table__btn error-table__btn--delete',
         'data-i18n': 'tableDeleteBtn',
-        'aria-label': t('tableDeleteBtn') || 'Delete',
+        ariaLabel: t('tableDeleteBtn') || 'Delete',
       },
       t('tableDeleteBtn'),
     );
@@ -174,7 +190,15 @@ export class ErrorTable {
             setTimeout(() => hideLoading(btn), 0);
           })
           .catch((error) => {
-            handleModuleLoadError('Ошибка при открытии модального окна удаления:', error, hideLoading, btn);
+            // Оборачиваем hideLoading в функцию с необязательным параметром, чтобы соответствовать типу (btn?: HTMLElement | undefined) => void
+            handleModuleLoadError(
+              'Ошибка при открытии модального окна удаления:',
+              error,
+              (b?: HTMLElement) => {
+                if (b) hideLoading(b);
+              },
+              btn,
+            );
           });
       } catch (impErr) {
         handleModuleLoadError('Failed to load loading utils for delete (table)', impErr);
@@ -183,11 +207,11 @@ export class ErrorTable {
     return btn;
   }
 
-  formatId(id) {
+  formatId(id: string): string {
     return id.length > 10 ? `${id.slice(0, 8)}-...${id.slice(-4)}` : id;
   }
 
-  formatDate(dateStr) {
+  formatDate(dateStr: string): string {
     const date = new Date(dateStr);
     if (isNaN(date.getTime())) return '';
 
@@ -201,55 +225,58 @@ export class ErrorTable {
     return `${day}.${month}.${year}  ${hours}:${minutes}`;
   }
 
-  sortErrors(errors, field, order = 'asc') {
+  sortErrors(errors: ErrorItem[], field: string, order: string): ErrorItem[] {
     const statusOrder = ['new', 'in_progress', 'fixed', 'ignored'];
+    const orders: 'asc' | 'desc' = order === 'desc' ? 'desc' : 'asc';
+    // приведение поля к известному FieldName для ветвления, но сохранение оригинального поля для динамического доступа
+    const fieldName = (['id', 'type', 'count', 'firstSeen', 'lastSeen', 'status'].includes(field) ? field : field) as FieldName;
 
-    return errors.sort((a, b) => {
-      if (field === 'status') {
+    return errors.sort((a: ErrorItem, b: ErrorItem) => {
+      if (fieldName === 'status') {
         const aStatus = (a.status || 'new').toString().toLowerCase();
         const bStatus = (b.status || 'new').toString().toLowerCase();
         const aIndex = statusOrder.indexOf(aStatus);
         const bIndex = statusOrder.indexOf(bStatus);
         if (aIndex !== -1 && bIndex !== -1) {
-          return order === 'asc' ? aIndex - bIndex : bIndex - aIndex;
+          return orders === 'asc' ? aIndex - bIndex : bIndex - aIndex;
         } else if (aIndex !== -1) {
-          return order === 'asc' ? -1 : 1;
+          return orders === 'asc' ? -1 : 1;
         } else if (bIndex !== -1) {
-          return order === 'asc' ? 1 : -1;
+          return orders === 'asc' ? 1 : -1;
         } else {
           const aText = t(aStatus) || aStatus;
           const bText = t(bStatus) || bStatus;
-          return order === 'asc' ? aText.localeCompare(bText) : bText.localeCompare(aText);
+          return orders === 'asc' ? aText.localeCompare(bText) : bText.localeCompare(aText);
         }
       }
-      if (field === 'id') {
+      if (fieldName === 'id') {
         const aValue = a.id ? a.id.toString().toLowerCase() : '';
         const bValue = b.id ? b.id.toString().toLowerCase() : '';
-        return order === 'asc' ? (aValue > bValue ? 1 : aValue < bValue ? -1 : 0) : aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
+        return orders === 'asc' ? (aValue > bValue ? 1 : aValue < bValue ? -1 : 0) : aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
       }
-      if (field === 'count') {
-        return order === 'asc' ? (a.count || 0) - (b.count || 0) : (b.count || 0) - (a.count || 0);
+      if (fieldName === 'count') {
+        const aCount = Number(a.count ?? 0);
+        const bCount = Number(b.count ?? 0);
+        return orders === 'asc' ? aCount - bCount : bCount - aCount;
       }
-      if (field === 'firstSeen') {
-        const getFirstSeen = (err) => err.firstSeen || '';
+      if (fieldName === 'firstSeen') {
+        const getFirstSeen = (err: ErrorItem) => err.firstSeen || '';
         const aValue = getFirstSeen(a) ? new Date(getFirstSeen(a)).getTime() : 0;
         const bValue = getFirstSeen(b) ? new Date(getFirstSeen(b)).getTime() : 0;
-        return order === 'asc' ? aValue - bValue : bValue - aValue;
+        return orders === 'asc' ? aValue - bValue : bValue - aValue;
       }
-      if (field === 'lastSeen') {
-        const getLastSeen = (err) => err.lastSeen || '';
+      if (fieldName === 'lastSeen') {
+        const getLastSeen = (err: ErrorItem) => err.lastSeen || '';
         const aValue = getLastSeen(a) ? new Date(getLastSeen(a)).getTime() : 0;
         const bValue = getLastSeen(b) ? new Date(getLastSeen(b)).getTime() : 0;
-        return order === 'asc' ? aValue - bValue : bValue - aValue;
+        return orders === 'asc' ? aValue - bValue : bValue - aValue;
       }
-      // Для других строковых полей
-      let aValue = a[field];
-      let bValue = b[field];
-      if (typeof aValue === 'string' && typeof bValue === 'string') {
-        aValue = aValue.toLowerCase();
-        bValue = bValue.toLowerCase();
-      }
-      return order === 'asc' ? (aValue > bValue ? 1 : aValue < bValue ? -1 : 0) : aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
+      // Для других строковых полей (используем приведение к any для динамического доступа)
+      const aRaw: unknown = (a as any)[field];
+      const bRaw: unknown = (b as any)[field];
+      const aValue = String(aRaw ?? '').toLowerCase();
+      const bValue = String(bRaw ?? '').toLowerCase();
+      return orders === 'asc' ? (aValue > bValue ? 1 : aValue < bValue ? -1 : 0) : aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
     });
   }
 }
@@ -264,13 +291,12 @@ document.addEventListener('DOMContentLoaded', () => {
     errorTable.renderErrors(errors);
     const statsManager = new StatsManager(errors);
     statsManager.renderErrorCards();
-    if (window.chartManager) {
-      window.chartManager.renderChart();
-    }
+    // безопасно вызываем renderChart, если chartManager и метод существуют
+    window.chartManager?.renderChart?.();
   };
 
   // Состояние направления сортировки
-  let sortOrder = {
+  let sortOrder: Record<FieldName, 'asc' | 'desc'> = {
     id: 'asc',
     type: 'asc',
     count: 'asc',
@@ -280,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // Универсальный обработчик сортировки
-  async function handleSort(field) {
+  async function handleSort(field: FieldName) {
     // Если фильтр активен — сортируем только по отфильтрованным данным
     if (window.headerManager && window.headerManager.filteredErrors) {
       const filtered = window.headerManager.filteredErrors;
@@ -305,7 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
     sortOrder[field] = sortOrder[field] === 'asc' ? 'desc' : 'asc';
   }
 
-  const sortIdBtn = document.getElementById('sortById');
+  const sortIdBtn = qs<HTMLElement>('#sortById');
   if (sortIdBtn) {
     sortIdBtn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -313,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const sortTypeBtn = document.getElementById('sortByType');
+  const sortTypeBtn = qs<HTMLElement>('#sortByType');
   if (sortTypeBtn) {
     sortTypeBtn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -321,21 +347,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const sortCountBtn = document.getElementById('sortByCount');
+  const sortCountBtn = qs<HTMLElement>('#sortByCount');
   if (sortCountBtn) {
     sortCountBtn.addEventListener('click', (e) => {
       e.preventDefault();
       handleSort('count');
     });
   }
-  const sortFirstSeenBtn = document.getElementById('sortByFirstSeen');
+  const sortFirstSeenBtn = qs<HTMLElement>('#sortByFirstSeen');
   if (sortFirstSeenBtn) {
     sortFirstSeenBtn.addEventListener('click', (e) => {
       e.preventDefault();
       handleSort('firstSeen');
     });
   }
-  const sortLastSeenBtn = document.getElementById('sortByLastSeen');
+  const sortLastSeenBtn = qs<HTMLElement>('#sortByLastSeen');
   if (sortLastSeenBtn) {
     sortLastSeenBtn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -343,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const sortStatusBtn = document.getElementById('sortByStatus');
+  const sortStatusBtn = qs<HTMLElement>('#sortByStatus');
   if (sortStatusBtn) {
     sortStatusBtn.addEventListener('click', (e) => {
       e.preventDefault();

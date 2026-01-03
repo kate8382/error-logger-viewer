@@ -1,4 +1,104 @@
 // Централизованный модуль i18n для управления языком и переводами
+// Определяем начальный язык и сохраняем его в currentLang
+let currentLang: 'en' | 'ru' = 'en';
+try {
+  const savedLang = localStorage.getItem('lang');
+  if (savedLang) {
+    currentLang = savedLang as 'en' | 'ru';
+  } else if (window.app?.errorApi) {
+    // window.app присутствует — используем app.lang дальше при необходимости
+  } else {
+    const nav = (navigator && (navigator.language || (navigator as any).userLanguage)) || 'en';
+    currentLang = String(nav).startsWith('en') ? 'en' : 'ru';
+  }
+} catch {
+  // Если localStorage недоступен, используем app или navigator
+  if (window.app && window.app.lang) {
+    currentLang = window.app.lang;
+  } else {
+    const nav = (navigator && (navigator.language || (navigator as any).userLanguage)) || 'en';
+    currentLang = String(nav).startsWith('en') ? 'en' : 'ru';
+  }
+}
+
+// Тип для определения языка
+type Lang = 'en' | 'ru';
+// eslint-disable-next-line no-unused-vars
+type LangChangeListener = (lang: Lang) => void;
+const listeners: Set<LangChangeListener> = new Set();
+
+// Получить текущий язык
+export function getCurrentLang() {
+  return currentLang;
+}
+
+// Установить язык
+export function setLang(lang: Lang): void {
+  if (lang !== currentLang) {
+    currentLang = lang;
+    if (window.app) window.app.lang = lang;
+    listeners.forEach((fn) => fn(lang));
+    // Сохраняем выбор языка, как делаем для темы
+    try {
+      localStorage.setItem('lang', lang);
+    } catch {
+      // игнорируем (localStorage может быть недоступен)
+    }
+  }
+}
+
+// Регистрация слушателя смены языка
+export function onLangChange(fn: LangChangeListener): void {
+  if (typeof fn === 'function') listeners.add(fn);
+}
+
+// Получить перевод по ключу (универсально)
+type TranslationsMap = typeof translations;
+type TranslationKeys = keyof TranslationsMap[Lang];
+type TemplateVars = Record<string, string | number | boolean>;
+
+export function t(key: TranslationKeys | string, vars: TemplateVars = {}): string {
+  const langMap = translations[currentLang] as TranslationsMap[Lang];
+  const raw = langMap?.[key as TranslationKeys];
+  let str = typeof raw === 'string' ? raw : (key as string);
+  Object.entries(vars).forEach(([k, v]) => {
+    str = str.replace(new RegExp(`{${k}}`, 'g'), String(v));
+  });
+  return str;
+}
+
+// Получить перевод для типа/статуса ошибки (универсально)
+export function getLabel(key?: string | TranslationKeys): string | undefined {
+  if (!key) return key;
+  const k = String(key);
+  const typeKey = k.startsWith('errorType_') ? k : 'errorType_' + k;
+  const langMap = translations[currentLang] as TranslationsMap[Lang];
+  if (Object.prototype.hasOwnProperty.call(langMap, typeKey)) {
+    return String(langMap[typeKey as TranslationKeys]);
+  }
+  if (Object.prototype.hasOwnProperty.call(langMap, k)) {
+    return String(langMap[k as TranslationKeys]);
+  }
+  return undefined;
+}
+
+// Получить все переводы для текущего языка
+export function getTranslations() {
+  return translations?.[currentLang] || {};
+}
+
+// Экспортируем объект для удобства
+const i18n = {
+  getCurrentLang,
+  setLang,
+  onLangChange,
+  t,
+  getLabel,
+  getTranslations,
+};
+export default i18n;
+
+// Объект с переводами
 export const translations = {
   en: {
     // Main
@@ -321,102 +421,3 @@ export const translations = {
     moduleLoadFailed: 'Не удалось загрузить модуль интерфейса. Пожалуйста, перезагрузите страницу.',
   },
 };
-
-// Определяем начальный язык и сохраняем его в currentLang
-let currentLang: 'en' | 'ru' = 'en';
-try {
-  const savedLang = localStorage.getItem('lang');
-  if (savedLang) {
-    currentLang = savedLang as 'en' | 'ru';
-  } else if (window.app?.errorApi) {
-    // window.app присутствует — используем app.lang дальше при необходимости
-  } else {
-    const nav = (navigator && (navigator.language || (navigator as any).userLanguage)) || 'en';
-    currentLang = String(nav).startsWith('en') ? 'en' : 'ru';
-  }
-} catch {
-  // Если localStorage недоступен, используем app или navigator
-  if (window.app && window.app.lang) {
-    currentLang = window.app.lang;
-  } else {
-    const nav = (navigator && (navigator.language || (navigator as any).userLanguage)) || 'en';
-    currentLang = String(nav).startsWith('en') ? 'en' : 'ru';
-  }
-}
-
-// Тип для определения языка
-type Lang = 'en' | 'ru';
-// eslint-disable-next-line no-unused-vars
-type LangChangeListener = (lang: Lang) => void;
-const listeners: Set<LangChangeListener> = new Set();
-
-// Получить текущий язык
-export function getCurrentLang() {
-  return currentLang;
-}
-
-// Установить язык
-export function setLang(lang: Lang): void {
-  if (lang !== currentLang) {
-    currentLang = lang;
-    if (window.app) window.app.lang = lang;
-    listeners.forEach((fn) => fn(lang));
-    // Сохраняем выбор языка, как делаем для темы
-    try {
-      localStorage.setItem('lang', lang);
-    } catch {
-      // игнорируем (localStorage может быть недоступен)
-    }
-  }
-}
-
-// Регистрация слушателя смены языка
-export function onLangChange(fn: LangChangeListener): void {
-  if (typeof fn === 'function') listeners.add(fn);
-}
-
-// Получить перевод по ключу (универсально)
-type TranslationsMap = typeof translations;
-type TranslationKeys = keyof TranslationsMap[Lang];
-type TemplateVars = Record<string, string | number | boolean>;
-
-export function t(key: TranslationKeys | string, vars: TemplateVars = {}): string {
-  const langMap = translations[currentLang] as TranslationsMap[Lang];
-  const raw = langMap?.[key as TranslationKeys];
-  let str = typeof raw === 'string' ? raw : (key as string);
-  Object.entries(vars).forEach(([k, v]) => {
-    str = str.replace(new RegExp(`{${k}}`, 'g'), String(v));
-  });
-  return str;
-}
-
-// Получить перевод для типа/статуса ошибки (универсально)
-export function getLabel(key?: string | TranslationKeys): string | undefined {
-  if (!key) return key;
-  const k = String(key);
-  const typeKey = k.startsWith('errorType_') ? k : 'errorType_' + k;
-  const langMap = translations[currentLang] as TranslationsMap[Lang];
-  if (Object.prototype.hasOwnProperty.call(langMap, typeKey)) {
-    return String(langMap[typeKey as TranslationKeys]);
-  }
-  if (Object.prototype.hasOwnProperty.call(langMap, k)) {
-    return String(langMap[k as TranslationKeys]);
-  }
-  return undefined;
-}
-
-// Получить все переводы для текущего языка
-export function getTranslations() {
-  return translations?.[currentLang] || {};
-}
-
-// Экспортируем объект для удобства
-const i18n = {
-  getCurrentLang,
-  setLang,
-  onLangChange,
-  t,
-  getLabel,
-  getTranslations,
-};
-export default i18n;
