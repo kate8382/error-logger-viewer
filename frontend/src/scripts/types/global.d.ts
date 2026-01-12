@@ -37,12 +37,12 @@ declare global {
   interface AppModalInterface {
     open?: (payload?: any) => void;
     close?: () => void;
-    openEdit: (err?: ErrorItem) => void;
-    deleteError: (id?: string) => void;
+    openEdit: (err: ErrorItem, _isLangChange?: boolean) => void;
+    deleteError: (id: string, _isLangChange?: boolean) => Promise<void> | void;
   }
 
   interface HeaderManagerInterface {
-    filterTable?: (query?: string) => void;
+    filterTable?: (query?: string) => Promise<void> | void;
     filteredErrors?: ErrorItem[];
   }
 
@@ -55,12 +55,15 @@ declare global {
     onLangChange?: (fn: (lang: 'en' | 'ru') => void) => void;
     renderErrorTable?: (errors?: ErrorItem[] | undefined) => void;
     errorTableInstance?: ErrorTableInterface;
-    appModal: AppModalInterface;
+    appModal?: AppModalInterface;
     statsManager?: StatsManagerInterface;
     chartManager?: ChartManagerInterface;
     headerManager?: HeaderManagerInterface | null;
     API_BASE_URL?: string;
     aside?: AsideInterface | null;
+    // внутренние helpers для modal.ts
+    closeCustomSelectModal?: (e?: MouseEvent) => void;
+    __errorTableDropdownListenerAdded?: boolean;
   }
 }
 

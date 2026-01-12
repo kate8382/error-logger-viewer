@@ -14,7 +14,7 @@ export class HeaderManager {
   chart: ChartManagerInterface | undefined; // Экземпляр ChartManager (из `window`)
   lang: string;
   justSwitchedToTable: boolean;
-  filteredErrors: ErrorItem[] | null;
+  filteredErrors: ErrorItem[] | undefined;
   _debounceTimers: Record<string, ReturnType<typeof setTimeout> | undefined> = {};
   _lastFilterRequestId = 0;
 
@@ -34,7 +34,7 @@ export class HeaderManager {
     this.chart = window.chartManager;
     this.lang = getCurrentLang();
     this.justSwitchedToTable = false;
-    this.filteredErrors = null;
+    this.filteredErrors = undefined;
     this.init();
   }
 
@@ -77,7 +77,7 @@ export class HeaderManager {
         titleSpan.textContent = t('title') || 'Error Logger & Viewer';
       } else {
         const existingAnchor = this.headerTitle.querySelector('a');
-        const span = createElement('span', { className: 'header__title-text', attrs: { 'data-i18n': 'title' }, text: t('title') || 'Error Logger & Viewer' });
+        const span = createElement('span', { className: 'header__title-text', dataI18n: 'title', text: t('title') || 'Error Logger & Viewer' });
         if (existingAnchor) existingAnchor.appendChild(span);
         else {
           const a = createElement('a', { attrs: { href: 'https://github.com/kate8382/error-logger-viewer', target: '_blank', rel: 'noopener noreferrer' } });
@@ -181,7 +181,7 @@ export class HeaderManager {
         this.searchInput.value = '';
         this.searchInput.dispatchEvent(new Event('input'));
       }
-      this.filteredErrors = null;
+      this.filteredErrors = undefined;
       // Сброс таблицы: показать все ошибки через fetchErrors
       if (this.table && typeof this.table.fetchErrors === 'function') this.table.fetchErrors();
       this.showAllSections();
@@ -227,7 +227,7 @@ export class HeaderManager {
             if (this.searchInput && this.searchInput.value) {
               // Первый клик: сброс фильтра таблицы, остаёмся в таблице
               this.searchInput.value = '';
-              this.filteredErrors = null;
+              this.filteredErrors = undefined;
               this.setSearchPlaceholder('table');
               this.showOnlySection('table');
               if (this.searchIcon) this.searchIcon.style.display = '';
@@ -235,7 +235,7 @@ export class HeaderManager {
               this.resetAllViews();
             } else {
               // Второй клик: выход на главную
-              this.filteredErrors = null;
+              this.filteredErrors = undefined;
               this.showAllSections();
               this.setHeaderTitleBySection(null); // Явно возвращаем основной заголовок
               if (this.searchIcon) this.searchIcon.style.display = '';
@@ -248,7 +248,7 @@ export class HeaderManager {
           // 2. Фильтрация по секциям — всегда полный выход
           else if (visibleSections.length === 1) {
             if (this.searchInput) this.searchInput.value = '';
-            this.filteredErrors = null;
+            this.filteredErrors = undefined;
             this.showAllSections();
             this.setHeaderTitleBySection(null); // Явно возвращаем основной заголовок
             if (this.searchIcon) this.searchIcon.style.display = '';
@@ -387,14 +387,15 @@ export class HeaderManager {
     if (this.searchInput) this.setSearchPlaceholder(onlyTableVisible ? 'table' : 'default');
   }
 
-  async filterTable(query: string) {
+  async filterTable(query?: string) {
+    const q = query || '';
     // запрос id чтобы избежать гонок: только последний ответ должен обновлять UI
     const requestId = ++this._lastFilterRequestId;
     // Получаем все ошибки
     const errors = await this.api.getErrors({});
     if (requestId !== this._lastFilterRequestId) return;
-    const filtered = filterErrors(errors, query, { getLabel, t });
-    this.filteredErrors = Array.isArray(filtered) && Array.isArray(errors) && filtered.length < (errors?.length || 0) ? filtered : null;
+    const filtered = filterErrors(errors, q, { getLabel, t });
+    this.filteredErrors = Array.isArray(filtered) && Array.isArray(errors) && filtered.length < (errors?.length || 0) ? filtered : undefined;
     this.table.renderErrors(filtered);
   }
 
@@ -435,7 +436,7 @@ export class HeaderManager {
 
 // Инициализация HeaderManager при загрузке DOM
 document.addEventListener('DOMContentLoaded', () => {
-  (window as any).headerManager = new HeaderManager();
+  window.headerManager = new HeaderManager();
 
   // Логика бургер-меню для мобильной версии
   const burger = qs<HTMLElement>('#headerBurgerBtn');
