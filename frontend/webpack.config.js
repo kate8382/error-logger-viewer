@@ -9,7 +9,7 @@ module.exports = (env = {}) => ({
   output: {
     filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'dist'),
-    clean: true
+    clean: true,
   },
   module: {
     rules: [
@@ -19,37 +19,35 @@ module.exports = (env = {}) => ({
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/preset-typescript']
-          }
-        }
+            presets: ['@babel/preset-env', '@babel/preset-typescript'],
+          },
+        },
       },
       {
         test: /\.s?css$/i,
-        use: env.prod
-          ? [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
-          : ['style-loader', 'css-loader', 'sass-loader'],
+        use: env.prod ? [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'] : ['style-loader', 'css-loader', 'sass-loader'],
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
         generator: {
-          filename: 'img/[name][ext]'
-        }
+          filename: 'img/[name][ext]',
+        },
       },
       {
         test: /\.(woff|woff2)$/i,
         type: 'asset/resource',
         generator: {
-          filename: 'fonts/[name][ext]'
-        }
-      }
-    ]
+          filename: 'fonts/[name][ext]',
+        },
+      },
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: 'src/index.html',
       filename: 'index.html',
-      inject: 'body'
+      inject: 'body',
     }),
     new MiniCssExtractPlugin({
       filename: 'style.[contenthash].css',
@@ -58,22 +56,22 @@ module.exports = (env = {}) => ({
       patterns: [
         { from: path.resolve(__dirname, 'src/assets/img'), to: 'img' },
         { from: path.resolve(__dirname, 'src/assets/fonts'), to: 'fonts' },
-        { from: path.resolve(__dirname, 'favicon.ico'), to: '' }
-      ]
-    })
+        { from: path.resolve(__dirname, 'favicon.ico'), to: '' },
+      ],
+    }),
   ],
   resolve: {
-    extensions: ['.ts', '.js']
+    extensions: ['.ts', '.js'],
   },
   devServer: {
     static: {
-      directory: path.resolve(__dirname, 'dist')
+      directory: path.resolve(__dirname, 'dist'),
     },
     historyApiFallback: true,
     hot: true,
     port: 8080,
     open: true,
     compress: true,
-    host: '0.0.0.0'
-  }
+    host: '0.0.0.0',
+  },
 });
