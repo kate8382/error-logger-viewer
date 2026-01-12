@@ -19,27 +19,59 @@ export function assertExists<T extends Element = Element>(el: T | null, selector
 }
 
 // Опции для createElement
-export interface CreateElementOptions {
+export interface CreateElementOptions extends Record<string, any> {
   className?: string;
-  attrs?: Record<string, string>;
-  text?: string;
-  dataI18n?: string;
-  ariaLabel?: string;
+  id?: string;
+  role?: string;
+  tabIndex?: number | string;
+  style?: string;
+  disabled?: boolean;
+  href?: string;
+  // legacy-friendly: любые data-*, aria-* и др. атрибуты допускаются
+  [attr: string]: any;
 }
 
 // Создает элемент с опциональными классами, атрибутами и текстом
-export function createElement<K extends keyof HTMLElementTagNameMap>(tag: K, options?: CreateElementOptions, textContent?: string | undefined): HTMLElementTagNameMap[K] {
+export function createElement<K extends keyof HTMLElementTagNameMap>(tag: K, options?: CreateElementOptions, ...children: Array<string | number | Node | Array<Node | string | number> | null | undefined>): HTMLElementTagNameMap[K] {
   const el = document.createElement(tag) as HTMLElementTagNameMap[K];
   if (options?.className) el.className = options.className;
-  if (options?.text) el.textContent = options.text;
+  if (options?.text && (!children || children.length === 0)) el.textContent = options.text;
   if (options?.attrs) {
-    for (const [k, v] of Object.entries(options.attrs)) el.setAttribute(k, v);
+    for (const [k, v] of Object.entries(options.attrs)) {
+      if (v === null || v === undefined) continue;
+      el.setAttribute(k, String(v));
+    }
   }
-  if (options?.dataI18n) el.setAttribute('data-i18n', options.dataI18n);
-  if (options?.ariaLabel) el.setAttribute('aria-label', options.ariaLabel);
-  if (textContent !== undefined && textContent !== null) {
-    el.textContent = textContent;
+  if (options?.id) el.id = String(options.id);
+  if (options?.role) el.setAttribute('role', String(options.role));
+  if (options?.tabIndex !== undefined) el.setAttribute('tabindex', String(options.tabIndex));
+  if (options?.style) el.setAttribute('style', String(options.style));
+  if (options?.href) el.setAttribute('href', String(options.href));
+  if (options?.disabled !== undefined) (el as any).disabled = Boolean(options.disabled);
+  if (options?.dataI18n) el.setAttribute('data-i18n', String(options.dataI18n));
+  if (options?.ariaLabel) el.setAttribute('aria-label', String(options.ariaLabel));
+  if (options?.ariaHidden) el.setAttribute('aria-hidden', String(options.ariaHidden));
+
+  // добавляем дочерние элементы (строки, узлы или их массивы)
+  if (children && children.length) {
+    const appendChildValue = (c: string | number | Node) => {
+      if (typeof c === 'string' || typeof c === 'number') el.appendChild(document.createTextNode(String(c)));
+      else if (c != null) el.appendChild(c);
+    };
+
+    children.forEach((ch) => {
+      if (ch == null) return;
+      if (Array.isArray(ch)) {
+        ch.forEach((nested) => {
+          if (nested == null) return;
+          appendChildValue(typeof nested === 'string' ? nested : (nested as Node));
+        });
+      } else {
+        appendChildValue(typeof ch === 'string' ? ch : (ch as Node));
+      }
+    });
   }
+
   return el;
 }
 

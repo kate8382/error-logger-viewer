@@ -111,7 +111,7 @@ export class ErrorTable {
       dropdownMenu.style.display = dropdownMenu.style.display === 'none' ? 'flex' : 'none';
     });
     // Добавляем глобальный обработчик для закрытия всех выпадающих меню один раз
-    if (!(window as any).__errorTableDropdownListenerAdded) {
+    if (!window.__errorTableDropdownListenerAdded) {
       document.body.addEventListener('click', (ev: Event) => {
         const target = ev.target as Node;
         document.querySelectorAll<HTMLElement>('.error-table__dropdown-menu').forEach((menu) => {
@@ -121,7 +121,7 @@ export class ErrorTable {
           }
         });
       });
-      (window as any).__errorTableDropdownListenerAdded = true;
+      window.__errorTableDropdownListenerAdded = true;
     }
     actionsCell.appendChild(dropdownBtn);
     actionsCell.appendChild(dropdownMenu);
@@ -151,8 +151,9 @@ export class ErrorTable {
         import('./modal')
           .then(({ Modal }: { Modal: any }) => {
             const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
-            window.appModal = new Modal(mode);
-            window.appModal.openEdit(error);
+            const modal = new Modal(mode);
+            window.appModal = modal;
+            modal.openEdit(error);
             setTimeout(() => hideLoading(btn), 0);
           })
           .catch((err: unknown) => {
@@ -166,11 +167,11 @@ export class ErrorTable {
   }
 
   createDeleteButton(error: ErrorItem): HTMLButtonElement {
-    const btn = el(
+    const btn = createElement(
       'button',
       {
         className: 'error-table__btn error-table__btn--delete',
-        'data-i18n': 'tableDeleteBtn',
+        dataI18n: 'tableDeleteBtn',
         ariaLabel: t('tableDeleteBtn') || 'Delete',
       },
       t('tableDeleteBtn'),
@@ -184,8 +185,9 @@ export class ErrorTable {
         import('./modal')
           .then(({ Modal }) => {
             const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
-            window.appModal = new Modal(mode);
-            window.appModal.deleteError(error.id);
+            const modal = new Modal(mode);
+            window.appModal = modal;
+            modal.deleteError(error.id);
             // После завершения действия скрываем спиннер
             setTimeout(() => hideLoading(btn), 0);
           })
@@ -283,10 +285,12 @@ export class ErrorTable {
 
 // Инициализация таблицы и статистики при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
-  // Глобальный экземпляр для обновления из модалок
-  const errorTable = new ErrorTable();
+  // Используем существующий глобальный экземпляр, если он уже создан (например в main.js),
+  // чтобы не перезаписывать инстанс и избежать рассинхронизации данных.
+  const existing = window.errorTableInstance as unknown as ErrorTable | undefined;
+  const errorTable = existing || new ErrorTable();
   window.errorTableInstance = errorTable;
-  errorTable.fetchErrors();
+  if (typeof errorTable.fetchErrors === 'function') errorTable.fetchErrors();
   window.renderErrorTable = (errors) => {
     errorTable.renderErrors(errors);
     const statsManager = new StatsManager(errors);

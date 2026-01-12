@@ -6,19 +6,19 @@ const sample = [
   { id: 'abc-3', type: 'ui', status: 'in_progress', firstSeen: 'invalid', lastSeen: '' },
 ];
 
-test('getDateOnly formats ISO to DD.MM.YYYY and handles invalid', () => {
+test('getDateOnly форматирует ISO в DD.MM.YYYY и обрабатывает неверные значения', () => {
   expect(getDateOnly('2025-10-01T12:00:00Z')).toMatch(/01\.10\.2025/);
   expect(getDateOnly('invalid')).toBe('');
   expect(getDateOnly(undefined)).toBe('');
 });
 
-test('filter by id and partial id', () => {
+test('фильтрация по id и частичному id', () => {
   const r = filterErrors(sample, 'abc');
   expect(r).toHaveLength(1);
   expect(r[0].id).toBe('abc-3');
 });
 
-test('filter by type using getLabel and status using t', () => {
+test('фильтрация по типу с использованием getLabel и по статусу с использованием t', () => {
   const r = filterErrors(sample, 'database', {
     getLabel: (type) => (type === 'db' ? 'Database' : type || ''),
     t: (k) => (k === 'fixed' ? 'Fixed' : k || ''),
