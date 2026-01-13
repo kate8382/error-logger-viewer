@@ -445,9 +445,9 @@ export default class ChartManager {
     this.renderChart();
   }
 
-  prepareChartData(stats: Stats, getLabel: (key: string) => string): { labels: string[], data: number[] } {
+  prepareChartData(stats: Stats, labelFn: (key: string) => string | undefined = getLabel): { labels: string[], data: number[] } {
     // stats: { "type1": count, "type2": count, ... }
-    const labels = Object.keys(stats).map((key) => getLabel(key));
+    const labels = Object.keys(stats).map((key) => labelFn(key) ?? key);
     const data = Object.values(stats);
     return { labels, data };
   }
