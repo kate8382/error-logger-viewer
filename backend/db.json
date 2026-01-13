@@ -648,6 +648,20 @@
       "users": [
         "unknown"
       ]
+    },
+    {
+      "id": "acc062e5-882a-4839-92eb-c1349cd932ca",
+      "projectId": "unknown",
+      "type": "ResourceLoadError",
+      "message": "Failed to load resource: SCRIPT",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2026-01-13T17:45:38.279Z",
+      "lastSeen": "2026-01-13T17:45:38.279Z",
+      "users": [
+        "unknown"
+      ]
     }
   ],
   "projects": [

@@ -9,3 +9,4 @@ export interface ErrorItem {
 }
 export type NewError = Omit<ErrorItem, 'id' | 'firstSeen' | 'lastSeen'>; // Omit исключает указанные ключи из типа
 export type Stats = Record<string, number>; // Record представляет объект с ключами-строками и значениями-числами
+export type PeriodStats = Record<string, Stats>; // Статистика, сгруппированная по периодам (period -> { key: count })

@@ -2,7 +2,7 @@ import '../assets/scss/style.scss';
 import { ErrorApi } from './api';
 import './header';
 import { StatsManager } from './stats';
-import ChartManager from './charts.js';
+import ChartManager from './charts';
 import { ErrorTable } from './table';
 import { getCurrentLang, onLangChange } from './utils/i18n';
 import { updateTestErrorButtonVisibility } from './utils/testErrorButton';
