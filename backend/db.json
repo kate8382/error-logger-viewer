@@ -633,6 +633,35 @@
       "users": [
         "unknown"
       ]
+    },
+    {
+      "id": "f5e3c941-6d15-4fe5-8e6e-ce64efe47a58",
+      "projectId": "unknown",
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:201:32)\n    at Generator.eval (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:15:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:16:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:22:70)\n    at _next (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:23:163)\n    at eval (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:23:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer-frontend/./src/scripts/main.js?:23:90)\n    at eval (webpack://error-logger-viewer-frontend/./src/scripts/utils/request.ts?:19:18)\n    at Generator.eval (webpack://error-logger-viewer-frontend/./src/scripts/utils/request.ts?:5:1660)",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2026-01-12T16:03:45.945Z",
+      "lastSeen": "2026-01-12T16:03:45.945Z",
+      "users": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "acc062e5-882a-4839-92eb-c1349cd932ca",
+      "projectId": "unknown",
+      "type": "ResourceLoadError",
+      "message": "Failed to load resource: SCRIPT",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2026-01-13T17:45:38.279Z",
+      "lastSeen": "2026-01-13T17:45:38.279Z",
+      "users": [
+        "unknown"
+      ]
     }
   ],
   "projects": [

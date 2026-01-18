@@ -20,6 +20,18 @@ await db.read();
 await db.write();
 console.log('db.data:', db.data);
 
+// Загружаем общие лимиты периодов из config/periods.json
+let PERIOD_LIMITS = { day: 7, week: 8, month: 6, year: 4 };
+try {
+  // dynamic import with json assertion (Node ESM)
+
+  const cfg = await import('../config/periods.json', { assert: { type: 'json' } });
+  // eslint-disable-next-line no-unused-vars
+  if (cfg && cfg.default) PERIOD_LIMITS = cfg.default;
+} catch (e) {
+  console.warn('[server] Could not load config/periods.json, using defaults', e);
+}
+
 // Инициализация структуры данных, если она отсутствует
 if (!db.data) db.data = { errors: [], projects: [] };
 else {
@@ -167,17 +179,19 @@ app.get('/errors/stats', async (req, res) => {
       const key = group === 'type' ? e.type || 'Unknown' : e.status || 'new';
       result[periodKey][key] = (result[periodKey][key] || 0) + 1;
     });
-    // Оставить только последние 7 дней, если by === 'day'
-    if (by === 'day') {
-      const sortedKeys = Object.keys(result).sort();
-      const last7 = sortedKeys.slice(-7);
+    // Применяем ограничение по числу периодов для уменьшения объёма данных,
+    // если это необходимо (напр., дни/недели/месяцы/годы).
+    const PERIOD_LIMITS = { day: 7, week: 8, month: 6, year: 4 };
+    const sortedKeys = Object.keys(result).sort();
+    const lim = PERIOD_LIMITS[by] ?? 0;
+    if (lim > 0 && sortedKeys.length > lim) {
+      const last = sortedKeys.slice(-lim);
       const filtered = {};
-      last7.forEach((k) => {
+      last.forEach((k) => {
         filtered[k] = result[k];
       });
       return res.json(filtered);
     }
-    // ВАЖНО: не переходим к else, всегда возвращаем periods!
     return res.json(result);
   }
   // Если параметр некорректный — по умолчанию возвращаем по статусу

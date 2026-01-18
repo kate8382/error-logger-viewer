@@ -1,0 +1,9 @@
+# нормализовать текстовые файлы в LF при коммите
+* text=auto
+*.js text
+*.ts text
+*.json text
+*.css text
+*.scss text
+*.html text
+*.md text
