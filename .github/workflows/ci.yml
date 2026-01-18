@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, feat/*, '*-ts' ]
   pull_request:
     branches: [ main ]
 
@@ -77,6 +77,22 @@ jobs:
             frontend/cypress/videos
             frontend/cypress/logs
             frontend/cypress-run.log
+
+  backend-tests:
+    name: "CI / Backend: tests"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install backend deps
+        working-directory: backend
+        run: npm ci
+      - name: Run backend tests
+        working-directory: backend
+        run: npm test
 
   lint:
     name: Lint
