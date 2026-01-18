@@ -3,7 +3,7 @@ import type { Chart as ChartJS } from 'chart.js'; // Импортируем ти
 import { API_BASE_URL } from './api';
 import type { ErrorItem, Stats, PeriodStats } from './types/errors';
 import { request } from './utils/request';
-import { qs, createElement, translateNodes } from './utils/dom';
+import { qs } from './utils/dom';
 import { t, getLabel, onLangChange, setLang } from './utils/i18n';
 import { typeColors, statusColors } from './utils/colors';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
@@ -82,23 +82,32 @@ export default class ChartManager {
 
   // Обновляет размер шрифта на графике и перерисовывает его
   updateFontSize() {
-    if (this.chart && this.chart.options && this.chart.options.plugins && this.chart.options.plugins.legend && this.chart.options.plugins.legend.labels) {
-      const labels = this.chart.options.plugins.legend.labels;
-      // Нормализуем font: если это функция — заменяем объектом, иначе расширяем существующий объект безопасно
-      const currentFont = labels.font;
+    if (!this.chart || !this.chart.options) return;
+
+    const fontSize = this.getResponsiveFontSize();
+
+    // Обновляем шрифт легенды если она присутствует
+    const legendLabels = (this.chart.options.plugins && this.chart.options.plugins.legend && this.chart.options.plugins.legend.labels) as any | undefined;
+    if (legendLabels) {
+      const currentFont = legendLabels.font;
       if (typeof currentFont === 'function') {
-        // Заменяем функцию на объект с нужным размером (функция не поддерживает прямую модификацию)
-        labels.font = { size: this.getResponsiveFontSize() } as any;
+        legendLabels.font = { size: fontSize } as any;
       } else {
-        // currentFont может быть Partial<FontSpec> | undefined — используем any для безопасной установки size
-        labels.font = { ...(currentFont as any), size: this.getResponsiveFontSize() } as any;
+        legendLabels.font = { ...(currentFont as any), size: fontSize } as any;
       }
-      // Если график по дням — перерисовываем полностью, чтобы обновить формат дат
-      if (this.currentType === 'day' || this.currentType === 'date') {
-        this.renderChart();
-      } else {
-        this.chart.update();
-      }
+    }
+
+    // Обновляем шрифты для подписей осей X/Y если они доступны
+    const xTicks = (this.chart.options.scales && (this.chart.options.scales as any).x && (this.chart.options.scales as any).x.ticks) as any | undefined;
+    const yTicks = (this.chart.options.scales && (this.chart.options.scales as any).y && (this.chart.options.scales as any).y.ticks) as any | undefined;
+    if (xTicks) xTicks.font = { ...((xTicks.font as any) || {}), size: fontSize } as any;
+    if (yTicks) yTicks.font = { ...((yTicks.font as any) || {}), size: fontSize } as any;
+
+    // Если график по дням — перерисовываем полностью, чтобы обновить формат дат
+    if (this.currentType === 'day' || this.currentType === 'date') {
+      this.renderChart();
+    } else {
+      this.chart.update();
     }
   }
 
@@ -108,11 +117,12 @@ export default class ChartManager {
     const d = new Date(dateStr);
     if (by === 'day') return d.toISOString().slice(0, 10);
     if (by === 'week') {
-      const year = d.getFullYear();
-      const firstJan = new Date(year, 0, 1);
-      const days = Math.floor((d.getTime() - firstJan.getTime()) / 86400000);
-      const week = Math.ceil((days + firstJan.getDay() + 1) / 7);
-      return `${year}-W${week.toString().padStart(2, '0')}`;
+      const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      const dayNum = date.getUTCDay() || 7;
+      date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+      const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+      const weekNum = Math.ceil(((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+      return `${date.getUTCFullYear()}-W${weekNum.toString().padStart(2, '0')}`;
     }
     if (by === 'month') return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
     if (by === 'year') return d.getFullYear().toString();
@@ -210,6 +220,7 @@ export default class ChartManager {
           statsType = resType || {};
           const resStatus = await request<PeriodStats>(`${API_BASE_URL}/errors/stats?by=${byParam}&group=status`);
           statsStatus = resStatus || {};
+          // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
         } catch (e) {
           // В случае ошибки — оставляем пустые данные
           statsType = {};
@@ -318,9 +329,12 @@ export default class ChartManager {
    * Универсальная подготовка данных для bar chart (labels, datasets, стили, форматирование)
    * Используется и для demo, и для server режима
    */
-  prepareBarChartData(statsType: PeriodStats = {}, statsStatus: PeriodStats = {}, byParam: string = 'day', currentType: ChartManager['currentType'] = this.currentType): PreparedChartData {
-    // Собираем все ключи периодов, фильтруем только валидные
-    let periodKeys = Object.keys(statsType).filter((date) => {
+  prepareBarChartData(statsType: PeriodStats = {}, statsStatus: PeriodStats = {}, byParam: string = 'day', currentType?: ChartManager['currentType']): PreparedChartData {
+    currentType = currentType ?? this.currentType;
+
+    // Собираем все ключи периодов из типов и статусов, фильтруем только валидные
+    const keysSet = new Set<string>([...Object.keys(statsType || {}), ...Object.keys(statsStatus || {})]);
+    let periodKeys = Array.from(keysSet).filter((date) => {
       if (!date || typeof date !== 'string') return false;
       const typeVals = Object.values(statsType[date] || {});
       const statusVals = Object.values(statsStatus[date] || {});
@@ -333,8 +347,35 @@ export default class ChartManager {
       return total > 0;
     });
 
+    // Сортируем ключи периодов в хронологическом порядке для корректного отображения
+    try {
+      if (byParam === 'day' || byParam === 'date') {
+        periodKeys.sort((a, b) => Number(new Date(a)) - Number(new Date(b)));
+      } else if (byParam === 'week') {
+        const parseWeek = (wk: string) => {
+          const m = wk.match(/(\d{4})(?:-W)?(\d{1,2})/);
+          if (!m) return { y: 0, w: 0 };
+          return { y: Number(m[1]), w: Number(m[2]) };
+        };
+        periodKeys.sort((a, b) => {
+          const A = parseWeek(a);
+          const B = parseWeek(b);
+          return A.y === B.y ? A.w - B.w : A.y - B.y;
+        });
+      } else if (byParam === 'month') {
+        periodKeys.sort((a, b) => Number(new Date(a + '-01')) - Number(new Date(b + '-01')));
+      } else if (byParam === 'year') {
+        periodKeys.sort((a, b) => Number(a) - Number(b));
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+    } catch (err) {
+      // В случае любой ошибки сортировки — оставляем исходный порядок
+    }
+
     // Защита от некорректных periodKeys
     if (!Array.isArray(periodKeys)) periodKeys = [];
+
+    // NOTE: period limits are enforced on the server; frontend will render all received periods
     // Ограничиваем количество отображаемых периодов и настраиваем ширину баров
     let barPerc = 0.8;
     let catPerc = 0.6;
@@ -400,28 +441,37 @@ export default class ChartManager {
     const allTypes = Array.from(new Set(periodKeys.flatMap((date) => Object.keys(statsType[date] || {}))));
     const allStatuses = Array.from(new Set(periodKeys.flatMap((date) => Object.keys(statsStatus[date] || {}))));
 
+    // Helper для создания dataset — уменьшает дублирование
+    const makeDataset = (label: string, data: number[], backgroundColor: string | string[], stack: string) => ({
+      label,
+      data,
+      backgroundColor,
+      borderWidth: 0,
+      borderRadius: 8,
+      barPercentage: barPerc,
+      categoryPercentage: catPerc,
+      stack,
+    });
+
     // Формируем datasets для типов
-    const typeDatasets: PreparedChartData['datasets'] = allTypes.map((type, idx) => ({
-      label: (getLabel(type) || type) as string,
-      data: periodKeys.map((date) => Number(this.safeValue(statsType, date, type) || 0)),
-      backgroundColor: typeColors[idx % typeColors.length],
-      borderWidth: 0,
-      borderRadius: 8,
-      barPercentage: barPerc,
-      categoryPercentage: catPerc,
-      stack: 'types',
-    }));
+    const typeDatasets: PreparedChartData['datasets'] = allTypes.map((type, idx) =>
+      makeDataset(
+        (getLabel(type) || type) as string,
+        periodKeys.map((date) => Number(this.safeValue(statsType, date, type) || 0)),
+        typeColors[idx % typeColors.length],
+        'types',
+      ),
+    );
+
     // Для статусов используем t(status)
-    const statusDatasets: PreparedChartData['datasets'] = allStatuses.map((status, idx) => ({
-      label: t(status),
-      data: periodKeys.map((date) => Number(this.safeValue(statsStatus, date, status) || 0)),
-      backgroundColor: statusColors[idx % statusColors.length],
-      borderWidth: 0,
-      borderRadius: 8,
-      barPercentage: barPerc,
-      categoryPercentage: catPerc,
-      stack: 'statuses',
-    }));
+    const statusDatasets: PreparedChartData['datasets'] = allStatuses.map((status, idx) =>
+      makeDataset(
+        t(status),
+        periodKeys.map((date) => Number(this.safeValue(statsStatus, date, status) || 0)),
+        statusColors[idx % statusColors.length],
+        'statuses',
+      ),
+    );
     const datasets = [...typeDatasets, ...statusDatasets];
 
     // Рассчитываем nice max и шаг по всем данным
@@ -445,6 +495,7 @@ export default class ChartManager {
     this.renderChart();
   }
 
+  // eslint-disable-next-line no-unused-vars
   prepareChartData(stats: Stats, labelFn: (key: string) => string | undefined = getLabel): { labels: string[], data: number[] } {
     // stats: { "type1": count, "type2": count, ... }
     const labels = Object.keys(stats).map((key) => labelFn(key) ?? key);
