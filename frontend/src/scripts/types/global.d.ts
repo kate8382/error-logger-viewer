@@ -5,7 +5,7 @@ import type { Mode, ErrorApi } from '../api';
 // Здесь определяем минимальные интерфейсы для глобальных менеджеров.
 
 declare global {
-  //тип поля для сортировки
+  // тип поля для сортировки
   type FieldName = 'id' | 'type' | 'count' | 'firstSeen' | 'lastSeen' | 'status';
 
   // Интерфейс для таблицы ошибок

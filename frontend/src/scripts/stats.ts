@@ -1,15 +1,49 @@
 import { el, setChildren } from 'redom';
+import type { ErrorItem, PeriodStats } from './types/errors';
+import { request } from './utils/request';
+import { qs } from './utils/dom';
 import { t, getLabel, onLangChange } from './utils/i18n';
 import { typeColors, statusColors } from './utils/colors';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 
+// Типы и интерфейсы, получающие и возвращающие функции статистики
+export type DoughnutData = { percents: number[], counts: number[] };
+export type GetStatsFn = () => Array<[string, number]>;
+export type GetPercentsFn = () => number[];
+
+export interface RenderSectionOptions {
+  chartId: string;
+  listId: string;
+  getStats: GetStatsFn;
+  getPercents: GetPercentsFn;
+  colors: readonly string[];
+  btnPercentId: string;
+  btnCountId: string;
+  // eslint-disable-next-line no-unused-vars
+  doughnutMethod?: (_view: 'percent' | 'count') => void;
+}
+
 export class StatsManager {
-  constructor(errors = []) {
-    this.errors = errors;
+  // eslint-disable-next-line prettier/prettier, no-unused-vars
+  constructor(public errors: ErrorItem[] = []) {
     // Подписка на смену языка для автоматического обновления статистики
     onLangChange(() => {
       this.renderErrorCards();
     });
+  }
+
+  // Загружает статистику по периодам с сервера, типизировано как `PeriodStats`
+  async fetchPeriodStats(by: string = 'day'): Promise<PeriodStats> {
+    try {
+      const url = `/errors/stats?by=${encodeURIComponent(by)}`;
+      const res = await request<PeriodStats>(url);
+      return (res ?? {}) as PeriodStats;
+    } catch (e) {
+      // В случае ошибки логируем и возвращаем пустой объект
+
+      console.error('[StatsManager] fetchPeriodStats error', e);
+      return {} as PeriodStats;
+    }
   }
 
   // Общее количество ошибок
@@ -30,30 +64,30 @@ export class StatsManager {
 
   // Статистика по типам ошибок: [['TypeError', 25], ...]
   get typeStats() {
-    const typeStats = {};
+    const typeStats: Record<string, number> = {};
     this.errors
       .filter((e) => e.status !== 'deleted')
       .forEach((e) => {
         const type = e.type || 'Unknown';
         typeStats[type] = (typeStats[type] || 0) + 1;
       });
-    return Object.entries(typeStats);
+    return Object.entries(typeStats) as Array<[string, number]>;
   }
 
   // Статистика по статусам ошибок: [['new', 10], ...]
   get statusStats() {
-    const statusStats = {};
+    const statusStats: Record<string, number> = {};
     this.errors
       .filter((e) => e.status !== 'deleted')
       .forEach((e) => {
         const status = e.status || 'new';
         statusStats[status] = (statusStats[status] || 0) + 1;
       });
-    return Object.entries(statusStats);
+    return Object.entries(statusStats) as Array<[string, number]>;
   }
 
   // Универсальный метод для расчёта процентов по статистике
-  getPercentStats(getStatsMethod) {
+  getPercentStats(getStatsMethod: () => Array<[string, number]>): number[] {
     if (typeof getStatsMethod !== 'function') {
       console.error('[StatsManager] getPercentStats: getStatsMethod должен быть функцией, а не', getStatsMethod);
       return [];
@@ -68,8 +102,10 @@ export class StatsManager {
     const remainders = rawPercents.map((v, i) => ({ idx: i, frac: v - floored[i] }));
     remainders.sort((a, b) => b.frac - a.frac);
     const percents = [...floored];
-    for (let i = 0; i < remainder; i++) {
-      percents[remainders[i].idx]++;
+    // распределяем оставшиеся проценты
+    for (let i = 0; i < Math.min(remainder, remainders.length); i++) {
+      const idx = remainders[i].idx;
+      if (typeof percents[idx] === 'number') percents[idx]++;
     }
     return percents;
   }
@@ -85,7 +121,7 @@ export class StatsManager {
   }
 
   // Универсальный рендер полу-бублика
-  renderDoughnut({ chartId, stats, colors, view = 'percent' }) {
+  renderDoughnut({ chartId, stats, colors, view = 'percent' }: { chartId: string, stats: { percents: number[], counts: number[] }, colors: readonly string[], view?: 'percent' | 'count' }) {
     const canvasWrapper = document.getElementById(chartId);
     if (!canvasWrapper) return;
     canvasWrapper.innerHTML = '';
@@ -95,14 +131,18 @@ export class StatsManager {
     canvas.height = 130;
     canvasWrapper.appendChild(canvas);
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
     const data = view === 'percent' ? stats.percents : stats.counts;
     if (!data.length) return;
     const cx = canvas.width / 2;
     const cy = canvas.height * 0.98;
-    const r = Math.min(canvas.width, canvas.height * 2) / 2 - 16;
+    // Радиус с учётом отступов
+    let r = Math.min(canvas.width, canvas.height * 2) / 2 - 16;
+    r = Math.max(0, r);
     const thickness = 20;
     const startAngle = Math.PI;
     const total = data.reduce((sum, v) => sum + v, 0);
+    if (!total) return;
     const gap = 0.01;
     const minSegment = 0.03;
     let currentAngle = startAngle;
@@ -123,10 +163,11 @@ export class StatsManager {
   }
 
   // Универсальный рендер карточек для типов/статусов
-  renderStatCards(listElem, stats, getValue, valueClass, colors, isStatus = false) {
+  // eslint-disable-next-line no-unused-vars
+  renderStatCards(listElem: HTMLElement, stats: Array<[string, number]>, getValue: (idx: number, value: number) => string | number, valueClass: string, colors: readonly string[], isStatus = false) {
     listElem.innerHTML = '';
     stats.forEach(([item, value], idx) => {
-      const itemLabel = isStatus ? t(item) : getLabel(item);
+      const itemLabel = (isStatus ? t(item) : getLabel(item)) ?? item;
       const color = colors[idx % colors.length];
       const li = el('li', { className: 'stat__card flex' });
       const colorBox = el('span', { className: 'stat__color-box', style: `background:${color}` });
@@ -136,19 +177,30 @@ export class StatsManager {
   }
 
   // создание карточек ошибок
-  async renderErrorCards() {
+  async renderErrorCards(): Promise<void> {
     // Общие суммы (без спиннера)
-    const total = document.getElementById('totalErrors');
-    if (total) total.textContent = this.totalCount;
-    const today = document.getElementById('errorsPerDay');
-    if (today) today.textContent = this.todayCount;
+    const total = qs<HTMLDivElement>('#totalErrors');
+    if (total) total.textContent = String(this.totalCount);
+    const today = qs<HTMLDivElement>('#errorsPerDay');
+    if (today) today.textContent = String(this.todayCount);
 
     // Параллельная загрузка для обеих групп
-    const groupTypeContent = document.querySelector('.stats__group-content > #statsChartType')?.parentElement;
-    const groupStatusContent = document.querySelector('.stats__group-content > #statsChartStatus')?.parentElement;
+    const _typeCanvas = qs<HTMLDivElement>('.stats__group-content > #statsChartType');
+    const groupTypeContent = _typeCanvas && _typeCanvas.parentElement instanceof HTMLElement ? _typeCanvas.parentElement : null;
+    const _statusCanvas = qs<HTMLDivElement>('.stats__group-content > #statsChartStatus');
+    const groupStatusContent = _statusCanvas && _statusCanvas.parentElement instanceof HTMLElement ? _statusCanvas.parentElement : null;
 
     if (groupTypeContent) showCenterSpinner(groupTypeContent, 'page');
     if (groupStatusContent) showCenterSpinner(groupStatusContent, 'page');
+
+    // helper для создания метода рендера бублика с замыканием
+    const makeDoughnut = (getPercentsFn: () => number[], getCountsFn: () => number[], chartIdLocal: string, colorsLocal: readonly string[]) => (view: 'percent' | 'count') => {
+      const stats = {
+        percents: getPercentsFn(),
+        counts: getCountsFn(),
+      };
+      this.renderDoughnut({ chartId: chartIdLocal, stats, colors: colorsLocal, view });
+    };
 
     await Promise.all([
       (async () => {
@@ -161,13 +213,7 @@ export class StatsManager {
             colors: typeColors,
             btnPercentId: 'btnStatsTypePercent',
             btnCountId: 'btnStatsTypeCount',
-            doughnutMethod: (view) => {
-              const stats = {
-                percents: this.typePercentStats,
-                counts: this.typeStats.map(([, count]) => count),
-              };
-              this.renderDoughnut({ chartId: 'statsChartType', stats, colors: typeColors, view });
-            },
+            doughnutMethod: makeDoughnut(() => this.typePercentStats, () => this.typeStats.map(([, c]) => c), 'statsChartType', typeColors),
           });
           hideCenterSpinner(groupTypeContent);
         }
@@ -182,13 +228,7 @@ export class StatsManager {
             colors: statusColors,
             btnPercentId: 'btnStatsStatusPercent',
             btnCountId: 'btnStatsStatusCount',
-            doughnutMethod: (view) => {
-              const stats = {
-                percents: this.statusPercentStats,
-                counts: this.statusStats.map(([, count]) => count),
-              };
-              this.renderDoughnut({ chartId: 'statsChartStatus', stats, colors: statusColors, view });
-            },
+            doughnutMethod: makeDoughnut(() => this.statusPercentStats, () => this.statusStats.map(([, c]) => c), 'statsChartStatus', statusColors),
           });
           hideCenterSpinner(groupStatusContent);
         }
@@ -197,18 +237,19 @@ export class StatsManager {
 
     // Динамическое выравнивание высоты .stats__group
     setTimeout(() => {
-      const groups = document.querySelectorAll('.stats__group');
+      const nodeList = document.querySelectorAll<HTMLElement>('.stats__group');
+      const groups = Array.from(nodeList);
       if (groups.length < 2) return;
       // Сброс высоты перед измерением
       groups.forEach((g) => (g.style.height = 'auto'));
-      const maxHeight = Math.max(...Array.from(groups).map((g) => g.offsetHeight));
+      const maxHeight = Math.max(...groups.map((g) => g.offsetHeight));
       groups.forEach((g) => (g.style.height = maxHeight + 'px'));
     }, 0);
   }
   // Универсальный рендер секции статистики (тип/статус)
-  renderSection({ chartId, listId, getStats, getPercents, colors, btnPercentId, btnCountId, doughnutMethod }) {
-    const chartElem = document.getElementById(chartId);
-    const listElem = document.getElementById(listId);
+  renderSection({ chartId, listId, getStats, getPercents, colors, btnPercentId, btnCountId, doughnutMethod }: RenderSectionOptions) {
+    const chartElem = document.getElementById(chartId) as HTMLElement | null;
+    const listElem = document.getElementById(listId) as HTMLElement | null;
     if (!chartElem || !listElem) return;
 
     // Защита: если getStats/getPercents не функция — не рендерим
@@ -217,18 +258,18 @@ export class StatsManager {
       return;
     }
 
-    const percentStats = getPercents.call(this);
-    const statsArr = getStats.call(this);
+    const percentStats = getPercents.call(this) as number[];
+    const statsArr = getStats.call(this) as Array<[string, number]>;
     // Определяем, что это секция статусов, если listId содержит 'Status'
-    const isStatus = listId && listId.toLowerCase().includes('status');
+    const isStatus = !!(listId && listId.toLowerCase().includes('status'));
     this.renderStatCards(listElem, statsArr, (idx) => `${percentStats[idx]} %`, 'stat__value', colors, isStatus);
     if (typeof doughnutMethod === 'function') {
       doughnutMethod('percent');
     }
 
     // Обработчики кнопок
-    const btnPercent = document.getElementById(btnPercentId);
-    const btnCount = document.getElementById(btnCountId);
+    const btnPercent = document.getElementById(btnPercentId) as HTMLButtonElement | null;
+    const btnCount = document.getElementById(btnCountId) as HTMLButtonElement | null;
     if (btnPercent) {
       btnPercent.setAttribute('aria-label', t('ariaStatsBtnPercent'));
       btnPercent.onclick = () => {

@@ -2,15 +2,18 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - 'feat/*'
+      - '*-ts'
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   frontend-tests:
-    name: "Frontend: tests & e2e"
+    name: 'CI / Frontend: tests & e2e'
     runs-on: ubuntu-latest
-    services: {}
     defaults:
       run:
         working-directory: frontend
@@ -18,7 +21,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Use Node.js 18.16.0
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18.16.0'
@@ -38,12 +41,12 @@ jobs:
           echo "waiting for server..." && sleep 2
 
       - name: Start backend server
-        working-directory: ./backend
         run: |
+          pushd ../backend
           npm ci
           nohup node server.js &
+          popd
           echo "waiting for backend..."
-          # Wait for backend to respond on /errors (max ~10 seconds)
           for i in 1 2 3 4 5; do
             if curl -sS http://localhost:3000/errors >/dev/null 2>&1; then
               echo "backend ready"
@@ -64,7 +67,6 @@ jobs:
         env:
           CYPRESS_baseUrl: http://localhost:8080
         run: |
-          # save full cypress stdout/stderr to a file for later upload
           npx cypress run --browser electron 2>&1 | tee cypress-run.log
 
       - name: Upload Cypress artifacts
@@ -78,6 +80,28 @@ jobs:
             frontend/cypress/logs
             frontend/cypress-run.log
 
+  backend-tests:
+    name: 'CI / Backend: tests'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (backend)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install backend deps
+        run: |
+          cd backend
+          npm ci
+
+      - name: Run backend tests
+        run: |
+          cd backend
+          npm test
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -85,12 +109,16 @@ jobs:
       run:
         working-directory: frontend
     steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js 18.16.0
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18.16.0'
+
       - name: Install deps
         run: npm ci
+
       - name: Run ESLint
         run: npm run lint || true
