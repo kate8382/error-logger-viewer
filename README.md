@@ -176,6 +176,8 @@ For detailed test instructions and helper descriptions see [frontend/TESTS.md](f
 2. Make changes to the required JS file.
 3. Submit a pull request with a description of the changes.
 
+For repository maintainers: see [BRANCH_PROTECTION.md](BRANCH_PROTECTION.md) for instructions on setting up GitHub branch protection rules while maintaining the ability to merge your own PRs.
+
 ---
 
 ## License
