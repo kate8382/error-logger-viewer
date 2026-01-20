@@ -1,9 +1,11 @@
 import '../assets/scss/style.scss';
 import { ErrorApi } from './api';
+import type { Mode } from './api';
 import './header';
 import { StatsManager } from './stats';
 import ChartManager from './charts';
 import { ErrorTable } from './table';
+import type { ErrorItem, NewError } from './types/errors';
 import { getCurrentLang, onLangChange } from './utils/i18n';
 import { updateTestErrorButtonVisibility } from './utils/testErrorButton';
 import handleModuleLoadError from './utils/moduleLoad';
@@ -12,20 +14,24 @@ import handleModuleLoadError from './utils/moduleLoad';
 window.errorTableInstance = new ErrorTable('server');
 // Асинхронная инициализация statsManager после загрузки ошибок
 async function initStatsManager() {
-  let errors = [];
+  let errors: ErrorItem[] = [];
   try {
     errors = await new ErrorApi().getErrors({});
   } catch (e) {
     console.error('[StatsManager] Error loading errors:', e);
   }
   window.statsManager = new StatsManager(errors);
-  window.statsManager.renderErrorCards();
+  if (window.statsManager && typeof window.statsManager.renderErrorCards === 'function') {
+    window.statsManager.renderErrorCards();
+  }
 }
 initStatsManager();
 
 // Главный класс приложения - инициализирует API, обработчики ошибок и aside
 class ErrorLoggerApp {
-  constructor(mode = 'server') {
+  errorApi: ErrorApi;
+
+  constructor(mode: Mode = 'server') {
     this.errorApi = new ErrorApi(mode);
     // Язык и переводы теперь централизованы через i18n.js
     this.init();
@@ -37,10 +43,10 @@ class ErrorLoggerApp {
       import('./aside')
         .then(({ Aside }) => {
           // Динамический импорт (lazy loading) для отложенной загрузки aside
-          window.aside = new Aside(this);
+          window.aside = new Aside();
           if (window.aside && typeof window.aside.translatePage === 'function') {
             window.aside.translatePage(getCurrentLang());
-            onLangChange(() => window.aside.translatePage(getCurrentLang()));
+            onLangChange(() => window.aside?.translatePage?.(getCurrentLang()));
           }
         })
         .catch((err) => {
@@ -54,38 +60,39 @@ class ErrorLoggerApp {
     });
   }
 
-  async updateErrorTable() {
-    if (window.renderErrorTable) {
-      this.errorApi.getErrors({}).then((errors) => {
-        window.renderErrorTable(errors);
-        if (window.statsManager) {
-          window.statsManager.errors = errors;
-          window.statsManager.renderErrorCards();
-        }
-        if (window.chartManager) {
-          window.chartManager.renderChart();
-        }
-      });
+  async updateErrorTable(): Promise<void> {
+    if (!window.renderErrorTable) return;
+    const errors = await this.errorApi.getErrors({});
+    window.renderErrorTable(errors);
+    if (window.statsManager) {
+      // убираем any из-за ошибки типов в глобальном объявлении
+      window.statsManager.errors = errors;
+      window.statsManager.renderErrorCards && window.statsManager.renderErrorCards();
+    }
+    if (window.chartManager) {
+      window.chartManager.renderChart && window.chartManager.renderChart();
     }
   }
 
   // Универсальный обработчик создания ошибки и обновления UI
-  handleErrorCreate(errorData) {
-    return this.errorApi.createError(errorData).then((created) => {
-      this.updateErrorTable();
-      return created;
-    });
+  async handleErrorCreate(errorData: NewError): Promise<ErrorItem> {
+    const created = await this.errorApi.createError(errorData);
+    this.updateErrorTable();
+    return created;
   }
 
   setupErrorListeners() {
     // Глобальный обработчик ошибок загрузки ресурсов (скрипты, стили, изображения)
     window.addEventListener(
       'error',
-      (event) => {
-        const target = event.target || event.srcElement;
+      (event: Event) => {
+        const target = event.target || (event as any).srcElement;
         if (target && (target instanceof HTMLScriptElement || target instanceof HTMLLinkElement || target instanceof HTMLImageElement)) {
-          const src = target.src || target.href || target.currentSrc || '';
-          const tag = target.tagName;
+          let src = '';
+          if (target instanceof HTMLScriptElement) src = target.src || '';
+          else if (target instanceof HTMLLinkElement) src = target.href || '';
+          else if (target instanceof HTMLImageElement) src = target.currentSrc || target.src || '';
+          const tag = (target as Element).tagName;
           this.handleErrorCreate({
             type: 'ResourceLoadError',
             message: `Failed to load resource: ${tag}`,
@@ -99,7 +106,7 @@ class ErrorLoggerApp {
     );
 
     // Глобальный обработчик ошибок JavaScript (onerror: message - ошибка в коде, source - файл, lineno - строка, colno - столбец)
-    window.onerror = (message, source, lineno, colno, error) => {
+    window.onerror = (message: string | Event, source?: string, lineno?: number, colno?: number, error?: Error | null) => {
       console.log('[ErrorLogger] Creating JS error:', message);
       this.handleErrorCreate({
         type: error && error.name ? error.name : 'Error',
@@ -114,12 +121,12 @@ class ErrorLoggerApp {
     };
 
     // Глобальный обработчик необработанных промиссов (unhandledrejection)
-    window.onunhandledrejection = (event) => {
+    window.onunhandledrejection = (event: PromiseRejectionEvent) => {
       console.log('[ErrorLogger] Creating Promise error:', event.reason);
       this.handleErrorCreate({
         type: 'UnhandledPromiseRejection',
         message: event.reason ? String(event.reason) : 'Promise rejected',
-        stack: event.reason && event.reason.stack ? event.reason.stack : '',
+        stack: (event.reason as any)?.stack ?? undefined,
         firstSeen: new Date().toISOString(),
         lastSeen: new Date().toISOString(),
       });
@@ -142,12 +149,13 @@ class ErrorLoggerApp {
         }
         return response;
       } catch (error) {
-        console.log('[ErrorLogger] Creating Fetch error:', error.message);
+        const err = error as any;
+        console.log('[ErrorLogger] Creating Fetch error:', err?.message || err);
         this.handleErrorCreate({
           type: 'FetchError',
-          message: error.message,
+          message: err?.message ? String(err.message) : String(err),
           source: args[0],
-          stack: error.stack,
+          stack: err?.stack,
           firstSeen: new Date().toISOString(),
           lastSeen: new Date().toISOString(),
         });
@@ -158,17 +166,17 @@ class ErrorLoggerApp {
     // Дополнительный глобальный обработчик ошибок через addEventListener
     window.addEventListener(
       'error',
-      function (event) {
+      function (event: ErrorEvent) {
         if (event.error) {
           // Это JS-ошибка (TypeError, SyntaxError и др.)
           if (window.app && window.app.errorApi) {
             window.app.errorApi.createError({
-              type: event.error.name || 'Error',
-              message: event.error.message || String(event.message),
-              source: event.filename,
-              lineno: event.lineno,
-              colno: event.colno,
-              stack: event.error.stack || '',
+              type: (event.error as any)?.name || 'Error',
+              message: (event.error as any)?.message || String(event.message),
+              source: (event as any).filename || undefined,
+              lineno: (event as any).lineno || undefined,
+              colno: (event as any).colno || undefined,
+              stack: (event.error as any)?.stack || '',
               firstSeen: new Date().toISOString(),
               lastSeen: new Date().toISOString(),
             });
@@ -182,7 +190,7 @@ class ErrorLoggerApp {
   // Получаем ошибки из localStorage
   async flushLocalErrors() {
     const key = 'errorsLocal';
-    let errors = [];
+    let errors: ErrorItem[] = [];
     try {
       errors = JSON.parse(localStorage.getItem(key) || '[]');
     } catch (e) {
@@ -205,7 +213,7 @@ class ErrorLoggerApp {
 // Инициализация приложения
 /* Автоматически выбираем режим: на локальной машине используем 'server', на публичном хостинге (gh-pages и т.п.) — 'demo', чтобы не пытаться обращаться к localhost:3000 */
 // prettier-ignore
-const defaultMode =
+const defaultMode: Mode =
   typeof window !== 'undefined' &&
     (window.location.hostname === 'localhost' ||
       window.location.hostname === '127.0.0.1')
