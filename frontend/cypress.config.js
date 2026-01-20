@@ -2,7 +2,8 @@ const { defineConfig } = require('cypress');
 
 module.exports = defineConfig({
   e2e: {
-    baseUrl: 'http://192.168.31.198:8080', // адрес фронта
+    // Allow CI or local env to override baseUrl via CYPRESS_BASE_URL; default to localhost for CI friendliness
+    baseUrl: process.env.CYPRESS_BASE_URL || 'http://localhost:8080',
     viewportWidth: 1280,
     viewportHeight: 800,
     video: false, // не сохранять видео

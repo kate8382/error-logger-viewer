@@ -4,7 +4,7 @@ import type { FieldName } from './table';
 import { StatsManager } from './stats';
 import type { ErrorItem } from './types/errors';
 import { filterErrors } from './services/errorFilter';
-import { qs, createElement, delegate, translateNodes, assertExists } from './utils/dom';
+import { qs, createElement, delegate, translateNodes } from './utils/dom';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 import { t, getCurrentLang, getLabel, setLang, onLangChange } from './utils/i18n';
 
@@ -171,12 +171,12 @@ export class HeaderManager {
 
   init() {
     this.searchInput = qs<HTMLInputElement>('#searchInput');
-    this.headerTitle = assertExists(qs<HTMLElement>('.header__title'), '.header__title');
+    this.headerTitle = qs<HTMLElement>('.header__title');
     this.searchBtn = qs<HTMLElement>('#searchBtn');
     this.sections = {
-      stats: assertExists(qs<HTMLElement>('#errorStats'), '#errorStats'),
-      chart: assertExists(qs<HTMLElement>('#errorsChart'), '#errorsChart'),
-      table: assertExists(qs<HTMLElement>('#errorTableSection'), '#errorTableSection'),
+      stats: qs<HTMLElement>('#errorStats'),
+      chart: qs<HTMLElement>('#errorsChart'),
+      table: qs<HTMLElement>('#errorTableSection'),
     };
 
     // Локализация при инициализации
@@ -420,15 +420,23 @@ export class HeaderManager {
   }
 
   handleTableSort(field: FieldName) {
-    // Если есть фильтр — сортируем только по отфильтрованным данным
+    const order = this.sortOrder[field];
+    // Если ErrorTable реализует `handleSort`, предпочитаем его — он обрабатывает серверный и локальный режимы внутренне
+    if (this.table && typeof (this.table as any).handleSort === 'function') {
+      // вызываем и не ожидаем, чтобы UI оставался отзывчивым; ErrorTable отрендерит, когда будет готов
+      (this.table as any).handleSort(field, order).catch((err: unknown) => console.error('handleSort error', err));
+      // меняем порядок для следующего клика
+      this.sortOrder[field] = order === 'asc' ? 'desc' : 'asc';
+      return;
+    }
+
+    // Запасной вариант: локальная сортировка с использованием существующих ошибок (или отфильтрованных ошибок)
     let errorsToSort = this.filteredErrors || this.table.getErrors();
-    // Если массив пустой — запрашиваем все ошибки
     if (!errorsToSort || !errorsToSort.length) errorsToSort = this.table.getErrors();
-    const sorted = this.table.sortErrors([...errorsToSort], field, this.sortOrder[field]);
+    const sorted = this.table.sortErrors([...errorsToSort], field, order);
     this.table.renderErrors(sorted);
-    // Переключаем направление для следующего клика
-    this.sortOrder[field] = this.sortOrder[field] === 'asc' ? 'desc' : 'asc';
-    // Обновляем filteredErrors, чтобы сортировка была по текущему фильтру
+    // меняем порядок для следующего клика
+    this.sortOrder[field] = order === 'asc' ? 'desc' : 'asc';
     if (this.filteredErrors) this.filteredErrors = sorted;
   }
 }

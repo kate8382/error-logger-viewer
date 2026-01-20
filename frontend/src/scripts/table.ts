@@ -325,9 +325,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // безопасно вызываем renderChart, если chartManager и метод существуют
     window.chartManager?.renderChart?.();
   };
-
-  // Sorting is handled by HeaderManager which delegates to ErrorTable.handleSort
-
-  // Сортировка по нажатию на заголовки таблицы реализована в `HeaderManager` через делегирование.
-  // Оставляем централизованную обработку в `header.ts` (delegate), чтобы избежать дублирования обработчиков.
 });
