@@ -1,9 +1,10 @@
 import { ErrorApi } from './api';
 import { ErrorTable } from './table';
+import type { FieldName } from './table';
 import { StatsManager } from './stats';
 import type { ErrorItem } from './types/errors';
 import { filterErrors } from './services/errorFilter';
-import { qs, createElement, delegate, translateNodes } from './utils/dom';
+import { qs, createElement, delegate, translateNodes, assertExists } from './utils/dom';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 import { t, getCurrentLang, getLabel, setLang, onLangChange } from './utils/i18n';
 
@@ -25,17 +26,30 @@ export class HeaderManager {
   searchOrExitIcon: HTMLElement | null = null;
   searchIcon: HTMLElement | null = null;
   exitIcon: HTMLElement | null = null;
-  sortOrder: Record<string, string> = {};
+  sortOrder: Record<FieldName, 'asc' | 'desc'> = { id: 'asc', type: 'asc', count: 'asc', firstSeen: 'asc', lastSeen: 'asc', status: 'asc' };
 
   constructor() {
     this.api = new ErrorApi();
     this.table = (window.errorTableInstance as unknown as ErrorTable) || new ErrorTable();
     this.stats = (window.statsManager as unknown as StatsManager) || new StatsManager();
-    this.chart = window.chartManager;
+    this.chart = window.chartManager ?? undefined;
     this.lang = getCurrentLang();
     this.justSwitchedToTable = false;
     this.filteredErrors = undefined;
     this.init();
+  }
+
+  // Простой debounce, хранящий таймеры в `this._debounceTimers`
+  // eslint-disable-next-line no-unused-vars
+  _debounce<T extends (...args: any[]) => void>(fn: T, wait = 250, key = 'default') {
+    return (...args: Parameters<T>) => {
+      const existing = this._debounceTimers[key];
+      if (existing) clearTimeout(existing as ReturnType<typeof setTimeout>);
+      this._debounceTimers[key] = setTimeout(() => {
+        fn(...args);
+        delete this._debounceTimers[key];
+      }, wait);
+    };
   }
 
   // Универсальный сброс всех секций (показать все)
@@ -157,21 +171,19 @@ export class HeaderManager {
 
   init() {
     this.searchInput = qs<HTMLInputElement>('#searchInput');
-    this.headerTitle = qs<HTMLElement>('.header__title');
+    this.headerTitle = assertExists(qs<HTMLElement>('.header__title'), '.header__title');
     this.searchBtn = qs<HTMLElement>('#searchBtn');
     this.sections = {
-      stats: qs<HTMLElement>('#errorStats'),
-      chart: qs<HTMLElement>('#errorsChart'),
-      table: qs<HTMLElement>('#errorTableSection'),
+      stats: assertExists(qs<HTMLElement>('#errorStats'), '#errorStats'),
+      chart: assertExists(qs<HTMLElement>('#errorsChart'), '#errorsChart'),
+      table: assertExists(qs<HTMLElement>('#errorTableSection'), '#errorTableSection'),
     };
 
     // Локализация при инициализации
     this.updateSectionTitles();
     // Обработка смены языка (убираем дублирование)
-    const langEnBtn = qs<HTMLElement>('#lang-en');
-    const langRuBtn = qs<HTMLElement>('#lang-ru');
-    if (langEnBtn) langEnBtn.addEventListener('click', () => setLang('en'));
-    if (langRuBtn) langRuBtn.addEventListener('click', () => setLang('ru'));
+    delegate(document, '#lang-en', 'click', () => setLang('en'));
+    delegate(document, '#lang-ru', 'click', () => setLang('ru'));
     onLangChange((lang) => {
       this.lang = lang;
       this.updateSectionTitles();
@@ -281,19 +293,6 @@ export class HeaderManager {
     }
   }
 
-  // Простая debounce-обёртка (храним таймеры по ключу на инстансе)
-  // eslint-disable-next-line no-unused-vars
-  _debounce(fn: (..._args: any[]) => void, wait = 200, key = '__default') {
-    return (..._args: any[]) => {
-      const existing = this._debounceTimers[key];
-      if (existing) clearTimeout(existing as any);
-      this._debounceTimers[key] = setTimeout(() => {
-        fn(..._args);
-        delete this._debounceTimers[key];
-      }, wait);
-    };
-  }
-
   // Основная логика поиска и фильтрации
   handleSearch(query: string) {
     const lowerQuery = query.trim().toLowerCase();
@@ -401,7 +400,7 @@ export class HeaderManager {
 
   addTableSortHandlers() {
     // Кнопки сортировки должны иметь id: sortById, sortByType, sortByCount, sortByFirstSeen, sortByLastSeen, sortByStatus
-    const sortFields: Record<string, string>[] = [
+    const sortFields: Array<{ id: string, field: FieldName }> = [
       { id: 'sortById', field: 'id' },
       { id: 'sortByType', field: 'type' },
       { id: 'sortByCount', field: 'count' },
@@ -415,12 +414,12 @@ export class HeaderManager {
     delegate(document, '[id^="sortBy"]', 'click', (ev: Event, target: Element) => {
       ev.preventDefault();
       const id = (target as HTMLElement).id;
-      const field = sortFields.find((sf) => sf.id === id)?.field;
+      const field = sortFields.find((sf) => sf.id === id)?.field as FieldName | undefined;
       if (field) this.handleTableSort(field);
     });
   }
 
-  handleTableSort(field: string) {
+  handleTableSort(field: FieldName) {
     // Если есть фильтр — сортируем только по отфильтрованным данным
     let errorsToSort = this.filteredErrors || this.table.getErrors();
     // Если массив пустой — запрашиваем все ошибки

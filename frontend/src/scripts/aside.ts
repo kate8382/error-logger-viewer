@@ -1,7 +1,7 @@
 import type { Mode } from './api';
 import { ErrorApi } from './api';
 import { t, getCurrentLang, setLang, onLangChange } from './utils/i18n';
-import { qsa, qs, translateNodes } from './utils/dom';
+import { qsa, qs, translateNodes, delegate } from './utils/dom';
 
 export class Aside {
   api: ErrorApi;
@@ -120,13 +120,11 @@ export class Aside {
       }
     });
 
-    // Смена языка через выпадающий список
-    const langOptions = qsa<HTMLElement>('.sidebar__dropdown-sublist[data-group="language"] .sidebar__dropdown-option');
-    langOptions.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const lang = (btn.dataset.value as 'en' | 'ru') || 'en';
-        setLang(lang);
-      });
+    // Смена языка через выпадающий список (делегируем на document)
+    delegate(document, '.sidebar__dropdown-sublist[data-group="language"] .sidebar__dropdown-option', 'click', (_ev, btn) => {
+      const el = btn as HTMLElement;
+      const lang = (el.dataset.value as 'en' | 'ru') || 'en';
+      setLang(lang);
     });
   }
 

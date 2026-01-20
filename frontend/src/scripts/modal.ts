@@ -2,7 +2,7 @@ import { el, setChildren } from 'redom';
 import { ErrorApi } from './api';
 import type { Mode } from './api';
 import type { ErrorItem } from './types/errors';
-import { qs, createElement, translateNodes } from './utils/dom';
+import { qs, createElement, translateNodes, assertExists } from './utils/dom';
 import { t, getLabel, onLangChange } from './utils/i18n';
 import { handleModuleLoadError } from './utils/moduleLoad';
 
@@ -37,9 +37,8 @@ export class Modal {
         }
       }
     });
-    this.modal = qs<HTMLElement>('#modal');
-    this.modalContent = qs<HTMLElement>('#modalContent');
-    if (!this.modal || !this.modalContent) return;
+    this.modal = assertExists(qs<HTMLElement>('#modal'), '#modal');
+    this.modalContent = assertExists(qs<HTMLElement>('#modalContent'), '#modalContent');
 
     this.modalClose = document.querySelectorAll('.modal__close');
     Array.from(this.modalClose).forEach((closeBtn) => {

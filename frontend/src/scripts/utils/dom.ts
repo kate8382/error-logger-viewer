@@ -75,8 +75,11 @@ export function createElement<K extends keyof HTMLElementTagNameMap>(tag: K, opt
   return el;
 }
 
-// Простая делегация событий: root должен содержать элементы-мишени
-// Поддерживаем generic для типа события и целевого элемента
+/*
+ * delegate(root, selector, type, handler) — это классический pattern «event delegation». Вместо того, чтобы вешать много слушателей на каждую кнопку, мы вешаем один слушатель на общий родительский узел (root, в коде — document).
+ * Когда событие всплывёт, delegate проверит ev.target.closest(selector) и, если нашёл совпадение внутри root, вызовет handler(ev, matchedElement). Это экономит слушатели и упрощает динамически создаваемые элементы.
+ * В delegate реализовано: слушатель на root, const match = (ev.target as Element).closest(selector), проверка, что match внутри root, и вызов handler(ev as E, match as T)
+ */
 // eslint-disable-next-line no-unused-vars
 export function delegate<E extends Event = Event, T extends Element = Element>(root: ParentNode, selector: string, type: string, handler: (_event: E, target: T) => void): void {
   root.addEventListener(type, (ev: Event) => {
