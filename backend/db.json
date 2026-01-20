@@ -676,6 +676,20 @@
       "users": [
         "unknown"
       ]
+    },
+    {
+      "id": "4801ae95-4f04-40c4-a630-61cf56bd3e31",
+      "projectId": "unknown",
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2026-01-20T17:19:19.396Z",
+      "lastSeen": "2026-01-20T17:19:19.396Z",
+      "users": [
+        "unknown"
+      ]
     }
   ],
   "projects": [

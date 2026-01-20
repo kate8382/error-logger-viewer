@@ -3,7 +3,7 @@ import type { Chart as ChartJS } from 'chart.js'; // Импортируем ти
 import { API_BASE_URL } from './api';
 import type { ErrorItem, Stats, PeriodStats } from './types/errors';
 import { request } from './utils/request';
-import { qs } from './utils/dom';
+import { qs, delegate } from './utils/dom';
 import { t, getLabel, onLangChange, setLang } from './utils/i18n';
 import { typeColors, statusColors } from './utils/colors';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
@@ -543,10 +543,8 @@ export default class ChartManager {
   }
 
   initLangHandlers() {
-    const langEnBtn = qs<HTMLButtonElement>('#lang-en') as HTMLButtonElement | null;
-    const langRuBtn = qs<HTMLButtonElement>('#lang-ru') as HTMLButtonElement | null;
-    if (langEnBtn) langEnBtn.addEventListener('click', () => setLang('en'));
-    if (langRuBtn) langRuBtn.addEventListener('click', () => setLang('ru'));
+    delegate(document, '#lang-en', 'click', () => setLang('en'));
+    delegate(document, '#lang-ru', 'click', () => setLang('ru'));
     this.updateAriaLabels();
   }
 
@@ -559,3 +557,5 @@ export default class ChartManager {
     if (btnYear) btnYear.setAttribute('aria-label', t('ariaChartYear'));
   }
 }
+
+export type ChartManagerType = ChartManager;

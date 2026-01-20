@@ -1,5 +1,6 @@
 ﻿import type { ErrorItem } from './errors';
 import type { Mode, ErrorApi } from '../api';
+import type { ChartManagerType } from '../charts';
 
 // Этот файл расширяет глобальные типы window для приложения.
 // Здесь определяем минимальные интерфейсы для глобальных менеджеров.
@@ -21,17 +22,22 @@ declare global {
 
   interface StatsManagerInterface {
     renderErrorCards?: () => void;
+    errors?: import('./errors').ErrorItem[];
   }
 
   interface ChartManagerInterface {
     resetToDefault?: () => void;
     renderChart?: () => void;
+    errors?: ErrorItem[];
+    currentType?: 'day' | 'week' | 'month' | 'year' | 'date';
+    isRendering?: boolean;
   }
 
   interface AppInterface {
     errorApi?: ErrorApi;
     updateErrorTable?: () => void;
     lang?: 'en' | 'ru';
+    flushLocalErrors?: () => Promise<void> | void;
   }
 
   interface AppModalInterface {
@@ -48,6 +54,7 @@ declare global {
 
   interface AsideInterface {
     setTheme?: (theme: string) => void;
+    translatePage?: (lang?: 'en' | 'ru') => void;
   }
 
   interface Window {
@@ -57,7 +64,7 @@ declare global {
     errorTableInstance?: ErrorTableInterface;
     appModal?: AppModalInterface;
     statsManager?: StatsManagerInterface;
-    chartManager?: ChartManagerInterface;
+    chartManager?: ChartManagerType | ChartManagerInterface | null;
     headerManager?: HeaderManagerInterface | null;
     API_BASE_URL?: string;
     aside?: AsideInterface | null;

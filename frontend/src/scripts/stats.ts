@@ -1,7 +1,7 @@
 import { el, setChildren } from 'redom';
 import type { ErrorItem, PeriodStats } from './types/errors';
 import { request } from './utils/request';
-import { qs } from './utils/dom';
+import { qs, qsa, createElement } from './utils/dom';
 import { t, getLabel, onLangChange } from './utils/i18n';
 import { typeColors, statusColors } from './utils/colors';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
@@ -122,11 +122,11 @@ export class StatsManager {
 
   // Универсальный рендер полу-бублика
   renderDoughnut({ chartId, stats, colors, view = 'percent' }: { chartId: string, stats: { percents: number[], counts: number[] }, colors: readonly string[], view?: 'percent' | 'count' }) {
-    const canvasWrapper = document.getElementById(chartId);
+    const canvasWrapper = qs<HTMLElement>(`#${chartId}`);
     if (!canvasWrapper) return;
     canvasWrapper.innerHTML = '';
     const parentWidth = canvasWrapper.offsetWidth || 385;
-    const canvas = document.createElement('canvas');
+    const canvas = createElement('canvas') as HTMLCanvasElement;
     canvas.width = parentWidth;
     canvas.height = 130;
     canvasWrapper.appendChild(canvas);
@@ -237,8 +237,7 @@ export class StatsManager {
 
     // Динамическое выравнивание высоты .stats__group
     setTimeout(() => {
-      const nodeList = document.querySelectorAll<HTMLElement>('.stats__group');
-      const groups = Array.from(nodeList);
+      const groups = qsa<HTMLElement>('.stats__group');
       if (groups.length < 2) return;
       // Сброс высоты перед измерением
       groups.forEach((g) => (g.style.height = 'auto'));
@@ -248,8 +247,8 @@ export class StatsManager {
   }
   // Универсальный рендер секции статистики (тип/статус)
   renderSection({ chartId, listId, getStats, getPercents, colors, btnPercentId, btnCountId, doughnutMethod }: RenderSectionOptions) {
-    const chartElem = document.getElementById(chartId) as HTMLElement | null;
-    const listElem = document.getElementById(listId) as HTMLElement | null;
+    const chartElem = qs<HTMLElement>(`#${chartId}`);
+    const listElem = qs<HTMLElement>(`#${listId}`);
     if (!chartElem || !listElem) return;
 
     // Защита: если getStats/getPercents не функция — не рендерим
@@ -268,8 +267,8 @@ export class StatsManager {
     }
 
     // Обработчики кнопок
-    const btnPercent = document.getElementById(btnPercentId) as HTMLButtonElement | null;
-    const btnCount = document.getElementById(btnCountId) as HTMLButtonElement | null;
+    const btnPercent = qs<HTMLButtonElement>(`#${btnPercentId}`);
+    const btnCount = qs<HTMLButtonElement>(`#${btnCountId}`);
     if (btnPercent) {
       btnPercent.setAttribute('aria-label', t('ariaStatsBtnPercent'));
       btnPercent.onclick = () => {

@@ -8,7 +8,7 @@ import { t, getCurrentLang, onLangChange } from './utils/i18n';
 import { handleModuleLoadError } from './utils/moduleLoad';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 
-type FieldName = 'id' | 'type' | 'count' | 'firstSeen' | 'lastSeen' | 'status';
+export type FieldName = 'id' | 'type' | 'count' | 'firstSeen' | 'lastSeen' | 'status';
 
 export class ErrorTable {
   errors: ErrorItem[];
@@ -281,6 +281,33 @@ export class ErrorTable {
       return orders === 'asc' ? (aValue > bValue ? 1 : aValue < bValue ? -1 : 0) : aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
     });
   }
+
+  async handleSort(field: FieldName, order: 'asc' | 'desc'): Promise<void> {
+    // Если фильтр активен — сортируем только по отфильтрованным данным
+    if (window.headerManager && window.headerManager.filteredErrors) {
+      const filtered = window.headerManager.filteredErrors;
+      const sorted = this.sortErrors([...filtered], field, order);
+      this.renderErrors(sorted);
+      // Обновляем filteredErrors, чтобы сортировка была по текущему фильтру
+      window.headerManager.filteredErrors = sorted;
+      return;
+    }
+
+    if (this.errorApi.mode === 'server') {
+      // Если серверный режим — сортировка через API
+      const errors = await this.errorApi.getErrors({
+        sort: field,
+        order,
+      });
+      this.renderErrors(errors);
+      return;
+    }
+
+    // Локальная сортировка по всем ошибкам
+    const errors = await this.errorApi.getErrors({});
+    const sorted = this.sortErrors(errors, field, order);
+    this.renderErrors(sorted);
+  }
 }
 
 // Инициализация таблицы и статистики при загрузке страницы
@@ -298,86 +325,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // безопасно вызываем renderChart, если chartManager и метод существуют
     window.chartManager?.renderChart?.();
   };
-
-  // Состояние направления сортировки
-  let sortOrder: Record<FieldName, 'asc' | 'desc'> = {
-    id: 'asc',
-    type: 'asc',
-    count: 'asc',
-    firstSeen: 'asc',
-    lastSeen: 'asc',
-    status: 'asc',
-  };
-
-  // Универсальный обработчик сортировки
-  async function handleSort(field: FieldName) {
-    // Если фильтр активен — сортируем только по отфильтрованным данным
-    if (window.headerManager && window.headerManager.filteredErrors) {
-      const filtered = window.headerManager.filteredErrors;
-      const sorted = errorTable.sortErrors([...filtered], field, sortOrder[field]);
-      errorTable.renderErrors(sorted);
-      // Обновляем filteredErrors, чтобы сортировка была по текущему фильтру
-      window.headerManager.filteredErrors = sorted;
-    } else if (errorTable.errorApi.mode === 'server') {
-      // Если серверный режим — сортировка через API
-      const errors = await errorTable.errorApi.getErrors({
-        sort: field,
-        order: sortOrder[field],
-      });
-      errorTable.renderErrors(errors);
-    } else {
-      // Локальная сортировка по всем ошибкам
-      const errors = await errorTable.errorApi.getErrors({});
-      const sorted = errorTable.sortErrors(errors, field, sortOrder[field]);
-      errorTable.renderErrors(sorted);
-    }
-    // Переключаем направление для следующего клика
-    sortOrder[field] = sortOrder[field] === 'asc' ? 'desc' : 'asc';
-  }
-
-  const sortIdBtn = qs<HTMLElement>('#sortById');
-  if (sortIdBtn) {
-    sortIdBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      handleSort('id');
-    });
-  }
-
-  const sortTypeBtn = qs<HTMLElement>('#sortByType');
-  if (sortTypeBtn) {
-    sortTypeBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      handleSort('type');
-    });
-  }
-
-  const sortCountBtn = qs<HTMLElement>('#sortByCount');
-  if (sortCountBtn) {
-    sortCountBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      handleSort('count');
-    });
-  }
-  const sortFirstSeenBtn = qs<HTMLElement>('#sortByFirstSeen');
-  if (sortFirstSeenBtn) {
-    sortFirstSeenBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      handleSort('firstSeen');
-    });
-  }
-  const sortLastSeenBtn = qs<HTMLElement>('#sortByLastSeen');
-  if (sortLastSeenBtn) {
-    sortLastSeenBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      handleSort('lastSeen');
-    });
-  }
-
-  const sortStatusBtn = qs<HTMLElement>('#sortByStatus');
-  if (sortStatusBtn) {
-    sortStatusBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      handleSort('status');
-    });
-  }
 });
