@@ -30,7 +30,9 @@ export class HeaderManager {
 
   constructor() {
     this.api = new ErrorApi();
-    this.table = (window.errorTableInstance as unknown as ErrorTable) || new ErrorTable();
+    // Всегда используем существующий экземпляр errorTableInstance, если он есть.
+    // Если его нет, создаём fallback (но в нормальном потоке main.ts должен создать его первым).
+    this.table = (window.errorTableInstance as unknown as ErrorTable) || new ErrorTable('server');
     this.stats = (window.statsManager as unknown as StatsManager) || new StatsManager();
     this.chart = window.chartManager ?? undefined;
     this.lang = getCurrentLang();
@@ -411,7 +413,8 @@ export class HeaderManager {
     this.sortOrder = { id: 'asc', type: 'asc', count: 'asc', firstSeen: 'asc', lastSeen: 'asc', status: 'asc' };
 
     // Делегированный обработчик: один слушатель для всех кнопок сортировки
-    delegate(document, '[id^="sortBy"]', 'click', (ev: Event, target: Element) => {
+    // Узкий селектор нацелен только на кнопки, чтобы избежать случайных срабатываний
+    delegate(document, 'button[id^="sortBy"]', 'click', (ev: Event, target: Element) => {
       ev.preventDefault();
       const id = (target as HTMLElement).id;
       const field = sortFields.find((sf) => sf.id === id)?.field as FieldName | undefined;
@@ -421,20 +424,22 @@ export class HeaderManager {
 
   handleTableSort(field: FieldName) {
     const order = this.sortOrder[field];
+    // Используем глобальный errorTableInstance для согласованности или fallback на this.table
+    const tableInstance = (window.errorTableInstance as unknown as ErrorTable) || this.table;
     // Если ErrorTable реализует `handleSort`, предпочитаем его — он обрабатывает серверный и локальный режимы внутренне
-    if (this.table && typeof (this.table as any).handleSort === 'function') {
+    if (tableInstance && typeof (tableInstance as any).handleSort === 'function') {
       // вызываем и не ожидаем, чтобы UI оставался отзывчивым; ErrorTable отрендерит, когда будет готов
-      (this.table as any).handleSort(field, order).catch((err: unknown) => console.error('handleSort error', err));
+      (tableInstance as any).handleSort(field, order).catch((err: unknown) => console.error('handleSort error', err));
       // меняем порядок для следующего клика
       this.sortOrder[field] = order === 'asc' ? 'desc' : 'asc';
       return;
     }
 
     // Запасной вариант: локальная сортировка с использованием существующих ошибок (или отфильтрованных ошибок)
-    let errorsToSort = this.filteredErrors || this.table.getErrors();
-    if (!errorsToSort || !errorsToSort.length) errorsToSort = this.table.getErrors();
-    const sorted = this.table.sortErrors([...errorsToSort], field, order);
-    this.table.renderErrors(sorted);
+    let errorsToSort = this.filteredErrors || tableInstance.getErrors();
+    if (!errorsToSort || !errorsToSort.length) errorsToSort = tableInstance.getErrors();
+    const sorted = tableInstance.sortErrors([...errorsToSort], field, order);
+    tableInstance.renderErrors(sorted);
     // меняем порядок для следующего клика
     this.sortOrder[field] = order === 'asc' ? 'desc' : 'asc';
     if (this.filteredErrors) this.filteredErrors = sorted;
