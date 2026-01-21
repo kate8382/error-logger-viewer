@@ -429,7 +429,7 @@ export class HeaderManager {
 
   handleTableSort(field: FieldName) {
     const order = this.sortOrder[field];
-    // Используем глобальный errorTableInstance для согласованности или fallback на this.table
+    // Используем глобальный errorTableInstance для согласованности
     const tableInstance = this.getErrorTableInstance();
     // Если ErrorTable реализует `handleSort`, предпочитаем его — он обрабатывает серверный и локальный режимы внутренне
     if (tableInstance && typeof (tableInstance as any).handleSort === 'function') {
