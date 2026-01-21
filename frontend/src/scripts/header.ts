@@ -1,6 +1,5 @@
 import { ErrorApi } from './api';
 import { ErrorTable } from './table';
-import type { FieldName } from './table';
 import { StatsManager } from './stats';
 import type { ErrorItem } from './types/errors';
 import { filterErrors } from './services/errorFilter';
@@ -12,7 +11,7 @@ export class HeaderManager {
   api: ErrorApi;
   table: ErrorTable; // Экземпляр ErrorTable (из `window`)
   stats: StatsManager; // Экземпляр StatsManager (из `window`)
-  chart: ChartManagerInterface | undefined; // Экземпляр ChartManager (из `window`)
+  chart: ChartManagerInterface | null | undefined; // Экземпляр ChartManager (из `window`)
   lang: string;
   justSwitchedToTable: boolean;
   filteredErrors: ErrorItem[] | undefined;
@@ -26,30 +25,17 @@ export class HeaderManager {
   searchOrExitIcon: HTMLElement | null = null;
   searchIcon: HTMLElement | null = null;
   exitIcon: HTMLElement | null = null;
-  sortOrder: Record<FieldName, 'asc' | 'desc'> = { id: 'asc', type: 'asc', count: 'asc', firstSeen: 'asc', lastSeen: 'asc', status: 'asc' };
+  sortOrder: Record<string, string> = {};
 
   constructor() {
     this.api = new ErrorApi();
     this.table = (window.errorTableInstance as unknown as ErrorTable) || new ErrorTable();
     this.stats = (window.statsManager as unknown as StatsManager) || new StatsManager();
-    this.chart = window.chartManager ?? undefined;
+    this.chart = window.chartManager;
     this.lang = getCurrentLang();
     this.justSwitchedToTable = false;
     this.filteredErrors = undefined;
     this.init();
-  }
-
-  // Простой debounce, хранящий таймеры в `this._debounceTimers`
-  // eslint-disable-next-line no-unused-vars
-  _debounce<T extends (...args: any[]) => void>(fn: T, wait = 250, key = 'default') {
-    return (...args: Parameters<T>) => {
-      const existing = this._debounceTimers[key];
-      if (existing) clearTimeout(existing as ReturnType<typeof setTimeout>);
-      this._debounceTimers[key] = setTimeout(() => {
-        fn(...args);
-        delete this._debounceTimers[key];
-      }, wait);
-    };
   }
 
   // Универсальный сброс всех секций (показать все)
@@ -182,8 +168,10 @@ export class HeaderManager {
     // Локализация при инициализации
     this.updateSectionTitles();
     // Обработка смены языка (убираем дублирование)
-    delegate(document, '#lang-en', 'click', () => setLang('en'));
-    delegate(document, '#lang-ru', 'click', () => setLang('ru'));
+    const langEnBtn = qs<HTMLElement>('#lang-en');
+    const langRuBtn = qs<HTMLElement>('#lang-ru');
+    if (langEnBtn) langEnBtn.addEventListener('click', () => setLang('en'));
+    if (langRuBtn) langRuBtn.addEventListener('click', () => setLang('ru'));
     onLangChange((lang) => {
       this.lang = lang;
       this.updateSectionTitles();
@@ -293,6 +281,19 @@ export class HeaderManager {
     }
   }
 
+  // Простая debounce-обёртка (храним таймеры по ключу на инстансе)
+  // eslint-disable-next-line no-unused-vars
+  _debounce(fn: (..._args: any[]) => void, wait = 200, key = '__default') {
+    return (..._args: any[]) => {
+      const existing = this._debounceTimers[key];
+      if (existing) clearTimeout(existing as any);
+      this._debounceTimers[key] = setTimeout(() => {
+        fn(..._args);
+        delete this._debounceTimers[key];
+      }, wait);
+    };
+  }
+
   // Основная логика поиска и фильтрации
   handleSearch(query: string) {
     const lowerQuery = query.trim().toLowerCase();
@@ -400,7 +401,7 @@ export class HeaderManager {
 
   addTableSortHandlers() {
     // Кнопки сортировки должны иметь id: sortById, sortByType, sortByCount, sortByFirstSeen, sortByLastSeen, sortByStatus
-    const sortFields: Array<{ id: string, field: FieldName }> = [
+    const sortFields: Record<string, string>[] = [
       { id: 'sortById', field: 'id' },
       { id: 'sortByType', field: 'type' },
       { id: 'sortByCount', field: 'count' },
@@ -414,29 +415,21 @@ export class HeaderManager {
     delegate(document, '[id^="sortBy"]', 'click', (ev: Event, target: Element) => {
       ev.preventDefault();
       const id = (target as HTMLElement).id;
-      const field = sortFields.find((sf) => sf.id === id)?.field as FieldName | undefined;
+      const field = sortFields.find((sf) => sf.id === id)?.field;
       if (field) this.handleTableSort(field);
     });
   }
 
-  handleTableSort(field: FieldName) {
-    const order = this.sortOrder[field];
-    // Если ErrorTable реализует `handleSort`, предпочитаем его — он обрабатывает серверный и локальный режимы внутренне
-    if (this.table && typeof (this.table as any).handleSort === 'function') {
-      // вызываем и не ожидаем, чтобы UI оставался отзывчивым; ErrorTable отрендерит, когда будет готов
-      (this.table as any).handleSort(field, order).catch((err: unknown) => console.error('handleSort error', err));
-      // меняем порядок для следующего клика
-      this.sortOrder[field] = order === 'asc' ? 'desc' : 'asc';
-      return;
-    }
-
-    // Запасной вариант: локальная сортировка с использованием существующих ошибок (или отфильтрованных ошибок)
+  handleTableSort(field: string) {
+    // Если есть фильтр — сортируем только по отфильтрованным данным
     let errorsToSort = this.filteredErrors || this.table.getErrors();
+    // Если массив пустой — запрашиваем все ошибки
     if (!errorsToSort || !errorsToSort.length) errorsToSort = this.table.getErrors();
-    const sorted = this.table.sortErrors([...errorsToSort], field, order);
+    const sorted = this.table.sortErrors([...errorsToSort], field, this.sortOrder[field]);
     this.table.renderErrors(sorted);
-    // меняем порядок для следующего клика
-    this.sortOrder[field] = order === 'asc' ? 'desc' : 'asc';
+    // Переключаем направление для следующего клика
+    this.sortOrder[field] = this.sortOrder[field] === 'asc' ? 'desc' : 'asc';
+    // Обновляем filteredErrors, чтобы сортировка была по текущему фильтру
     if (this.filteredErrors) this.filteredErrors = sorted;
   }
 }
@@ -456,8 +449,8 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.classList.add('sidebar-open');
     });
 
-    // Закрытие по клику вне sidebar
-    document.addEventListener('click', (e) => {
+    // Закрытие по клику вне sidebar — через делегат для единообразия
+    delegate(document, 'body', 'click', (e: Event) => {
       const target = e.target as Element | null;
       if (sidebar.classList.contains('sidebar--active') && target && !sidebar.contains(target) && target !== burger) {
         sidebar.classList.remove('sidebar--active');
