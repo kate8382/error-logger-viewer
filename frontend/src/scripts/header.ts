@@ -31,14 +31,19 @@ export class HeaderManager {
   constructor() {
     this.api = new ErrorApi();
     // Всегда используем существующий экземпляр errorTableInstance, если он есть.
-    // Если его нет, создаём fallback (но в нормальном потоке main.ts должен создать его первым).
-    this.table = (window.errorTableInstance as unknown as ErrorTable) || new ErrorTable('server');
+    // Если его нет, создаём fallback (но в нормальном потоке main.ts создаёт его на строке 14).
+    this.table = this.getErrorTableInstance();
     this.stats = (window.statsManager as unknown as StatsManager) || new StatsManager();
     this.chart = window.chartManager ?? undefined;
     this.lang = getCurrentLang();
     this.justSwitchedToTable = false;
     this.filteredErrors = undefined;
     this.init();
+  }
+
+  // Вспомогательный метод для получения глобального экземпляра ErrorTable или создания fallback
+  private getErrorTableInstance(): ErrorTable {
+    return (window.errorTableInstance as unknown as ErrorTable) || new ErrorTable('server');
   }
 
   // Простой debounce, хранящий таймеры в `this._debounceTimers`
@@ -425,7 +430,7 @@ export class HeaderManager {
   handleTableSort(field: FieldName) {
     const order = this.sortOrder[field];
     // Используем глобальный errorTableInstance для согласованности или fallback на this.table
-    const tableInstance = (window.errorTableInstance as unknown as ErrorTable) || this.table;
+    const tableInstance = this.getErrorTableInstance();
     // Если ErrorTable реализует `handleSort`, предпочитаем его — он обрабатывает серверный и локальный режимы внутренне
     if (tableInstance && typeof (tableInstance as any).handleSort === 'function') {
       // вызываем и не ожидаем, чтобы UI оставался отзывчивым; ErrorTable отрендерит, когда будет готов
