@@ -26,7 +26,3 @@ Planned fixes
 - Ensure `window.errorTableInstance` is initialized in `server` mode when e2e tests run, or make `handleSort` robust to missing instance.
 - Consider making Cypress intercepts more permissive or intercept both server and local sorting patterns.
 - Re-run full Cypress suite locally and on CI to confirm stability.
-
-Next steps
-----------
-I will open a follow-up PR to implement the delegate selector fix and, if needed, stabilize initialization ordering. The PR will include tests and a brief explanation of why the change reduces flakiness.
