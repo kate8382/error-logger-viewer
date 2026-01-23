@@ -1,4 +1,4 @@
-import { ErrorTable } from '../table';
+import { ErrorTable } from '../../frontend/src/scripts/table';
 
 // Мок-данные для теста рендеринга
 const mockErrors = [

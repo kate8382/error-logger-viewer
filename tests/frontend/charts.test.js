@@ -1,4 +1,4 @@
-import ChartManager from '../charts';
+import ChartManager from '../../frontend/src/scripts/charts';
 
 // Мокаем fetch для Node.js среды
 globalThis.fetch = jest.fn(() =>

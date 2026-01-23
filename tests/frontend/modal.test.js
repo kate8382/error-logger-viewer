@@ -1,4 +1,4 @@
-import { Modal } from '../modal';
+import { Modal } from '../../frontend/src/scripts/modal';
 
 describe('Modal', () => {
   let modalInstance;

@@ -1,7 +1,7 @@
-import { HeaderManager } from '../header';
+import { HeaderManager } from '../../frontend/src/scripts/header';
 
 // Мокаем ErrorApi для demo-режима
-jest.mock('../api', () => {
+jest.mock('../../frontend/src/scripts/api', () => {
   return {
     ErrorApi: jest.fn().mockImplementation(() => ({
       getErrors: () => Promise.resolve(mockErrors),
