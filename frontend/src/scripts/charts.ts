@@ -188,7 +188,9 @@ export default class ChartManager {
       if (this.currentType === 'year') byParam = 'year';
 
       // Проверяем режим приложения
-      const mode = window.app?.errorApi?.mode || 'server';
+      // Приведение глобального `window.app` к минимальному типу, чтобы безопасно читать mode
+      const app = window.app as unknown as { errorApi?: { mode?: 'server' | 'demo' } } | undefined;
+      const mode = app?.errorApi?.mode || 'server';
       let statsType: PeriodStats = {};
       let statsStatus: PeriodStats = {};
       if (mode === 'demo') {

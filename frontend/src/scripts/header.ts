@@ -1,7 +1,8 @@
 import { ErrorApi } from './api';
-import { ErrorTable } from './table';
+import { ErrorTable } from './table'; // Импорт типа конкретного менеджера графиков (ранее использовали ambient-интерфейс из global.d.ts)
 import { StatsManager } from './stats';
 import type { ErrorItem } from './types/errors';
+import type { ChartManagerType } from './charts';
 import { filterErrors } from './services/errorFilter';
 import { qs, createElement, delegate, translateNodes } from './utils/dom';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
@@ -11,7 +12,8 @@ export class HeaderManager {
   api: ErrorApi;
   table: ErrorTable; // Экземпляр ErrorTable (из `window`)
   stats: StatsManager; // Экземпляр StatsManager (из `window`)
-  chart: ChartManagerInterface | null | undefined; // Экземпляр ChartManager (из `window`)
+  // `chart` может быть глобально доступен (через `window.chartManager`), но указываем точный тип через импорт, чтобы не полагаться на ambient-описание.
+  chart: ChartManagerType | null | undefined; // Экземпляр ChartManager (из `window`)
   lang: string;
   justSwitchedToTable: boolean;
   filteredErrors: ErrorItem[] | undefined;
@@ -31,7 +33,9 @@ export class HeaderManager {
     this.api = new ErrorApi();
     this.table = (window.errorTableInstance as unknown as ErrorTable) || new ErrorTable();
     this.stats = (window.statsManager as unknown as StatsManager) || new StatsManager();
-    this.chart = window.chartManager;
+    // Локальное приведение глобального менеджера графиков к импортированному типу
+    // Это позволяет сократить публичную поверхность ambient-описаний и сохранить безопасность типов.
+    this.chart = window.chartManager as unknown as ChartManagerType | undefined;
     this.lang = getCurrentLang();
     this.justSwitchedToTable = false;
     this.filteredErrors = undefined;
@@ -59,11 +63,15 @@ export class HeaderManager {
       const allErrors = this.table.getErrors();
       this.table.renderErrors(allErrors);
     }
-    if (window.statsManager && typeof window.statsManager.renderErrorCards === 'function') {
-      window.statsManager.renderErrorCards();
+    // Используем локальное приведение глобального менеджера статистики
+    {
+      const sm = window.statsManager as unknown as StatsManager | undefined;
+      if (sm && typeof sm.renderErrorCards === 'function') sm.renderErrorCards();
     }
-    if (window.chartManager && typeof window.chartManager.resetToDefault === 'function') {
-      window.chartManager.resetToDefault();
+    // Локальное приведение `chartManager` к импортированному типу
+    {
+      const cm = window.chartManager as unknown as ChartManagerType | undefined;
+      if (cm && typeof cm.resetToDefault === 'function') cm.resetToDefault();
     }
   }
 
@@ -286,7 +294,7 @@ export class HeaderManager {
   _debounce(fn: (..._args: any[]) => void, wait = 200, key = '__default') {
     return (..._args: any[]) => {
       const existing = this._debounceTimers[key];
-      if (existing) clearTimeout(existing as any);
+      if (existing !== undefined) clearTimeout(existing as unknown as number);
       this._debounceTimers[key] = setTimeout(() => {
         fn(..._args);
         delete this._debounceTimers[key];
@@ -365,7 +373,8 @@ export class HeaderManager {
         const key = visibleSections.length === 1 ? visibleSections[0][0] : null;
         this.setHeaderTitleBySection(key);
       }
-      if (window.chartManager && typeof window.chartManager.resetToDefault === 'function') window.chartManager.resetToDefault();
+      const cm = window.chartManager as unknown as ChartManagerType | undefined;
+      if (cm && typeof cm.resetToDefault === 'function') cm.resetToDefault();
     } else {
       // Показываем заголовок первой видимой секции
       const firstVisible = Object.values(this.sections).find((sec) => sec && sec.style.display !== 'none');
@@ -378,8 +387,9 @@ export class HeaderManager {
       showCenterSpinner(this.sections.table, 'page');
       this.filterTable(query).finally(() => {
         hideCenterSpinner(this.sections.table);
-        if (window.errorTableInstance && typeof window.errorTableInstance.fetchErrors === 'function') {
-          window.errorTableInstance.fetchErrors();
+        {
+          const et = window.errorTableInstance as unknown as ErrorTable | undefined;
+          if (et && typeof et.fetchErrors === 'function') et.fetchErrors();
         }
       });
     }

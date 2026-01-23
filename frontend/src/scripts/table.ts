@@ -3,7 +3,9 @@ import { ErrorApi } from './api';
 import type { Mode } from './api';
 import { StatsManager } from './stats';
 import type { ErrorItem } from './types/errors';
+import type { HeaderManager } from './header'; // Импортируем тип менеджера заголовка, чтобы безопасно приводить `window.headerManager` к реальному типу
 import { qs, createElement, translateNodes } from './utils/dom';
+import type { ChartManagerType } from './charts';
 import { t, getCurrentLang, onLangChange } from './utils/i18n';
 import { handleModuleLoadError } from './utils/moduleLoad';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
@@ -154,7 +156,9 @@ export class ErrorTable {
 
         import('./modal')
           .then(({ Modal }: { Modal: any }) => {
-            const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
+            // Приведение `window.app` к минимальному типу, чтобы безопасно читать `errorApi.mode`
+            const app = window.app as unknown as { errorApi?: { mode?: 'server' | 'demo' } } | undefined;
+            const mode = app?.errorApi?.mode || 'server';
             const modal = new Modal(mode);
             window.appModal = modal;
             modal.openEdit(error);
@@ -188,7 +192,8 @@ export class ErrorTable {
 
         import('./modal')
           .then(({ Modal }) => {
-            const mode = window.app && window.app.errorApi ? window.app.errorApi.mode : 'server';
+            const app = window.app as unknown as { errorApi?: { mode?: 'server' | 'demo' } } | undefined;
+            const mode = app?.errorApi?.mode || 'server';
             const modal = new Modal(mode);
             window.appModal = modal;
             modal.deleteError(error.id);
@@ -278,8 +283,8 @@ export class ErrorTable {
         return orders === 'asc' ? aValue - bValue : bValue - aValue;
       }
       // Для других строковых полей (используем приведение к any для динамического доступа)
-      const aRaw: unknown = (a as any)[field];
-      const bRaw: unknown = (b as any)[field];
+      const aRaw: unknown = (a as unknown as Record<string, unknown>)[field];
+      const bRaw: unknown = (b as unknown as Record<string, unknown>)[field];
       const aValue = String(aRaw ?? '').toLowerCase();
       const bValue = String(bRaw ?? '').toLowerCase();
       return orders === 'asc' ? (aValue > bValue ? 1 : aValue < bValue ? -1 : 0) : aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
@@ -294,13 +299,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const existing = window.errorTableInstance as unknown as ErrorTable | undefined;
   const errorTable = existing || new ErrorTable();
   window.errorTableInstance = errorTable;
+  // При инициализации вызываем fetchErrors, приводя тип глобального инстанса к реальному.
+  // !!! используем явное приведение, чтобы TypeScript видел методы экземпляра.
   if (typeof errorTable.fetchErrors === 'function') errorTable.fetchErrors();
   window.renderErrorTable = (errors) => {
     errorTable.renderErrors(errors);
     const statsManager = new StatsManager(errors);
     statsManager.renderErrorCards();
-    // безопасно вызываем renderChart, если chartManager и метод существуют
-    window.chartManager?.renderChart?.();
+    // Локальное приведение `chartManager` перед вызовом метода — безопасно и избегает зависимости от большого ambient-файла
+    {
+      const cm = window.chartManager as unknown as ChartManagerType | undefined;
+      if (cm && typeof cm.renderChart === 'function') cm.renderChart();
+    }
   };
 
   // Состояние направления сортировки
@@ -316,12 +326,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // Универсальный обработчик сортировки
   async function handleSort(field: FieldName) {
     // Если фильтр активен — сортируем только по отфильтрованным данным
-    if (window.headerManager && window.headerManager.filteredErrors) {
-      const filtered = window.headerManager.filteredErrors;
+    // Локальное приведение `window.headerManager` к типу HeaderManager - это позволяет обращаться к `filteredErrors` без большого ambient-файла.
+    const hm = window.headerManager as unknown as HeaderManager | undefined;
+    if (hm && hm.filteredErrors) {
+      const filtered = hm.filteredErrors;
       const sorted = errorTable.sortErrors([...filtered], field, sortOrder[field]);
       errorTable.renderErrors(sorted);
       // Обновляем filteredErrors, чтобы сортировка была по текущему фильтру
-      window.headerManager.filteredErrors = sorted;
+      hm.filteredErrors = sorted;
+      return;
     } else if (errorTable.errorApi.mode === 'server') {
       // Если серверный режим — сортировка через API
       const errors = await errorTable.errorApi.getErrors({
