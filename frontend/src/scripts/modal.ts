@@ -2,7 +2,12 @@ import { el, setChildren } from 'redom';
 import { ErrorApi } from './api';
 import type { Mode } from './api';
 import type { ErrorItem } from './types/errors';
+// Импортируем тип `ErrorTable`, потому что вызываем `fetchErrors` на глобальном экземпляре и делаем локальное приведение `window.errorTableInstance` -> `ErrorTable`.
+import type { ErrorTable } from './table';
 import { qs, createElement, translateNodes, assertExists } from './utils/dom';
+// Локальный тип для временного свойства на `window` (closeCustomSelectModal)
+// eslint-disable-next-line no-unused-vars
+type WindowWithClose = Window & { closeCustomSelectModal?: ((e?: MouseEvent) => void) | undefined };
 import { t, getLabel, onLangChange } from './utils/i18n';
 import { handleModuleLoadError } from './utils/moduleLoad';
 
@@ -17,7 +22,7 @@ export class Modal {
   // eslint-disable-next-line no-unused-vars
   _outsideClickHandler: (event: MouseEvent) => void = () => {}; // Обработчик клика по фону модального окна
   // eslint-disable-next-line no-unused-vars
-  _closeCustomSelect: ((e: MouseEvent) => void) | undefined; // Обработчик для закрытия кастомного селекта
+  _closeCustomSelect: ((e?: MouseEvent) => void) | undefined; // Обработчик для закрытия кастомного селекта
   _lastErrorForEdit: ErrorItem | null = null; // Последняя открытая ошибка для редактирования
   _lastErrorIdForDelete: string | null = null; // Последний открытый ID ошибки для удаления
 
@@ -179,7 +184,7 @@ export class Modal {
             style: 'display: none;',
             role: 'listbox',
           },
-          ...statusOptions.filter((opt) => opt.value !== currentStatus.value).map((opt) => el('li', { 'data-value': opt.value, className: 'modal__status-option', tabindex: '0', role: 'option' } as any, opt.label)),
+          ...statusOptions.filter((opt) => opt.value !== currentStatus.value).map((opt) => el('li', { 'data-value': opt.value, className: 'modal__status-option', tabindex: '0', role: 'option' } as Record<string, unknown>, opt.label)),
         ),
       ],
     );
@@ -194,7 +199,7 @@ export class Modal {
       (statusSelect as HTMLElement).setAttribute('aria-expanded', 'false');
       if (this._closeCustomSelect) {
         document.removeEventListener('mousedown', this._closeCustomSelect);
-        (window as any).closeCustomSelectModal = undefined;
+        (window as WindowWithClose).closeCustomSelectModal = undefined;
       }
     };
 
@@ -204,7 +209,7 @@ export class Modal {
       if (list) list.style.display = 'block';
       (statusSelect as HTMLElement).setAttribute('aria-expanded', 'true');
       if (this._closeCustomSelect) {
-        (window as any).closeCustomSelectModal = this._closeCustomSelect;
+        (window as WindowWithClose).closeCustomSelectModal = this._closeCustomSelect;
         document.addEventListener('mousedown', this._closeCustomSelect);
       }
       const firstOption = list ? (list.querySelector('.modal__status-option') as HTMLElement | null) : null;
@@ -212,8 +217,8 @@ export class Modal {
     };
 
     // Вынесено в приватный метод класса
-    this._closeCustomSelect = (e: MouseEvent) => {
-      const target = e.target as Node | null;
+    this._closeCustomSelect = (e?: MouseEvent) => {
+      const target = (e?.target as Node) ?? null;
       if (!target || !(statusSelect as HTMLElement).contains(target)) {
         closeStatusSelect();
       }
@@ -362,7 +367,7 @@ export class Modal {
       if (this.mode === 'demo') {
         const now = new Date().toISOString();
         updated.lastSeen = now;
-        (updated as any).updatedAt = now;
+        (updated as ErrorItem).updatedAt = now;
       } else {
         // Для server-режима удаляем lastSeen, чтобы сервер выставил новое значение
         if ('lastSeen' in updated) delete updated.lastSeen;
@@ -379,8 +384,10 @@ export class Modal {
             await api.updateError(error.id, updated);
           }
           this.close();
-          if (window.errorTableInstance && typeof window.errorTableInstance.fetchErrors === 'function') {
-            window.errorTableInstance.fetchErrors();
+          // Приводим глобальный `window.errorTableInstance` к реальному типу перед вызовом метода (устраняет зависимость от большого ambient-интерфейса и даёт корректную типизацию).
+          {
+            const et = window.errorTableInstance as unknown as ErrorTable | undefined;
+            if (et && typeof et.fetchErrors === 'function') et.fetchErrors();
           }
           setTimeout(() => hideLoading(saveBtn), 0);
         } catch (e) {
@@ -432,8 +439,10 @@ export class Modal {
             .deleteError(errorId)
             .then(() => {
               this.close();
-              if (window.errorTableInstance && typeof window.errorTableInstance.fetchErrors === 'function') {
-                window.errorTableInstance.fetchErrors();
+              // безопасно приводим глобальный инстанс и вызываем `fetchErrors`.
+              {
+                const et = window.errorTableInstance as unknown as ErrorTable | undefined;
+                if (et && typeof et.fetchErrors === 'function') et.fetchErrors();
               }
               setTimeout(() => hideLoading(deleteBtn), 0);
             })

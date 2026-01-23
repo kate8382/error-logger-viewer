@@ -4,9 +4,11 @@ import type { Mode } from './api';
 import './header';
 import { StatsManager } from './stats';
 import ChartManager from './charts';
+import type { ChartManagerType } from './charts'; // Импорт типа ChartManager чтобы приводить созданный инстанс к правильному типу (вместо ambient-описание в global.d.ts)
+import type { Aside } from './aside'; // Импорт типа Aside для приведения динамически загруженного синглтона
 import { ErrorTable } from './table';
 import type { ErrorItem, NewError } from './types/errors';
-import { getCurrentLang, onLangChange } from './utils/i18n';
+import { onLangChange } from './utils/i18n';
 import { updateTestErrorButtonVisibility } from './utils/testErrorButton';
 import handleModuleLoadError from './utils/moduleLoad';
 
@@ -21,8 +23,10 @@ async function initStatsManager() {
     console.error('[StatsManager] Error loading errors:', e);
   }
   window.statsManager = new StatsManager(errors);
-  if (window.statsManager && typeof window.statsManager.renderErrorCards === 'function') {
-    window.statsManager.renderErrorCards();
+  // Приводим глобальный синглтон к локальному типу перед вызовом методов
+  const sm = window.statsManager as unknown as StatsManager | undefined;
+  if (sm && typeof sm.renderErrorCards === 'function') {
+    sm.renderErrorCards();
   }
 }
 initStatsManager();
@@ -44,9 +48,12 @@ class ErrorLoggerApp {
         .then(({ Aside }) => {
           // Динамический импорт (lazy loading) для отложенной загрузки aside
           window.aside = new Aside();
-          if (window.aside && typeof window.aside.translatePage === 'function') {
-            window.aside.translatePage(getCurrentLang());
-            onLangChange(() => window.aside?.translatePage?.(getCurrentLang()));
+          // Приводим глобальный aside к типу и используем локальную переменную для вызовов
+          const asideLocal = window.aside as unknown as Aside | undefined;
+          if (asideLocal && typeof asideLocal.translatePage === 'function') {
+            // `translatePage` не принимает аргументы — он читает текущий язык из i18n.
+            asideLocal.translatePage();
+            onLangChange(() => asideLocal?.translatePage?.());
           }
         })
         .catch((err) => {
@@ -55,7 +62,8 @@ class ErrorLoggerApp {
       this.setupErrorListeners();
       // Инициализация ChartManager только один раз глобально
       if (!window.chartManager) {
-        window.chartManager = new ChartManager();
+        // Явное приведение нового объекта к `ChartManagerType` для корректной типизации
+        window.chartManager = new ChartManager() as ChartManagerType;
       }
     });
   }
@@ -64,13 +72,18 @@ class ErrorLoggerApp {
     if (!window.renderErrorTable) return;
     const errors = await this.errorApi.getErrors({});
     window.renderErrorTable(errors);
-    if (window.statsManager) {
-      // убираем any из-за ошибки типов в глобальном объявлении
-      window.statsManager.errors = errors;
-      window.statsManager.renderErrorCards && window.statsManager.renderErrorCards();
+    // Локальное приведение глобального синглтона к корректному типу
+    {
+      const sm = window.statsManager as unknown as StatsManager | undefined;
+      if (sm) {
+        sm.errors = errors;
+        sm.renderErrorCards && sm.renderErrorCards();
+      }
     }
-    if (window.chartManager) {
-      window.chartManager.renderChart && window.chartManager.renderChart();
+    // Локальное приведение `chartManager` для безопасного вызова методов
+    {
+      const cm = window.chartManager as unknown as ChartManagerType | undefined;
+      if (cm && typeof cm.renderChart === 'function') cm.renderChart();
     }
   }
 
@@ -86,7 +99,7 @@ class ErrorLoggerApp {
     window.addEventListener(
       'error',
       (event: Event) => {
-        const target = event.target || (event as any).srcElement;
+        const target = (event.target ?? (event as unknown as { srcElement?: EventTarget }).srcElement) as EventTarget | null;
         if (target && (target instanceof HTMLScriptElement || target instanceof HTMLLinkElement || target instanceof HTMLImageElement)) {
           let src = '';
           if (target instanceof HTMLScriptElement) src = target.src || '';
@@ -126,7 +139,7 @@ class ErrorLoggerApp {
       this.handleErrorCreate({
         type: 'UnhandledPromiseRejection',
         message: event.reason ? String(event.reason) : 'Promise rejected',
-        stack: (event.reason as any)?.stack ?? undefined,
+        stack: (event.reason as unknown as { stack?: string })?.stack ?? undefined,
         firstSeen: new Date().toISOString(),
         lastSeen: new Date().toISOString(),
       });
@@ -149,7 +162,7 @@ class ErrorLoggerApp {
         }
         return response;
       } catch (error) {
-        const err = error as any;
+        const err = error as unknown as { message?: string, stack?: string };
         console.log('[ErrorLogger] Creating Fetch error:', err?.message || err);
         this.handleErrorCreate({
           type: 'FetchError',
@@ -170,13 +183,15 @@ class ErrorLoggerApp {
         if (event.error) {
           // Это JS-ошибка (TypeError, SyntaxError и др.)
           if (window.app && window.app.errorApi) {
+            const evErr = event.error as unknown as { name?: string, message?: string, stack?: string } | undefined;
+            const evMeta = event as unknown as { filename?: string, lineno?: number, colno?: number };
             window.app.errorApi.createError({
-              type: (event.error as any)?.name || 'Error',
-              message: (event.error as any)?.message || String(event.message),
-              source: (event as any).filename || undefined,
-              lineno: (event as any).lineno || undefined,
-              colno: (event as any).colno || undefined,
-              stack: (event.error as any)?.stack || '',
+              type: evErr?.name || 'Error',
+              message: evErr?.message || String(event.message),
+              source: evMeta.filename || undefined,
+              lineno: evMeta.lineno || undefined,
+              colno: evMeta.colno || undefined,
+              stack: evErr?.stack || '',
               firstSeen: new Date().toISOString(),
               lastSeen: new Date().toISOString(),
             });

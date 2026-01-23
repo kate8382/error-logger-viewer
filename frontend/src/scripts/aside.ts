@@ -1,5 +1,6 @@
 import type { Mode } from './api';
 import { ErrorApi } from './api';
+import type { ErrorTable } from './table';
 import { t, getCurrentLang, setLang, onLangChange } from './utils/i18n';
 import { qsa, qs, translateNodes, delegate } from './utils/dom';
 
@@ -88,10 +89,13 @@ export class Aside {
     modeOptions.forEach((option) => {
       option.addEventListener('click', () => {
         const mode = option.dataset.value as Mode;
-        const app = window.app;
+        // Локальное приведение глобального `app` к минимальному типу для обращения к errorApi/updateErrorTable
+        // eslint-disable-next-line no-unused-vars
+        const app = window.app as unknown as { errorApi?: { setMode?: (m: Mode) => void }, updateErrorTable?: () => void } | undefined;
         if (app && app.errorApi && typeof app.updateErrorTable === 'function') {
-          app.errorApi.setMode(mode);
-          const et = window.errorTableInstance;
+          if (typeof app.errorApi.setMode === 'function') app.errorApi.setMode(mode);
+          /* Приведение глобального инстанса таблицы к реальному типу ErrorTable. Это нужно для безопасного вызова метода `setMode`, т.к. `window.errorTableInstance` объявлен минимально в global.d.ts */
+          const et = window.errorTableInstance as unknown as ErrorTable | undefined;
           if (et && typeof et.setMode === 'function') {
             et.setMode(mode);
           }

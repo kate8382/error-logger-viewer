@@ -5,18 +5,23 @@ try {
   const savedLang = localStorage.getItem('lang');
   if (savedLang) {
     currentLang = savedLang as 'en' | 'ru';
-  } else if (window.app?.errorApi) {
-    // window.app присутствует — используем app.lang дальше при необходимости
   } else {
-    const nav = (navigator && (navigator.language || (navigator as any).userLanguage)) || 'en';
-    currentLang = String(nav).startsWith('en') ? 'en' : 'ru';
+    // Локальное приведение `window.app` к минимальному типу для безопасной проверки errorApi
+    const app = window.app as unknown as { errorApi?: { mode?: string }, lang?: 'en' | 'ru' } | undefined;
+    if (app && app.errorApi) {
+      // window.app присутствует — используем app.lang дальше при необходимости
+    } else {
+      const nav = (navigator && (navigator.language || (navigator as unknown as { userLanguage?: string }).userLanguage)) || 'en';
+      currentLang = String(nav).startsWith('en') ? 'en' : 'ru';
+    }
   }
 } catch {
   // Если localStorage недоступен, используем app или navigator
-  if (window.app && window.app.lang) {
-    currentLang = window.app.lang;
+  const app = window.app as unknown as { lang?: 'en' | 'ru' } | undefined;
+  if (app && app.lang) {
+    currentLang = app.lang;
   } else {
-    const nav = (navigator && (navigator.language || (navigator as any).userLanguage)) || 'en';
+    const nav = (navigator && (navigator.language || (navigator as unknown as { userLanguage?: string }).userLanguage)) || 'en';
     currentLang = String(nav).startsWith('en') ? 'en' : 'ru';
   }
 }
@@ -36,7 +41,9 @@ export function getCurrentLang() {
 export function setLang(lang: Lang): void {
   if (lang !== currentLang) {
     currentLang = lang;
-    if (window.app) window.app.lang = lang;
+    // Локальное приведение `window.app` перед записью языка
+    const app = window.app as unknown as { lang?: string } | undefined;
+    if (app) app.lang = lang;
     listeners.forEach((fn) => fn(lang));
     // Сохраняем выбор языка, как делаем для темы
     try {

@@ -705,6 +705,34 @@
       "users": [
         "unknown"
       ]
+    },
+    {
+      "id": "ca55888b-e172-42f6-8d05-a2af42867373",
+      "projectId": "unknown",
+      "type": "ResourceLoadError",
+      "message": "Failed to load resource: SCRIPT",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2026-01-23T15:13:54.880Z",
+      "lastSeen": "2026-01-23T15:13:54.880Z",
+      "users": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "99ed4a7b-e107-4ac5-8ea9-a0bfaf7837e7",
+      "projectId": "unknown",
+      "type": "FetchError",
+      "message": "Fetch failed: 404 Not Found",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2026-01-23T15:53:20.008Z",
+      "lastSeen": "2026-01-23T15:53:20.008Z",
+      "users": [
+        "unknown"
+      ]
     }
   ],
   "projects": [
