@@ -1,4 +1,4 @@
-import { filterErrors, getDateOnly } from '../services/errorFilter';
+import { filterErrors, getDateOnly } from '../../frontend/src/scripts/services/errorFilter';
 
 const sample = [
   { id: '1', type: 'auth', status: 'new', firstSeen: '2025-10-01T12:00:00Z', lastSeen: '2025-10-02T12:00:00Z' },

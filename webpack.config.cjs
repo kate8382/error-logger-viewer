@@ -5,7 +5,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = (env = {}) => ({
   mode: env.prod ? 'production' : 'development',
-  entry: './src/scripts/main.ts',
+  entry: './frontend/src/scripts/main.ts',
   output: {
     filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'dist'),
@@ -45,7 +45,7 @@ module.exports = (env = {}) => ({
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'src/index.html',
+      template: path.resolve(__dirname, 'frontend', 'src', 'index.html'),
       filename: 'index.html',
       inject: 'body',
     }),
@@ -54,9 +54,9 @@ module.exports = (env = {}) => ({
     }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: path.resolve(__dirname, 'src/assets/img'), to: 'img' },
-        { from: path.resolve(__dirname, 'src/assets/fonts'), to: 'fonts' },
-        { from: path.resolve(__dirname, 'favicon.ico'), to: '' },
+        { from: path.resolve(__dirname, 'frontend', 'src', 'assets', 'img'), to: 'img' },
+        { from: path.resolve(__dirname, 'frontend', 'src', 'assets', 'fonts'), to: 'fonts' },
+        { from: path.resolve(__dirname, 'frontend', 'favicon.ico'), to: '' },
       ],
     }),
   ],

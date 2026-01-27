@@ -14,9 +14,6 @@ jobs:
   frontend-tests:
     name: 'CI / Frontend: tests & e2e'
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,26 +23,23 @@ jobs:
         with:
           node-version: '18.16.0'
 
-      - name: Install frontend deps
+      - name: Install deps (root)
         run: npm ci
 
-      - name: Run unit tests (Jest)
-        run: npm test --silent
+      - name: Run frontend unit tests (Jest)
+        run: npm run test:frontend --silent
 
       - name: Build production bundle
-        run: npm run build
+        run: npm run build:frontend
 
       - name: Serve production build in background
         run: |
-          npm run serve:dist &
+          npm run serve:dist:frontend &
           echo "waiting for server..." && sleep 2
 
       - name: Start backend server
         run: |
-          pushd ../backend
-          npm ci
-          nohup node server.js &
-          popd
+          nohup npm run dev:backend &
           echo "waiting for backend..."
           for i in 1 2 3 4 5; do
             if curl -sS http://localhost:3000/errors >/dev/null 2>&1; then
@@ -61,7 +55,7 @@ jobs:
           fi
 
       - name: Install Cypress
-        run: npm i cypress@15 --no-save
+        run: npm ci --no-audit --no-fund --silent && npm i cypress@15 --no-save
 
       - name: Run Cypress headless
         env:
@@ -78,7 +72,7 @@ jobs:
             frontend/cypress/screenshots
             frontend/cypress/videos
             frontend/cypress/logs
-            frontend/cypress-run.log
+            cypress-run.log
 
   backend-tests:
     name: 'CI / Backend: tests'
@@ -92,22 +86,15 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install backend deps
-        run: |
-          cd backend
-          npm ci
+      - name: Install deps (root)
+        run: npm ci
 
       - name: Run backend tests
-        run: |
-          cd backend
-          npm test
+        run: npm run test:backend
 
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -117,8 +104,8 @@ jobs:
         with:
           node-version: '18.16.0'
 
-      - name: Install deps
+      - name: Install deps (root)
         run: npm ci
 
       - name: Run ESLint
-        run: npm run lint || true
+        run: npm run lint:all || true

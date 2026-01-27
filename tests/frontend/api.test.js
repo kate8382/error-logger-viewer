@@ -1,4 +1,4 @@
-import { ErrorApi } from '../api';
+import { ErrorApi } from '../../frontend/src/scripts/api';
 
 // Тест для проверки работы ErrorApi в demo-режиме
 describe('ErrorApi', () => {

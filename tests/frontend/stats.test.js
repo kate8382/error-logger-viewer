@@ -1,4 +1,4 @@
-import { StatsManager } from '../stats';
+import { StatsManager } from '../../frontend/src/scripts/stats';
 
 describe('StatsManager', () => {
   // фиксируем системную дату, чтобы todayCount был детерминирован

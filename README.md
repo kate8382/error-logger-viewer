@@ -166,7 +166,7 @@ The application allows you to:
 - Fixed runtime bug in charts generation (`charts.js`) to avoid accessing undefined nested properties.
 - Added GitHub Actions workflow (`.github/workflows/ci.yml`) to run Jest, build the frontend, and execute headless Cypress tests in CI.
 
-For detailed test instructions and helper descriptions see [frontend/TESTS.md](frontend/TESTS.md).
+For detailed test instructions and helper descriptions see [TESTS.md](TESTS.md).
 
  ---
 

@@ -1,4 +1,4 @@
-import { ErrorTable } from '../table';
+import { ErrorTable } from '../../frontend/src/scripts/table';
 
 describe('ErrorTable edge-cases', () => {
   it('renderErrors не падает при undefined', () => {
