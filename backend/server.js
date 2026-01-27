@@ -6,6 +6,7 @@ import { Low } from 'lowdb'; // легковесная база данных
 import { JSONFile } from 'lowdb/node'; // адаптер для работы с JSON файлами
 import { fileURLToPath } from 'url'; // для получения пути к файлу
 import { dirname, join } from 'path'; // для работы с путями
+import { promises as fs } from 'fs';
 import { v4 as uuidv4 } from 'uuid'; // для генерации уникальных идентификаторов
 
 // Настройка базы данных
@@ -23,13 +24,19 @@ console.log('db.data:', db.data);
 // Загружаем общие лимиты периодов из config/periods.json
 let PERIOD_LIMITS = { day: 7, week: 8, month: 6, year: 4 };
 try {
-  // dynamic import with json assertion (Node ESM)
-
+  // Try to use dynamic import with json assertion when Node supports it
   const cfg = await import('../config/periods.json', { assert: { type: 'json' } });
-  // eslint-disable-next-line no-unused-vars
   if (cfg && cfg.default) PERIOD_LIMITS = cfg.default;
 } catch (e) {
-  console.warn('[server] Could not load config/periods.json, using defaults', e);
+  // Fallback: read JSON file using fs to support older Node versions
+  try {
+    const raw = await fs.readFile(join(__dirname, '..', 'config', 'periods.json'), 'utf8');
+    const cfgJson = JSON.parse(raw);
+    // eslint-disable-next-line no-unused-vars
+    if (cfgJson) PERIOD_LIMITS = cfgJson;
+  } catch (e2) {
+    console.warn('[server] Could not load config/periods.json, using defaults', e, e2);
+  }
 }
 
 // Инициализация структуры данных, если она отсутствует

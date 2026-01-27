@@ -40,6 +40,8 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
+backend/node_modules/
+backend/package-lock.json
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
@@ -140,3 +142,4 @@ vite.config.ts.timestamp-*
 
 # Ignore local issue drafts folder
 .github/ISSUES/
+backend/dist

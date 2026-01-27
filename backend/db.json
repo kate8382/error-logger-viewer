@@ -733,6 +733,20 @@
       "users": [
         "unknown"
       ]
+    },
+    {
+      "id": "a25b8674-5bde-4643-804c-42824fcd19e6",
+      "projectId": "unknown",
+      "type": "TestError",
+      "message": "Тестовая ошибка для проверки дат",
+      "status": "fixed",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2026-01-27T17:34:51.094Z",
+      "lastSeen": "2026-01-27T17:34:51.094Z",
+      "users": [
+        "unknown"
+      ]
     }
   ],
   "projects": [

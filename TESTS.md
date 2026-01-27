@@ -9,26 +9,26 @@ This document explains how to run unit and end-to-end tests for the frontend.
 
 Prerequisites
 - Node.js (16+) and npm installed.
-- Project dependencies installed in `frontend`:
+- Project dependencies installed (from repo root):
   ```powershell
-  cd frontend
   npm install
+  # or if you prefer to install only frontend deps:
+  # npx --prefix frontend npm install
   ```
 
 Unit tests (Jest)
 -----------------
-- Run all unit tests:
+- Run all frontend unit tests from repo root:
   ```powershell
-  cd frontend
-  npm test
+  npm run test:frontend
   ```
 - Run a single test file (example):
   ```powershell
-  npm test -- src/scripts/__tests__/header.test.js
+  npm run test:frontend -- src/scripts/__tests__/header.test.js
   ```
 - Run in watch mode:
   ```powershell
-  npm test -- --watch
+  npm run test:frontend -- --watch
   ```
 
 Why run unit tests?
@@ -37,28 +37,26 @@ Why run unit tests?
 
 End-to-end tests (Cypress)
 --------------------------
-Cypress tests interact with a running frontend application. You must start the dev server first.
+Cypress tests interact with a running frontend application. Start the dev server from the repo root first.
 
 1) Start dev server in one terminal:
 ```powershell
-cd frontend
-npm run start
+npm run dev:frontend
 ```
 The app is usually available at http://localhost:8080. If your dev server uses a different host/port, see the "Troubleshooting" section.
 
-2) Open Cypress (interactive):
+2) Open Cypress (interactive) from root using `--prefix` to run the `frontend` package tools:
 ```powershell
-cd frontend
-npx cypress open --config baseUrl="http://localhost:8080"
+npx --prefix frontend cypress open --config baseUrl="http://localhost:8080"
 ```
-or run headless:
+Or run headless:
 ```powershell
-npx cypress run --config baseUrl="http://localhost:8080"
+npx --prefix frontend cypress run --config baseUrl="http://localhost:8080"
 ```
 
 Run a single spec:
 ```powershell
-npx cypress run --config baseUrl="http://localhost:8080" --spec "cypress/e2e/header.filters.cy.js"
+npx --prefix frontend cypress run --config baseUrl="http://localhost:8080" --spec "cypress/e2e/header.filters.cy.js"
 ```
 
 Fixtures & deterministic tests
@@ -107,6 +105,17 @@ CI notes (suggestion)
   - `npm ci`
   - `npm test`
   - Start dev server (if needed) and run `npx cypress run` in headless mode
+
+---
+
+## Code style (createElement usage)
+
+We standardize calls to `createElement` in the frontend codebase to improve readability and type-safety.
+
+- Preferred style: use camelCase top-level fields for common attributes and `attrs` for less common or kebab-case attributes.
+  - Examples: `className`, `id`, `tabIndex`, `dataI18n`, `ariaLabel`, `ariaHidden`, `text`, `disabled`.
+  - For other attributes use `attrs: { 'data-foo': 'bar', 'aria-foo': 'baz' }`.
+- Rationale: camelCase top-level fields are easier to discover in TypeScript and are mapped by `createElement` to the correct HTML attributes (for example `dataI18n` → `data-i18n`, `ariaLabel` → `aria-label`).
 
 ---
 
