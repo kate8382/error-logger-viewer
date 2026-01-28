@@ -1,6 +1,6 @@
-import type { ErrorItem } from './errors';
-import type { ErrorApi } from '../api';
-import type { ChartManagerType } from '../charts';
+import type { ErrorItem } from '../frontend/src/scripts/utils/errors';
+import type { ErrorApi } from '../frontend/src/scripts/api';
+import type { ChartManagerType } from '../frontend/src/scripts/charts';
 
 // Минимальная публичная поверхность `window` для рантайма.
 // Оставляем только реально необходимое для взаимодействия между ленивыми модулями, чтобы не держать огромный ambient-файл и позволить модулям импортировать свои типы явно.
