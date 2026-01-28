@@ -1,5 +1,5 @@
 import { el, setChildren } from 'redom';
-import type { ErrorItem, PeriodStats } from './types/errors';
+import type { ErrorItem, PeriodStats } from './utils/errors';
 import { request } from './utils/request';
 import { qs, qsa, createElement } from './utils/dom';
 import { t, getLabel, onLangChange } from './utils/i18n';

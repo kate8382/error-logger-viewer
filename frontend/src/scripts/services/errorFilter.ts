@@ -1,4 +1,4 @@
-import type { ErrorItem } from '../types/errors';
+import type { ErrorItem } from '../utils/errors';
 // eslint-disable-next-line prettier/prettier
 import type * as I18n from '../utils/i18n';
 

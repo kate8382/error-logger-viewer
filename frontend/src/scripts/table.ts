@@ -2,7 +2,7 @@ import { el, setChildren } from 'redom';
 import { ErrorApi } from './api';
 import type { Mode } from './api';
 import { StatsManager } from './stats';
-import type { ErrorItem } from './types/errors';
+import type { ErrorItem } from './utils/errors';
 import type { HeaderManager } from './header'; // Импортируем тип менеджера заголовка, чтобы безопасно приводить `window.headerManager` к реальному типу
 import { qs, createElement, translateNodes } from './utils/dom';
 import type { ChartManagerType } from './charts';

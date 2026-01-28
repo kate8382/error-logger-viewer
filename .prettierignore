@@ -40,4 +40,4 @@ backend/package-lock.json
 
 # Ignore lowdb db file
 backend/db.json
-frontend/src/scripts/types/global.d.ts
+types/global.d.ts

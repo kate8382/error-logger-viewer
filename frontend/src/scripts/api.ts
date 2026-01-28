@@ -2,7 +2,7 @@
 export const API_BASE_URL = (typeof globalThis !== 'undefined' && (globalThis as any).API_BASE_URL) || 'http://localhost:3000';
 
 import { request } from './utils/request';
-import type { ErrorItem, NewError, Stats } from './types/errors';
+import type { ErrorItem, NewError, Stats } from './utils/errors';
 
 export type Mode = 'server' | 'demo';
 
