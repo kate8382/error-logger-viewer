@@ -10,8 +10,7 @@
     "noEmit": true
   },
   "include": ["src/**/*", "../types/**/*.d.ts"],
-  // "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"],
-  // "include": ["src/**/*", "src/scripts/types/**/*"],
+  "files": ["../types/global.d.ts"],
   "exclude": [
     "node_modules",
     "dist"

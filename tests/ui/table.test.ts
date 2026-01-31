@@ -1,7 +1,9 @@
 import { ErrorTable } from '../../frontend/src/scripts/table';
+import type { ErrorItem } from '../../frontend/src/scripts/utils/errors';
+import { qsa, assertExists } from '../../frontend/src/scripts/utils/dom';
 
 // Мок-данные для теста рендеринга
-const mockErrors = [
+const mockErrors: ErrorItem[] = [
   {
     id: '1234567890abcdef',
     type: 'TypeError',
@@ -51,16 +53,24 @@ describe('ErrorTable', () => {
     it('должен рендерить ошибки в таблицу', () => {
       const table = new ErrorTable('demo');
       table.renderErrors(mockErrors.slice(0, 2));
-      const rows = document.querySelectorAll('#errorTableBody tr');
+      const rows = qsa<HTMLTableRowElement>('#errorTableBody tr');
       expect(rows.length).toBe(2);
-      expect(rows[0].querySelector('.error-table__cell--id').textContent).toContain('12345678-...cdef');
-      expect(rows[1].querySelector('.error-table__cell--id').textContent).toContain('abcdef12-...7890');
-      expect(rows[0].querySelector('.error-table__cell--data').textContent).toContain('Type Error');
-      expect(rows[1].querySelector('.error-table__cell--data').textContent).toContain('ReferenceError');
-      expect(rows[0].querySelector('.error-table__cell--count').textContent).toBe('2');
-      expect(rows[1].querySelector('.error-table__cell--count').textContent).toBe('1');
-      expect(rows[0].querySelector('.error-table__cell--status').textContent).toBe('New');
-      expect(rows[1].querySelector('.error-table__cell--status').textContent).toBe('Fixed');
+      const first = assertExists(rows[0].querySelector('.error-table__cell--id')) as HTMLElement;
+      const second = assertExists(rows[1].querySelector('.error-table__cell--id')) as HTMLElement;
+      expect(first.textContent).toContain('12345678-...cdef');
+      expect(second.textContent).toContain('abcdef12-...7890');
+      const dataFirst = assertExists(rows[0].querySelector('.error-table__cell--data')) as HTMLElement;
+      const dataSecond = assertExists(rows[1].querySelector('.error-table__cell--data')) as HTMLElement;
+      expect(dataFirst.textContent).toContain('Type Error');
+      expect(dataSecond.textContent).toContain('ReferenceError');
+      const countFirst = assertExists(rows[0].querySelector('.error-table__cell--count')) as HTMLElement;
+      const countSecond = assertExists(rows[1].querySelector('.error-table__cell--count')) as HTMLElement;
+      expect(countFirst.textContent).toBe('2');
+      expect(countSecond.textContent).toBe('1');
+      const statusFirst = assertExists(rows[0].querySelector('.error-table__cell--status')) as HTMLElement;
+      const statusSecond = assertExists(rows[1].querySelector('.error-table__cell--status')) as HTMLElement;
+      expect(statusFirst.textContent).toBe('New');
+      expect(statusSecond.textContent).toBe('Fixed');
     });
   });
 });

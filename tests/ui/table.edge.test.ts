@@ -25,12 +25,12 @@ describe('ErrorTable edge-cases', () => {
 
   it('sortErrors не падает при пустом массиве', () => {
     const table = new ErrorTable('demo');
-    expect(table.sortErrors([], 'count')).toEqual([]);
+    expect(table.sortErrors([], 'count', 'asc')).toEqual([]);
   });
 
   it('sortErrors корректно сортирует по несуществующему полю', () => {
     const table = new ErrorTable('demo');
     const errors = [{ id: 'a' }, { id: 'b' }];
-    expect(table.sortErrors(errors, 'unknown')).toEqual(errors);
+    expect(table.sortErrors(errors, 'unknown', 'asc')).toEqual(errors);
   });
 });

@@ -1,23 +1,29 @@
 import { StatsManager } from '../../frontend/src/scripts/stats';
+import type { ErrorItem } from '../../frontend/src/scripts/utils/errors';
 
 describe('StatsManager', () => {
   // фиксируем системную дату, чтобы todayCount был детерминирован
   beforeAll(() => {
-    jest.useFakeTimers('modern');
+    // используем стандартные фейковые таймеры для удовлетворения типов
+    jest.useFakeTimers();
+    // устанавливаем детерминированное системное время
+    // @ts-ignore setSystemTime exists on modern timers in Jest runtime
     jest.setSystemTime(new Date('2025-10-15T16:00:00.000Z'));
   });
   afterAll(() => {
     jest.useRealTimers();
   });
-  const mockErrors = [
-    { type: 'TypeError', status: 'new', firstSeen: '2025-10-15T10:00:00.000Z' },
+  const mockErrors: ErrorItem[] = [
+    { id: '1', type: 'TypeError', status: 'new', firstSeen: '2025-10-15T10:00:00.000Z' },
     {
+      id: '2',
       type: 'ReferenceError',
       status: 'fixed',
       firstSeen: '2025-10-15T12:00:00.000Z',
     },
-    { type: 'TypeError', status: 'new', firstSeen: '2025-10-14T09:00:00.000Z' },
+    { id: '3', type: 'TypeError', status: 'new', firstSeen: '2025-10-14T09:00:00.000Z' },
     {
+      id: '4',
       type: 'RangeError',
       status: 'deleted',
       firstSeen: '2025-10-15T13:00:00.000Z',

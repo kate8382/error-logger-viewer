@@ -17,6 +17,7 @@ module.exports = defineConfig([
       '.github/**',
       '.vscode/**',
       '**/*.lock',
+      '**/*.yml',
       '**/*.png',
       '**/*.jpg',
       '**/*.jpeg',
