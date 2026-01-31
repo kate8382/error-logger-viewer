@@ -1,22 +1,28 @@
 import ChartManager from '../../frontend/src/scripts/charts';
 
 // Мокаем fetch для Node.js среды
-globalThis.fetch = jest.fn(() =>
-  Promise.resolve({
-    json: () => Promise.resolve({ data: [] }),
-  }),
-);
+// mock fetch as any to satisfy TS
+const mockResponse = { json: async () => ({ data: [] }) } as unknown as Response;
+const mockFetch = jest.fn(() => Promise.resolve(mockResponse)) as unknown as jest.MockedFunction<typeof fetch>;
+globalThis.fetch = mockFetch;
 
 // Мокаем getContext для canvas, чтобы избежать ошибок jsdom
 beforeAll(() => {
-  HTMLCanvasElement.prototype.getContext = jest.fn(() => ({
+  const mockCtx: Partial<CanvasRenderingContext2D> = {
     clearRect: jest.fn(),
     // другие методы, если понадобятся
-  }));
+  };
+
+  jest.spyOn(HTMLCanvasElement.prototype, 'getContext' as any).mockImplementation(function (this: HTMLCanvasElement, ...args: unknown[]): CanvasRenderingContext2D | null {
+    const contextId = args[0] as string | undefined;
+    // возвращаем 2d-контекст для запросов '2d'
+    if (!contextId || contextId === '2d') return mockCtx as CanvasRenderingContext2D;
+    return null;
+  });
 });
 
 describe('ChartManager', () => {
-  let chartManager;
+  let chartManager: ChartManager;
   beforeEach(() => {
     // Мокаем DOM-элементы, необходимые для конструктора
     document.body.innerHTML = '<canvas id="chartCanvas"></canvas>' + '<div class="chart__title"></div>' + '<div id="errorsChartSortWeek"></div>' + '<div id="errorsChartSortMonth"></div>' + '<div id="errorsChartSortYear"></div>';

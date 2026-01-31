@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": false,
+    "types": ["jest", "node"],
+    "typeRoots": ["./node_modules/@types", "./types"]
+  },
+  "include": [
+    "tests/ui/**/*.ts",
+    "tests/api/**/*.ts",
+    "types/**/*.d.ts"
+  ],
+  "exclude": ["node_modules"]
+}

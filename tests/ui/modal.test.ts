@@ -1,7 +1,9 @@
 import { Modal } from '../../frontend/src/scripts/modal';
+import type { ErrorItem } from '../../frontend/src/scripts/utils/errors';
+import { qs, assertExists } from '../../frontend/src/scripts/utils/dom';
 
 describe('Modal', () => {
-  let modalInstance;
+  let modalInstance: Modal;
 
   beforeEach(() => {
     // минимальная разметка модального окна
@@ -19,9 +21,13 @@ describe('Modal', () => {
     if (modalInstance && typeof modalInstance.close === 'function') modalInstance.close();
     document.body.innerHTML = '';
     // очистка глобальных обработчиков
-    if (window.closeCustomSelectModal) {
-      document.removeEventListener('mousedown', window.closeCustomSelectModal);
-      window.closeCustomSelectModal = undefined;
+    {
+      // приводим window к локальному типу с closeCustomSelectModal (исправления как в modal.ts)
+      const w = window as Window & { closeCustomSelectModal?: ((e?: MouseEvent) => void) | undefined };
+      if (w.closeCustomSelectModal) {
+        document.removeEventListener('mousedown', w.closeCustomSelectModal);
+        w.closeCustomSelectModal = undefined;
+      }
     }
   });
 
@@ -38,15 +44,15 @@ describe('Modal', () => {
       comment: 'ok',
     };
 
-    modalInstance.openEdit(error);
+    modalInstance.openEdit(error as ErrorItem);
 
-    const modalEl = document.querySelector('#modal');
+    const modalEl = assertExists(qs<HTMLElement>('#modal'));
     expect(modalEl.classList.contains('modal--open')).toBe(true);
 
-    const saveBtn = document.querySelector('#saveModalButton');
+    const saveBtn = assertExists(qs<HTMLElement>('#saveModalButton'));
     expect(saveBtn).toBeTruthy();
 
-    const statusSelect = document.querySelector('.modal__status-select');
+    const statusSelect = assertExists(qs<HTMLElement>('.modal__status-select'));
     expect(statusSelect).toBeTruthy();
   });
 
@@ -57,27 +63,27 @@ describe('Modal', () => {
     // дождёмся обновления DOM
     await new Promise((r) => setTimeout(r, 0));
 
-    const statusSelect = document.querySelector('.modal__status-select');
+    const statusSelect = qs<HTMLElement>('.modal__status-select');
     expect(statusSelect).toBeTruthy();
-    const list = statusSelect.querySelector('.modal__status-list');
-    const current = statusSelect.querySelector('.modal__status-current');
+    const list = statusSelect!.querySelector('.modal__status-list') as HTMLElement | null;
+    const current = statusSelect!.querySelector('.modal__status-current') as HTMLElement | null;
 
     // изначально закрыт (атрибут может быть не установлен до открытия)
-    expect([null, 'false']).toContain(statusSelect.getAttribute('aria-expanded'));
-    expect(list.style.display).toBe('none');
+    expect([null, 'false']).toContain(statusSelect!.getAttribute('aria-expanded'));
+    expect(list!.style.display).toBe('none');
 
     // открывается по клику
-    statusSelect.click();
-    expect(statusSelect.getAttribute('aria-expanded')).toBe('true');
-    expect(list.style.display === 'block' || list.style.display === '').toBe(true);
+    statusSelect!.click();
+    expect(statusSelect!.getAttribute('aria-expanded')).toBe('true');
+    expect(list!.style.display === 'block' || list!.style.display === '').toBe(true);
 
     // выбирается первый вариант
-    const option = list.querySelector('.modal__status-option');
+    const option = list!.querySelector('.modal__status-option') as HTMLElement | null;
     expect(option).toBeTruthy();
-    const labelBefore = current.textContent;
-    option.click();
+    const labelBefore = current!.textContent;
+    option!.click();
     // после выбора текущий текст должен обновиться
-    expect(current.textContent !== labelBefore).toBe(true);
+    expect(current!.textContent !== labelBefore).toBe(true);
   });
 
   it('close()  скрывает модалку и очищает состояние', () => {
@@ -85,8 +91,8 @@ describe('Modal', () => {
     modalInstance.openEdit(error);
     modalInstance.close();
 
-    const modalEl = document.querySelector('#modal');
-    expect(modalEl.classList.contains('modal--open')).toBe(false);
+    const modalEl = qs<HTMLElement>('#modal');
+    expect(modalEl!.classList.contains('modal--open')).toBe(false);
     expect(modalInstance._lastErrorForEdit).toBeNull();
   });
 });

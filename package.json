@@ -26,7 +26,8 @@
     "lint:all": "concurrently \"npm run lint:frontend\" \"npm run lint:backend\"",
     "lint:frontend": "cd frontend && npm run lint",
     "lint:backend": "cd backend && npm run lint",
-    "ts:check": "node node_modules/typescript/bin/tsc -p frontend/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p backend/tsconfig.json --noEmit"
+    "ts:check": "node node_modules/typescript/bin/tsc -p frontend/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p backend/tsconfig.json --noEmit",
+    "ts:check:tests": "node node_modules/typescript/bin/tsc -p tsconfig.tests.json --noEmit"
   },
   "dependencies": {
     "cors": "^2.8.5",

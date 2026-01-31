@@ -739,14 +739,14 @@
       "projectId": "unknown",
       "type": "TestError",
       "message": "Тестовая ошибка для проверки дат",
-      "status": "fixed",
-      "comment": "",
+      "status": "in_progress",
+      "comment": "in progress\n\n\n\n\n\n\n\n\n",
       "count": 1,
       "firstSeen": "2026-01-27T17:34:51.094Z",
-      "lastSeen": "2026-01-27T17:34:51.094Z",
       "users": [
         "unknown"
-      ]
+      ],
+      "lastSeen": "2026-01-31T17:56:58.782Z"
     }
   ],
   "projects": [
