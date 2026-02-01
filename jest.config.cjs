@@ -18,7 +18,7 @@ module.exports = {
       // Используем babel-jest для frontend, чтобы поддерживать ES модули и JS тесты
       transform: {
         '^.+\\.jsx?$': 'babel-jest',
-        '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.tests.json' }],
+        '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tests/tsconfig.tests.json' }],
       },
       moduleDirectories: ['node_modules', 'frontend/src/scripts'],
     },
@@ -32,7 +32,7 @@ module.exports = {
       transform: {
         // Используем babel-jest для JS (ESM) тестов и ts-jest для TypeScript
         '^.+\\.jsx?$': 'babel-jest',
-        '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.tests.json' }],
+        '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tests/tsconfig.tests.json' }],
       },
       moduleDirectories: ['node_modules'],
     },
