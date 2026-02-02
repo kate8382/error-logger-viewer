@@ -1,4 +1,4 @@
-// / <reference types="cypress" />
+/// <reference types="cypress" />
 
 describe('Table - CRUD operations', () => {
   beforeEach(() => {
@@ -29,7 +29,7 @@ describe('Table - CRUD operations', () => {
 
   it('создает новую ошибку через тестовую кнопку', () => {
     // Тестовая кнопка появляется только в demo режиме (localStorage), включим его
-    cy.window().then((win) => {
+    cy.window().then((win: Window & { localStorage: Storage }) => {
       win.localStorage.setItem('app_mode', 'demo');
     });
     // Перезагрузим страницу чтобы приложение применило режим
@@ -37,7 +37,7 @@ describe('Table - CRUD operations', () => {
     cy.wait('@getErrors');
 
     // Теперь безопасно кликаем по кнопке тестовой ошибки
-    cy.get('body').then(($body) => {
+    cy.get('body').then(($body: JQuery<HTMLElement>) => {
       if ($body.find('#testErrorBtn').length) {
         cy.get('#testErrorBtn').click();
         cy.wait('@createError');
@@ -83,7 +83,7 @@ describe('Table - CRUD operations', () => {
 
     cy.get('#saveModalButton').click();
     // Отладка: выведем режим приложения и errorApi.baseUrl, затем ждём сетевой запрос
-    cy.window().then((win) => {
+    cy.window().then((win: Window & { app?: any }) => {
       console.log('DEBUG app mode:', win.app && win.app.errorApi && win.app.errorApi.mode);
 
       console.log('DEBUG errorApi baseUrl:', win.app && win.app.errorApi && win.app.errorApi.baseUrl);
@@ -109,11 +109,11 @@ describe('Table - CRUD operations', () => {
     cy.get('#errorTableBody').should('exist');
 
     // Если мы в demo режиме, убедимся, что запись удалена из localStorage
-    cy.window().then((win) => {
+    cy.window().then((win: Window & { localStorage: Storage }) => {
       if (win.localStorage.getItem('app_mode') === 'demo') {
         const errs = JSON.parse(win.localStorage.getItem('errorsLocal') || '[]');
         // исходная фикстура содержит err-1, ожидаем, что его нет после удаления
-        expect(errs.find((e) => e.id === 'err-1')).to.be.undefined;
+        expect(errs.find((e: any) => e.id === 'err-1')).to.be.undefined;
       }
     });
   });

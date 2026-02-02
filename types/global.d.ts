@@ -1,5 +1,5 @@
 import type { ErrorItem } from '../frontend/src/scripts/utils/errors';
-import type { ErrorApi } from '../frontend/src/scripts/api';
+import type { ErrorApi, Mode } from '../frontend/src/scripts/api';
 import type { ChartManagerType } from '../frontend/src/scripts/charts';
 
 // Минимальная публичная поверхность `window` для рантайма.
@@ -22,6 +22,7 @@ declare global {
       getErrors?: () => ErrorItem[] | undefined;
       renderErrors?: (errs?: ErrorItem[] | undefined) => void;
       fetchErrors?: () => Promise<void> | void;
+      setMode?: (mode: Mode) => void;
     } | undefined;
     statsManager?: { renderErrorCards?: () => void; errors?: ErrorItem[] } | undefined;
     chartManager?: ChartManagerType | null;

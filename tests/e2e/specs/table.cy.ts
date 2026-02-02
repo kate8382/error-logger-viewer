@@ -1,4 +1,4 @@
-// / <reference types="cypress" />
+/// <reference types="cypress" />
 
 describe('Table of Errors', () => {
   it('открывает главную страницу и видит заголовок таблицы', () => {
@@ -33,7 +33,7 @@ describe('Table of Errors', () => {
     cy.wait('@getErrorsSorted');
 
     // Проверяем порядок строк после получения отсортированных данных
-    cy.get('#errorTableBody tr', { timeout: 20000 }).then(($rows) => {
+    cy.get('#errorTableBody tr', { timeout: 20000 }).then(($rows: JQuery<HTMLElement>) => {
       const ids = $rows.map((i, el) => Cypress.$(el).find('td').first().text().trim()).get();
       expect(ids).to.deep.equal(['err-2', 'err-1']);
     });

@@ -1,4 +1,4 @@
-{
+ {
   "watch": ["backend"],
   "ext": "js,json",
   "ignore": [
