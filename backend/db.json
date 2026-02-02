@@ -747,6 +747,21 @@
         "unknown"
       ],
       "lastSeen": "2026-01-31T17:56:58.782Z"
+    },
+    {
+      "id": "0f540cd5-4910-4623-bf18-c90ca85492ac",
+      "projectId": "unknown",
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:238:32)\n    at Generator.eval (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:15:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:16:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:22:70)\n    at _next (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:23:163)\n    at eval (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:23:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:23:90)\n    at eval (webpack://error-logger-viewer/./frontend/src/scripts/utils/request.ts?:19:18)\n    at Generator.eval (webpack://error-logger-viewer/./frontend/src/scripts/utils/request.ts?:5:1660)",
+      "status": "new",
+      "comment": "",
+      "count": 1,
+      "firstSeen": "2026-02-02T16:42:38.060Z",
+      "lastSeen": "2026-02-02T16:42:38.060Z",
+      "users": [
+        "unknown"
+      ]
     }
   ],
   "projects": [

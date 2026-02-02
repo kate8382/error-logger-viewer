@@ -35,7 +35,19 @@ jobs:
       - name: Serve production build in background
         run: |
           npm run serve:dist:frontend &
-          echo "waiting for server..." && sleep 2
+          echo "waiting for server..."
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            if curl -sS http://localhost:8080/ >/dev/null 2>&1; then
+              echo "frontend ready"
+              break
+            fi
+            echo "waiting for server... ($i)"
+            sleep 2
+          done
+          if ! curl -sS http://localhost:8080/ >/dev/null 2>&1; then
+            echo "Frontend did not become ready in time" >&2
+            exit 1
+          fi
 
       - name: Start backend server
         run: |
@@ -59,7 +71,7 @@ jobs:
 
       - name: Run Cypress headless (e2e from tests/e2e)
         env:
-          CYPRESS_baseUrl: http://localhost:8080
+          CYPRESS_BASE_URL: http://localhost:8080
         run: |
           npm run test:e2e --silent 2>&1 | tee cypress-run.log
 

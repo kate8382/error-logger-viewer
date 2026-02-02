@@ -9,8 +9,8 @@ export default defineConfig({
     viewportHeight: 800,
     video: false,
     //  Пути относительно корня репозитория — все артефакты cypress помещаются в tests/e2e
-    screenshotsFolder: 'tests/e2e/cypress/screenshots',
-    videosFolder: 'tests/e2e/cypress/videos',
+    screenshotsFolder: 'tests/e2e/screenshots',
+    videosFolder: 'tests/e2e/videos',
     fixturesFolder: 'tests/e2e/fixtures',
     // папка с тестами (раньше integrationFolder -> теперь specPattern)
     specPattern: 'tests/e2e/specs/**/*.cy.{js,ts}',
