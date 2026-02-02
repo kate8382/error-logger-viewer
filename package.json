@@ -29,7 +29,8 @@
     "lint:frontend": "cd frontend && npm run lint",
     "lint:backend": "cd backend && npm run lint",
     "ts:check": "node node_modules/typescript/bin/tsc -p frontend/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p backend/tsconfig.json --noEmit",
-    "ts:check:tests": "node node_modules/typescript/bin/tsc -p tests/tsconfig.tests.json --noEmit"
+    "ts:check:unit": "node node_modules/typescript/bin/tsc -p frontend/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p backend/tsconfig.json --noEmit",
+    "ts:check:e2e": "node node_modules/typescript/bin/tsc -p tests/e2e/tsconfig.json --noEmit"
   },
   "dependencies": {
     "chart.js": "^4.5.0",

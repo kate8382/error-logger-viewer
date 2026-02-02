@@ -1,4 +1,4 @@
-// / <reference types="cypress" />
+/// <reference types="cypress" />
 
 describe('Table - CRUD operations', () => {
   beforeEach(() => {
@@ -113,7 +113,7 @@ describe('Table - CRUD operations', () => {
       if (win.localStorage.getItem('app_mode') === 'demo') {
         const errs = JSON.parse(win.localStorage.getItem('errorsLocal') || '[]');
         // исходная фикстура содержит err-1, ожидаем, что его нет после удаления
-        expect(errs.find((e) => e.id === 'err-1')).to.be.undefined;
+        expect(errs.find((e: any) => e.id === 'err-1')).to.be.undefined;
       }
     });
   });
