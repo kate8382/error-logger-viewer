@@ -4,13 +4,12 @@
     "noEmit": true,
     "allowJs": true,
     "checkJs": false,
-    "types": ["node", "jest", "cypress"],
-    "typeRoots": ["./node_modules/@types", "./types"]
+    "types": ["node", "jest"],
+    "typeRoots": ["../node_modules/@types", "../types"]
   },
   "include": [
     "ui/**/*.ts",
     "api/**/*.ts",
-    "e2e/**/*.ts",
     "../types/**/*.d.ts"
   ]
 }
