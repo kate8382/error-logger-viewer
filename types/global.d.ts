@@ -22,6 +22,7 @@ declare global {
       getErrors?: () => ErrorItem[] | undefined;
       renderErrors?: (errs?: ErrorItem[] | undefined) => void;
       fetchErrors?: () => Promise<void> | void;
+      setMode?: (mode: string) => void;
     } | undefined;
     statsManager?: { renderErrorCards?: () => void; errors?: ErrorItem[] } | undefined;
     chartManager?: ChartManagerType | null;

@@ -15,7 +15,7 @@ export default defineConfig({
     // папка с тестами (раньше integrationFolder -> теперь specPattern)
     specPattern: 'tests/e2e/specs/**/*.cy.{js,ts}',
     // файл support (используй .ts после миграции)
-    supportFile: 'tests/e2e/support/index.{js,ts}',
+    supportFile: 'tests/e2e/support/e2e.ts',
     //  исключить папки с покрытием или другие
     excludeSpecPattern: ['**/coverage/**'],
     defaultCommandTimeout: 8000,
