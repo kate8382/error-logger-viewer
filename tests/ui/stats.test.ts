@@ -1,5 +1,5 @@
+import type { ErrorItem } from '../../types/errors';
 import { StatsManager } from '../../frontend/src/scripts/stats';
-import type { ErrorItem } from '../../frontend/src/scripts/utils/errors';
 
 describe('StatsManager', () => {
   // фиксируем системную дату, чтобы todayCount был детерминирован

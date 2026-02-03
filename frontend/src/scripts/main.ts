@@ -1,13 +1,14 @@
 import '../assets/scss/style.scss';
+import type { ErrorItem, NewError } from '../../../types/errors';
+import type { Mode } from '../../../types/api';
 import { ErrorApi } from './api';
-import type { Mode } from './api';
 import './header';
 import { StatsManager } from './stats';
 import ChartManager from './charts';
 import type { ChartManagerType } from './charts'; // Импорт типа ChartManager чтобы приводить созданный инстанс к правильному типу (вместо ambient-описание в global.d.ts)
 import type { Aside } from './aside'; // Импорт типа Aside для приведения динамически загруженного синглтона
 import { ErrorTable } from './table';
-import type { ErrorItem, NewError } from './utils/errors';
+
 import { onLangChange } from './utils/i18n';
 import { updateTestErrorButtonVisibility } from './utils/testErrorButton';
 import handleModuleLoadError from './utils/moduleLoad';

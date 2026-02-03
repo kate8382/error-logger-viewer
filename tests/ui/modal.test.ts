@@ -1,5 +1,5 @@
+import type { ErrorItem } from '../../types/errors';
 import { Modal } from '../../frontend/src/scripts/modal';
-import type { ErrorItem } from '../../frontend/src/scripts/utils/errors';
 import { qs, assertExists } from '../../frontend/src/scripts/utils/dom';
 
 describe('Modal', () => {
