@@ -1,10 +1,9 @@
 // Универсальный API-клиент для работы с ошибками
 export const API_BASE_URL = (typeof globalThis !== 'undefined' && (globalThis as any).API_BASE_URL) || 'http://localhost:3000';
 
-import { request } from './utils/request';
-import type { ErrorItem, NewError, Stats } from './utils/errors';
-
-export type Mode = 'server' | 'demo';
+import { request } from '../shared/request';
+import type { ErrorItem, NewError, Stats } from '../../../types/errors';
+import type { Mode } from '../../../types/api';
 
 export class ErrorApi {
   mode: Mode;

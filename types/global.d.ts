@@ -1,5 +1,5 @@
-import type { ErrorItem } from '../frontend/src/scripts/utils/errors';
-import type { ErrorApi, Mode } from '../frontend/src/scripts/api';
+import type { ErrorItem } from '../types/errors';
+import type { ErrorApi, Mode } from '../types/api';
 import type { ChartManagerType } from '../frontend/src/scripts/charts';
 
 // Минимальная публичная поверхность `window` для рантайма.

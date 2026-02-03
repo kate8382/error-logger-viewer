@@ -1,3 +1,4 @@
+// Универсальная функция для выполнения HTTP-запросов и обработки JSON-ответов в строгой типизации
 export async function request<T = unknown>(input: string, init?: RequestInit): Promise<T | undefined> {
   const res = await fetch(input, init);
   if (!res.ok) throw new Error(`Request failed: ${res.status} ${res.statusText}`);

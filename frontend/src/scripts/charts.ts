@@ -1,8 +1,8 @@
 import Chart from 'chart.js/auto';
 import type { Chart as ChartJS } from 'chart.js'; // Импортируем тип ChartJS для аннотаций типов
+import type { ErrorItem, Stats, PeriodStats } from '../../../types/errors';
 import { API_BASE_URL } from './api';
-import type { ErrorItem, Stats, PeriodStats } from './utils/errors';
-import { request } from './utils/request';
+import { request } from '../shared/request';
 import { qs, delegate } from './utils/dom';
 import { t, getLabel, onLangChange, setLang } from './utils/i18n';
 import { typeColors, statusColors } from './utils/colors';

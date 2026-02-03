@@ -1,5 +1,5 @@
+import type { ErrorItem } from '../../types/errors';
 import { HeaderManager } from '../../frontend/src/scripts/header';
-import type { ErrorItem } from '../../frontend/src/scripts/utils/errors';
 import type { ErrorTable } from '../../frontend/src/scripts/table';
 
 // Мокаем ErrorApi для demo-режима

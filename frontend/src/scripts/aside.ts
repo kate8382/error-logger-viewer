@@ -1,4 +1,4 @@
-import type { Mode } from './api';
+import type { Mode } from '../../../types/api';
 import { ErrorApi } from './api';
 import type { ErrorTable } from './table';
 import { t, getCurrentLang, setLang, onLangChange } from './utils/i18n';

@@ -1,7 +1,8 @@
-import type { ErrorItem } from '../utils/errors';
+import type { ErrorItem } from '../../../types/errors';
 // eslint-disable-next-line prettier/prettier
-import type * as I18n from '../utils/i18n';
+import type * as I18n from '../scripts/utils/i18n';
 
+// Функция для получения даты в формате ДД.ММ.ГГГГ из строки даты
 export function getDateOnly(str?: string): string {
   if (!str) return '';
   const date = new Date(str);
@@ -12,11 +13,13 @@ export function getDateOnly(str?: string): string {
   return `${day}.${month}.${year}`;
 }
 
+// Типы для функций i18n
 type I18nHelpers = {
   getLabel?: typeof I18n.getLabel,
   t?: typeof I18n.t,
 };
 
+// Фильтрация списка ошибок по поисковому запросу с учетом i18n
 export function filterErrors(errors: ErrorItem[] | undefined, query: string, { getLabel = ((s?: string) => (s ? String(s) : undefined)) as typeof I18n.getLabel, t = ((k?: string) => (k ? String(k) : '')) as typeof I18n.t }: I18nHelpers = {}): ErrorItem[] {
   const q = (query || '').toLowerCase().trim();
   if (!q) return Array.isArray(errors) ? errors : [];

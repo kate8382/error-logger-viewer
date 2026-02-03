@@ -1,9 +1,9 @@
+import type { ErrorItem } from '../../../types/errors';
 import { ErrorApi } from './api';
 import { ErrorTable } from './table'; // Импорт типа конкретного менеджера графиков (ранее использовали ambient-интерфейс из global.d.ts)
 import { StatsManager } from './stats';
-import type { ErrorItem } from './utils/errors';
 import type { ChartManagerType } from './charts';
-import { filterErrors } from './services/errorFilter';
+import { filterErrors } from '../shared/errorFilter';
 import { qs, createElement, delegate, translateNodes } from './utils/dom';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 import { t, getCurrentLang, getLabel, setLang, onLangChange } from './utils/i18n';
