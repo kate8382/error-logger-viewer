@@ -19,7 +19,7 @@ pids
 lib-cov
 
 # Coverage directory used by tools like istanbul
-coverage
+coverage/
 *.lcov
 
 # nyc test coverage
@@ -40,8 +40,6 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
-backend/node_modules/
-backend/package-lock.json
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
@@ -82,7 +80,7 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+# (keep frontend/dist ignored explicitly below; avoid generic `dist` entry)
 
 # Gatsby files
 .cache/
@@ -136,11 +134,19 @@ dist
 !.yarn/sdks
 !.yarn/versions
 
-# Vite logs files
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
+# Vite logs files (not used in this repo with esbuild preprocessors)
+# vite.config.js.timestamp-*
+# vite.config.ts.timestamp-*
 
 # Ignore local issue drafts folder
 .github/ISSUES/
 .github/PR/
 backend/dist
+frontend/dist
+coverage/
+
+# Cypress artifacts
+tests/e2e/screenshots/
+tests/e2e/videos/
+tests/e2e/logs/
+cypress-run.log

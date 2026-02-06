@@ -4,15 +4,13 @@ on:
   push:
     branches:
       - main
-      - 'feat/*'
-      - '*-ts'
   pull_request:
     branches:
       - main
 
 jobs:
-  frontend-tests:
-    name: 'CI / Frontend: tests & e2e'
+  tests-frontend:
+    name: 'Frontend (unit + coverage)'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,8 +24,56 @@ jobs:
       - name: Install deps (root)
         run: npm ci
 
-      - name: Run frontend unit tests (Jest)
-        run: npm run test:frontend --silent
+      - name: Run frontend unit tests and coverage
+        run: npm run test:coverage:frontend -- --coverageDirectory=coverage/frontend --silent
+
+      - name: Upload frontend coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-frontend
+          path: coverage/frontend
+
+  tests-backend:
+    name: 'Backend (unit + coverage)'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.16.0'
+
+      - name: Install deps (root)
+        run: npm ci
+
+      - name: Run backend unit tests and coverage
+        run: npm run test:coverage:backend -- --coverageDirectory=coverage/backend --silent
+
+      - name: Upload backend coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-backend
+          path: coverage/backend
+
+  frontend-e2e:
+    name: 'Frontend: e2e'
+    runs-on: ubuntu-latest
+    needs: [tests-frontend, tests-backend]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.16.0'
+
+      - name: Install deps (root)
+        run: npm ci
 
       - name: Build production bundle
         run: npm run build:frontend
@@ -74,23 +120,12 @@ jobs:
             tests/e2e/logs
             cypress-run.log
 
-  backend-tests:
-    name: 'CI / Backend: tests'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js (backend)
-        uses: actions/setup-node@v4
+      - name: Upload dist artifact
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          node-version: '18'
-
-      - name: Install deps (root)
-        run: npm ci
-
-      - name: Run backend tests
-        run: npm run test:backend
+          name: dist
+          path: frontend/dist
 
   lint:
     name: Lint

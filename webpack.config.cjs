@@ -8,7 +8,7 @@ module.exports = (env = {}) => ({
   entry: './frontend/src/scripts/main.ts',
   output: {
     filename: '[name].[contenthash].js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'frontend', 'dist'),
     clean: true,
   },
   module: {
@@ -65,7 +65,7 @@ module.exports = (env = {}) => ({
   },
   devServer: {
     static: {
-      directory: path.resolve(__dirname, 'dist'),
+      directory: path.resolve(__dirname, 'frontend', 'dist'),
     },
     historyApiFallback: true,
     hot: true,
