@@ -4,15 +4,13 @@ on:
   push:
     branches:
       - main
-      - 'feat/*'
-      - '*-ts'
   pull_request:
     branches:
       - main
 
 jobs:
   frontend-tests:
-    name: 'CI / Frontend: tests & e2e'
+    name: 'Frontend: tests & e2e'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -74,8 +72,23 @@ jobs:
             tests/e2e/logs
             cypress-run.log
 
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: |
+            coverage
+
+      - name: Upload dist artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: frontend/dist
+
   backend-tests:
-    name: 'CI / Backend: tests'
+    name: 'Backend: tests'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
