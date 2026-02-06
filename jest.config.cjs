@@ -15,6 +15,7 @@ module.exports = {
       // Теперь тесты расположены в корне: tests/ui
       roots: ['<rootDir>/tests/ui'],
       testMatch: ['**/*.test.js', '**/*.test.ts', '**/__tests__/**/*.js', '**/__tests__/**/*.ts'],
+      coverageDirectory: '<rootDir>/coverage/frontend',
       // Используем babel-jest для frontend, чтобы поддерживать ES модули и JS тесты
       transform: {
         '^.+\\.jsx?$': 'babel-jest',
@@ -29,6 +30,7 @@ module.exports = {
       // Тесты бэкенда теперь в корне: tests/api
       roots: ['<rootDir>/tests/api'],
       testMatch: ['**/*.test.js', '**/*.test.ts', '**/tests/**/*.js', '**/tests/**/*.ts'],
+      coverageDirectory: '<rootDir>/coverage/backend',
       transform: {
         // Используем babel-jest для JS (ESM) тестов и ts-jest для TypeScript
         '^.+\\.jsx?$': 'babel-jest',
