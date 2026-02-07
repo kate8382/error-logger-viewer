@@ -7,3 +7,7 @@
 *.scss text
 *.html text
 *.md text
+# проверить, что в файлах YAML и файлах рабочих процессов используется символ LF
+.github/workflows/* text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf

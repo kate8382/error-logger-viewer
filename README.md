@@ -3,13 +3,13 @@
 [![CI](https://github.com/kate8382/error-logger-viewer/actions/workflows/ci.yml/badge.svg)](https://github.com/kate8382/error-logger-viewer/actions)
 [![Pages](https://github.com/kate8382/error-logger-viewer/actions/workflows/deploy-gh-pages.yml/badge.svg)](https://github.com/kate8382/error-logger-viewer/actions)
 
-**Error Logger & Viewer** is a modern SPA for collecting, storing, analyzing, and visualizing JavaScript errors in web projects. It is designed for developers and teams who need to quickly identify, group, and track errors in production or test environments.
+**Error Logger & Viewer** is a modern SPA, migrated to TypeScript, for collecting, storing, analyzing, and visualizing JavaScript errors in web projects. Source files are in `src/` and use `.ts` modules. It is designed for developers and teams who need to quickly identify, group, and track errors in production or test environments.
 
 Live demo: https://kate8382.github.io/error-logger-viewer/ — try the "Create test error" button on the demo page to see the app in action.
 
 Read the short case study on Dev.to: https://dev.to/kate8382/error-logger-viewer-tiny-spa-for-tracking-js-errors-12mk
 
-Quick start: see [frontend/README.md](frontend/README.md) and [backend/README.md](backend/README.md) for detailed setup and test instructions.
+Quick start: follow the commands below to run the project locally. For contribution guidelines see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Purpose
 
@@ -32,7 +32,7 @@ The application allows you to:
 - **Visualization:**
 	Charts by day/week/month/year, doughnut charts by type and status.
 - **Multilanguage:**
-	All texts and UI are dynamically translated (i18n.js).
+	All texts and UI are dynamically translated (`i18n.ts`).
 - **Modes:**
 	Server (Node.js + Express + LowDB) and demo (localStorage).
 - **Edit and delete errors:**
@@ -78,12 +78,40 @@ The application allows you to:
 
 ## How to Use
 
-1. **Installation and launch**
-	 - Backend: Node.js, Express, LowDB (db.json file).
-	 - Frontend: SPA in pure JS, built with Webpack.
-	 - Start server and frontend (`npm start` in respective folders).
+1. Installation
+ - Ensure Node.js (16+) and npm are installed.
+ - From repo root install dependencies:
 
-	To preview a production build locally run `npm run build` and `npm run serve:dist` in the `frontend` folder — see [frontend/README.md](frontend/README.md) for details.
+```powershell
+npm ci
+```
+
+2. Development
+ - Start backend only:
+
+```powershell
+npm run dev:backend
+```
+
+ - Start frontend dev server only:
+
+```powershell
+npm run dev:frontend
+```
+
+ - Start both backend and frontend concurrently:
+
+```powershell
+npm run start:all
+```
+
+3. Production preview
+ - Build frontend and serve `dist` locally:
+
+```powershell
+npm run build:frontend
+npm run serve:dist:frontend
+```
 
 2. **Error collection**
 	 - All errors are automatically logged when they occur on the page.
@@ -106,15 +134,16 @@ The application allows you to:
 ## Architecture & Technical Details
 
 - **Frontend (src/scripts):**
-	- `main.js` — app initialization, global error handlers, API integration.
-	- `api.js` — universal API client for server/localStorage.
-	- `header.js` — header management, search, filtering, localization.
-	- `aside.js` — sidebar logic, language/theme/mode switching.
-	- `table.js` — error table rendering and management.
-	- `stats.js` — statistics calculation and visualization.
-	- `charts.js` — chart building by period.
-	- `modal.js` — modals for editing and deleting errors.
-	- `i18n.js` — all translatable UI strings.
+	- `main.ts` — app initialization, global error handlers, API integration.
+	- `api.ts` — universal API client for server/localStorage.
+	- `header.ts` — header management, search, filtering, localization.
+	- `aside.ts` — sidebar logic, language/theme/mode switching.
+	- `table.ts` — error table rendering and management.
+	- `stats.ts` — statistics calculation and visualization.
+	- `charts.ts` — chart building by period.
+	- `modal.ts` — modals for editing and deleting errors.
+	- `i18n.ts` — all translatable UI strings.
+	- `utils/` and `shared/` — TypeScript utility modules and shared helpers (`*.ts`).
 
 - **Backend (backend/server.js):**
 	- Node.js + Express + LowDB (JSON file).
@@ -122,7 +151,7 @@ The application allows you to:
 	- Error grouping by type, message, stack, and date.
 
 - **Localization:**
-	- All texts are in i18n.js, dynamic language switching supported.
+	- All texts are in i18n.ts, dynamic language switching supported.
 
 - **UI/UX:**
 	- Modern responsive interface, fast feedback, loading spinners, theme support.
@@ -154,27 +183,19 @@ The application allows you to:
 - Node.js (for backend)
 - Modern browser (for frontend)
 - Webpack (for frontend build)
+- TypeScript (dev dependency) — use `npm run ts:check` in development/CI to verify types.
 
 ---
 
 ## Tests
 
- CI: the repository includes a GitHub Actions workflow at `.github/workflows/ci.yml` that runs Jest, builds the frontend, starts a simple static server and the backend, and runs Cypress headless.
-
- - Added and stabilized Cypress end-to-end specs (modal, header filters, table CRUD) and custom Cypress helpers (`cy.openRowActions()`, `cy.confirmDelete()`). See `frontend/cypress` for test specs and fixtures.
-- Centralized dynamic-import error handling via `frontend/src/scripts/utils/moduleLoad.js` and added translated fallback message `moduleLoadFailed` in `i18n.js`.
-- Fixed runtime bug in charts generation (`charts.js`) to avoid accessing undefined nested properties.
-- Added GitHub Actions workflow (`.github/workflows/ci.yml`) to run Jest, build the frontend, and execute headless Cypress tests in CI.
-
-For detailed test instructions and helper descriptions see [TESTS.md](TESTS.md).
+See [TESTS.md](TESTS.md) for detailed, up-to-date instructions on running unit and end-to-end tests locally and in CI.
 
  ---
 
 ## How to contribute
 
-1. Fork the repository.
-2. Make changes to the required JS file.
-3. Submit a pull request with a description of the changes.
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines, PR process, required checks and code style.
 
 ---
 
@@ -193,7 +214,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Project Structure
 
-- `frontend/` — SPA in pure JavaScript (ES6+), OOP architecture, SCSS, Webpack
+- `frontend/` — SPA on TypeScript (TS), OOP-style architecture, SCSS, Webpack. Source files in `frontend/src/` (`*.ts`).
 - `backend/` — Node.js + Express + LowDB (JSON)
 
 ---
