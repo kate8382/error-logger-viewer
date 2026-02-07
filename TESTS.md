@@ -104,7 +104,11 @@ CI notes (recommended)
 ```powershell
 npm ci
 npm run build:frontend
-# start backend + serve dist as required by your workflow
+# start backend and serve the built frontend from `frontend/dist` as required by your workflow
+# example (serve `frontend/dist` locally):
+#   npm run serve:dist:frontend
+# start backend in a separate terminal if needed:
+#   npm run start:backend
 npm run coverage:all
 npm run test:e2e
 ```
