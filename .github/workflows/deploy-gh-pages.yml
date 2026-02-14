@@ -23,7 +23,7 @@ jobs:
         run: npm ci
 
       - name: Build frontend (production)
-        run: npm run build:frontend
+        run: npm run build:types && npm run build:frontend
 
       - name: Prepare SPA fallback (404 -> index)
         run: |

@@ -9,7 +9,7 @@ import { dirname, join } from 'path'; // для работы с путями
 import { promises as fs } from 'fs';
 import { v4 as uuidv4 } from 'uuid'; // для генерации уникальных идентификаторов
 import { DBSchema } from './types/db';
-import { ProjectDTO } from '../../types/projects';
+import type { ProjectDTO } from 'projects';
 
 // Настройка базы данных
 const __filename = fileURLToPath(import.meta.url); // получение пути к текущему файлу
