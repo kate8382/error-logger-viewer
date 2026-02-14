@@ -143,6 +143,8 @@ out
 .github/PR/
 backend/dist
 frontend/dist
+types/dist
+/types/*.js
 coverage/
 
 # Cypress artifacts

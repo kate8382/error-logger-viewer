@@ -1,0 +1,32 @@
+﻿**********************
+Начало записи сценария Windows PowerShell
+Время начала: 20260214165843
+Имя пользователя: DESKTOP-7PKDJ54\User
+Запуск от имени пользователя: DESKTOP-7PKDJ54\User
+Имя конфигурации: 
+Компьютер: DESKTOP-7PKDJ54 (Microsoft Windows NT 10.0.19045.0)
+Ведущее приложение: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -ExecutionPolicy Bypass -Command Import-Module 'c:\Users\User\.vscode\extensions\ms-vscode.powershell-2025.4.0\modules\PowerShellEditorServices\PowerShellEditorServices.psd1'; Start-EditorServices -HostName 'Visual Studio Code Host' -HostProfileId 'Microsoft.VSCode' -HostVersion '2025.4.0' -BundledModulesPath 'c:\Users\User\.vscode\extensions\ms-vscode.powershell-2025.4.0\modules' -EnableConsoleRepl -StartupBanner "PowerShell Extension v2025.4.0
+Copyright (c) Microsoft Corporation.
+
+https://aka.ms/vscode-powershell
+Type 'help' to get help.
+" -LogLevel 'Warning' -LogPath 'c:\Users\User\AppData\Roaming\Code\logs\20260214T163906\window1\exthost\ms-vscode.powershell' -SessionDetailsPath 'c:\Users\User\AppData\Roaming\Code\User\globalStorage\ms-vscode.powershell\sessions\PSES-VSCode-15148-653242.json' -FeatureFlags @() 
+ИД процесса: 8924
+PSVersion: 5.1.19041.6456
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.19041.6456
+BuildVersion: 10.0.19041.6456
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Транскрибирование запущено, выходной файл .\copilot-log.txt
+]633;D;0]633;A]633;P;Cwd=C:\x5cUsers\x5cUser\x5cOneDrive\x5cDesktop\x5cGitHub\x5cerror-logger-viewerPS C:\Users\User\OneDrive\Desktop\GitHub\error-logger-viewer> ]633;B
+PS>$global:__psEditorServices_userInput = $args[0]
+PS>$global:__psEditorServices_userInput = ""
+PS>Stop-Transcript
+**********************
+Конец записи протокола Windows PowerShell
+Время окончания: 20260214170006
+**********************
