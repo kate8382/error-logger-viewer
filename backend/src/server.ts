@@ -15,7 +15,8 @@ import type { ProjectDTO } from 'projects';
 const __filename = fileURLToPath(import.meta.url); // получение пути к текущему файлу
 const __dirname = dirname(__filename);
 
-const adapter = new JSONFile<DBSchema>(join(__dirname, 'db.json'));
+// Проверяем, что файл базы данных (db.json) хранится в папке бэкенда (а не в backend/src) при непосредственном запуске TS, чтобы избежать проблем с путями при компиляции в JavaScript
+const adapter = new JSONFile<DBSchema>(join(__dirname, '..', 'db.json'));
 const db: Low<DBSchema> = new Low(adapter, { errors: [], projects: [] } as DBSchema);
 
 // Инициализация базы данных
@@ -93,7 +94,7 @@ function findProjectByOwnerOrMember(email: string | undefined): ProjectDTO | nul
 // 5. Построение сниппета с заданным API ключом
 function buildSnippet(apiKey: string | undefined) {
   const escapedKey = String(apiKey || '');
-  return `<script>(function(){const API_KEY='${escapedKey}';const ENDPOINT=window.__ERROR_LOGGER_ENDPOINT__||location.protocol+'//'+location.host+'/errors';function send(payload){try{fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign(payload,{apiKey:API_KEY}))});}catch(e){}}window.addEventListener('error',function(e){send({message:e.message,stack:(e.error&&e.error.stack)||e.message,type:'error',user:navigator.userAgent});});window.addEventListener('unhandledrejection',function(e){send({message:(e.reason&&e.reason.message)||String(e.reason),stack:e.reason&&e.reason.stack,type:'unhandledrejection',user:navigator.userAgent});});})();</script>`;
+  return `<script>(function(){if((window).__ERROR_LOGGER_SNIPPET_ADDED__){return;} (window).__ERROR_LOGGER_SNIPPET_ADDED__=true; const API_KEY='${escapedKey}';const ENDPOINT=window.__ERROR_LOGGER_ENDPOINT__||location.protocol+'//'+location.host+'/errors';function send(payload){try{fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign(payload,{apiKey:API_KEY}))});}catch(e){}}window.addEventListener('error',function(e){send({message:e.message,stack:(e.error&&e.error.stack)||e.message,type:'error',user:navigator.userAgent});});window.addEventListener('unhandledrejection',function(e){send({message:(e.reason&&e.reason.message)||String(e.reason),stack:e.reason&&e.reason.stack,type:'unhandledrejection',user:navigator.userAgent});});})();</script>`;
 }
 
 // Маршрут для создания нового проекта

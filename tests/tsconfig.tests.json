@@ -8,9 +8,8 @@
     "typeRoots": ["../node_modules/@types", "../types/dist"]
   },
   "include": [
-    "ui/**/*.ts",
-    "api/**/*.ts",
-    "../types/dist/**/*.d.ts",
+      "ui/**/*.ts",
+      "api/**/*.ts",
     "../types/global.d.ts"
   ]
 }

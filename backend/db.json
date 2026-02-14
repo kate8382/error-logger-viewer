@@ -59,14 +59,14 @@
       "type": "FetchError",
       "message": "Failed to fetch",
       "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./src/scripts/main.js?:240:32)\n    at Generator.eval (webpack://error-logger-viewer/./src/scripts/main.js?:19:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./src/scripts/main.js?:20:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./src/scripts/main.js?:21:70)\n    at _next (webpack://error-logger-viewer/./src/scripts/main.js?:22:163)\n    at eval (webpack://error-logger-viewer/./src/scripts/main.js?:22:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./src/scripts/main.js?:22:90)\n    at ErrorApi.eval (webpack://error-logger-viewer/./src/scripts/api.js?:218:22)\n    at Generator.eval (webpack://error-logger-viewer/./src/scripts/api.js?:6:1660)",
-      "status": "ignored",
+      "status": "fixed",
       "comment": "same error",
       "count": 1,
       "firstSeen": "2025-09-20T15:23:32.470Z",
       "users": [
         "unknown"
       ],
-      "lastSeen": "2025-12-20T17:00:58.163Z"
+      "lastSeen": "2026-02-16T17:26:58.493Z"
     },
     {
       "id": "bc50e1cf-b16f-4eca-a41d-07a5eb3a548c",

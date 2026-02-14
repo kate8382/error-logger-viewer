@@ -47,13 +47,26 @@ export class ErrorApi {
 
   async createError(data: NewError): Promise<ErrorItem> {
     if (this.mode === 'server') {
-      const res = await request<ErrorItem>(`${this.baseUrl}/errors`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      } as RequestInit);
-      if (!res) throw new Error('Empty response from createError');
-      return res;
+      try {
+        const res = await request<ErrorItem>(`${this.baseUrl}/errors`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        } as RequestInit);
+        if (!res) throw new Error('Empty response from createError');
+        return res;
+      } catch (e) {
+        // Если отправка на сервер не удалась (например, backend недоступен), сохраняем ошибку локально для последующей отправки и возвращаем локальную запись.
+        console.error('[ErrorApi] createError failed, caching locally', e);
+        const raw = localStorage.getItem(this.localKey) || '[]';
+        const errors = JSON.parse(raw) as ErrorItem[];
+        const id = Date.now().toString();
+        const now = new Date().toISOString();
+        const item: ErrorItem = { ...(data as any), id, firstSeen: now, lastSeen: now };
+        errors.push(item);
+        localStorage.setItem(this.localKey, JSON.stringify(errors));
+        return item;
+      }
     } else {
       const raw = localStorage.getItem(this.localKey) || '[]';
       const errors = JSON.parse(raw) as ErrorItem[];

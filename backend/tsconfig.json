@@ -11,8 +11,10 @@
     "skipLibCheck": true, // пропускаем проверку типов в node_modules для ускорения компиляции
     "allowJs": true, // разрешаем компилировать JavaScript файлы, чтобы можно было использовать серверный код на JS
     "checkJs": false, // отключаем проверку типов в JavaScript файлах, чтобы не мешать разработке на JS
-    "noEmit": false // разрешаем генерацию выходных файлов, т.к. мы хотим компилировать TypeScript в JavaScript для продакшена
+    "noEmit": false, // разрешаем генерацию выходных файлов, т.к. мы хотим компилировать TypeScript в JavaScript для продакшена
+    "typeRoots": ["../types", "../node_modules/@types"]
   },
-  "include": ["src/**/*", "../types/dist/**/*.d.ts"],
+  "include": ["src/**/*"],
+  "files": ["../types/global.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
