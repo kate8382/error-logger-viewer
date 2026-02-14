@@ -1,4 +1,4 @@
-import type { ErrorItem } from '../../types/errors';
+import type { ErrorItem } from 'errors';
 import { StatsManager } from '../../frontend/src/scripts/stats';
 
 describe('StatsManager', () => {

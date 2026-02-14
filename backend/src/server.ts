@@ -24,20 +24,18 @@ if (!db.data) db.data = { errors: [], projects: [] };
 await db.write();
 console.log('db.data:', db.data);
 
-// Загружаем общие лимиты периодов из config/periods.json
+// Загружаем общие лимиты периодов из config/periods.json (ищем в корне проекта)
 let PERIOD_LIMITS = { day: 7, week: 8, month: 6, year: 4 };
 try {
-  // Try to use dynamic import with json assertion when Node supports it
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const cfg = await import('../config/periods.json', { assert: { type: 'json' } });
-  if (cfg && cfg.default) PERIOD_LIMITS = cfg.default;
+  const cfgPath = join(process.cwd(), 'config', 'periods.json');
+  const raw = await fs.readFile(cfgPath, 'utf8');
+  const cfgJson = JSON.parse(raw);
+  if (cfgJson) PERIOD_LIMITS = cfgJson;
 } catch (e) {
-  // Fallback: read JSON file using fs to support older Node versions
+  // Если нет файла в корне — пытаемся найти рядом с бандлом (backward-compat)
   try {
     const raw = await fs.readFile(join(__dirname, '..', 'config', 'periods.json'), 'utf8');
     const cfgJson = JSON.parse(raw);
-    // eslint-disable-next-line no-unused-vars
     if (cfgJson) PERIOD_LIMITS = cfgJson;
   } catch (e2) {
     console.warn('[server] Could not load config/periods.json, using defaults', e, e2);

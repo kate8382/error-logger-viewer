@@ -2,8 +2,8 @@
 export const API_BASE_URL = (typeof globalThis !== 'undefined' && (globalThis as any).API_BASE_URL) || 'http://localhost:3000';
 
 import { request } from '../shared/request';
-import type { ErrorItem, NewError, Stats } from '../../../types/errors';
-import type { Mode } from '../../../types/api';
+import type { ErrorItem, NewError, Stats } from 'errors';
+import type { Mode } from 'api';
 
 export class ErrorApi {
   mode: Mode;

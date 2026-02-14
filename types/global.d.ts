@@ -1,21 +1,17 @@
-import type { ErrorItem } from '../types/errors';
-import type { ErrorApi, Mode } from '../types/api';
-// Minimal runtime shape for chart manager used in ambient `window`.
-// We avoid importing implementation types from frontend source here so
-// declaration-only build doesn't pull application sources into the types build.
-export type ChartManagerType = {
-  render?: () => void;
-  destroy?: () => void;
-  update?: (...args: any[]) => void;
-} | null;
+import type { ErrorItem } from './errors';
+import type { ErrorApi, Mode } from './api';
 
-// Минимальная публичная поверхность `window` для рантайма.
-// Оставляем только реально необходимое для взаимодействия между ленивыми модулями, чтобы не держать огромный ambient-файл и позволить модулям импортировать свои типы явно.
+// Локальное определение минимального API ChartManager, чтобы сборка деклараций
+// не зависела от исходников фронтенда.
+export type ChartManagerType = {
+  renderChart: (canvasId: string | HTMLElement, data: unknown) => void;
+  updateFontSize?: (size: number) => void;
+  destroy?: () => void;
+};
 
 declare global {
   interface Window {
     API_BASE_URL?: string;
-    // Основной публичный объект приложения (не дублируем всю реализацию)
     app?: {
       errorApi?: ErrorApi;
       updateErrorTable?: () => void;
@@ -23,7 +19,6 @@ declare global {
       lang?: 'en' | 'ru';
     };
 
-    // Небольшие точки входа, которые реально используются в коде
     renderErrorTable?: (errors?: ErrorItem[] | undefined) => void;
     errorTableInstance?: {
       getErrors?: () => ErrorItem[] | undefined;
@@ -35,10 +30,8 @@ declare global {
     chartManager?: ChartManagerType | null;
     aside?: { setTheme?: (theme: string) => void; translatePage?: (lang?: 'en' | 'ru') => void } | null;
 
-    // Header manager used for cross-component filtering state
     headerManager?: { filterTable?: (query?: string) => Promise<void> | void; filteredErrors?: ErrorItem[] | undefined } | null;
 
-    // Вспомогательные runtime-флаги/хелперы
     closeCustomSelectModal?: (e?: MouseEvent) => void;
     __errorTableDropdownListenerAdded?: boolean;
     appModal?: { openEdit?: (err: ErrorItem, _?: boolean) => void; deleteError?: (id: string) => void } | undefined;

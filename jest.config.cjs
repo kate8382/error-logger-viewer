@@ -22,6 +22,13 @@ module.exports = {
         '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tests/tsconfig.tests.json' }],
       },
       moduleDirectories: ['node_modules', 'frontend/src/scripts'],
+      moduleNameMapper: {
+        '^@types/(.*)$': '<rootDir>/types/dist/$1',
+        '^api$': '<rootDir>/types/dist/api',
+        '^errors$': '<rootDir>/types/dist/errors',
+        '^projects$': '<rootDir>/types/dist/projects',
+        '^users$': '<rootDir>/types/dist/users'
+      },
     },
     {
       displayName: 'backend',
@@ -37,6 +44,13 @@ module.exports = {
         '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tests/tsconfig.tests.json' }],
       },
       moduleDirectories: ['node_modules'],
+      moduleNameMapper: {
+        '^@types/(.*)$': '<rootDir>/types/dist/$1',
+        '^api$': '<rootDir>/types/dist/api',
+        '^errors$': '<rootDir>/types/dist/errors',
+        '^projects$': '<rootDir>/types/dist/projects',
+        '^users$': '<rootDir>/types/dist/users'
+      },
     },
   ],
 };

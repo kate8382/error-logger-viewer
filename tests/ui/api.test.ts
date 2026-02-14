@@ -1,5 +1,5 @@
 import { ErrorApi } from '../../frontend/src/scripts/api';
-import type { ErrorItem, NewError } from '../../types/errors';
+import type { ErrorItem, NewError } from 'errors';
 
 // Тест для проверки работы ErrorApi в demo-режиме
 describe('ErrorApi', () => {

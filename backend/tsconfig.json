@@ -7,13 +7,6 @@
     "module": "es2022", // используем современный модульный синтаксис для лучшей поддержки tree-shaking и оптимизации
     "target": "es2022", // таргетируем современный JavaScript для лучшей производительности и поддержки новых возможностей
     "moduleResolution": "node", // используем node модуль резолюшн для лучшей совместимости с npm пакетами
-    "baseUrl": ".",
-    "paths": {
-      "@types/*": ["../types/dist/*"],
-      "projects": ["../types/dist/projects"],
-      "errors": ["../types/dist/errors"],
-      "users": ["../types/dist/users"]
-    },
     "esModuleInterop": true, // включаем поддержку импорта CommonJS модулей как ES6 модулей
     "skipLibCheck": true, // пропускаем проверку типов в node_modules для ускорения компиляции
     "allowJs": true, // разрешаем компилировать JavaScript файлы, чтобы можно было использовать серверный код на JS
