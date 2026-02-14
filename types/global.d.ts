@@ -1,13 +1,6 @@
 import type { ErrorItem } from '../types/errors';
 import type { ErrorApi, Mode } from '../types/api';
-// Minimal runtime shape for chart manager used in ambient `window`.
-// We avoid importing implementation types from frontend source here so
-// declaration-only build doesn't pull application sources into the types build.
-export type ChartManagerType = {
-  render?: () => void;
-  destroy?: () => void;
-  update?: (...args: any[]) => void;
-} | null;
+import type { ChartManagerType } from '../frontend/src/scripts/charts';
 
 // Минимальная публичная поверхность `window` для рантайма.
 // Оставляем только реально необходимое для взаимодействия между ленивыми модулями, чтобы не держать огромный ambient-файл и позволить модулям импортировать свои типы явно.

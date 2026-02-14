@@ -1,25 +1,18 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "./src", // компилируем только исходники в backend/src
-    "outDir": "./dist", // выходные файлы будут в backend/dist (локальный для backend)
+    "rootDir": "..", // позволяем подключать общие типы из корневой папки (../types)
+    "outDir": "../dist", // выходные файлы должны быть в parent dist директории
     "composite": false, // отключаем композитные проекты, т.к. у нас нет зависимостей между проектами
     "module": "es2022", // используем современный модульный синтаксис для лучшей поддержки tree-shaking и оптимизации
     "target": "es2022", // таргетируем современный JavaScript для лучшей производительности и поддержки новых возможностей
     "moduleResolution": "node", // используем node модуль резолюшн для лучшей совместимости с npm пакетами
-    "baseUrl": ".",
-    "paths": {
-      "@types/*": ["../types/dist/*"],
-      "projects": ["../types/dist/projects"],
-      "errors": ["../types/dist/errors"],
-      "users": ["../types/dist/users"]
-    },
     "esModuleInterop": true, // включаем поддержку импорта CommonJS модулей как ES6 модулей
     "skipLibCheck": true, // пропускаем проверку типов в node_modules для ускорения компиляции
     "allowJs": true, // разрешаем компилировать JavaScript файлы, чтобы можно было использовать серверный код на JS
     "checkJs": false, // отключаем проверку типов в JavaScript файлах, чтобы не мешать разработке на JS
     "noEmit": false // разрешаем генерацию выходных файлов, т.к. мы хотим компилировать TypeScript в JavaScript для продакшена
   },
-  "include": ["src/**/*", "../types/dist/**/*.d.ts"],
+  "include": ["src/**/*", "../types/**/*", "server.js"],
   "exclude": ["node_modules", "dist"]
 }

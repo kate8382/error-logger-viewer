@@ -2,13 +2,15 @@
   "watch": ["backend"],
   "ext": "js,json",
   "ignore": [
-    "backend/dist",
+    "dist",
     "frontend/dist",
+    "frontend/node_modules",
     "node_modules",
     "coverage",
     "**/*.log",
     "frontend/src/**",
     "webpack.config.cjs",
+    "webpack.config.js",
     "backend/db.json",
     "backend/*.json"
   ],

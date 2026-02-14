@@ -106,7 +106,7 @@ npm run start:all
 ```
 
 3. Production preview
- - Build frontend and serve `frontend/dist` locally:
+ - Build frontend and serve `dist` locally:
 
 ```powershell
 npm run build:frontend

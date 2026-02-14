@@ -4,10 +4,10 @@
 
 Короткая последовательность
 1. Создать ветку `feat/backend-migrate-to-ts` [x].
-2. Добавить `backend/src/server.ts` (scaffold) — пока оставить `backend/server.js` как fallback [x].
-3. Добавить `backend/tsconfig.json` и скрипты `build:backend`, `dev:backend` в `package.json` [x].
-4. Добавить минимальные интерфейсы типов (`ErrorRecord`, `Project`, `DBSchema`, `User`) [x].
-5. Прогнать `npm run ts:check` и фиксить ошибки по мере появления [x].
+2. Добавить `backend/src/server.ts` (scaffold) — пока оставить `backend/server.js` как fallback [ ].
+3. Добавить `backend/tsconfig.json` и скрипты `build:backend`, `dev:backend` в `package.json` [ ].
+4. Добавить минимальные интерфейсы типов (`ErrorRecord`, `Project`, `DBSchema`, `User`) [ ].
+5. Прогнать `npm run ts:check` и фиксить ошибки по мере появления [ ].
 6. Добавить базовые интеграционные smoke-tests (Jest + supertest) [ ].
 7. Скомпилировать `backend/dist` и переключить `start:backend` на `node backend/dist/server.js` [ ].
 8. Удалить/архивировать старый `server.js` после верификации в CI [ ].
@@ -35,7 +35,7 @@ git pull origin feat/backend-migrate-to-ts
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./dist",
+    "outDir": "../dist",
     "rootDir": "src",
     "composite": false,
     "module": "ES2020",
@@ -134,3 +134,9 @@ node backend/dist/server.js
 Риски и рекомендации
 - Риск: мелкие поведенческие различия при изменении импорта/экспорта — покрывайте тестами.
 - Рекомендация: делать миграцию малыми шагами, коммитить и тестировать часто.
+
+Если хотите, могу:
+- A) создать `backend/src/server.ts` scaffold и `backend/tsconfig.json` и обновить `package.json` скрипты; либо
+- B) только подготовить `backend/tsconfig.json` и инструкцию, чтобы вы вручную проверили перед созданием кода.
+
+Выберите вариант (A или B) и я выполню следующий шаг.
