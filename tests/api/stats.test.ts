@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import type { PeriodStats } from '../../types/errors';
+import type { PeriodStats } from 'errors';
 
 // Простая проверка: конфиг и логика среза последних N ключей
 const cfgPath = path.resolve(process.cwd(), 'config/periods.json');

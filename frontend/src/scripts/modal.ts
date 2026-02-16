@@ -1,6 +1,6 @@
 import { el, setChildren } from 'redom';
-import type { ErrorItem } from '../../../types/errors';
-import type { Mode } from '../../../types/api';
+import type { ErrorItem } from 'errors';
+import type { Mode } from 'api';
 import { ErrorApi } from './api';
 // Импортируем тип `ErrorTable`, потому что вызываем `fetchErrors` на глобальном экземпляре и делаем локальное приведение `window.errorTableInstance` -> `ErrorTable`.
 import type { ErrorTable } from './table';

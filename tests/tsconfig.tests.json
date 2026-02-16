@@ -5,11 +5,11 @@
     "allowJs": true,
     "checkJs": false,
     "types": ["node", "jest"],
-    "typeRoots": ["../node_modules/@types", "../types"]
+    "typeRoots": ["../node_modules/@types", "../types/dist"]
   },
   "include": [
-    "ui/**/*.ts",
-    "api/**/*.ts",
-    "../types/**/*.d.ts"
+      "ui/**/*.ts",
+      "api/**/*.ts",
+    "../types/global.d.ts"
   ]
 }

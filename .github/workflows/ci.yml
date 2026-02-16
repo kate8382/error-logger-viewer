@@ -78,7 +78,7 @@ jobs:
         run: npm ci
 
       - name: Build production bundle
-        run: npm run build:frontend
+        run: npm run build:types && npm run build:frontend
 
       - name: Serve production build in background
         run: |

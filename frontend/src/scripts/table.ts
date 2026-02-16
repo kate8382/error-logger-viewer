@@ -1,6 +1,6 @@
 import { el, setChildren } from 'redom';
-import type { Mode } from '../../../types/api';
-import type { ErrorItem } from '../../../types/errors';
+import type { Mode } from 'api';
+import type { ErrorItem } from 'errors';
 import { ErrorApi } from './api';
 import { StatsManager } from './stats';
 import type { HeaderManager } from './header'; // Импортируем тип менеджера заголовка, чтобы безопасно приводить `window.headerManager` к реальному типу

@@ -67,11 +67,20 @@ module.exports = (env = {}) => ({
     static: {
       directory: path.resolve(__dirname, 'frontend', 'dist'),
     },
+    // historyApiFallback для поддержки SPA маршрутизации, hot для горячей перезагрузки, порт 8080, открытие браузера при запуске, сжатие и доступ с любого хоста
     historyApiFallback: true,
     hot: true,
     port: 8080,
     open: true,
     compress: true,
     host: '0.0.0.0',
+    // Настройка прокси для API запросов к бэкенду, чтобы избежать проблем с CORS при разработке
+    proxy: [
+      {
+        context: ['/errors', '/projects', '/users'],
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    ],
   },
 });

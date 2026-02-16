@@ -1,5 +1,5 @@
 import { ErrorTable } from '../../frontend/src/scripts/table';
-import type { ErrorItem } from '../../types/errors';
+import type { ErrorItem } from 'errors';
 import { qsa, assertExists } from '../../frontend/src/scripts/utils/dom';
 
 // Мок-данные для теста рендеринга

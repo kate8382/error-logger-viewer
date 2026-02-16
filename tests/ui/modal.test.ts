@@ -1,4 +1,4 @@
-import type { ErrorItem } from '../../types/errors';
+import type { ErrorItem } from 'errors';
 import { Modal } from '../../frontend/src/scripts/modal';
 import { qs, assertExists } from '../../frontend/src/scripts/utils/dom';
 

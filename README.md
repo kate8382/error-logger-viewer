@@ -106,7 +106,7 @@ npm run start:all
 ```
 
 3. Production preview
- - Build frontend and serve `dist` locally:
+ - Build frontend and serve `frontend/dist` locally:
 
 ```powershell
 npm run build:frontend
@@ -152,6 +152,9 @@ npm run serve:dist:frontend
 
 - **Localization:**
 	- All texts are in i18n.ts, dynamic language switching supported.
+
+**TypeScript aliases**
+- Project-level path aliases are defined in `tsconfig.base.json` and point to generated declarations in `types/dist`. Backend and frontend inherit these aliases so you can import shared types using aliases like `projects`, `errors`, `users` instead of relative paths. Declarations are generated with `npm run build:types`.
 
 - **UI/UX:**
 	- Modern responsive interface, fast feedback, loading spinners, theme support.

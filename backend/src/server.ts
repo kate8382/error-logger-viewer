@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 // Импорт библиотек
-import express from 'express'; // ответственный за создание сервера и маршрутов
+import express, { Request, Response } from 'express'; // ответственный за создание сервера и маршрутов
 import cors from 'cors'; // для обработки CORS (Cross-Origin Resource Sharing)
 import { Low } from 'lowdb'; // легковесная база данных
 import { JSONFile } from 'lowdb/node'; // адаптер для работы с JSON файлами
@@ -8,31 +8,35 @@ import { fileURLToPath } from 'url'; // для получения пути к ф
 import { dirname, join } from 'path'; // для работы с путями
 import { promises as fs } from 'fs';
 import { v4 as uuidv4 } from 'uuid'; // для генерации уникальных идентификаторов
+import { DBSchema } from './types/db';
+import type { ProjectDTO } from 'projects';
 
 // Настройка базы данных
 const __filename = fileURLToPath(import.meta.url); // получение пути к текущему файлу
 const __dirname = dirname(__filename);
 
-const adapter = new JSONFile(join(__dirname, 'db.json'));
-const db = new Low(adapter, { errors: [] });
+// Проверяем, что файл базы данных (db.json) хранится в папке бэкенда (а не в backend/src) при непосредственном запуске TS, чтобы избежать проблем с путями при компиляции в JavaScript
+const adapter = new JSONFile<DBSchema>(join(__dirname, '..', 'db.json'));
+const db: Low<DBSchema> = new Low(adapter, { errors: [], projects: [] } as DBSchema);
 
 // Инициализация базы данных
 await db.read();
+if (!db.data) db.data = { errors: [], projects: [] };
 await db.write();
 console.log('db.data:', db.data);
 
-// Загружаем общие лимиты периодов из config/periods.json
+// Загружаем общие лимиты периодов из config/periods.json (ищем в корне проекта)
 let PERIOD_LIMITS = { day: 7, week: 8, month: 6, year: 4 };
 try {
-  // Try to use dynamic import with json assertion when Node supports it
-  const cfg = await import('../config/periods.json', { assert: { type: 'json' } });
-  if (cfg && cfg.default) PERIOD_LIMITS = cfg.default;
+  const cfgPath = join(process.cwd(), 'config', 'periods.json');
+  const raw = await fs.readFile(cfgPath, 'utf8');
+  const cfgJson = JSON.parse(raw);
+  if (cfgJson) PERIOD_LIMITS = cfgJson;
 } catch (e) {
-  // Fallback: read JSON file using fs to support older Node versions
+  // Если нет файла в корне — пытаемся найти рядом с бандлом (backward-compat)
   try {
     const raw = await fs.readFile(join(__dirname, '..', 'config', 'periods.json'), 'utf8');
     const cfgJson = JSON.parse(raw);
-    // eslint-disable-next-line no-unused-vars
     if (cfgJson) PERIOD_LIMITS = cfgJson;
   } catch (e2) {
     console.warn('[server] Could not load config/periods.json, using defaults', e, e2);
@@ -68,31 +72,33 @@ function generateApiKey() {
 }
 
 // 2. Поиск проекта по API ключу
-function findProjectByApiKey(key) {
+function findProjectByApiKey(key: string | undefined): ProjectDTO | null {
   if (!key) return null;
-  return db.data.projects.find((p) => p.apiKey === key) || null;
+  return (db.data.projects.find((p) => p.apiKey === key) as ProjectDTO) || null;
 }
 
 // 3. Поиск проекта по ID
-function findProjectById(id) {
+function findProjectById(id: string | undefined): ProjectDTO | null {
   if (!id) return null;
-  return db.data.projects.find((p) => p.id === id) || null;
+  return (db.data.projects.find((p) => p.id === id) as ProjectDTO) || null;
 }
 
 // 4. Поиск проекта по владельцу или участнику
-function findProjectByOwnerOrMember(email) {
+function findProjectByOwnerOrMember(email: string | undefined): ProjectDTO | null {
   if (!email) return null;
-  return db.data.projects.find((p) => p.owner === email || (Array.isArray(p.members) && p.members.includes(email))) || null;
+  return (
+    db.data.projects.find((p) => p.owner === email || (Array.isArray(p.members) && p.members.includes(email))) as ProjectDTO
+  ) || null;
 }
 
 // 5. Построение сниппета с заданным API ключом
-function buildSnippet(apiKey) {
+function buildSnippet(apiKey: string | undefined) {
   const escapedKey = String(apiKey || '');
-  return `<script>(function(){const API_KEY='${escapedKey}';const ENDPOINT=window.__ERROR_LOGGER_ENDPOINT__||location.protocol+'//'+location.host+'/errors';function send(payload){try{fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign(payload,{apiKey:API_KEY}))});}catch(e){}}window.addEventListener('error',function(e){send({message:e.message,stack:(e.error&&e.error.stack)||e.message,type:'error',user:navigator.userAgent});});window.addEventListener('unhandledrejection',function(e){send({message:(e.reason&&e.reason.message)||String(e.reason),stack:e.reason&&e.reason.stack,type:'unhandledrejection',user:navigator.userAgent});});})();</script>`;
+  return `<script>(function(){if((window).__ERROR_LOGGER_SNIPPET_ADDED__){return;} (window).__ERROR_LOGGER_SNIPPET_ADDED__=true; const API_KEY='${escapedKey}';const ENDPOINT=window.__ERROR_LOGGER_ENDPOINT__||location.protocol+'//'+location.host+'/errors';function send(payload){try{fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign(payload,{apiKey:API_KEY}))});}catch(e){}}window.addEventListener('error',function(e){send({message:e.message,stack:(e.error&&e.error.stack)||e.message,type:'error',user:navigator.userAgent});});window.addEventListener('unhandledrejection',function(e){send({message:(e.reason&&e.reason.message)||String(e.reason),stack:e.reason&&e.reason.stack,type:'unhandledrejection',user:navigator.userAgent});});})();</script>`;
 }
 
 // Маршрут для создания нового проекта
-app.post('/projects', async (req, res) => {
+app.post('/projects', async (req: Request, res: Response) => {
   const { name, owner, members } = req.body || {};
   if (!name || !owner) {
     return res.status(400).json({ error: 'Project name and owner are required' });
@@ -118,43 +124,46 @@ app.post('/projects', async (req, res) => {
   return res.status(201).json(project);
 });
 
-app.get('/projects', async (req, res) => {
+app.get('/projects', async (req: Request, res: Response) => {
   await db.read();
   let projects = db.data.projects || [];
   if (req.query.owner) {
-    projects = projects.filter((p) => p.owner === req.query.owner || (p.members && p.members.includes(req.query.owner)));
+    const ownerQ = String(req.query.owner);
+    projects = projects.filter((p) => p.owner === ownerQ || (p.members && p.members.includes(ownerQ)));
   }
   res.json(projects);
 });
 
 // Маршрут для получения статистики ошибок
-app.get('/errors/stats', async (req, res) => {
+app.get('/errors/stats', async (req: Request, res: Response) => {
   await db.read();
   const errors = db.data.errors || [];
-  const by = req.query.by || 'status';
-  const group = req.query.group || 'status';
+  const by = String(req.query.by || 'status');
+  const group = String(req.query.group || 'status');
   console.log('[STATS] Запрос:', { by, group });
-  let result = {};
+  let result: Record<string, any> = {};
   // Группировка по статусу
   if (by === 'status') {
-    result = errors.reduce((acc, e) => {
+    const statusResultMain = errors.reduce<Record<string, number>>((acc, e) => {
       const status = e.status || 'new';
       acc[status] = (acc[status] || 0) + 1;
       return acc;
-    }, {});
+    }, {} as Record<string, number>);
+    result = statusResultMain;
   }
   // Группировка по типу
   else if (by === 'type') {
-    result = errors.reduce((acc, e) => {
+    const typeResult = errors.reduce<Record<string, number>>((acc, e) => {
       const type = e.type || 'Unknown';
       acc[type] = (acc[type] || 0) + 1;
       return acc;
-    }, {});
+    }, {} as Record<string, number>);
+    result = typeResult;
   }
   // Группировка по дням/неделям/месяцам/годам
   else if (['day', 'week', 'month', 'year'].includes(by)) {
-    function getPeriodKey(dateStr, by) {
-      if (!dateStr) return '';
+    function getPeriodKey(dateStr: string, by: string): string {
+        if (!dateStr) return '';
       const date = new Date(dateStr);
       if (isNaN(date.getTime())) return '';
       if (by === 'day') {
@@ -165,7 +174,7 @@ app.get('/errors/stats', async (req, res) => {
         const dayNum = d.getUTCDay() || 7;
         d.setUTCDate(d.getUTCDate() + 4 - dayNum);
         const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-        const weekNum = Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+        const weekNum = Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
         return `${d.getUTCFullYear()}-W${weekNum.toString().padStart(2, '0')}`;
       }
       if (by === 'month') {
@@ -183,17 +192,18 @@ app.get('/errors/stats', async (req, res) => {
       const periodKey = getPeriodKey(dateStr, by);
       if (!periodKey) return;
       if (!result[periodKey]) result[periodKey] = {};
-      const key = group === 'type' ? e.type || 'Unknown' : e.status || 'new';
+      const key = group === 'type' ? (e.type || 'Unknown') : (e.status || 'new');
       result[periodKey][key] = (result[periodKey][key] || 0) + 1;
     });
     // Применяем ограничение по числу периодов для уменьшения объёма данных,
     // если это необходимо (напр., дни/недели/месяцы/годы).
-    const PERIOD_LIMITS = { day: 7, week: 8, month: 6, year: 4 };
+    const PERIOD_LIMITS: Record<string, number> = { day: 7, week: 8, month: 6, year: 4 };
     const sortedKeys = Object.keys(result).sort();
-    const lim = PERIOD_LIMITS[by] ?? 0;
+    const lim = (PERIOD_LIMITS as Record<string, number>)[by] ?? 0;
+
     if (lim > 0 && sortedKeys.length > lim) {
       const last = sortedKeys.slice(-lim);
-      const filtered = {};
+      const filtered: Record<string, Record<string, number>> = {};
       last.forEach((k) => {
         filtered[k] = result[k];
       });
@@ -203,18 +213,19 @@ app.get('/errors/stats', async (req, res) => {
   }
   // Если параметр некорректный — по умолчанию возвращаем по статусу
   else {
-    result = errors.reduce((acc, e) => {
+    const statusResult = errors.reduce<Record<string, number>>((acc, e) => {
       const status = e.status || 'new';
       acc[status] = (acc[status] || 0) + 1;
       return acc;
-    }, {});
+    }, {} as Record<string, number>);
+    result = statusResult;
   }
   console.log('[STATS] Результат:', result);
   return res.json(result);
 });
 
 // Маршрут для получения ошибок
-app.get('/errors', async (req, res) => {
+app.get('/errors', async (req: Request, res: Response) => {
   await db.read();
   let errors = db.data.errors || [];
 
@@ -222,26 +233,29 @@ app.get('/errors', async (req, res) => {
   const filterKeys = Object.keys(req.query).filter((k) => !['sort', 'order', 'filter'].includes(k));
   if (filterKeys.length > 0) {
     errors = errors.filter((e) => {
+      const anyE = e as any; // для динамического доступа к полям
       return filterKeys.every((key) => {
         // Приводим к строке и сравниваем без регистра
-        return e[key] !== undefined && String(e[key]).toLowerCase().includes(String(req.query[key]).toLowerCase());
+        return anyE[key] !== undefined && String(anyE[key]).toLowerCase().includes(String(req.query[key]).toLowerCase());
       });
     });
   }
 
   // Фильтрация по типу ошибки (старый вариант, если используется filter)
   if (req.query.filter) {
-    errors = errors.filter((e) => String(e.type).toLowerCase() === String(req.query.filter).toLowerCase());
+    const filterVal = String(req.query.filter).toLowerCase();
+    errors = errors.filter((e) => String((e as any).type).toLowerCase() === filterVal);
   }
 
   // Сортировка по полю
   if (req.query.sort) {
-    const order = req.query.order === 'desc' ? -1 : 1;
-    if (req.query.sort === 'status') {
+    const order = String(req.query.order) === 'desc' ? -1 : 1;
+    const sortKey = String(req.query.sort);
+    if (sortKey === 'status') {
       const statusOrder = ['new', 'in_progress', 'fixed', 'ignored'];
       errors = errors.sort((a, b) => {
-        const aStatus = (a.status || 'new').toLowerCase();
-        const bStatus = (b.status || 'new').toLowerCase();
+        const aStatus = (String((a as any).status || 'new')).toLowerCase();
+        const bStatus = (String((b as any).status || 'new')).toLowerCase();
         const aIndex = statusOrder.indexOf(aStatus);
         const bIndex = statusOrder.indexOf(bStatus);
         if (aIndex !== -1 && bIndex !== -1) return (aIndex - bIndex) * order;
@@ -249,19 +263,19 @@ app.get('/errors', async (req, res) => {
         if (bIndex !== -1) return 1 * order;
         return aStatus.localeCompare(bStatus) * order;
       });
-    } else if (req.query.sort === 'count') {
+    } else if (sortKey === 'count') {
       errors = errors.sort((a, b) => {
-        return ((a.count || 0) - (b.count || 0)) * order;
+        return ((Number((a as any).count || 0) - Number((b as any).count || 0))) * order;
       });
-    } else if (req.query.sort === 'firstSeen') {
-      const getFirstSeen = (err) => err.firstSeen || '';
+    } else if (sortKey === 'firstSeen') {
+      const getFirstSeen = (err: any) => err.firstSeen || '';
       errors = errors.sort((a, b) => {
         const aValue = getFirstSeen(a) ? new Date(getFirstSeen(a)).getTime() : 0;
         const bValue = getFirstSeen(b) ? new Date(getFirstSeen(b)).getTime() : 0;
         return (aValue - bValue) * order;
       });
-    } else if (req.query.sort === 'lastSeen') {
-      const getLastSeen = (err) => err.lastSeen || '';
+    } else if (sortKey === 'lastSeen') {
+      const getLastSeen = (err: any) => err.lastSeen || '';
       errors = errors.sort((a, b) => {
         const aValue = getLastSeen(a) ? new Date(getLastSeen(a)).getTime() : 0;
         const bValue = getLastSeen(b) ? new Date(getLastSeen(b)).getTime() : 0;
@@ -269,8 +283,10 @@ app.get('/errors', async (req, res) => {
       });
     } else {
       errors = errors.sort((a, b) => {
-        if (a[req.query.sort] < b[req.query.sort]) return -1 * order;
-        if (a[req.query.sort] > b[req.query.sort]) return 1 * order;
+        const anyA = a as any;
+        const anyB = b as any;
+        if (anyA[sortKey] < anyB[sortKey]) return -1 * order;
+        if (anyA[sortKey] > anyB[sortKey]) return 1 * order;
         return 0;
       });
     }
@@ -279,8 +295,8 @@ app.get('/errors', async (req, res) => {
 });
 
 // Маршрут для добавления новой ошибки
-app.post('/errors', async (req, res) => {
-  const newError = req.body;
+app.post('/errors', async (req: Request, res: Response) => {
+  const newError: any = req.body;
   if (!newError || !newError.message) {
     return res.status(400).json({ error: 'Invalid error data' });
   }
@@ -291,9 +307,9 @@ app.post('/errors', async (req, res) => {
   db.data.projects = db.data.projects || [];
 
   // Разрешение проекта: заголовок X-API-KEY -> body.apiKey -> body.projectId -> email владельца в body или пользователя
-  const headerApiKey = (req.headers['x-api-key'] || req.headers['X-API-KEY'] || '').toString();
-  const bodyApiKey = newError.apiKey || newError.key || '';
-  const bodyProjectId = newError.projectId || '';
+  const headerApiKey = String(req.headers['x-api-key'] || req.headers['X-API-KEY'] || '');
+  const bodyApiKey = String(newError.apiKey || newError.key || '');
+  const bodyProjectId = String(newError.projectId || '');
   let project = null;
   if (headerApiKey) project = findProjectByApiKey(headerApiKey);
   if (!project && bodyApiKey) project = findProjectByApiKey(bodyApiKey);
@@ -316,14 +332,15 @@ app.post('/errors', async (req, res) => {
   const day = now.slice(0, 10);
 
   // Нормализуем сравниваемые поля (trim, toLowerCase, пустая строка вместо undefined)
-  function normalize(val) {
+  function normalize(val: any) {
     return val === undefined || val === null ? '' : String(val).trim().toLowerCase();
   }
 
-  let found = db.data.errors.find(
-    (e) =>
-      // группируем только в рамках одного проекта (или оба неизвестны)
-      String(e.projectId || 'unknown') === String(projectId) && groupKeys.every((k) => normalize(e[k]) === normalize(newError[k])) && e.firstSeen && e.firstSeen.slice(0, 10) === day,
+  let found = db.data.errors.find((e) =>
+    // группируем только в рамках одного проекта (или оба неизвестны)
+    String((e as any).projectId || 'unknown') === String(projectId) &&
+    groupKeys.every((k) => normalize((e as any)[k]) === normalize(newError[k])) &&
+    (e as any).firstSeen && (e as any).firstSeen.slice(0, 10) === day,
   );
 
   if (found) {
@@ -358,8 +375,8 @@ app.post('/errors', async (req, res) => {
 });
 
 // Маршрут для обновления ошибки по ID
-app.put('/errors/:id', async (req, res) => {
-  const updatedError = req.body;
+app.put('/errors/:id', async (req: Request, res: Response) => {
+  const updatedError: any = req.body;
   if (!updatedError || !updatedError.message) {
     return res.status(400).json({ error: 'Invalid error data' });
   }
@@ -384,7 +401,7 @@ app.put('/errors/:id', async (req, res) => {
 });
 
 // Маршрут для получения ошибки по ID
-app.get('/errors/:id', async (req, res) => {
+app.get('/errors/:id', async (req: Request, res: Response) => {
   await db.read();
   if (!db.data || !db.data.errors) {
     return res.status(404).json({ error: 'No errors found' });
@@ -399,7 +416,7 @@ app.get('/errors/:id', async (req, res) => {
 });
 
 // Маршрут для удаления ошибки по ID
-app.delete('/errors/:id', async (req, res) => {
+app.delete('/errors/:id', async (req: Request, res: Response) => {
   await db.read();
   if (!db.data || !db.data.errors) {
     return res.status(404).json({ error: 'No errors found' });
@@ -416,7 +433,7 @@ app.delete('/errors/:id', async (req, res) => {
 });
 
 // Запуск сервера
-const PORT = process.env.PORT || 3000;
+const PORT: number = Number(process.env.PORT) || 3000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is running on http://0.0.0.0:${PORT}`);
 });

@@ -5,11 +5,12 @@
     "outDir": "./dist",
     "module": "ES2022",
     "lib": ["ES2022", "DOM"],
+    "typeRoots": ["../types", "../node_modules/@types"],
     "allowJs": true,
     "checkJs": false,
     "noEmit": true
   },
-  "include": ["src/**/*", "../types/**/*.d.ts"],
+  "include": ["src/**/*"],
   "files": ["../types/global.d.ts"],
   "exclude": [
     "node_modules",

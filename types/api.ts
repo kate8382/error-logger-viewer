@@ -2,6 +2,7 @@ import type { ErrorItem, NewError, Stats } from './errors';
 
 export type Mode = 'server' | 'demo';
 
+// интерфейс для API ошибок
 export interface ErrorApi {
   mode: Mode;
   baseUrl: string;

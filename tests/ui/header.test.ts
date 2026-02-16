@@ -1,4 +1,4 @@
-import type { ErrorItem } from '../../types/errors';
+import type { ErrorItem } from 'errors';
 import { HeaderManager } from '../../frontend/src/scripts/header';
 import type { ErrorTable } from '../../frontend/src/scripts/table';
 

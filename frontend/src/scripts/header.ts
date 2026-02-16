@@ -1,4 +1,4 @@
-import type { ErrorItem } from '../../../types/errors';
+import type { ErrorItem } from 'errors';
 import { ErrorApi } from './api';
 import { ErrorTable } from './table'; // Импорт типа конкретного менеджера графиков (ранее использовали ambient-интерфейс из global.d.ts)
 import { StatsManager } from './stats';

@@ -1,6 +1,6 @@
 import '../assets/scss/style.scss';
-import type { ErrorItem, NewError } from '../../../types/errors';
-import type { Mode } from '../../../types/api';
+import type { ErrorItem, NewError } from 'errors';
+import type { Mode } from 'api';
 import { ErrorApi } from './api';
 import './header';
 import { StatsManager } from './stats';
