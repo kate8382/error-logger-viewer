@@ -20,4 +20,6 @@
     "resolveJsonModule": true,
     "types": ["node", "jest"]
   }
+  ,
+  "exclude": ["types"]
 }

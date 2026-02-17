@@ -1,5 +1,5 @@
-import type { ErrorItem } from './errors';
-import type { ErrorApi, Mode } from './api';
+import type { ErrorItem } from 'errors';
+import type { ErrorApi, Mode } from 'api';
 
 // Локальное определение минимального API ChartManager, чтобы сборка деклараций
 // не зависела от исходников фронтенда.
