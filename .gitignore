@@ -145,6 +145,7 @@ backend/dist
 frontend/dist
 types/dist
 /types/*.js
+/types/*.js.map
 coverage/
 
 # Cypress artifacts

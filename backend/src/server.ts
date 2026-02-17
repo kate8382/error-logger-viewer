@@ -17,11 +17,11 @@ const __dirname = dirname(__filename);
 
 // Проверяем, что файл базы данных (db.json) хранится в папке бэкенда (а не в backend/src) при непосредственном запуске TS, чтобы избежать проблем с путями при компиляции в JavaScript
 const adapter = new JSONFile<DBSchema>(join(__dirname, '..', 'db.json'));
-const db: Low<DBSchema> = new Low(adapter, { errors: [], projects: [] } as DBSchema);
+const db: Low<DBSchema> = new Low(adapter, { errors: [], projects: [], users: [] } as DBSchema);
 
 // Инициализация базы данных
 await db.read();
-if (!db.data) db.data = { errors: [], projects: [] };
+if (!db.data) db.data = { errors: [], projects: [], users: [] };
 await db.write();
 console.log('db.data:', db.data);
 
@@ -44,10 +44,11 @@ try {
 }
 
 // Инициализация структуры данных, если она отсутствует
-if (!db.data) db.data = { errors: [], projects: [] };
+if (!db.data) db.data = { errors: [], projects: [], users: [] };
 else {
   db.data.errors = db.data.errors || [];
   db.data.projects = db.data.projects || [];
+  db.data.users = db.data.users || [];
 }
 
 // Создание приложения Express
@@ -104,7 +105,7 @@ app.post('/projects', async (req: Request, res: Response) => {
     return res.status(400).json({ error: 'Project name and owner are required' });
   }
   await db.read();
-  if (!db.data) db.data = { errors: [], projects: [] };
+  if (!db.data) db.data = { errors: [], projects: [], users: [] };
   db.data.errors = db.data.errors || [];
   db.data.projects = db.data.projects || [];
   const id = uuidv4();
@@ -132,6 +133,35 @@ app.get('/projects', async (req: Request, res: Response) => {
     projects = projects.filter((p) => p.owner === ownerQ || (p.members && p.members.includes(ownerQ)));
   }
   res.json(projects);
+});
+
+// USERS endpoints
+app.post('/users', async (req: Request, res: Response) => {
+  const { email, name } = req.body || {};
+  if (!email) return res.status(400).json({ error: 'Email is required' });
+  await db.read();
+  if (!db.data) db.data = { errors: [], projects: [], users: [] } as any;
+  db.data.users = db.data.users || [];
+  const exists = db.data.users.find((u: any) => u.email === email);
+  if (exists) return res.status(200).json(exists);
+  const id = uuidv4();
+  const user = { id, email, name: name || '', createdAt: new Date().toISOString() };
+  db.data.users.push(user as any);
+  await db.write();
+  return res.status(201).json(user);
+});
+
+app.get('/users', async (req: Request, res: Response) => {
+  await db.read();
+  const users = db.data.users || [];
+  res.json(users);
+});
+
+app.get('/users/:id', async (req: Request, res: Response) => {
+  await db.read();
+  const u = (db.data.users || []).find((x: any) => x.id === req.params.id);
+  if (!u) return res.status(404).json({ error: 'User not found' });
+  return res.json(u);
 });
 
 // Маршрут для получения статистики ошибок
@@ -302,7 +332,7 @@ app.post('/errors', async (req: Request, res: Response) => {
   }
 
   await db.read();
-  if (!db.data) db.data = { errors: [], projects: [] };
+  if (!db.data) db.data = { errors: [], projects: [], users: [] };
   db.data.errors = db.data.errors || [];
   db.data.projects = db.data.projects || [];
 

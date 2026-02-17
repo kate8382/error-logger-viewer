@@ -4,6 +4,8 @@
     "noEmit": true,
     "allowJs": true,
     "checkJs": false,
+    "module": "ES2022",
+    "target": "ES2022",
     "types": ["node", "jest"],
     "typeRoots": ["../node_modules/@types", "../types/dist"]
   },
