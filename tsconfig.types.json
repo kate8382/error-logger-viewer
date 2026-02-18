@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "noEmit": false, // для генерации только декларационных файлов
     "declaration": true,
     "emitDeclarationOnly": true,
     "outDir": "types/dist",

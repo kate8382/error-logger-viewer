@@ -1,3 +1,5 @@
+/// <reference types="jest" />
+
 import fs from 'fs';
 import path from 'path';
 import type { PeriodStats } from 'errors';

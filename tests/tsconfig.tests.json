@@ -4,12 +4,16 @@
     "noEmit": true,
     "allowJs": true,
     "checkJs": false,
+    "module": "ES2022",
+    "target": "ES2022",
     "types": ["node", "jest"],
-    "typeRoots": ["../node_modules/@types", "../types/dist"]
+    "typeRoots": ["../node_modules/@types", "../types", "../types/dist"]
   },
   "include": [
       "ui/**/*.ts",
       "api/**/*.ts",
     "../types/global.d.ts"
   ]
+  ,
+  "exclude": []
 }

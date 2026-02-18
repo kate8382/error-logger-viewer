@@ -3,6 +3,7 @@
     "target": "ES2022",
     "module": "ES2022",
     "moduleResolution": "node",
+    "noEmit": true, // для проверки типов без генерации файлов
     "esModuleInterop": true,
     "typeRoots": ["./types", "./node_modules/@types"],
     "baseUrl": ".",
@@ -13,10 +14,12 @@
       "errors": ["types/dist/errors"],
       "users": ["types/dist/users"]
     },
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": true, // для предотвращения проблем с регистром в именах файлов
     "strict": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "types": ["node", "jest"]
   }
+  ,
+  "exclude": ["types"]
 }
