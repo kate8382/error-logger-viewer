@@ -9,8 +9,8 @@
   "type": "module",
   "scripts": {
     "install:all": "npm install",
-    "build:backend": "npm run build:types && tsc -p backend/tsconfig.json",
     "build:types": "tsc -p tsconfig.types.json",
+    "build:backend": "npm run build:types && tsc -p backend/tsconfig.json",
     "build:frontend": "npm run build:types && webpack --config webpack.config.cjs --mode production",
     "dev:backend": "nodemon --watch backend/src --ext ts --exec \"npm run build:backend && node backend/dist/server.js\"",
     "dev:frontend": "webpack serve --config webpack.config.cjs --mode development",

@@ -7,26 +7,26 @@ let serverProc: ChildProcess | null = null;
 const PORT = process.env.TEST_BACKEND_PORT || '34567';
 const BASE = `http://127.0.0.1:${PORT}`;
 
-// increase jest timeout for server startup
+// добавляем jest timeout для запуска сервера
 jest.setTimeout(20000);
 
 const dbPath = path.join(__dirname, '..', '..', 'backend', 'db.json');
 const backupPath = path.join(__dirname, '..', '..', 'backend', 'db.test.backup.json');
 
 beforeAll(async () => {
-  // backup db.json to restore later
+  // резервная копия db.json для последующего восстановления
   try {
     await fs.copyFile(dbPath, backupPath);
   } catch (e) {
-    // ignore if missing
+    // игнорировать, если отсутствует
   }
-  // spawn node process running compiled server (so Jest runtime doesn't need to import ESM)
+  // запуск процесса node с компилированным сервером (чтобы среда выполнения Jest не нужно было импортировать ESM)
   serverProc = spawn(process.execPath, ['backend/dist/server.js'], {
     env: { ...process.env, PORT },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
 
-  // wait for server to start by polling
+  // ожидание запуска сервера с помощью опроса
   const base = `http://127.0.0.1:${PORT}`;
   const max = Date.now() + 5000;
   // eslint-disable-next-line no-constant-condition
@@ -37,7 +37,7 @@ beforeAll(async () => {
         return;
       }
     } catch (e) {
-      // ignore
+      // игнорировать
     }
     await new Promise((r) => setTimeout(r, 200));
   }
@@ -45,7 +45,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  // restore original db.json
+  // восстановление оригинального db.json
   try {
     await fs.copyFile(backupPath, dbPath);
     await fs.rm(backupPath);
