@@ -25,13 +25,13 @@
     "test:e2e": "cypress run --config-file tests/e2e/cypress.config.ts",
     "test:e2e:open": "cypress open --config-file tests/e2e/cypress.config.ts",
     "test:coverage:frontend": "npm run build:types && jest --selectProjects frontend --coverage",
-    "test:coverage:backend": "npm run build:types && jest --selectProjects backend --coverage",
+    "test:coverage:backend": "npm run build:backend && jest --selectProjects backend --coverage",
     "coverage:all": "jest --coverage --coverageDirectory=coverage",
     "lint:all": "concurrently \"npm run lint:frontend\" \"npm run lint:backend\"",
     "lint:frontend": "cd frontend && npm run lint",
     "lint:backend": "cd backend && npm run lint",
     "ts:check": "node node_modules/typescript/bin/tsc -p frontend/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p backend/tsconfig.json --noEmit",
-    "ts:check:unit": "node node_modules/typescript/bin/tsc -p frontend/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p backend/tsconfig.json --noEmit",
+    "ts:check:unit": "node node_modules/typescript/bin/tsc -p tsconfig.tests.json --noEmit",
     "ts:check:e2e": "node node_modules/typescript/bin/tsc -p tests/e2e/tsconfig.json --noEmit"
   },
   "dependencies": {

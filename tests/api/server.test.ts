@@ -1,3 +1,5 @@
+/// <reference types="jest" />
+
 import request from 'supertest';
 import fs from 'fs/promises';
 import path from 'path';

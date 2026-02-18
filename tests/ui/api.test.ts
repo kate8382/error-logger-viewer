@@ -1,3 +1,5 @@
+/// <reference types="jest" />
+
 import { ErrorApi } from '../../frontend/src/scripts/api';
 import type { ErrorItem, NewError } from 'errors';
 
