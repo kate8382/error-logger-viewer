@@ -762,36 +762,6 @@
       "users": [
         "unknown"
       ]
-    },
-    {
-      "id": "856ef270-5cc5-4961-81cb-36cf04380557",
-      "projectId": "unknown",
-      "type": "UnhandledPromiseRejection",
-      "message": "TypeError: Failed to fetch",
-      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:238:32)\n    at Generator.eval (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:15:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:16:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:22:70)\n    at _next (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:23:163)\n    at eval (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:23:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:23:90)\n    at eval (webpack://error-logger-viewer/./frontend/src/shared/request.ts?:20:18)\n    at Generator.eval (webpack://error-logger-viewer/./frontend/src/shared/request.ts?:5:1660)",
-      "status": "new",
-      "comment": "",
-      "count": 40,
-      "firstSeen": "2026-02-16T18:54:38.311Z",
-      "lastSeen": "2026-02-16T18:55:08.412Z",
-      "users": [
-        "unknown"
-      ]
-    },
-    {
-      "id": "d2cb22cc-dd25-47a2-be45-5654bf53b014",
-      "projectId": "unknown",
-      "type": "FetchError",
-      "message": "Failed to fetch",
-      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:238:32)\n    at Generator.eval (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:15:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:16:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:22:70)\n    at _next (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:23:163)\n    at eval (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:23:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:23:90)\n    at eval (webpack://error-logger-viewer/./frontend/src/shared/request.ts?:20:18)\n    at Generator.eval (webpack://error-logger-viewer/./frontend/src/shared/request.ts?:5:1660)",
-      "status": "new",
-      "comment": "",
-      "count": 23,
-      "firstSeen": "2026-02-16T18:54:38.692Z",
-      "lastSeen": "2026-02-16T18:55:08.957Z",
-      "users": [
-        "unknown"
-      ]
     }
   ],
   "projects": [
