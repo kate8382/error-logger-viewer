@@ -1,0 +1,15 @@
+---
+# Конфигурация деплоя cPanel — копирование уже собранных артефактов
+# Предполагается, что CI (GitHub Actions) собирает frontend/dist и backend/dist
+# и пушит их в ветку, которую вы деплоите в cPanel.
+
+deployment:
+  tasks:
+    - run: "echo 'Копирование артефактов в public_html и backend...'"
+    - run: "cd /home/ekaterina/repositories/error-logger-viewer && if [ ! -d frontend/dist ]; then echo 'frontend/dist не найден'; exit 1; fi"
+    - run: "cd /home/ekaterina/repositories/error-logger-viewer && if [ -d backend/dist ]; then echo 'backend/dist найден'; else echo 'backend/dist не найден — деплоим только фронтенд'; fi"
+    - run: "rm -rf /home/ekaterina/public_html/* || true"
+    - run: "cd /home/ekaterina/repositories/error-logger-viewer && cp -R frontend/dist/* /home/ekaterina/public_html/"
+    - run: "mkdir -p /home/ekaterina/backend || true"
+    - run: "cd /home/ekaterina/repositories/error-logger-viewer && cp -R backend/dist /home/ekaterina/backend/ || true"
+    - run: "echo 'Копирование завершено'"

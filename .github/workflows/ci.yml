@@ -129,6 +129,27 @@ jobs:
           name: dist
           path: frontend/dist
 
+      - name: Push frontend/dist + backend/dist to cpanel-deploy
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          TMPDIR=$(mktemp -d)
+          cp -R frontend/dist "$TMPDIR/frontend"
+          if [ -d backend/dist ]; then
+            cp -R backend/dist "$TMPDIR/backend"
+          fi
+          cd "$TMPDIR"
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "CI: deploy artifacts $GITHUB_SHA" || echo "no changes to commit"
+          git branch -M cpanel-deploy
+          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git push --force-with-lease origin cpanel-deploy
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
