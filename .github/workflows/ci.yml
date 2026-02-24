@@ -148,6 +148,8 @@ jobs:
           git commit -m "CI: deploy artifacts $GITHUB_SHA" || echo "no changes to commit"
           git branch -M cpanel-deploy
           git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          # Ensure we have remote ref info so --force-with-lease can succeed
+          git fetch origin cpanel-deploy || true
           git push --force-with-lease origin cpanel-deploy
 
   lint:
