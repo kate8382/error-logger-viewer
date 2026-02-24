@@ -140,6 +140,10 @@ jobs:
           if [ -d backend/dist ]; then
             cp -R backend/dist "$TMPDIR/backend"
           fi
+          # include .cpanel.yml so cpanel-deploy branch contains deployment config
+          if [ -f .cpanel.yml ]; then
+            cp .cpanel.yml "$TMPDIR/.cpanel.yml"
+          fi
           cd "$TMPDIR"
           git init
           git config user.name "github-actions[bot]"
