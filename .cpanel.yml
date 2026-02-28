@@ -1,25 +1,38 @@
----
-# Конфигурация деплоя cPanel — копирование уже собранных артефактов
-# Предполагается, что CI (GitHub Actions) собирает frontend/dist и backend/dist
-# и пушит их в ветку, которую вы деплоите в cPanel.
-
 deployment:
   tasks:
     - run: "exec > /home/ekaterina/deploy.log 2>&1 || true"
-    - run: "echo '------ DEPLOY START ------' && date"
-    - run: "echo 'Копирование артефактов в public_html и backend...'"
-    - run: "echo 'REPO PATH:' && pwd || true"
-    - run: "echo '--- repo/frontend contents ---' && ls -la /home/ekaterina/repositories/error-logger-viewer/frontend || true"
-    - run: "cd /home/ekaterina/repositories/error-logger-viewer && if [ ! -d frontend/dist ]; then echo 'frontend/dist не найден'; exit 1; fi"
-    - run: "echo '--- repo/frontend/dist contents ---' && ls -la /home/ekaterina/repositories/error-logger-viewer/frontend/dist || true"
-    - run: "cd /home/ekaterina/repositories/error-logger-viewer && if [ -d backend/dist ]; then echo 'backend/dist найден'; else echo 'backend/dist не найден — деплоим только фронтенд'; fi"
-    - run: "echo '--- before public_html ---' && ls -la /home/ekaterina/public_html || true"
-    - run: "rm -rf /home/ekaterina/public_html/* || true"
-    - run: "echo '--- after clean public_html ---' && ls -la /home/ekaterina/public_html || true"
-    - run: "cd /home/ekaterina/repositories/error-logger-viewer && cp -R frontend/dist/* /home/ekaterina/public_html/ || echo 'cp frontend -> public_html exited with code $?'
-    - run: "echo '--- after copy to public_html ---' && ls -la /home/ekaterina/public_html || true"
-    - run: "mkdir -p /home/ekaterina/backend || true"
-    - run: "cd /home/ekaterina/repositories/error-logger-viewer && cp -R backend/dist /home/ekaterina/backend/ || echo 'cp backend exited with code $?'
-    - run: "echo '--- after copy backend ---' && ls -la /home/ekaterina/backend || true"
-    - run: "echo 'Копирование завершено'"
-    - run: "echo '------ DEPLOY END ------' && date"
+    - run: "export DEPLOYPATH=/home/ekaterina/public_html; export BACKENDPATH=/home/ekaterina/backend; echo DEPLOYPATH=$DEPLOYPATH BACKENDPATH=$BACKENDPATH"
+    - run: |
+        echo "------ DEPLOY START ------"
+        date
+        echo "Repo root: $(pwd)"
+        # choose frontend source: frontend/dist (recommended) or frontend (fallback)
+        if [ -d frontend/dist ]; then
+          SRC=frontend/dist
+        elif [ -d frontend ]; then
+          SRC=frontend
+        else
+          echo "No frontend source found (frontend/dist or frontend)"
+          exit 1
+        fi
+        echo "Using frontend source: $SRC"
+        mkdir -p "$DEPLOYPATH"
+        echo "--- before clean $DEPLOYPATH ---"
+        ls -la "$DEPLOYPATH" || true
+        rm -rf "$DEPLOYPATH"/* || true
+        echo "--- copying frontend from $SRC to $DEPLOYPATH ---"
+        cp -a "$SRC"/. "$DEPLOYPATH"/ || echo "cp frontend -> public_html exited with code $?"
+        echo "--- after copy ---"
+        ls -la "$DEPLOYPATH" || true
+        # backend: prefer backend/dist when present
+        if [ -d backend/dist ]; then
+          mkdir -p "$BACKENDPATH"
+          cp -a backend/dist/. "$BACKENDPATH"/ || echo "cp backend/dist exited with code $?"
+        elif [ -d backend ]; then
+          mkdir -p "$BACKENDPATH"
+          cp -a backend/. "$BACKENDPATH"/ || echo "cp backend exited with code $?"
+        else
+          echo "No backend to deploy"
+        fi
+        echo "------ DEPLOY END ------"
+        date
