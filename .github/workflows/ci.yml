@@ -129,6 +129,13 @@ jobs:
           name: dist
           path: frontend/dist
 
+      - name: Upload .cpanel.yml to artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpanel-config
+          path: .cpanel.yml
+
       - name: Push frontend/dist + backend/dist to cpanel-deploy
         if: success()
         env:
@@ -136,9 +143,20 @@ jobs:
         run: |
           set -e
           TMPDIR=$(mktemp -d)
-          cp -R frontend/dist "$TMPDIR/frontend"
+          # copy contents of frontend/dist into TMPDIR/frontend (preserve files, not nested dist/)
+          if [ -d frontend/dist ]; then
+            mkdir -p "$TMPDIR/frontend"
+            cp -a frontend/dist/. "$TMPDIR/frontend/"
+          elif [ -d frontend ]; then
+            mkdir -p "$TMPDIR/frontend"
+            cp -a frontend/. "$TMPDIR/frontend/"
+          fi
           if [ -d backend/dist ]; then
-            cp -R backend/dist "$TMPDIR/backend"
+            mkdir -p "$TMPDIR/backend"
+            cp -a backend/dist/. "$TMPDIR/backend/"
+          elif [ -d backend ]; then
+            mkdir -p "$TMPDIR/backend"
+            cp -a backend/. "$TMPDIR/backend/"
           fi
           # include .cpanel.yml so cpanel-deploy branch contains deployment config
           if [ -f .cpanel.yml ]; then
