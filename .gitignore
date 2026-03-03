@@ -141,6 +141,7 @@ out
 # Ignore local issue drafts folder
 .github/ISSUES/
 .github/PR/
+.github/CPANEL_TERMINAL_COMMANDS.md
 backend/dist
 frontend/dist
 types/dist

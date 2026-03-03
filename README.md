@@ -21,7 +21,14 @@ The application allows you to:
 - Track error status (new, in progress, fixed, ignored).
 - Work in two languages: Russian and English.
 
----
+Types of errors captured by the application:
+
+- Client-side JavaScript runtime errors (captured via `window.onerror`).
+- Unhandled promise rejections (`window.onunhandledrejection`).
+- Resource load errors (scripts, styles, images) via `error` event listeners on elements.
+- Network/fetch errors — the app wraps `fetch` and creates an error record on non-OK responses or exceptions.
+
+Note: the collector focuses on client-side errors that occur in users' browsers. Server-side exceptions are not automatically captured by the client code — to collect backend errors you must send them explicitly to the API or log them on the server.
 
 ## Main Features
 
@@ -42,39 +49,11 @@ The application allows you to:
 - **Accessibility:**
 	ARIA-labels, keyboard navigation for better usability.
 
----
-
 ## Screenshots
 
-<p align="center">
-	<figure style="display:inline-block; margin:12px;">
-		<img src="screenshots/dashboard-view.png" alt="Main dashboard" width="1000">
-		<figcaption align="center">Main dashboard — overview of error statistics, quick filters and light/dark theme examples.</figcaption>
-	</figure>
-</p>
-
-<p align="center">
-	<figure style="display:inline-block; margin:12px;">
-		<img src="screenshots/table-filter-view.png" alt="Error table with filter" width="1000">
-		<figcaption align="center">Error table with search and filter — showing sortable columns and action menu for each row.</figcaption>
-	</figure>
-</p>
-
-<p align="center">
-	<figure style="display:inline-block; margin:12px;">
-		<img src="screenshots/modal-view.png" alt="Modal edit" width="1000">
-		<figcaption align="center">Error details modal — view full stack, change status and add comments.</figcaption>
-	</figure>
-</p>
-
-<p align="center">
-	<figure style="display:inline-block; margin:12px;">
-		<img src="screenshots/chart-view.png" alt="Chart view" width="1000">
-		<figcaption align="center">Charts view — stacked bar charts and period selector (week/month/year) for error dynamics.</figcaption>
-	</figure>
-</p>
-
----
+| ![Dashboard](screenshots/dashboard-view.png) | ![Table](screenshots/table-filter-view.png) | ![Modal](screenshots/modal-view.png) | ![Chart](screenshots/chart-view.png)
+|---|---|---|---|
+| Main dashboard | Error table (filter/sort) | Error details modal | Charts (day/week/month/year) |
 
 ## How to Use
 
@@ -129,8 +108,6 @@ npm run serve:dist:frontend
 	 - "Statistics" section — quick overview by type and status.
 	 - "Charts" section — error dynamics over time.
 
----
-
 ## Architecture & Technical Details
 
 - **Frontend (src/scripts):**
@@ -153,13 +130,14 @@ npm run serve:dist:frontend
 - **Localization:**
 	- All texts are in i18n.ts, dynamic language switching supported.
 
-**TypeScript aliases**
-- Project-level path aliases are defined in `tsconfig.base.json` and point to generated declarations in `types/dist`. Backend and frontend inherit these aliases so you can import shared types using aliases like `projects`, `errors`, `users` instead of relative paths. Declarations are generated with `npm run build:types`.
+- **TypeScript aliases**
+  - Project-level path aliases are defined in `tsconfig.base.json` and point to generated declarations in `types/dist`. Backend and frontend inherit these aliases so you can import shared types using aliases like `projects`, `errors`, `users` instead of relative paths. Declarations are generated with `npm run build:types`.
 
 - **UI/UX:**
 	- Modern responsive interface, fast feedback, loading spinners, theme support.
 
----
+
+Note: this project is implemented in TypeScript across frontend and backend. Build steps are required to produce `frontend/dist` and any generated type artifacts.
 
 ## Usage Scenarios
 
@@ -170,16 +148,12 @@ npm run serve:dist:frontend
 - **Team collaboration:**
 	Change error statuses, add comments, track fix progress.
 
----
-
 ## Features & Benefits
 
 - Simple integration and setup.
 - No external services required (can work fully locally).
 - Flexible architecture: easy to extend and modify.
 - Open source, easy to customize for your needs.
-
----
 
 ## Requirements
 
@@ -188,37 +162,58 @@ npm run serve:dist:frontend
 - Webpack (for frontend build)
 - TypeScript (dev dependency) — use `npm run ts:check` in development/CI to verify types.
 
----
-
 ## Tests
 
 See [TESTS.md](TESTS.md) for detailed, up-to-date instructions on running unit and end-to-end tests locally and in CI.
-
- ---
 
 ## How to contribute
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines, PR process, required checks and code style.
 
----
-
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-
----
 
 ## Acknowledgements
 
 - UI design: [M. Ali, Free Admin Dashboard UI Kit](https://www.figma.com/community/file/1244293267600418871)
 - Application development: kate8382 (main developer) together with GitHub Copilot (AI assistant)
 
----
-
 ## Project Structure
 
-- `frontend/` — SPA on TypeScript (TS), OOP-style architecture, SCSS, Webpack. Source files in `frontend/src/` (`*.ts`).
-- `backend/` — Node.js + Express + LowDB (JSON)
+A concise map of the main repository layout. For detailed development workflows and CI steps see [CONTRIBUTING.md](CONTRIBUTING.md) and [TESTS.md](TESTS.md).
+
+```
+error-logger-viewer/
+├── .github/                 # CI workflows, issues and PR helpers
+├── backend/                 # server source, example DB, backend config
+│   ├── src/
+│   └── db.json
+├── frontend/                # SPA source (TypeScript + assets)
+├── config/                  # runtime configuration (periods.json, etc.)
+├── tests/                   # unit and end-to-end tests
+├── types/                   # shared TypeScript declarations
+├── screenshots/             # example screenshots used in README
+├── package.json             # scripts and dependencies
+├── tsconfig.base.json       # project-level TypeScript aliases
+├── tsconfig.types.json      # generated types build config
+├── webpack.config.cjs       # frontend build config
+└── babel.config.cjs         # build tooling config
+
+```
+
+Notable config files
+
+- `package.json` — project scripts, dev and prod dependencies
+- `tsconfig.base.json`, `tsconfig.types.json` — TypeScript aliases and declaration build
+- `webpack.config.cjs`, `babel.config.cjs` — frontend build / bundling
+- `nodemon.json` — backend dev runner configuration
+- `.gitignore`, `.gitattributes` — repository-level ignore and attribute rules
+
+Notes
+
+- Build outputs and generated artifacts (for example `frontend/dist/`, `backend/dist/`, `types/dist/`) are intentionally omitted from the tree.
+- Local editor/IDE folders and personal files (for example `.vscode/`) are not listed here — they are developer-specific and typically excluded from documentation. See [CONTRIBUTING.md](CONTRIBUTING.md) for recommended local setup and workspace settings.
 
 ---
 
