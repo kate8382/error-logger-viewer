@@ -55,7 +55,6 @@ Note: the collector focuses on client-side errors that occur in users' browsers.
 |---|---|
 | Main dashboard | Error table (filter/sort) |
 | ![Modal](screenshots/modal-view.png) | ![Chart](screenshots/chart-view.png) |
-|---|---|
 | Error details modal | Charts (day/week/month/year) |
 
 ## How to Use
