@@ -7,9 +7,12 @@
 
 Live demo: https://kate8382.github.io/error-logger-viewer/ — try the "Create test error" button on the demo page to see the app in action.
 
-Read the short case study on Dev.to: https://dev.to/kate8382/error-logger-viewer-tiny-spa-for-tracking-js-errors-12mk
-
 Quick start: follow the commands below to run the project locally. For contribution guidelines see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+### 📖 Case Studies & Articles
+
+- [How I migrated my pet project to TypeScript, or Katya in Wonderland](https://dev.to/kate8382/how-i-migrated-my-pet-project-to-typescript-or-katya-in-wonderland-328a) — My personal journey of migrating this project from JS to TS (written for the #WeCoded 2026 Challenge).
+- [Error Logger Viewer - tiny SPA for tracking JS errors](https://dev.to/kate8382/error-logger-viewer-tiny-spa-for-tracking-js-errors-12mk) — Technical overview and features of the application.
 
 ## Purpose
 
