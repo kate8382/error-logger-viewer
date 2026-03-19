@@ -76,13 +76,38 @@ You can run the application using Docker for easy setup and deployment.
 	docker run -p 3000:3000 error-logger-viewer
 	```
 
-### Using Docker Compose
 
-1. **Start the app with Docker Compose:**
-	```sh
-	docker-compose up --build
-	```
-2. The app will be available at [http://localhost:3000](http://localhost:3000).
+
+### Using Docker Compose (Production)
+
+You can use the provided script for convenience:
+
+```sh
+./start-prod.sh
+```
+
+Or run manually:
+```sh
+docker compose up --build
+```
+The app will be available at [http://localhost:3000](http://localhost:3000).
+
+
+### Using Docker Compose for Development
+
+You can use the provided script for convenience:
+
+```sh
+./start-dev.sh
+```
+
+Or run manually:
+```sh
+docker compose -f docker-compose.dev.yml up --build
+```
+The backend will be available at [http://localhost:3000](http://localhost:3000), and the frontend (with hot reload) at [http://localhost:8080](http://localhost:8080).
+Source code changes will be reflected live in the containers.
+The frontend container waits for the backend to become reachable before starting webpack-dev-server, so initial proxy connection-refused noise is avoided.
 
 ---
 
@@ -153,7 +178,7 @@ npm run serve:dist:frontend
 	- `i18n.ts` — all translatable UI strings.
 	- `utils/` and `shared/` — TypeScript utility modules and shared helpers (`*.ts`).
 
-- **Backend (backend/server.js):**
+- **Backend (backend/src/server.ts):**
 	- Node.js + Express + LowDB (JSON file).
 	- REST API: get, add, update, delete errors, get statistics.
 	- Error grouping by type, message, stack, and date.

@@ -13,11 +13,14 @@ RUN npm install --production
 # Copy the rest of the application code
 COPY . .
 
-# Build frontend and backend (if needed)
-RUN npm run build || true
 
-# Expose the port the app runs on (adjust as needed)
+# Build frontend
+RUN npm run build:frontend
+# Build backend
+RUN npm run build:backend
+
+# Expose the port the app runs on
 EXPOSE 3000
 
-# Start the application (adjust as needed)
+# Start the application
 CMD ["npm", "start"]

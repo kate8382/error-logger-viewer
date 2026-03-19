@@ -762,6 +762,34 @@
       "users": [
         "unknown"
       ]
+    },
+    {
+      "id": "edad88ae-4579-47d8-9fb2-3f0bcdfcd7de",
+      "projectId": "unknown",
+      "type": "FetchError",
+      "message": "Load failed",
+      "status": "new",
+      "comment": "",
+      "count": 518,
+      "firstSeen": "2026-03-19T01:17:35.268Z",
+      "lastSeen": "2026-03-19T01:17:40.393Z",
+      "users": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "34d06b6b-e36f-411d-a696-2450c74da7d6",
+      "projectId": "unknown",
+      "type": "UnhandledPromiseRejection",
+      "message": "TypeError: Load failed",
+      "status": "new",
+      "comment": "",
+      "count": 173,
+      "firstSeen": "2026-03-19T01:17:35.458Z",
+      "lastSeen": "2026-03-19T01:17:40.364Z",
+      "users": [
+        "unknown"
+      ]
     }
   ],
   "projects": [
@@ -777,5 +805,6 @@
       "snippet": "<script>(function(){const API_KEY='5aa1a9e7-5956-4666-8d7b-2a9e48ed86ae';const ENDPOINT=window.__ERROR_LOGGER_ENDPOINT__||location.protocol+'//'+location.host+'/errors';function send(payload){try{fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign(payload,{apiKey:API_KEY}))});}catch(e){}}window.addEventListener('error',function(e){send({message:e.message,stack:(e.error&&e.error.stack)||e.message,type:'error',user:navigator.userAgent});});window.addEventListener('unhandledrejection',function(e){send({message:(e.reason&&e.reason.message)||String(e.reason),stack:e.reason&&e.reason.stack,type:'unhandledrejection',user:navigator.userAgent});});})();</script>",
       "createdAt": "2025-11-03T18:46:29.374Z"
     }
-  ]
+  ],
+  "users": []
 }

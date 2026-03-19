@@ -1,5 +1,7 @@
 // Универсальный API-клиент для работы с ошибками
-export const API_BASE_URL = (typeof globalThis !== 'undefined' && (globalThis as any).API_BASE_URL) || 'http://localhost:3000';
+// По умолчанию используем same-origin: в dev это проксируется webpack-dev-server,
+// в prod фронтенд и API обслуживаются одним Express-сервером.
+export const API_BASE_URL = (typeof globalThis !== 'undefined' && (globalThis as any).API_BASE_URL) || '';
 
 import { request } from '../shared/request';
 import type { ErrorItem, NewError, Stats } from 'errors';
@@ -24,7 +26,12 @@ export class ErrorApi {
           searchParams.append(key, String(value));
         }
       });
-      return (await request<ErrorItem[]>(`${this.baseUrl}/errors?${searchParams}`)) || [];
+      try {
+        return (await request<ErrorItem[]>(`${this.baseUrl}/errors?${searchParams}`)) || [];
+      } catch (e) {
+        console.error('[ErrorApi] getErrors failed', e);
+        return [];
+      }
     } else {
       const raw = localStorage.getItem(this.localKey) || '[]';
       const errors = JSON.parse(raw) as ErrorItem[];
@@ -81,7 +88,12 @@ export class ErrorApi {
 
   async deleteError(id: string): Promise<boolean> {
     if (this.mode === 'server') {
-      await request<void>(`${this.baseUrl}/errors/${id}`, { method: 'DELETE' } as RequestInit);
+      try {
+        await request<void>(`${this.baseUrl}/errors/${id}`, { method: 'DELETE' } as RequestInit);
+      } catch (e) {
+        console.error('[ErrorApi] deleteError failed', e);
+        return false;
+      }
     } else {
       const raw = localStorage.getItem(this.localKey) || '[]';
       let errors = JSON.parse(raw) as ErrorItem[];
@@ -93,12 +105,17 @@ export class ErrorApi {
 
   async updateError(id: string, data: Partial<NewError>): Promise<ErrorItem | null> {
     if (this.mode === 'server') {
-      const res = await request<ErrorItem>(`${this.baseUrl}/errors/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      } as RequestInit);
-      return res || null;
+      try {
+        const res = await request<ErrorItem>(`${this.baseUrl}/errors/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        } as RequestInit);
+        return res || null;
+      } catch (e) {
+        console.error('[ErrorApi] updateError failed', e);
+        return null;
+      }
     } else {
       const raw = localStorage.getItem(this.localKey) || '[]';
       const errors = JSON.parse(raw) as ErrorItem[];

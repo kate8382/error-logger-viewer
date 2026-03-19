@@ -22,8 +22,11 @@ const db: Low<DBSchema> = new Low(adapter, { errors: [], projects: [], users: []
 // Инициализация базы данных
 await db.read();
 if (!db.data) db.data = { errors: [], projects: [], users: [] };
+db.data.errors = db.data.errors || [];
+db.data.projects = db.data.projects || [];
+db.data.users = db.data.users || [];
 await db.write();
-console.log('db.data:', db.data);
+console.log(`[server] DB loaded: ${db.data.errors.length} errors, ${db.data.projects.length} projects, ${db.data.users.length} users`);
 
 // Загружаем общие лимиты периодов из config/periods.json (ищем в корне проекта)
 let PERIOD_LIMITS = { day: 7, week: 8, month: 6, year: 4 };
@@ -51,6 +54,7 @@ else {
   db.data.users = db.data.users || [];
 }
 
+
 // Создание приложения Express
 const app = express();
 
@@ -65,6 +69,20 @@ if (isProd) {
   app.use(cors()); // разрешить все в разработке
 }
 app.use(express.json()); // для обработки JSON-запросов
+
+// Serve static frontend in production
+import { existsSync } from 'fs';
+const frontendDist = join(__dirname, '..', '..', 'frontend', 'dist');
+if (isProd && existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  // SPA fallback: serve index.html for any unknown route
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/errors') || req.path.startsWith('/projects') || req.path.startsWith('/users')) {
+      return next();
+    }
+    res.sendFile(join(frontendDist, 'index.html'));
+  });
+}
 
 // Helper функции для проектов
 // 1. Генерация API ключа

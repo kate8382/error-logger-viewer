@@ -1,6 +1,12 @@
 // Универсальная функция для выполнения HTTP-запросов и обработки JSON-ответов в строгой типизации
 export async function request<T = unknown>(input: string, init?: RequestInit): Promise<T | undefined> {
-  const res = await fetch(input, init);
+  let res: Response;
+  try {
+    res = await fetch(input, init);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    throw new Error(`Network request failed for ${input}: ${msg}`);
+  }
   if (!res.ok) throw new Error(`Request failed: ${res.status} ${res.statusText}`);
   if (res.status === 204) return undefined;
   const text = await res.text();
