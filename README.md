@@ -60,6 +60,32 @@ Note: the collector focuses on client-side errors that occur in users' browsers.
 | ![Modal](screenshots/modal-view.png) | ![Chart](screenshots/chart-view.png) |
 | Error details modal | Charts (day/week/month/year) |
 
+
+## Docker Usage
+
+You can run the application using Docker for easy setup and deployment.
+
+### Build and Run with Docker
+
+1. **Build the Docker image:**
+	```sh
+	docker build -t error-logger-viewer .
+	```
+2. **Run the container:**
+	```sh
+	docker run -p 3000:3000 error-logger-viewer
+	```
+
+### Using Docker Compose
+
+1. **Start the app with Docker Compose:**
+	```sh
+	docker-compose up --build
+	```
+2. The app will be available at [http://localhost:3000](http://localhost:3000).
+
+---
+
 ## How to Use
 
 1. Installation
