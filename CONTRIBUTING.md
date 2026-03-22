@@ -71,13 +71,17 @@ We standardize calls to `createElement` in the frontend codebase to improve read
 
 **Dismissing a "Request Changes" review**
 
-If you want to change a "Request Changes" review to a non-blocking informational comment (for example, when the suggestions are useful but not required for merging), you can *dismiss* the review:
+If you want to change a "Request Changes" review to a non-blocking informational comment (for example, when the suggestions are useful improvements but not required for merging a contributor's PR), you can *dismiss* the review.
+
+**Note on perspective:** the dismissal message is written by the **reviewer** (i.e. the project owner dismissing their own review), not by the contributor. The message should clarify that the review suggestions are nice-to-have improvements, not merge blockers.
+
+Steps:
 
 1. Open the PR on GitHub.
-2. In the "Reviewers" section on the right sidebar, click the review, then click **"Dismiss review"**.
-3. In the dismissal message box you can write something like:
+2. In the "Reviewers" section on the right sidebar, find the review and click **"Dismiss review"**.
+3. In the dismissal message box write something like:
 
-   > Feedback noted. Treating review suggestions as informational — not a merge blocker. The recommendations will be tracked and addressed in follow-up work.
+   > Dismissing my own review. The suggestions above are valuable improvements I'd like to see addressed, but they are not blocking this contribution from being merged. Please consider opening follow-up issues or PRs for the remaining items.
 
 4. Click **"Dismiss review"** to confirm.
 
