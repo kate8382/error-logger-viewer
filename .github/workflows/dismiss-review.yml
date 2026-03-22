@@ -1,9 +1,16 @@
 name: Dismiss "Request Changes" Review
 
 # This workflow dismisses a "Request Changes" review so it becomes informational only.
+# After dismissal the review is NOT deleted — it stays visible with all comments, but it
+# is marked "Dismissed" and no longer blocks merging the PR.
+#
 # Default values target PR #63 (Docker containerization PR) and review ID 3982525496
 # (the "Request Changes" review left by kate8382). Adjust the inputs when running
 # for a different PR or review.
+#
+# Suggested dismissal message (also used as the default below):
+#   "Feedback noted. Treating review suggestions as informational — not a merge blocker.
+#    Recommendations will be tracked and addressed in follow-up work."
 
 on:
   workflow_dispatch:
@@ -19,7 +26,7 @@ on:
       message:
         description: 'Dismissal message'
         required: false
-        default: 'Changing review status from "Request Changes" to informational Comment. The suggestions remain valid feedback for consideration.'
+        default: 'Feedback noted. Treating review suggestions as informational — not a merge blocker. Recommendations will be tracked and addressed in follow-up work.'
 
 permissions:
   pull-requests: write
@@ -39,7 +46,23 @@ jobs:
             "/repos/${{ github.repository }}/pulls/${{ inputs.pull_number }}/reviews/${{ inputs.review_id }}/dismissals" \
             -f message="$DISMISS_MESSAGE"
 
+      - name: Post follow-up comment on PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DISMISS_MESSAGE: ${{ inputs.message }}
+          REVIEW_ID: ${{ inputs.review_id }}
+        run: |
+          jq -n \
+            --arg review_id "$REVIEW_ID" \
+            --arg msg "$DISMISS_MESSAGE" \
+            '{"body": ("**Review status updated** ✅\n\nThe \"Request Changes\" review (ID `" + $review_id + "`) has been dismissed.\n\n**What this means:**\n- The review is still fully visible with all its comments — it has **not** been deleted.\n- It is now marked **Dismissed** and no longer blocks merging this PR.\n- All suggestions remain as informational feedback to consider in follow-up work.\n\nDismissal message: *" + $msg + "*")}' | \
+          gh api \
+            -X POST \
+            "/repos/${{ github.repository }}/issues/${{ inputs.pull_number }}/comments" \
+            --input -
+
       - name: Confirm dismissal
         run: |
           echo "Review ${{ inputs.review_id }} on PR #${{ inputs.pull_number }} has been dismissed."
+          echo "A follow-up comment was posted on the PR explaining the change."
           echo "The review suggestions remain as informational comments."

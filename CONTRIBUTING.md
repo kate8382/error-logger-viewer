@@ -69,6 +69,24 @@ We standardize calls to `createElement` in the frontend codebase to improve read
 - At least one approving review is required before merging.
 - Address review comments with follow-up commits; avoid force-pushing over shared branches if not necessary.
 
+**Dismissing a "Request Changes" review**
+
+If you want to change a "Request Changes" review to a non-blocking informational comment (for example, when the suggestions are useful but not required for merging), you can *dismiss* the review:
+
+1. Open the PR on GitHub.
+2. In the "Reviewers" section on the right sidebar, click the review, then click **"Dismiss review"**.
+3. In the dismissal message box you can write something like:
+
+   > Feedback noted. Treating review suggestions as informational — not a merge blocker. The recommendations will be tracked and addressed in follow-up work.
+
+4. Click **"Dismiss review"** to confirm.
+
+**What happens after dismissal:**
+- The review is **not deleted** and does not disappear. It stays fully visible in the PR conversation with all its comments intact.
+- It is marked with a **"Dismissed"** badge and your dismissal message is shown inline.
+- It **no longer blocks merging** — the "Request Changes" requirement is cleared.
+- The original review text and suggestions remain readable for everyone.
+
 7. Reporting issues and security
 - Open GitHub issues for bugs and feature requests. For sensitive security issues, do not open a public issue—contact repository maintainers directly or use the security contact on GitHub.
 
