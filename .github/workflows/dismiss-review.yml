@@ -9,9 +9,8 @@ name: Dismiss "Request Changes" Review
 # for a different PR or review.
 #
 # Suggested dismissal message (also used as the default below):
-#   "Dismissing my own review. The suggestions above are valuable improvements I'd like
-#    to see addressed, but they are not blocking this contribution from being merged.
-#    Please consider opening follow-up issues or PRs for the remaining items."
+#   "Feedback noted. Treating review suggestions as informational — not a merge blocker.
+#    Recommendations will be tracked and addressed in follow-up work."
 
 on:
   workflow_dispatch:
@@ -27,7 +26,7 @@ on:
       message:
         description: 'Dismissal message'
         required: false
-        default: 'Dismissing my own review. The suggestions above are valuable improvements I would like to see addressed, but they are not blocking this contribution from being merged. Please consider opening follow-up issues or PRs for the remaining items.'
+        default: 'Feedback noted. Treating review suggestions as informational — not a merge blocker. Recommendations will be tracked and addressed in follow-up work.'
 
 permissions:
   pull-requests: write
