@@ -1,0 +1,45 @@
+name: Dismiss "Request Changes" Review
+
+# This workflow dismisses a "Request Changes" review so it becomes informational only.
+# Default values target PR #63 (Docker containerization PR) and review ID 3982525496
+# (the "Request Changes" review left by kate8382). Adjust the inputs when running
+# for a different PR or review.
+
+on:
+  workflow_dispatch:
+    inputs:
+      pull_number:
+        description: 'Pull Request number (default: 63 — Docker PR)'
+        required: true
+        default: '63'
+      review_id:
+        description: 'Review ID to dismiss (default: 3982525496 — Request Changes review on PR #63)'
+        required: true
+        default: '3982525496'
+      message:
+        description: 'Dismissal message'
+        required: false
+        default: 'Changing review status from "Request Changes" to informational Comment. The suggestions remain valid feedback for consideration.'
+
+permissions:
+  pull-requests: write
+
+jobs:
+  dismiss-review:
+    name: Dismiss Request Changes Review
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dismiss review via GitHub API
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DISMISS_MESSAGE: ${{ inputs.message }}
+        run: |
+          gh api \
+            -X PUT \
+            "/repos/${{ github.repository }}/pulls/${{ inputs.pull_number }}/reviews/${{ inputs.review_id }}/dismissals" \
+            -f message="$DISMISS_MESSAGE"
+
+      - name: Confirm dismissal
+        run: |
+          echo "Review ${{ inputs.review_id }} on PR #${{ inputs.pull_number }} has been dismissed."
+          echo "The review suggestions remain as informational comments."
