@@ -1,26 +1,27 @@
-# Use an official Node.js runtime as a parent image
-FROM node:20-alpine
+FROM node:20-alpine AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package.json package-lock.json* ./
+COPY package.json package-lock.json ./
+RUN npm ci
 
-# Install dependencies
-RUN npm install --production
-
-# Copy the rest of the application code
 COPY . .
+RUN npm run build:frontend && npm run build:backend
 
+FROM node:20-alpine AS runtime
 
-# Build frontend
-RUN npm run build:frontend
-# Build backend
-RUN npm run build:backend
+WORKDIR /app
 
-# Expose the port the app runs on
+ENV NODE_ENV=production
+
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+
+COPY --from=builder /app/backend/dist ./backend/dist
+COPY --from=builder /app/frontend/dist ./frontend/dist
+COPY --from=builder /app/backend/db.json ./backend/db.json
+COPY --from=builder /app/config ./config
+
 EXPOSE 3000
 
-# Start the application
-CMD ["npm", "start"]
+CMD ["npm", "run", "start:backend"]

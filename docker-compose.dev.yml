@@ -4,7 +4,8 @@ services:
     working_dir: /app
     volumes:
       - ./:/app
-    command: sh -c "npm install && npm run dev:backend"
+      - backend-node-modules:/app/node_modules
+    command: sh -c "if [ ! -x node_modules/.bin/nodemon ]; then npm ci; fi && npm run dev:backend"
     ports:
       - "3000:3000"
     environment:
@@ -14,7 +15,12 @@ services:
     working_dir: /app
     volumes:
       - ./:/app
-    command: sh -c "npm install && until wget -qO- http://backend:3000/errors >/dev/null 2>&1; do echo '[frontend] waiting for backend...'; sleep 1; done && npm run dev:frontend"
+      - frontend-node-modules:/app/node_modules
+    command: >
+      sh -c "if [ ! -x node_modules/.bin/webpack ]; then npm ci; fi &&
+      until node -e \"fetch('http://backend:3000/errors').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))\";
+      do echo '[frontend] waiting for backend...'; sleep 1; done &&
+      npm run dev:frontend"
     ports:
       - "8080:8080"
     environment:
@@ -22,3 +28,7 @@ services:
       - API_PROXY_TARGET=http://backend:3000
     depends_on:
       - backend
+
+volumes:
+  backend-node-modules:
+  frontend-node-modules:
