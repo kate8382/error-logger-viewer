@@ -92,12 +92,6 @@
     "test-exclude": {
       "glob": "^10.5.0"
     },
-    "@cypress/request": {
-      "uuid": "^14.0.0"
-    },
-    "sockjs": {
-      "uuid": "^14.0.0"
-    },
     "glob": "^10.5.0",
     "path-to-regexp": "^8.4.2",
     "rimraf": "^4.0.0"
