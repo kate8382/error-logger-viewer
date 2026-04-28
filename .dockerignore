@@ -1,0 +1,10 @@
+# .dockerignore
+node_modules
+npm-debug.log
+dist
+build
+.env
+*.test.js
+*.test.ts
+coverage
+.DS_Store

@@ -60,10 +60,11 @@ export default class ChartManager {
 
   // Форматирует дату для оси X по дням: короткий или длинный год
   formatDayLabel(dateStr: string): string {
-    const d = new Date(dateStr);
-    const day = d.getDate().toString().padStart(2, '0');
-    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-    const year = d.getFullYear().toString();
+    const dateOnlyMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr);
+    const d = dateOnlyMatch ? null : new Date(dateStr);
+    const day = dateOnlyMatch ? dateOnlyMatch[3] : d!.getDate().toString().padStart(2, '0');
+    const month = dateOnlyMatch ? dateOnlyMatch[2] : (d!.getMonth() + 1).toString().padStart(2, '0');
+    const year = dateOnlyMatch ? dateOnlyMatch[1] : d!.getFullYear().toString();
     // Если ширина экрана <= desktop, сокращаем год
     if (window.innerWidth <= 1140) {
       return `${day}.${month}.${year.slice(-2)}`;

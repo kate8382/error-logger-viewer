@@ -2,6 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const apiProxyTarget = process.env.API_PROXY_TARGET || 'http://localhost:3000';
 
 module.exports = (env = {}) => ({
   mode: env.prod ? 'production' : 'development',
@@ -78,7 +79,7 @@ module.exports = (env = {}) => ({
     proxy: [
       {
         context: ['/errors', '/projects', '/users'],
-        target: 'http://localhost:3000',
+        target: apiProxyTarget,
         changeOrigin: true,
       },
     ],

@@ -5,7 +5,7 @@ import cors from 'cors'; // для обработки CORS (Cross-Origin Resourc
 import { Low } from 'lowdb'; // легковесная база данных
 import { JSONFile } from 'lowdb/node'; // адаптер для работы с JSON файлами
 import { fileURLToPath } from 'url'; // для получения пути к файлу
-import { dirname, join } from 'path'; // для работы с путями
+import { dirname, join, resolve } from 'path'; // для работы с путями
 import { promises as fs } from 'fs';
 import { v4 as uuidv4 } from 'uuid'; // для генерации уникальных идентификаторов
 import { DBSchema } from './types/db';
@@ -15,15 +15,20 @@ import type { ProjectDTO } from 'projects';
 const __filename = fileURLToPath(import.meta.url); // получение пути к текущему файлу
 const __dirname = dirname(__filename);
 
-// Проверяем, что файл базы данных (db.json) хранится в папке бэкенда (а не в backend/src) при непосредственном запуске TS, чтобы избежать проблем с путями при компиляции в JavaScript
-const adapter = new JSONFile<DBSchema>(join(__dirname, '..', 'db.json'));
+// По умолчанию db.json хранится в папке бэкенда. В Docker/production можно
+// задать DB_FILE, чтобы вынести файл в постоянный volume.
+const dbFile = process.env.DB_FILE ? resolve(process.env.DB_FILE) : join(__dirname, '..', 'db.json');
+const adapter = new JSONFile<DBSchema>(dbFile);
 const db: Low<DBSchema> = new Low(adapter, { errors: [], projects: [], users: [] } as DBSchema);
 
 // Инициализация базы данных
 await db.read();
 if (!db.data) db.data = { errors: [], projects: [], users: [] };
+db.data.errors = db.data.errors || [];
+db.data.projects = db.data.projects || [];
+db.data.users = db.data.users || [];
 await db.write();
-console.log('db.data:', db.data);
+console.log(`[server] DB loaded: ${db.data.errors.length} errors, ${db.data.projects.length} projects, ${db.data.users.length} users`);
 
 // Загружаем общие лимиты периодов из config/periods.json (ищем в корне проекта)
 let PERIOD_LIMITS = { day: 7, week: 8, month: 6, year: 4 };
@@ -51,6 +56,7 @@ else {
   db.data.users = db.data.users || [];
 }
 
+
 // Создание приложения Express
 const app = express();
 
@@ -65,6 +71,20 @@ if (isProd) {
   app.use(cors()); // разрешить все в разработке
 }
 app.use(express.json()); // для обработки JSON-запросов
+
+// Serve static frontend in production
+import { existsSync } from 'fs';
+const frontendDist = join(__dirname, '..', '..', 'frontend', 'dist');
+if (isProd && existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  // SPA fallback: serve index.html for any unknown route
+  app.get(/.*/, (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/errors') || req.path.startsWith('/projects') || req.path.startsWith('/users')) {
+      return next();
+    }
+    res.sendFile(join(frontendDist, 'index.html'));
+  });
+}
 
 // Helper функции для проектов
 // 1. Генерация API ключа
@@ -95,7 +115,7 @@ function findProjectByOwnerOrMember(email: string | undefined): ProjectDTO | nul
 // 5. Построение сниппета с заданным API ключом
 function buildSnippet(apiKey: string | undefined) {
   const escapedKey = String(apiKey || '');
-  return `<script>(function(){if((window).__ERROR_LOGGER_SNIPPET_ADDED__){return;} (window).__ERROR_LOGGER_SNIPPET_ADDED__=true; const API_KEY='${escapedKey}';const ENDPOINT=window.__ERROR_LOGGER_ENDPOINT__||location.protocol+'//'+location.host+'/errors';function send(payload){try{fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign(payload,{apiKey:API_KEY}))});}catch(e){}}window.addEventListener('error',function(e){send({message:e.message,stack:(e.error&&e.error.stack)||e.message,type:'error',user:navigator.userAgent});});window.addEventListener('unhandledrejection',function(e){send({message:(e.reason&&e.reason.message)||String(e.reason),stack:e.reason&&e.reason.stack,type:'unhandledrejection',user:navigator.userAgent});});})();</script>`;
+  return `<script>(function(){if((window).__ERROR_LOGGER_SNIPPET_ADDED__){return;} (window).__ERROR_LOGGER_SNIPPET_ADDED__=true; const PROJECT_KEY='${escapedKey}';const ENDPOINT=window.__ERROR_LOGGER_ENDPOINT__||location.protocol+'//'+location.host+'/errors';function send(payload){try{fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign(payload,{apiKey:PROJECT_KEY}))});}catch(e){}}window.addEventListener('error',function(e){send({message:e.message,stack:(e.error&&e.error.stack)||e.message,type:'error',user:navigator.userAgent});});window.addEventListener('unhandledrejection',function(e){send({message:(e.reason&&e.reason.message)||String(e.reason),stack:e.reason&&e.reason.stack,type:'unhandledrejection',user:navigator.userAgent});});})();</script>`;
 }
 
 // Маршрут для создания нового проекта

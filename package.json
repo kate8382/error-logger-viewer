@@ -32,17 +32,18 @@
     "lint:backend": "cd backend && npm run lint",
     "ts:check": "node node_modules/typescript/bin/tsc -p frontend/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p backend/tsconfig.json --noEmit",
     "ts:check:unit": "node node_modules/typescript/bin/tsc -p tsconfig.tests.json --noEmit",
-    "ts:check:e2e": "node node_modules/typescript/bin/tsc -p tests/e2e/tsconfig.json --noEmit"
+    "ts:check:e2e": "node node_modules/typescript/bin/tsc -p tests/e2e/tsconfig.json --noEmit",
+    "start": "npm run build:backend && node backend/dist/server.js"
   },
   "dependencies": {
     "chart.js": "^4.5.0",
     "core-js": "^3.44.0",
     "cors": "^2.8.5",
-    "express": "^5.1.0",
+    "express": "^5.2.1",
     "lowdb": "^7.0.1",
     "redom": "^4.3.0",
     "regenerator-runtime": "^0.14.1",
-    "uuid": "^11.1.0"
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.28.6",
@@ -61,7 +62,7 @@
     "babel-jest": "^30.2.0",
     "babel-loader": "^10.0.0",
     "concurrently": "^7.6.0",
-    "copy-webpack-plugin": "^13.0.0",
+    "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^7.1.2",
     "cypress": "^15.0.0",
     "esbuild": "^0.27.2",
@@ -92,6 +93,7 @@
       "glob": "^10.5.0"
     },
     "glob": "^10.5.0",
+    "path-to-regexp": "^8.4.2",
     "rimraf": "^4.0.0"
   }
 }
