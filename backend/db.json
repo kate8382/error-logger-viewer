@@ -782,11 +782,26 @@
       "projectId": "unknown",
       "type": "UnhandledPromiseRejection",
       "message": "TypeError: Load failed",
-      "status": "new",
+      "status": "fixed",
       "comment": "",
       "count": 173,
       "firstSeen": "2026-03-19T01:17:35.458Z",
-      "lastSeen": "2026-03-19T01:17:40.364Z",
+      "users": [
+        "unknown"
+      ],
+      "lastSeen": "2026-05-05T14:41:30.167Z"
+    },
+    {
+      "id": "d6eff23a-01ff-4fe6-9fd1-358fb5b7d31a",
+      "projectId": "unknown",
+      "type": "FetchError",
+      "message": "Failed to fetch",
+      "stack": "TypeError: Failed to fetch\n    at eval (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:238:32)\n    at Generator.eval (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:15:1660)\n    at Generator.eval [as next] (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:16:255)\n    at asyncGeneratorStep (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:22:70)\n    at _next (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:23:163)\n    at eval (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:23:299)\n    at new Promise (<anonymous>)\n    at eval (webpack://error-logger-viewer/./frontend/src/scripts/main.ts?:23:90)\n    at eval (webpack://error-logger-viewer/./frontend/src/shared/request.ts?:21:18)\n    at Generator.eval (webpack://error-logger-viewer/./frontend/src/shared/request.ts?:5:1660)",
+      "status": "new",
+      "comment": "",
+      "count": 8,
+      "firstSeen": "2026-05-05T15:56:29.626Z",
+      "lastSeen": "2026-05-05T15:56:51.047Z",
       "users": [
         "unknown"
       ]

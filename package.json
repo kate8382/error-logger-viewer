@@ -9,31 +9,42 @@
   "type": "module",
   "scripts": {
     "install:all": "npm install",
+
     "build:types": "tsc -p tsconfig.types.json",
     "build:backend": "npm run build:types && tsc -p backend/tsconfig.json",
     "build:frontend": "npm run build:types && webpack --config webpack.config.cjs --mode production",
+    "watch:frontend": "webpack --config webpack.config.cjs --watch",
+
     "dev:backend": "nodemon --watch backend/src --ext ts --exec \"npm run build:backend && node backend/dist/server.js\"",
     "dev:frontend": "webpack serve --config webpack.config.cjs --mode development",
-    "watch:frontend": "webpack --config webpack.config.cjs --watch",
+
     "serve:dist:frontend": "http-server frontend/dist -p 8080 -c-1",
+
     "start:backend": "node backend/dist/server.js",
     "start:frontend": "webpack serve --config webpack.config.cjs --open",
     "start:all": "npm run build:backend && concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "start": "npm run build:backend && node backend/dist/server.js",
+
     "test": "jest --runInBand",
     "test:frontend": "jest --selectProjects frontend --runInBand",
     "test:backend": "jest --selectProjects backend --runInBand",
-    "test:e2e": "cypress run --config-file tests/e2e/cypress.config.ts",
-    "test:e2e:open": "cypress open --config-file tests/e2e/cypress.config.ts",
+
+    "test:e2e:local": "npx cypress run --config-file tests/e2e/cypress.config.ts",
+    "test:e2e:docker": "docker run --rm -it -v \"$(pwd):/e2e\" -w /e2e cypress/included:12.17.4 --config baseUrl=http://host.docker.internal:8080 --config-file tests/e2e/cypress.config.ts",
+    "test:e2e": "npm run test:e2e:local",
+    "test:e2e:open": "npx cypress open --config-file tests/e2e/cypress.config.ts",
+
     "test:coverage:frontend": "npm run build:types && jest --selectProjects frontend --coverage",
     "test:coverage:backend": "npm run build:backend && jest --selectProjects backend --coverage",
     "coverage:all": "jest --coverage --coverageDirectory=coverage",
+
     "lint:all": "concurrently \"npm run lint:frontend\" \"npm run lint:backend\"",
     "lint:frontend": "cd frontend && npm run lint",
     "lint:backend": "cd backend && npm run lint",
+
     "ts:check": "node node_modules/typescript/bin/tsc -p frontend/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p backend/tsconfig.json --noEmit",
     "ts:check:unit": "node node_modules/typescript/bin/tsc -p tsconfig.tests.json --noEmit",
-    "ts:check:e2e": "node node_modules/typescript/bin/tsc -p tests/e2e/tsconfig.json --noEmit",
-    "start": "npm run build:backend && node backend/dist/server.js"
+    "ts:check:e2e": "node node_modules/typescript/bin/tsc -p tests/e2e/tsconfig.json --noEmit"
   },
   "dependencies": {
     "chart.js": "^4.5.0",
@@ -64,7 +75,7 @@
     "concurrently": "^7.6.0",
     "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^7.1.2",
-    "cypress": "^4.2.0",
+    "cypress": "^12.10.0",
     "esbuild": "^0.27.2",
     "eslint": "^9.29.0",
     "eslint-config-prettier": "^10.1.8",
