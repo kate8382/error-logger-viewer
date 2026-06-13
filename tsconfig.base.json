@@ -17,9 +17,13 @@
     "forceConsistentCasingInFileNames": true, // для предотвращения проблем с регистром в именах файлов
     "strict": true,
     "skipLibCheck": true,
+    "ignoreDeprecations": "6.0",
     "resolveJsonModule": true,
     "types": ["node", "jest"]
   }
   ,
   "exclude": ["types"]
+
+  ,
+  "files": ["types/global.d.ts", "types/modules.d.ts"]
 }

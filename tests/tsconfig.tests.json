@@ -11,6 +11,7 @@
   },
   "include": [
       "ui/**/*.ts",
+      "ui/**/*.d.ts",
       "api/**/*.ts",
     "../types/global.d.ts"
   ]
