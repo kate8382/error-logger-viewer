@@ -18,8 +18,6 @@ function findFiles(dir, results = []) {
 
 const cwd = process.cwd();
 const testDir = path.join(cwd, 'tests', 'ui');
-console.log('DEBUG run-frontend-tests cwd=', cwd);
-console.log('DEBUG run-frontend-tests testDir=', testDir);
 if (!fs.existsSync(testDir)) {
   console.error('tests/ui not found');
   process.exit(1);
@@ -30,9 +28,7 @@ if (files.length === 0) {
   process.exit(1);
 }
 
-console.log('Found %d test files', files.length);
 const jestBin = path.join(__dirname, '..', 'node_modules', 'jest', 'bin', 'jest.js');
 const args = ['--selectProjects', 'frontend', '--runInBand', '--runTestsByPath', ...files];
-console.log('Spawning:', process.execPath, jestBin, args.join(' '));
 const res = spawnSync(process.execPath, [jestBin, ...args], { stdio: 'inherit', env: process.env });
 process.exit(res.status);

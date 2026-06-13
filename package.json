@@ -23,8 +23,6 @@
     "start": "npm run build:backend && node backend/dist/server.js",
     "test": "npm run test:frontend && npm run test:backend",
     "test:frontend": "node ./scripts/run-frontend-tests.cjs",
-    "debug:npm:jest": "node ./scripts/debug-npm-jest.cjs",
-    "diag:test:frontend": "node ./scripts/diag-jest.cjs",
     "test:backend": "node node_modules/jest/bin/jest.js --selectProjects backend --runInBand",
     "test:e2e:local": "npx cypress run --config-file tests/e2e/cypress.config.ts",
     "test:e2e:docker": "docker run --rm -it -v \"$(pwd):/e2e\" -w /e2e cypress/included:12.17.4 --config baseUrl=http://host.docker.internal:8080 --config-file tests/e2e/cypress.config.ts",
