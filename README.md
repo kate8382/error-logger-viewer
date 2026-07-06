@@ -153,6 +153,27 @@ If the target host cannot run Docker, use a deploy-branch or artifact-branch fal
 npm ci
 ```
 
+**Note: patch-package (Windows fixes)**
+
+This repository uses `patch-package` to store and apply small fixes to third-party modules (for
+example, platform-specific fixes needed to run Jest on Windows). Patches live in the `patches/`
+directory and are applied automatically after `npm install` / `npm ci` thanks to the
+`postinstall` script in `package.json`.
+
+If you ever need to create or update a patch locally:
+
+```bash
+# 1. Make a manual edit inside node_modules/<package>
+# 2. Run:
+npx patch-package <package-name>
+# 3. Commit the generated file in patches/ to the repo
+git add patches/<package-name>+*.patch
+git commit -m "chore: patch <package-name> for Windows haste-map"
+```
+
+Leave patches in the repo — they ensure CI and other contributors get the same fixes automatically.
+
+
 2. Development
  - Start backend only:
 
