@@ -11,11 +11,12 @@ services:
     depends_on:
       - backend
   cypress:
-    image: cypress/included:12.17.4
+    build:
+      context: ..
+      dockerfile: docker/cypress.Dockerfile
+    image: error-logger-viewer-cypress:local
     working_dir: /e2e
-    volumes:
-      - ../tests:/e2e/tests:delegated
-    entrypoint: ["sh","-c","npx cypress run --config baseUrl=http://static-frontend:8080 --config-file tests/e2e/cypress.config.ts"]
-    command: []
+    environment:
+      - CYPRESS_BASE_URL=http://static-frontend:8080
     depends_on:
       - static-frontend
