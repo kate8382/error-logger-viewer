@@ -1,11 +1,22 @@
 version: '3.8'
 services:
+  static-frontend:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ../:/app:delegated
+    command: >
+      sh -c "npm ci --no-audit --prefer-offline && npm run build:frontend && npx http-server frontend/dist -p 8080 -c-1"
+    depends_on:
+      - backend
   cypress:
     image: cypress/included:12.17.4
     working_dir: /e2e
     volumes:
       - ../:/e2e:delegated
-    entrypoint: ["sh","-c","npm ci --no-audit --prefer-offline && npx cypress run --config baseUrl=http://frontend:8080 --config-file tests/e2e/cypress.config.ts"]
-    command: []
+    entrypoint: ["sh","-c"]
+    command: >
+      npm ci --no-audit --prefer-offline &&
+      npx cypress run --config baseUrl=http://static-frontend:8080 --config-file tests/e2e/cypress.config.ts
     depends_on:
-      - frontend
+      - static-frontend
