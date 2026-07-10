@@ -5,8 +5,7 @@ services:
     working_dir: /app
     volumes:
       - ../:/app:delegated
-    command: >
-      sh -c "npm ci --no-audit --prefer-offline && npm run build:frontend && npx http-server frontend/dist -p 8080 -c-1"
+    entrypoint: ["sh","-c","npm ci --no-audit --prefer-offline && npm run build:frontend && npx http-server frontend/dist -p 8080 -c-1"]
     depends_on:
       - backend
   cypress:
@@ -14,9 +13,7 @@ services:
     working_dir: /e2e
     volumes:
       - ../:/e2e:delegated
-    entrypoint: ["sh","-c"]
-    command: >
-      npm ci --no-audit --prefer-offline &&
-      npx cypress run --config baseUrl=http://static-frontend:8080 --config-file tests/e2e/cypress.config.ts
+    entrypoint: ["sh","-c","npm ci --no-audit --prefer-offline && npx cypress run --config baseUrl=http://static-frontend:8080 --config-file tests/e2e/cypress.config.ts"]
+    command: []
     depends_on:
       - static-frontend
