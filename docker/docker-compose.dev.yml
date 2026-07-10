@@ -3,7 +3,7 @@ services:
     image: node:20-alpine
     working_dir: /app
     volumes:
-      - ./:/app
+      - ..:/app:delegated
       - backend-node-modules:/app/node_modules
     command: sh -c "if [ ! -x node_modules/.bin/nodemon ]; then npm ci; fi && npm run dev:backend"
     ports:
@@ -14,7 +14,7 @@ services:
     image: node:20-alpine
     working_dir: /app
     volumes:
-      - ./:/app
+      - ..:/app:delegated
       - frontend-node-modules:/app/node_modules
     command: >
       sh -c "if [ ! -x node_modules/.bin/webpack ]; then npm ci; fi &&

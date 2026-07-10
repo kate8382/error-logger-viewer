@@ -25,7 +25,7 @@
     "test:frontend": "node ./scripts/run-frontend-tests.cjs",
     "test:backend": "node node_modules/jest/bin/jest.js --selectProjects backend --runInBand",
     "test:e2e:local": "npx cypress run --config-file tests/e2e/cypress.config.ts",
-    "test:e2e:docker": "docker run --rm -it -v \"$(pwd):/e2e\" -w /e2e cypress/included:12.17.4 bash -lc \"npm ci --no-audit --prefer-offline && npx cypress run --config baseUrl=http://host.docker.internal:8080 --config-file tests/e2e/cypress.config.ts\"",
+    "test:e2e:docker": "bash -lc 'docker run --rm -v \"$(pwd):/e2e\" -w /e2e -e CYPRESS_BASE_URL --entrypoint bash cypress/included:12.17.4 -lc \"npm ci --no-audit --prefer-offline && npx cypress run --config baseUrl=\\\"${CYPRESS_BASE_URL:-http://host.docker.internal:8080}\\\" --config-file tests/e2e/cypress.config.ts\"'",
     "test:e2e": "npm run test:e2e:local",
     "test:e2e:open": "npx cypress open --config-file tests/e2e/cypress.config.ts",
     "test:coverage:frontend": "npm run build:types && jest --selectProjects frontend --coverage",
@@ -36,7 +36,9 @@
     "lint:backend": "cd backend && npm run lint",
     "ts:check": "node node_modules/typescript/bin/tsc -p frontend/tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p backend/tsconfig.json --noEmit",
     "ts:check:unit": "node node_modules/typescript/bin/tsc -p tsconfig.tests.json --noEmit",
-    "ts:check:e2e": "node node_modules/typescript/bin/tsc -p tests/e2e/tsconfig.json --noEmit"
+    "ts:check:e2e": "node node_modules/typescript/bin/tsc -p tests/e2e/tsconfig.json --noEmit",
+    "dev:docker": "docker compose -f docker/docker-compose.dev.yml up --build",
+    "prod:docker": "docker compose -f docker/docker-compose.yml up --build -d"
   },
   "dependencies": {
     "chart.js": "^4.5.0",
