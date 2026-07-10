@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  cypress:
+    image: cypress/included:12.17.4
+    working_dir: /e2e
+    volumes:
+      - ../:/e2e:delegated
+    entrypoint: ["sh","-c","npm ci --no-audit --prefer-offline && npx cypress run --config baseUrl=http://frontend:8080 --config-file tests/e2e/cypress.config.ts"]
+    command: []
+    depends_on:
+      - frontend
