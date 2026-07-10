@@ -9,7 +9,7 @@ RUN npm ci --no-audit --prefer-offline
 # copy only tests and necessary config
 COPY tests ./tests
 # install ts-node so Cypress can require TypeScript config directly
-RUN npm install --no-audit --prefer-offline ts-node
+RUN npm install --no-audit --prefer-offline --legacy-peer-deps ts-node
 
 # ensure Node will register ts-node when requiring .ts files
 ENV NODE_OPTIONS=--require\ ts-node/register
