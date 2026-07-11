@@ -15,6 +15,6 @@ services:
     image: error-logger-viewer-cypress:local
     working_dir: /e2e
     environment:
-      - CYPRESS_BASE_URL=http://static-frontend:8080
+      - CYPRESS_BASE_URL=http://static-frontend:80
     depends_on:
       - static-frontend
