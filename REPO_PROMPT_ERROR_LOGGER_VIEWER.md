@@ -11,12 +11,26 @@
 - Пробовали запускать e2e в контейнере `cypress/included` через временный `docker-compose.e2e.yml` и напрямую `docker run` — столкнулись с ошибками: `npm` usage, volume path expansion, container exit, затем контейнеры остановлены с кодом 137.
 - Локальные e2e (через `npx cypress run`) запускались, но начали падать с ошибкой в рантайме браузера: `ReferenceError: require is not defined` (Webpack HMR / dev-client использует `events`/`require`), поэтому тесты падают на `before each`.
 
+Выполнено (кратко):
+- Node pinned to 20.19.0 in CI and Docker stages (builder/runtime/test).
+- Unified Cypress stage into `docker/Dockerfile` and switched `docker/docker-compose.e2e.yml` to build from it (`target: cypress`). Removed `docker/cypress.Dockerfile`.
+- Updated `docker/Dockerfile` to skip lifecycle scripts in production builds (`--ignore-scripts`) so `postinstall`/`patch-package` do not run in prod images.
+- Added simple `healthcheck` entries to compose files so e2e waits for services readiness.
+- Updated `scripts/README_NODE.md` and `scripts/setup-node-wsl.sh` to reflect docker path changes and `CYPRESS_BASE_URL=http://static-frontend:80` recommendation.
+- Added `patches/README.md` documenting existing patch and guidance for future patches.
+
 Проблемы сейчас (актуально)
 1. Среда Node на ноутбуке: установлена новая глобальная версия Node (v24), что привело к несовместимым бинарным зависимостям (esbuild, cypress и пр.). Нужно привести локальную среду к Node 20.19.0 (WSL предпочтительно).
 2. e2e в Docker: текущий `npm run test:e2e:docker` некорректно работает в Windows/WSL из-за разворачивания `$(pwd)` и entrypoint передачи `-lc` не там; были правки в `package.json`, но запуск из Windows PowerShell/Node вызывает ошибки. Требуется стабильный скрипт, корректно работающий из WSL и из CI.
 3. Cypress e2e падают локально: в браузерном рантайме появляются вызовы Node-style `require` (из webpack-dev-server client/hot), что вызывает `require is not defined`. Нужно либо полифиллить/заменить Node-буферы/процесс для браузера в `webpack.config.cjs`, либо отключить HMR/client для e2e прогонов.
 4. Docker+WSL: при запуске `docker run` в WSL важно, чтобы `$(pwd)` разворачивался в Linux путь; лучше запускать команды в WSL-терминале и/или обертывать `docker run` в `bash -lc` когда вызов идёт из Windows. Также избегать монтирования Windows-сборок `node_modules` в Linux контейнеры.
 5. Нужны стабильные инструкции/скрипты и проверяемый CI job, чтобы поддерживать reproducible dev/test environment.
+
+Открытые задачи (todo):
+- Add a CI job that runs e2e via `docker compose -f docker/docker-compose.dev.yml -f docker/docker-compose.e2e.yml up --abort-on-container-exit --exit-code-from cypress` on a runner with Docker (or use `cypress-io/github-action`).
+- Review and update critical dependencies that surface many terminal warnings (example: `glob`) — update to minimally compatible newer versions that do not break project logic. Run tests after upgrades and prepare patches if upstream fixes are necessary.
+- Decide whether to remove the legacy `test:e2e:docker` script or keep it for backwards compatibility.
+- Optionally add a documented CI-friendly `docker-compose.ci.yml` that uses prebuilt images or caches to speed up CI.
 
 Что нужно сделать (приоритеты)
 1. Привести локальную среду разработчика в соответствие с CI — Node `20.19.0`:
@@ -31,6 +45,10 @@
 5. Добавить CI Job (GitHub Actions) на ветку/PR для прогонов e2e (используя Node 20.19.0 или `cypress-io/github-action`), чтобы избежать локальной руттиной.
 6. Документация: обновить `README`/`DOCKER_WSL_GUIDE.md` и добавить `scripts/README_NODE.md` с точными командами и объяснениями.
 7. Я хочу навести порядок в корне своего репозитория и перенести все файлы, связанные с Docker, в отдельную папку `docker/`.
+
+8. Обновление зависимостей:
+ - Провести аудит зависимостей (например, `npm audit` + `npm outdated`) и обновить пакеты с наибольшим количеством предупреждений, начиная с непересекающих изменений, таких как `glob`.
+ - Прогнать unit/e2e тесты после каждого крупного обновления и фиксировать возникающие регрессии в `patches/` или через PRы в upstream.
 
 Сейчас в корне находятся следующие файлы:
 - Dockerfile
