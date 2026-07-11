@@ -10,6 +10,11 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
+    healthcheck:
+      test: ["CMD-SHELL","node -e \"require('http').get('http://localhost:3000/errors', r=>{process.exit(r.statusCode===200?0:1)}).on('error',()=>process.exit(1))\""]
+      interval: 5s
+      retries: 5
+      start_period: 5s
   frontend:
     image: node:20-alpine
     working_dir: /app

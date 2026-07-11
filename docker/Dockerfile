@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:20.19.0 AS builder
 
 WORKDIR /app
 
@@ -8,14 +8,15 @@ RUN npm ci
 COPY . .
 RUN npm run build:frontend && npm run build:backend
 
-FROM node:20-alpine AS runtime
+FROM node:20.19.0 AS runtime
 
 WORKDIR /app
 
 ENV NODE_ENV=production
 
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+# Install production deps but skip lifecycle scripts (postinstall) to avoid patch-package issues
+RUN npm ci --omit=dev --ignore-scripts
 
 COPY --from=builder /app/backend/dist ./backend/dist
 COPY --from=builder /app/frontend/dist ./frontend/dist
