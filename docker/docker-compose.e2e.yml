@@ -1,13 +1,11 @@
 version: '3.8'
 services:
   static-frontend:
-    image: node:20-alpine
-    working_dir: /app
+    image: nginx:alpine
     volumes:
-      - ../:/app:delegated
-    environment:
-      - NODE_ENV=development
-    entrypoint: ["sh","-c","npm ci --no-audit --prefer-offline && npm run build:frontend && npx http-server frontend/dist -p 8080 -c-1"]
+      - ../frontend/dist:/usr/share/nginx/html:ro
+    ports:
+      - "8080:80"
     depends_on:
       - backend
   cypress:
