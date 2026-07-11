@@ -39,8 +39,13 @@ npm ci
 echo "==> Установка завершена. Рекомендуется перезапустить терминал или выполнить 'source ~/.profile' если nvm не доступен в новой сессии."
 
 echo "Дальше вы можете поднять dev-сервисы и запустить тесты, например:
-  docker compose -f docker-compose.dev.yml up -d --build
+echo "Дальше вы можете поднять dev-сервисы и запустить тесты, например:
+  docker compose -f docker/docker-compose.dev.yml up -d --build
   npx cypress run --config-file tests/e2e/cypress.config.ts
 или
-  CYPRESS_BASE_URL=http://frontend:8080 npm run test:e2e:docker
+  # Запуск e2e через Docker (например, если вы используете WSL и хотите запускать тесты в контейнере):
+  CYPRESS_BASE_URL=http://static-frontend:80 npm run test:e2e:docker
+или (используйте compose e2e, рекомендуется):
+  docker compose -f docker/docker-compose.dev.yml -f docker/docker-compose.e2e.yml up --abort-on-container-exit --exit-code-from cypress --build backend static-frontend cypress
+"
 "
