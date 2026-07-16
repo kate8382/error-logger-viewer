@@ -1,6 +1,8 @@
 import type { ErrorItem } from 'errors';
 import type { ErrorApi, Mode } from 'api';
 
+// Этот файл нужен для расширения глобального типа Window, чтобы избежать ошибок типов при обращении к window.app и другим свойствами.
+
 // Локальное определение минимального API ChartManager, чтобы сборка деклараций
 // не зависела от исходников фронтенда.
 export type ChartManagerType = {
@@ -39,3 +41,5 @@ declare global {
 }
 
 export {};
+
+

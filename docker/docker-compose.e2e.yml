@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  static-frontend:
+    image: nginx:alpine
+    volumes:
+      - ../frontend/dist:/usr/share/nginx/html:ro
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL","test -s /usr/share/nginx/html/index.html"]
+      interval: 10s
+      retries: 3
+      start_period: 5s
+  cypress:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: cypress
+    image: error-logger-viewer-cypress:local
+    working_dir: /e2e
+    environment:
+      - CYPRESS_BASE_URL=http://static-frontend:80
+    depends_on:
+      - static-frontend

@@ -10,8 +10,8 @@
     "checkJs": false,
     "noEmit": true
   },
-  "include": ["src/**/*"],
-  "files": ["../types/global.d.ts"],
+  "include": ["src/**/*", "../types/global.d.ts"],
+  "files": ["../types/global.d.ts", "../types/modules.d.ts"],
   "exclude": [
     "node_modules",
     "dist"

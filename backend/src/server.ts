@@ -152,7 +152,16 @@ app.get('/projects', async (req: Request, res: Response) => {
     const ownerQ = String(req.query.owner);
     projects = projects.filter((p) => p.owner === ownerQ || (p.members && p.members.includes(ownerQ)));
   }
-  res.json(projects);
+  // Do not expose sensitive fields (apiKey, snippet) in public responses
+  const sanitized = projects.map((p: any) => ({
+    id: p.id,
+    name: p.name,
+    owner: p.owner,
+    members: p.members,
+    firstSeen: p.firstSeen,
+    createdAt: p.createdAt,
+  }));
+  res.json(sanitized);
 });
 
 // USERS endpoints

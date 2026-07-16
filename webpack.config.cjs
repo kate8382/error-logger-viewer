@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const apiProxyTarget = process.env.API_PROXY_TARGET || 'http://localhost:3000';
+const isCypress = !!process.env.CYPRESS_E2E;
 
 module.exports = (env = {}) => ({
   mode: env.prod ? 'production' : 'development',
@@ -64,15 +65,13 @@ module.exports = (env = {}) => ({
   resolve: {
     extensions: ['.ts', '.js'],
   },
-  devServer: {
+  devServer: Object.assign({
     static: {
       directory: path.resolve(__dirname, 'frontend', 'dist'),
     },
-    // historyApiFallback для поддержки SPA маршрутизации, hot для горячей перезагрузки, порт 8080, открытие браузера при запуске, сжатие и доступ с любого хоста
+    // historyApiFallback для поддержки SPA маршрутизации
     historyApiFallback: true,
-    hot: true,
     port: 8080,
-    open: true,
     compress: true,
     host: '0.0.0.0',
     // Настройка прокси для API запросов к бэкенду, чтобы избежать проблем с CORS при разработке
@@ -83,5 +82,13 @@ module.exports = (env = {}) => ({
         changeOrigin: true,
       },
     ],
-  },
+  }, isCypress ? {
+    hot: false,
+    client: false,
+    allowedHosts: 'all',
+    open: false,
+  } : {
+    hot: true,
+    open: true,
+  }),
 });

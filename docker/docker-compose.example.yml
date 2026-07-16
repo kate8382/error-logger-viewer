@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    image: error-logger-viewer:latest
+    ports:
+      - "3000:3000"   # бэкенд доступен на 3000
+      - "8080:3000"   # опционально: доступ к приложению через 8080 (CI/Cypress)
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_FILE: /app/backend/db.json
+    volumes:
+      - ./backend/db.json:/app/backend/db.json
+    restart: unless-stopped
