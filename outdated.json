@@ -1,0 +1,170 @@
+{
+  "@babel/core": {
+    "current": "7.29.7",
+    "wanted": "7.29.7",
+    "latest": "8.0.1",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\@babel\\core"
+  },
+  "@babel/preset-env": {
+    "current": "7.29.7",
+    "wanted": "7.29.7",
+    "latest": "8.0.2",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\@babel\\preset-env"
+  },
+  "@babel/preset-typescript": {
+    "current": "7.29.7",
+    "wanted": "7.29.7",
+    "latest": "8.0.1",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\@babel\\preset-typescript"
+  },
+  "@eslint/js": {
+    "current": "9.39.4",
+    "wanted": "9.39.5",
+    "latest": "10.0.1",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\@eslint\\js"
+  },
+  "@types/cypress": {
+    "current": "1.1.6",
+    "wanted": "1.1.6",
+    "latest": "0.1.6",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\@types\\cypress"
+  },
+  "@types/node": {
+    "current": "20.19.43",
+    "wanted": "20.19.43",
+    "latest": "26.1.1",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\@types\\node"
+  },
+  "@types/supertest": {
+    "current": "6.0.3",
+    "wanted": "6.0.3",
+    "latest": "7.2.1",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\@types\\supertest"
+  },
+  "@typescript-eslint/eslint-plugin": {
+    "current": "8.61.0",
+    "wanted": "8.64.0",
+    "latest": "8.64.0",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\@typescript-eslint\\eslint-plugin"
+  },
+  "@typescript-eslint/parser": {
+    "current": "8.61.0",
+    "wanted": "8.64.0",
+    "latest": "8.64.0",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\@typescript-eslint\\parser"
+  },
+  "concurrently": {
+    "current": "7.6.0",
+    "wanted": "7.6.0",
+    "latest": "10.0.3",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\concurrently"
+  },
+  "cypress": {
+    "current": "15.17.0",
+    "wanted": "15.18.1",
+    "latest": "15.18.1",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\cypress"
+  },
+  "esbuild": {
+    "current": "0.27.7",
+    "wanted": "0.27.7",
+    "latest": "0.28.1",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\esbuild"
+  },
+  "eslint": {
+    "current": "9.39.4",
+    "wanted": "9.39.5",
+    "latest": "10.7.0",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\eslint"
+  },
+  "eslint-plugin-jest": {
+    "current": "29.15.2",
+    "wanted": "29.15.4",
+    "latest": "29.15.4",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\eslint-plugin-jest"
+  },
+  "globals": {
+    "current": "16.5.0",
+    "wanted": "16.5.0",
+    "latest": "17.7.0",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\globals"
+  },
+  "jest": {
+    "current": "30.4.1",
+    "wanted": "30.4.2",
+    "latest": "30.4.2",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\jest"
+  },
+  "jest-haste-map": {
+    "current": "30.4.0",
+    "wanted": "30.4.0",
+    "latest": "30.4.1",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\jest-haste-map"
+  },
+  "prettier": {
+    "current": "3.8.4",
+    "wanted": "3.9.5",
+    "latest": "3.9.5",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\prettier"
+  },
+  "sass-loader": {
+    "current": "16.0.8",
+    "wanted": "16.0.8",
+    "latest": "17.0.0",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\sass-loader"
+  },
+  "typescript": {
+    "current": "6.0.3",
+    "wanted": "6.0.3",
+    "latest": "7.0.2",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\typescript"
+  },
+  "uuid": {
+    "current": "14.0.0",
+    "wanted": "14.0.1",
+    "latest": "14.0.1",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\uuid"
+  },
+  "webpack": {
+    "current": "5.107.2",
+    "wanted": "5.108.4",
+    "latest": "5.108.4",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\webpack"
+  },
+  "webpack-cli": {
+    "current": "6.0.1",
+    "wanted": "6.0.1",
+    "latest": "7.2.1",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\webpack-cli"
+  },
+  "webpack-dev-server": {
+    "current": "5.2.5",
+    "wanted": "5.2.6",
+    "latest": "6.0.0",
+    "dependent": "error-logger-viewer",
+    "location": "C:\\Users\\kate8382\\Desktop\\GitHub\\error-logger-viewer\\node_modules\\webpack-dev-server"
+  }
+}
