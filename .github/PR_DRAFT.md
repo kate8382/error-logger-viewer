@@ -89,5 +89,19 @@ Further updates will be added as separate entries below, with explanation, test 
 	- We should keep this rollback documented and, when the ecosystem stabilizes, plan a coordinated upgrade to Jest 30: update `ts-jest` and all `jest-*` plugins together in a separate major-change PR.
 	- Create an issue to track upgrading to Jest 30 and removing the rollback once `ts-jest` compatibility is confirmed.
 
+---
+
+## 6) Cleanup: remove obsolete patches and temporary snapshots
+
+- **Why:** The `patches/jest-haste-map+30.4.0.patch` was created for a 30.x release and is not compatible with the rolled-back `jest-haste-map@29.7.0`. Leaving an incompatible patch in `patches/` causes `patch-package` to fail during `postinstall` in CI. We removed the obsolete patch and the ancillary audit/outdated snapshots to simplify CI and avoid applying stale artifacts.
+- **Files removed:** `patches/` (obsolete README and patch files), `audit.json`, `audit_after.json`, `outdated.json`, `outdated_after.json`.
+- **Validation performed:**
+  - Clean install: `rm -rf node_modules && npm ci` — `postinstall` runs `patch-package` and reports "No patch files found" (OK).
+  - Local verification: `npm run test`, `npm run build:frontend`, `npm run build:backend` — all passed locally.
+
+---
+
+End of PR summary.
+
 
 
