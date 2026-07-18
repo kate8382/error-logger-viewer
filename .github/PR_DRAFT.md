@@ -57,4 +57,20 @@ Further updates will be added as separate entries below, with explanation, test 
 
 - **Notes:** `prettier` is a dev tooling dependency and should not affect runtime; warnings from webpack are pre-existing and unrelated to `prettier`.
 
+---
+
+## 4) Update: `uuid` → 14.0.1
+
+- **Why:** Keep runtime utility `uuid` up to date to get bug fixes and minor performance/security improvements in UUID generation.
+- **Command run:** `npm install --save-exact uuid@14.0.1` (lockfile updated).
+- **Testing performed:** ran `npm run test`, `npm run build:frontend`, `npm run build:backend`.
+- **Result:**
+	- Unit tests: frontend 8 suites, 34 tests passed; backend 2 suites, 4 tests passed.
+	- Builds: `build:frontend` completed; webpack 5 compiled with 2 warnings (asset size warnings). `build:backend` produced no output and exited successfully.
+	- Vulnerabilities: no change attributable to this bump (see `audit_after.json`).
+	- Commit: `package.json` and `package-lock.json` updated and will be committed to branch `DEPENDENCY_UPDATES`.
+
+- **Notes:** `uuid` is used at runtime; tests covering areas that use UUID passed locally. If CI has integration/e2e tests that exercise UUID‑dependent behavior, watch for any failures and report back.
+
+
 
