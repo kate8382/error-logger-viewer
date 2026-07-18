@@ -156,4 +156,22 @@ Further updates will be added as separate entries below, with explanation, test 
 	- E2E: All Cypress specs passed when run against static `frontend/dist` + running backend.
 	- Commit: `package.json` and `package-lock.json` updated and pushed to the `DEPENDENCY_UPDATES` branch.
 
+---
+
+## 11) Batch: build tooling & linters (low-risk)
+
+- **Packages updated:** `css-loader`, `style-loader`, `mini-css-extract-plugin`, `copy-webpack-plugin`, `html-webpack-plugin`, `eslint` and eslint-related plugins/configs (`eslint-config-prettier`, `eslint-plugin-prettier`, `eslint-plugin-jest`, `@typescript-eslint/eslint-plugin`, `@typescript-eslint/parser`).
+- **Why:** Keep webpack build pipeline and linting tooling current with non‑breaking minor/patch releases to reduce transitive issues and lint warnings.
+- **Command run:** `npm update css-loader style-loader mini-css-extract-plugin copy-webpack-plugin html-webpack-plugin eslint eslint-config-prettier eslint-plugin-jest eslint-plugin-prettier @typescript-eslint/eslint-plugin @typescript-eslint/parser --save-dev`
+- **Testing performed:**
+	- `npm run test` (frontend + backend unit tests)
+	- `npm run build:frontend` and `npm run build:backend`
+	- E2E: built production frontend, served `frontend/dist`, started backend, then ran `npm run test:e2e:local`.
+- **Result:**
+	- Unit tests: frontend 8 suites, 34 tests passed; backend 2 suites, 4 tests passed.
+	- Builds: `build:frontend` completed; webpack compiled with warnings (asset size warnings). `build:backend` completed successfully.
+	- E2E: All Cypress specs passed when run against static `frontend/dist` + running backend.
+	- Commit: `package.json` and `package-lock.json` updated and will be pushed to the `DEPENDENCY_UPDATES` branch.
+
+
 
