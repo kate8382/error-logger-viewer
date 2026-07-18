@@ -72,5 +72,22 @@ Further updates will be added as separate entries below, with explanation, test 
 
 - **Notes:** `uuid` is used at runtime; tests covering areas that use UUID passed locally. If CI has integration/e2e tests that exercise UUID‑dependent behavior, watch for any failures and report back.
 
+---
+
+## 5) Rollback: `jest` and related packages -> 29.x (removed temporary `jest-util` workaround)
+
+- **Why:** After a batch `npm update` the tree contained `jest@30.x` while `ts-jest` and some tooling expected the 29.x API. This caused runtime `Cannot find module 'jest-util'` errors. A temporary `jest-util@30.4.1` devDependency was added to unblock tests, but that is a brittle workaround we want to remove.
+- **Change performed:** rolled back `jest`, `babel-jest`, `jest-environment-jsdom`, `jest-haste-map` to the latest 29.x releases (`29.7.0`) and removed the temporary `jest-util` dependency.
+- **Commands run:**
+	- `npm install --save-dev jest@29 babel-jest@29 jest-environment-jsdom@29 jest-haste-map@29`
+	- `npm uninstall --save-dev jest-util`
+- **Result:**
+	- Local test suites (frontend + backend) pass: frontend 8 suites, 34 tests; backend 2 suites, 4 tests.
+	- Builds succeed locally.
+	- Project no longer contains `jest-util` temporary workaround; test infra is aligned with `ts-jest@29.x`.
+- **Risk/Next steps:**
+	- We should keep this rollback documented and, when the ecosystem stabilizes, plan a coordinated upgrade to Jest 30: update `ts-jest` and all `jest-*` plugins together in a separate major-change PR.
+	- Create an issue to track upgrading to Jest 30 and removing the rollback once `ts-jest` compatibility is confirmed.
+
 
 
