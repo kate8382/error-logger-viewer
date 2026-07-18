@@ -21,3 +21,40 @@ This draft PR will collect incremental dependency updates applied in the `DEPEND
 ---
 
 Further updates will be added as separate entries below, with explanation, test results and any required rollback instructions.
+
+---
+
+## 2) Batch: minor/patch updates (`npm update`)
+
+- **Why:** Apply safe minor/patch updates across dev and prod deps to reduce known advisories and keep the dependency tree up to date. This batch targets non‑breaking updates only.
+- **Change:** ran `npm update`, then `npm ci` to refresh the lockfile. Created snapshots `outdated_after.json` and `audit_after.json` in the repo for review.
+- **Notable package versions observed after update:** `jest` -> `30.4.2`, `jest-haste-map` -> `30.4.1`, `webpack` -> `5.108.4`, `cypress` -> `15.18.1`, `esbuild` remained at `0.28.1`.
+- **Temporary workaround applied:** during tests `ts-jest` raised `Cannot find module 'jest-util'`. To unblock test runs we added `jest-util@30.4.1` as a dev dependency and committed the change. This is a short‑term workaround — we'll follow up by aligning `ts-jest`/`jest` versions properly and removing the workaround.
+- **Testing performed:** ran `npm run test` (frontend + backend) and `npm run build:frontend` / `npm run build:backend` after the updates.
+- **Result:**
+	- `npm update` completed and `outdated_after.json` / `audit_after.json` created and committed.
+	- Unit tests: frontend 8 suites, 34 tests passed; backend 2 suites, 4 tests passed.
+	- Builds: `build:frontend` and `build:backend` completed; webpack compiled (warning: several asset size warnings only).
+	- Vulnerabilities: reduced to 3 moderate issues after the batch and workaround (see `audit_after.json`).
+	- Commits/pushes: batch changes committed and pushed to branch `DEPENDENCY_UPDATES` (commits include `d05ee8d`, `4496556`, `57b2c49` — see git log for exact sequence).
+
+- **Next actions:**
+	- Add a note/issue to remove the `jest-util` workaround after we either update `ts-jest` to a Jest 30 compatible release or otherwise reconcile versions.
+	- Continue with targeted safe updates (e.g., `prettier`, `uuid`) one at a time, recording results here.
+
+---
+
+## 3) Update: `prettier` → 3.9.5
+
+- **Why:** Safe minor/patch bump to keep formatting tooling current and reduce transitive advisory surface.
+- **Command run:** `npm install --save-exact prettier@3.9.5` (lockfile updated).
+- **Testing performed:** ran `npm run test`, `npm run build:frontend`, `npm run build:backend`.
+- **Result:**
+	- Unit tests: frontend 8 suites, 34 tests passed; backend 2 suites, 4 tests passed.
+	- Builds: `build:frontend` completed; webpack 5 compiled with 2 warnings (asset size warnings). `build:backend` produced no output and exited successfully.
+	- Vulnerabilities: overall audit state unchanged by this bump (see `audit_after.json` for current snapshot).
+	- Commit: `package.json` and `package-lock.json` updated and committed to branch `DEPENDENCY_UPDATES`.
+
+- **Notes:** `prettier` is a dev tooling dependency and should not affect runtime; warnings from webpack are pre-existing and unrelated to `prettier`.
+
+
