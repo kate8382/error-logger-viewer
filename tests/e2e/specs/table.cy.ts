@@ -1,4 +1,5 @@
 /// <reference types="cypress" />
+/// <reference path="../support/commands.d.ts" />
 
 describe('Table of Errors', () => {
   it('открывает главную страницу и видит заголовок таблицы', () => {
@@ -20,20 +21,25 @@ describe('Table of Errors', () => {
   });
 
   it('сортирует по count (серверная сортировка) и отображает порядок', () => {
-    // Перехват начального запроса (возвращаем базовую фикстуру)
-    cy.intercept({ method: 'GET', url: /\/errors(\?|$)/ }, { fixture: 'errors.json' }).as('getErrorsInit');
-    // Перехват сортировочного запроса по count: возвращаем заранее отсортированную фикстуру
-    cy.intercept({ method: 'GET', url: /\/errors.*(\?|&)sort=count(&|$)/ }, { fixture: 'errors_sorted_count_asc.json' }).as('getErrorsSorted');
+    // Универсальный перехват: для запросов с ?sort=count возвращаем отсортированную фикстуру, иначе — базовую фикстуру. Это устойчивее к порядку регистрации интерсептов и к вариантам query string (order, offset и т.д.).
+    cy.intercept({ method: 'GET', url: '**/errors*' }, (req) => {
+      const qSort = (req.query && (req.query as any).sort) || undefined;
+      if (qSort === 'count' || (req.url && req.url.includes('sort=count'))) {
+        req.reply({ fixture: 'errors_sorted_count_asc.json' });
+      } else {
+        req.reply({ fixture: 'errors.json' });
+      }
+    }).as('getErrors');
 
     cy.visit('/');
-    cy.wait('@getErrorsInit');
+    cy.wait('@getErrors');
 
     // Кликаем по кнопке сортировки и ждём сетевой вызов сортировки
     cy.get('#sortByCount').click();
-    cy.wait('@getErrorsSorted');
-
-    // Проверяем порядок строк после получения отсортированных данных
-    cy.get('#errorTableBody tr', { timeout: 20000 }).then(($rows: JQuery<HTMLElement>) => {
+    cy.wait('@getErrors');
+    // Ждём перерендера таблицы и проверяем порядок строк — используем `should` для автоповтора
+    cy.waitForTable();
+    cy.get('#errorTableBody tr', { timeout: 20000 }).should(($rows: JQuery<HTMLElement>) => {
       const ids = $rows.map((i, el) => Cypress.$(el).find('td').first().text().trim()).get();
       expect(ids).to.deep.equal(['err-2', 'err-1']);
     });

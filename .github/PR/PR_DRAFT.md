@@ -173,5 +173,41 @@ Further updates will be added as separate entries below, with explanation, test 
 	- E2E: All Cypress specs passed when run against static `frontend/dist` + running backend.
 	- Commit: `package.json` and `package-lock.json` updated and will be pushed to the `DEPENDENCY_UPDATES` branch.
 
+---
+
+## 12) Update: `sass` → 1.101.7 and `nodemon` → 3.1.14 (low-risk)
+
+- **Why:** Small patch/minor bumps to keep local dev tooling current and reduce transitive advisory surface. `sass` is required by `sass-loader`; `nodemon` is used for backend dev. Both are low-risk but should be validated with builds and tests.
+- **Command run:** `npm install --save-exact --save-dev sass@1.101.7 nodemon@3.1.14` (lockfile and package.json updated)
+- **Testing performed:**
+	- `npm run build:frontend` and `npm run build:backend`
+	- `npm run test` (frontend + backend unit tests)
+- **Result:**
+	- `npm install` completed; `package.json` and `package-lock.json` updated.
+	- Builds: `build:frontend` completed (webpack 5.108.4 compiled with asset-size warnings); `build:backend` completed successfully.
+	- Unit tests: frontend 8 suites, 34 tests passed; backend 2 suites, 4 tests passed.
+	- Commit: `package.json` and `package-lock.json` updated and pushed to the `DEPENDENCY_UPDATES` branch.
+
+	---
+
+	## 13) Update: `webpack` → 5.109.0, `webpack-cli` → 6.0.1, `webpack-dev-server` → 6.0.0
+
+	- **Why:** Align `webpack` with latest stable 5.x release and ensure dev tooling (`webpack-cli`, `webpack-dev-server`) matches to avoid runtime/client injection issues (HMR/dev-client) observed during e2e runs.
+	- **Change:**
+		- `npm install --save-exact webpack@5.109.0 --save-dev`
+		- `npm install --save-exact --save-dev webpack-cli@6.0.1 webpack-dev-server@6.0.0`
+		- `package-lock.json` updated.
+	- **Testing plan:** build frontend/backend, serve production frontend (`frontend/dist`) via static server and run Cypress e2e locally; also run unit tests and verify CI pipeline.
+	- **Result:**
+		- `npm run build:frontend` and `npm run build:backend` — successful (webpack compiled with asset-size warnings only).
+		- E2E: All Cypress specs passed when run against static `frontend/dist` + running backend (13 specs total, all passing locally).
+		- Unit tests: frontend 8 suites (34 tests) passed; backend 2 suites (4 tests) passed.
+		- `package.json` and `package-lock.json` updated and staged for commit.
+	- **Notes:**
+		- The original e2e failure (`require is not defined`) was caused by dev-server client/HMR code injection when running tests against the dev server. Running e2e against a production build eliminates the injected dev-client and is the recommended CI approach.
+		- Consider adding `http-server` to `devDependencies` or updating `serve:dist:frontend` to use `npx http-server` in CI scripts to ensure consistent behavior on dev machines and CI agents.
+
+
+
 
 
