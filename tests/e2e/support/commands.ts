@@ -4,7 +4,7 @@
 // https://on.cypress.io/custom-commands
 
 // Открыть основной выпадающий список настроек (Settings) в сайдбаре
-Cypress.Commands.add('openSettings', () => {
+(Cypress.Commands as any).add('openSettings', () => {
   cy.get('.sidebar__dropdown').then(($d) => {
     if (!$d.hasClass('open')) {
       cy.wrap($d).find('.sidebar__dropdown-btn').click();
@@ -14,7 +14,7 @@ Cypress.Commands.add('openSettings', () => {
 });
 
 // Открыть конкретную группу настроек внутри списка (например, 'language' или 'theme')
-Cypress.Commands.add('openSettingsGroup', (group: string) => {
+(Cypress.Commands as any).add('openSettingsGroup', (group: string) => {
   cy.openSettings();
   cy.get(`.sidebar__dropdown-group-btn[data-group="${group}"]`).scrollIntoView().click();
   cy.get(`.sidebar__dropdown-sublist[data-group="${group}"]`).should('exist');
@@ -22,20 +22,21 @@ Cypress.Commands.add('openSettingsGroup', (group: string) => {
 
 // Ожидать, что таблица ошибок (tbody) будет отрисована
 // options: { timeout } - время ожидания в ms (по умолчанию 20000)
-Cypress.Commands.add('waitForTable', (options: { timeout?: number } = {}) => {
+Cypress.Commands.add as any;
+(Cypress.Commands as any).add('waitForTable', (options: { timeout?: number } = {}) => {
   const { timeout = 20000 } = options;
   // Ждём появления tbody. Тесты могут дополнительно проверять количество строк
   return cy.get('#errorTableBody', { timeout }).should('exist');
 });
 
 // Вернуть первую строку таблицы (tr) как цепочку Cypress
-Cypress.Commands.add('getFirstRow', () => {
+(Cypress.Commands as any).add('getFirstRow', () => {
   return cy.get('#errorTableBody').find('tr').first() as unknown as Cypress.Chainable<any>;
 });
 
 // Нажать опцию в группе настроек: language, theme и т.п.
 // clickSettingsOption(group, value, { force: false })
-Cypress.Commands.add('clickSettingsOption', (group: string, value: string, opts: { force?: boolean } = {}) => {
+(Cypress.Commands as any).add('clickSettingsOption', (group: string, value: string, opts: { force?: boolean } = {}) => {
   const { force = false } = opts;
   cy.openSettings();
   cy.openSettingsGroup(group);
@@ -45,7 +46,7 @@ Cypress.Commands.add('clickSettingsOption', (group: string, value: string, opts:
 });
 
 // Открыть меню действий (edit/delete) для строки таблицы по индексу (по умолчанию 0)
-Cypress.Commands.add('openRowActions', (index: number = 0) => {
+(Cypress.Commands as any).add('openRowActions', (index: number = 0) => {
   // Найти строку и кнопку выпадающего меню внутри неё
   return cy
     .get('#errorTableBody')
@@ -77,7 +78,7 @@ Cypress.Commands.add('openRowActions', (index: number = 0) => {
 });
 
 // В модальном окне нажать кнопку подтверждения удаления и дождаться закрытия модалки
-Cypress.Commands.add('confirmDelete', () => {
+(Cypress.Commands as any).add('confirmDelete', () => {
   // Ожидаем, что модал присутствует и содержит кнопку с id deleteErrorButton
   cy.get('#modal')
     .should('exist')

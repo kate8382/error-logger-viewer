@@ -1,5 +1,8 @@
 name: CI
 
+env:
+  NPM_CONFIG_ALLOW_SCRIPTS: 'true'
+
 on:
   push:
     branches:
