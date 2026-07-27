@@ -1,501 +1,756 @@
 /* eslint-disable prettier/prettier */
-// Импорт библиотек
-import express, { Request, Response } from 'express'; // ответственный за создание сервера и маршрутов
-import cors from 'cors'; // для обработки CORS (Cross-Origin Resource Sharing)
-import { Low } from 'lowdb'; // легковесная база данных
-import { JSONFile } from 'lowdb/node'; // адаптер для работы с JSON файлами
-import { fileURLToPath } from 'url'; // для получения пути к файлу
-import { dirname, join, resolve } from 'path'; // для работы с путями
+// =============================================================================
+// server.ts — Error Logger Viewer Backend
+// =============================================================================
+// This is the single-file Express backend. It uses lowdb (a lightweight JSON
+// file database) and exposes REST endpoints for errors, projects, and users.
+//
+// ARCHITECTURE NOTE: All routes live in this one file for now. As the project
+// grows, consider splitting into: routes/, services/, middleware/.
+// =============================================================================
+
+// --- Standard library & third-party imports ---
+import express, { Request, Response, NextFunction } from 'express';
+import cors from 'cors';
+// helmet sets secure HTTP response headers (X-Frame-Options, CSP, etc.)
+import helmet from 'helmet';
+// rateLimit protects write endpoints from flooding
+import rateLimit from 'express-rate-limit';
+import { Low } from 'lowdb';
+import { JSONFile } from 'lowdb/node';
+import { fileURLToPath } from 'url';
+import { dirname, join, resolve } from 'path';
 import { promises as fs } from 'fs';
-import { v4 as uuidv4 } from 'uuid'; // для генерации уникальных идентификаторов
+import { existsSync } from 'fs';
+import { v4 as uuidv4 } from 'uuid';
 import { DBSchema } from './types/db';
 import type { ProjectDTO } from 'projects';
+import type { CreateErrorRequest, UpdateErrorRequest } from 'errors';
+import type { UserDTO } from 'users';
 
-// Настройка базы данных
-const __filename = fileURLToPath(import.meta.url); // получение пути к текущему файлу
+// =============================================================================
+// DATABASE SETUP
+// =============================================================================
+
+const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// По умолчанию db.json хранится в папке бэкенда. В Docker/production можно
-// задать DB_FILE, чтобы вынести файл в постоянный volume.
-const dbFile = process.env.DB_FILE ? resolve(process.env.DB_FILE) : join(__dirname, '..', 'db.json');
+// DB_FILE env var can override the default db.json location (e.g. for Docker
+// volumes). We resolve the path and keep it as-is — operators are responsible
+// for setting a safe path. Log it at startup so it's visible in the process log.
+const dbFile = process.env.DB_FILE
+  ? resolve(process.env.DB_FILE)
+  : join(__dirname, '..', 'db.json');
+
+console.log(`[server] Using DB file: ${dbFile}`);
+
 const adapter = new JSONFile<DBSchema>(dbFile);
 const db: Low<DBSchema> = new Low(adapter, { errors: [], projects: [], users: [] } as DBSchema);
 
-// Инициализация базы данных
+// --- Single, authoritative DB initialisation block ---
+// (Previously this was duplicated twice — now consolidated here.)
 await db.read();
-if (!db.data) db.data = { errors: [], projects: [], users: [] };
-db.data.errors = db.data.errors || [];
+if (!db.data) {
+  db.data = { errors: [], projects: [], users: [] };
+}
+db.data.errors   = db.data.errors   || [];
 db.data.projects = db.data.projects || [];
-db.data.users = db.data.users || [];
+db.data.users    = db.data.users    || [];
 await db.write();
-console.log(`[server] DB loaded: ${db.data.errors.length} errors, ${db.data.projects.length} projects, ${db.data.users.length} users`);
+console.log(
+  `[server] DB loaded: ${db.data.errors.length} errors, ` +
+  `${db.data.projects.length} projects, ${db.data.users.length} users`
+);
 
-// Загружаем общие лимиты периодов из config/periods.json (ищем в корне проекта)
-let PERIOD_LIMITS = { day: 7, week: 8, month: 6, year: 4 };
+// =============================================================================
+// PERIOD LIMITS (loaded once at startup from config/periods.json)
+// =============================================================================
+// IMPORTANT: This outer constant must NOT be re-declared inside any route
+// handler. The inner shadowing bug has been removed (see /errors/stats route).
+
+let PERIOD_LIMITS: Record<string, number> = { day: 7, week: 8, month: 6, year: 4 };
 try {
+  // Prefer config at the project root (standard location)
   const cfgPath = join(process.cwd(), 'config', 'periods.json');
   const raw = await fs.readFile(cfgPath, 'utf8');
-  const cfgJson = JSON.parse(raw);
-  if (cfgJson) PERIOD_LIMITS = cfgJson;
-} catch (e) {
-  // Если нет файла в корне — пытаемся найти рядом с бандлом (backward-compat)
+  const parsed = JSON.parse(raw) as Record<string, number>;
+  if (parsed && typeof parsed === 'object') PERIOD_LIMITS = parsed;
+  console.log('[server] Loaded PERIOD_LIMITS from', cfgPath, PERIOD_LIMITS);
+} catch {
   try {
+    // Fallback: look next to the compiled bundle (backward-compat)
     const raw = await fs.readFile(join(__dirname, '..', 'config', 'periods.json'), 'utf8');
-    const cfgJson = JSON.parse(raw);
-    if (cfgJson) PERIOD_LIMITS = cfgJson;
-  } catch (e2) {
-    console.warn('[server] Could not load config/periods.json, using defaults', e, e2);
+    const parsed = JSON.parse(raw) as Record<string, number>;
+    if (parsed && typeof parsed === 'object') PERIOD_LIMITS = parsed;
+    console.log('[server] Loaded PERIOD_LIMITS from bundle dir', PERIOD_LIMITS);
+  } catch {
+    console.warn('[server] config/periods.json not found — using default PERIOD_LIMITS', PERIOD_LIMITS);
   }
 }
 
-// Инициализация структуры данных, если она отсутствует
-if (!db.data) db.data = { errors: [], projects: [], users: [] };
-else {
-  db.data.errors = db.data.errors || [];
-  db.data.projects = db.data.projects || [];
-  db.data.users = db.data.users || [];
+// =============================================================================
+// UTILITY: GROUP ERRORS BY TIME PERIOD
+// =============================================================================
+// Hoisted to module scope so it is defined once (not re-created per request).
+// Returns an ISO-style key for the period containing `dateStr`.
+function getPeriodKey(dateStr: string, by: string): string {
+  // Guard: return empty string for invalid inputs so callers can skip them.
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return '';
+
+  if (by === 'day') {
+    // YYYY-MM-DD
+    return dateStr.slice(0, 10);
+  }
+  if (by === 'week') {
+    // ISO week number: YYYY-Www
+    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const dayNum = d.getUTCDay() || 7; // treat Sunday as 7
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    const weekNum = Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+    return `${d.getUTCFullYear()}-W${weekNum.toString().padStart(2, '0')}`;
+  }
+  if (by === 'month') {
+    // YYYY-MM
+    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+  }
+  if (by === 'year') {
+    return `${date.getFullYear()}`;
+  }
+  return '';
 }
 
+// =============================================================================
+// UTILITY: PROJECT LOOKUPS
+// =============================================================================
 
-// Создание приложения Express
+/** Find a project by its API key. Returns null if not found. */
+function findProjectByApiKey(key: string | undefined): ProjectDTO | null {
+  if (!key) return null;
+  return (db.data.projects.find((p) => p.apiKey === key) as ProjectDTO) || null;
+}
+
+/** Find a project by its UUID. Returns null if not found. */
+function findProjectById(id: string | undefined): ProjectDTO | null {
+  if (!id) return null;
+  return (db.data.projects.find((p) => p.id === id) as ProjectDTO) || null;
+}
+
+/** Find a project by owner email or member email. */
+function findProjectByOwnerOrMember(email: string | undefined): ProjectDTO | null {
+  if (!email) return null;
+  return (
+    db.data.projects.find(
+      (p) => p.owner === email || (Array.isArray(p.members) && p.members.includes(email))
+    ) as ProjectDTO
+  ) || null;
+}
+
+/** Build the client-side JS snippet that posts errors to this backend. */
+function buildSnippet(apiKey: string | undefined): string {
+  // Ensure the key is a plain string — no template injection possible since
+  // apiKey is always a UUID generated by us (see generateApiKey).
+  const escapedKey = String(apiKey || '');
+  return `<script>(function(){if((window).__ERROR_LOGGER_SNIPPET_ADDED__){return;} (window).__ERROR_LOGGER_SNIPPET_ADDED__=true; const PROJECT_KEY='${escapedKey}';const ENDPOINT=window.__ERROR_LOGGER_ENDPOINT__||location.protocol+'//'+location.host+'/errors';function send(payload){try{fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign(payload,{apiKey:PROJECT_KEY}))});}catch(e){}}window.addEventListener('error',function(e){send({message:e.message,stack:(e.error&&e.error.stack)||e.message,type:'error',user:navigator.userAgent});});window.addEventListener('unhandledrejection',function(e){send({message:(e.reason&&e.reason.message)||String(e.reason),stack:e.reason&&e.reason.stack,type:'unhandledrejection',user:navigator.userAgent});});})();</script>`;
+}
+
+/** Generate a new random API key (UUID v4). */
+function generateApiKey(): string {
+  return uuidv4();
+}
+
+// =============================================================================
+// UTILITY: INPUT VALIDATION HELPERS
+// =============================================================================
+
+/** Valid status values for an error record. */
+const VALID_STATUSES = new Set(['new', 'in_progress', 'fixed', 'ignored', 'unknown']);
+
+/**
+ * Sanitise a string value: coerce to string, trim whitespace, and truncate
+ * to `maxLen` characters to prevent unbounded data storage.
+ */
+function sanitizeString(val: unknown, maxLen = 2000): string {
+  if (val === undefined || val === null) return '';
+  return String(val).trim().slice(0, maxLen);
+}
+
+/**
+ * Normalise a string for duplicate-detection comparisons:
+ * lowercase + trimmed, empty string for null/undefined.
+ */
+function normalize(val: unknown): string {
+  if (val === undefined || val === null) return '';
+  return String(val).trim().toLowerCase();
+}
+
+// =============================================================================
+// EXPRESS APP + MIDDLEWARE STACK
+// =============================================================================
+
 const app = express();
-
-// Настройка CORS: разрешать все в разработке, только нужные origin в продакшене
 const isProd = process.env.NODE_ENV === 'production';
-const allowedOrigins = [
-  'https://kate8382.github.io', // для публикации на GitHub Pages
+
+// --- 1. Security headers (helmet) ---
+// Sets X-Content-Type-Options, X-Frame-Options, Referrer-Policy, CSP, etc.
+// Must be first in the middleware chain so headers are set on every response.
+app.use(helmet());
+
+// --- 2. CORS ---
+// In production: only allow the known GitHub Pages origin.
+// In development: only allow localhost variants to avoid accidental wide-open dev servers.
+const allowedOrigins = ['https://kate8382.github.io'];
+const devOrigins = [
+  'http://localhost:3000',
+  'http://localhost:8080',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:8080',
 ];
+
 if (isProd) {
   app.use(cors({ origin: allowedOrigins }));
 } else {
-  app.use(cors()); // разрешить все в разработке
+  // Dev: restrict to localhost — not fully open anymore.
+  app.use(cors({ origin: devOrigins }));
 }
-app.use(express.json()); // для обработки JSON-запросов
 
-// Serve static frontend in production
-import { existsSync } from 'fs';
+// --- 3. Body parsing with payload size limit ---
+// 50 kB cap prevents a single oversized POST from exhausting memory.
+app.use(express.json({ limit: '50kb' }));
+
+// --- 4. Rate limiters for write endpoints ---
+// Applied per-route below, but defined here for clarity.
+
+/** General write limiter: 100 requests per 15 minutes per IP. */
+const writeLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100,
+  standardHeaders: true, // return RateLimit headers in the response
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' },
+});
+
+/** Stricter limiter for the error ingestion endpoint (higher expected volume). */
+const errorIngestLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 60, // 60 error reports per minute per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Error report rate limit exceeded.' },
+});
+
+// =============================================================================
+// AUTHENTICATION MIDDLEWARE
+// =============================================================================
+// A lightweight API key guard. For write endpoints (POST /projects, admin
+// operations) we require a valid project API key in the X-API-KEY header.
+//
+// NOTE: The /errors POST endpoint handles its own project-key lookup because
+// it needs to associate the error with a project, not just authenticate the
+// caller. Management endpoints (PUT/DELETE) use this middleware.
+
+/**
+ * Middleware that verifies X-API-KEY corresponds to an existing project.
+ * Attaches the resolved project to `req` as `(req as any).project`.
+ */
+function requireApiKey(req: Request, res: Response, next: NextFunction): void {
+  // Accept the key from the header or (as a fallback) from the request body.
+  const headerKey = sanitizeString(req.headers['x-api-key'] as string | undefined, 128);
+  const bodyKey   = sanitizeString((req.body as Record<string, unknown>)?.apiKey as string | undefined, 128);
+  const key = headerKey || bodyKey;
+
+  const project = findProjectByApiKey(key);
+  if (!project) {
+    res.status(401).json({ error: 'Invalid or missing API key.' });
+    return;
+  }
+  // Attach resolved project so route handlers can use it without re-querying.
+  (req as Request & { project: ProjectDTO }).project = project;
+  next();
+}
+
+// =============================================================================
+// PRODUCTION: SERVE FRONTEND STATIC FILES
+// =============================================================================
+// IMPORTANT: The SPA fallback (catch-all) must be registered BEFORE the API
+// routes so that it can hand off to `next()` cleanly — but we use a prefix
+// check to avoid swallowing API requests. All API routes are registered below.
+
 const frontendDist = join(__dirname, '..', '..', 'frontend', 'dist');
 if (isProd && existsSync(frontendDist)) {
   app.use(express.static(frontendDist));
-  // SPA fallback: serve index.html for any unknown route
-  app.get(/.*/, (req, res, next) => {
-    if (req.path.startsWith('/api') || req.path.startsWith('/errors') || req.path.startsWith('/projects') || req.path.startsWith('/users')) {
+  // SPA fallback: serve index.html for any route that isn't an API endpoint.
+  // API prefixes are: /errors, /projects, /users.
+  // This catch-all is registered first but explicitly skips API paths.
+  app.get(/.*/, (req: Request, res: Response, next: NextFunction) => {
+    const apiPrefixes = ['/errors', '/projects', '/users'];
+    const isApiRoute = apiPrefixes.some((prefix) => req.path.startsWith(prefix));
+    if (isApiRoute) {
+      // Pass control to the actual API route handlers registered below.
       return next();
     }
     res.sendFile(join(frontendDist, 'index.html'));
   });
 }
 
-// Helper функции для проектов
-// 1. Генерация API ключа
-function generateApiKey() {
-  return uuidv4();
-}
+// =============================================================================
+// ROUTES: PROJECTS
+// =============================================================================
 
-// 2. Поиск проекта по API ключу
-function findProjectByApiKey(key: string | undefined): ProjectDTO | null {
-  if (!key) return null;
-  return (db.data.projects.find((p) => p.apiKey === key) as ProjectDTO) || null;
-}
+/** POST /projects — Create a new project. */
+app.post('/projects', writeLimiter, async (req: Request, res: Response) => {
+  const body = req.body as Record<string, unknown> || {};
 
-// 3. Поиск проекта по ID
-function findProjectById(id: string | undefined): ProjectDTO | null {
-  if (!id) return null;
-  return (db.data.projects.find((p) => p.id === id) as ProjectDTO) || null;
-}
-
-// 4. Поиск проекта по владельцу или участнику
-function findProjectByOwnerOrMember(email: string | undefined): ProjectDTO | null {
-  if (!email) return null;
-  return (
-    db.data.projects.find((p) => p.owner === email || (Array.isArray(p.members) && p.members.includes(email))) as ProjectDTO
-  ) || null;
-}
-
-// 5. Построение сниппета с заданным API ключом
-function buildSnippet(apiKey: string | undefined) {
-  const escapedKey = String(apiKey || '');
-  return `<script>(function(){if((window).__ERROR_LOGGER_SNIPPET_ADDED__){return;} (window).__ERROR_LOGGER_SNIPPET_ADDED__=true; const PROJECT_KEY='${escapedKey}';const ENDPOINT=window.__ERROR_LOGGER_ENDPOINT__||location.protocol+'//'+location.host+'/errors';function send(payload){try{fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign(payload,{apiKey:PROJECT_KEY}))});}catch(e){}}window.addEventListener('error',function(e){send({message:e.message,stack:(e.error&&e.error.stack)||e.message,type:'error',user:navigator.userAgent});});window.addEventListener('unhandledrejection',function(e){send({message:(e.reason&&e.reason.message)||String(e.reason),stack:e.reason&&e.reason.stack,type:'unhandledrejection',user:navigator.userAgent});});})();</script>`;
-}
-
-// Маршрут для создания нового проекта
-app.post('/projects', async (req: Request, res: Response) => {
-  const { name, owner, members } = req.body || {};
+  // Validate required fields.
+  const name  = sanitizeString(body.name, 200);
+  const owner = sanitizeString(body.owner, 200);
   if (!name || !owner) {
-    return res.status(400).json({ error: 'Project name and owner are required' });
+    return res.status(400).json({ error: 'Project name and owner are required.' });
   }
+
   await db.read();
   if (!db.data) db.data = { errors: [], projects: [], users: [] };
-  db.data.errors = db.data.errors || [];
   db.data.projects = db.data.projects || [];
-  const id = uuidv4();
+
+  // Normalise members to an array of sanitised strings.
+  let members: string[] = [];
+  if (Array.isArray(body.members)) {
+    members = (body.members as unknown[]).map((m) => sanitizeString(m, 200)).filter(Boolean);
+  } else if (body.members) {
+    const single = sanitizeString(body.members, 200);
+    if (single) members = [single];
+  }
+
+  const id     = uuidv4();
   const apiKey = generateApiKey();
-  const project = {
+  const project: ProjectDTO = {
     id,
     name,
     owner,
-    members: Array.isArray(members) ? members : members ? [members] : [],
+    members,
     apiKey,
     snippet: buildSnippet(apiKey),
     firstSeen: new Date().toISOString(),
   };
   db.data.projects.push(project);
   await db.write();
-  // Возвращаем без раскрытия массива участников, если только владелец не запрашивает (пока возвращаем полный объект)
   return res.status(201).json(project);
 });
 
+/** GET /projects — List projects, optionally filtered by ?owner=email. */
 app.get('/projects', async (req: Request, res: Response) => {
   await db.read();
   let projects = db.data.projects || [];
+
   if (req.query.owner) {
-    const ownerQ = String(req.query.owner);
-    projects = projects.filter((p) => p.owner === ownerQ || (p.members && p.members.includes(ownerQ)));
+    const ownerQ = sanitizeString(req.query.owner as string, 200);
+    projects = projects.filter(
+      (p) => p.owner === ownerQ || (Array.isArray(p.members) && p.members.includes(ownerQ))
+    );
   }
-  // Do not expose sensitive fields (apiKey, snippet) in public responses
-  const sanitized = projects.map((p: any) => ({
-    id: p.id,
-    name: p.name,
-    owner: p.owner,
-    members: p.members,
+
+  // Strip sensitive fields (apiKey, snippet) from the public response.
+  const sanitized = projects.map((p) => ({
+    id:        p.id,
+    name:      p.name,
+    owner:     p.owner,
+    members:   p.members,
     firstSeen: p.firstSeen,
-    createdAt: p.createdAt,
   }));
   res.json(sanitized);
 });
 
-// USERS endpoints
-app.post('/users', async (req: Request, res: Response) => {
-  const { email, name } = req.body || {};
-  if (!email) return res.status(400).json({ error: 'Email is required' });
+// =============================================================================
+// ROUTES: USERS
+// =============================================================================
+
+/** POST /users — Register a user (upsert by email). */
+app.post('/users', writeLimiter, async (req: Request, res: Response) => {
+  const body = req.body as Record<string, unknown> || {};
+  const email = sanitizeString(body.email, 200);
+  if (!email) return res.status(400).json({ error: 'Email is required.' });
+
   await db.read();
-  if (!db.data) db.data = { errors: [], projects: [], users: [] } as any;
+  if (!db.data) db.data = { errors: [], projects: [], users: [] } as DBSchema;
   db.data.users = db.data.users || [];
-  const exists = db.data.users.find((u: any) => u.email === email);
-  if (exists) return res.status(200).json(exists);
-  const id = uuidv4();
-  const user = { id, email, name: name || '', createdAt: new Date().toISOString() };
-  db.data.users.push(user as any);
+
+  // Upsert: return existing record if this email is already known.
+  const existing = db.data.users.find((u: UserDTO) => u.email === email);
+  if (existing) return res.status(200).json(existing);
+
+  const id   = uuidv4();
+  // Accept either 'name' or 'username'; prefer 'name' to match stored format.
+  const name = sanitizeString(body.name ?? body.username, 200);
+  const user: UserDTO = {
+    id,
+    email,
+    name: name || '',
+    createdAt: new Date().toISOString(),
+  };
+  db.data.users.push(user);
   await db.write();
   return res.status(201).json(user);
 });
 
+/** GET /users — List all users. */
 app.get('/users', async (req: Request, res: Response) => {
   await db.read();
-  const users = db.data.users || [];
-  res.json(users);
+  res.json(db.data.users || []);
 });
 
+/** GET /users/:id — Get a single user by ID. */
 app.get('/users/:id', async (req: Request, res: Response) => {
   await db.read();
-  const u = (db.data.users || []).find((x: any) => x.id === req.params.id);
-  if (!u) return res.status(404).json({ error: 'User not found' });
+  const u = (db.data.users || []).find((x: UserDTO) => x.id === req.params.id);
+  if (!u) return res.status(404).json({ error: 'User not found.' });
   return res.json(u);
 });
 
-// Маршрут для получения статистики ошибок
+// =============================================================================
+// ROUTES: ERRORS — STATS
+// =============================================================================
+
+/**
+ * GET /errors/stats — Return aggregate counts grouped by `by` parameter.
+ * Supported values: 'status' | 'type' | 'day' | 'week' | 'month' | 'year'
+ */
 app.get('/errors/stats', async (req: Request, res: Response) => {
   await db.read();
   const errors = db.data.errors || [];
-  const by = String(req.query.by || 'status');
-  const group = String(req.query.group || 'status');
-  console.log('[STATS] Запрос:', { by, group });
-  let result: Record<string, any> = {};
-  // Группировка по статусу
-  if (by === 'status') {
-    const statusResultMain = errors.reduce<Record<string, number>>((acc, e) => {
+
+  // Validate the 'by' parameter against a known set.
+  const validBy = new Set(['status', 'type', 'day', 'week', 'month', 'year']);
+  const by      = sanitizeString(req.query.by as string | undefined, 20);
+  const group   = sanitizeString(req.query.group as string | undefined, 20);
+  const safeBy  = validBy.has(by) ? by : 'status'; // default to 'status' for unknown values
+
+  let result: Record<string, unknown> = {};
+
+  if (safeBy === 'status') {
+    // Count errors by their status value.
+    result = errors.reduce<Record<string, number>>((acc, e) => {
       const status = e.status || 'new';
       acc[status] = (acc[status] || 0) + 1;
       return acc;
-    }, {} as Record<string, number>);
-    result = statusResultMain;
-  }
-  // Группировка по типу
-  else if (by === 'type') {
-    const typeResult = errors.reduce<Record<string, number>>((acc, e) => {
+    }, {});
+
+  } else if (safeBy === 'type') {
+    // Count errors by their type value.
+    result = errors.reduce<Record<string, number>>((acc, e) => {
       const type = e.type || 'Unknown';
       acc[type] = (acc[type] || 0) + 1;
       return acc;
-    }, {} as Record<string, number>);
-    result = typeResult;
-  }
-  // Группировка по дням/неделям/месяцам/годам
-  else if (['day', 'week', 'month', 'year'].includes(by)) {
-    function getPeriodKey(dateStr: string, by: string): string {
-        if (!dateStr) return '';
-      const date = new Date(dateStr);
-      if (isNaN(date.getTime())) return '';
-      if (by === 'day') {
-        return dateStr.slice(0, 10);
-      }
-      if (by === 'week') {
-        const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-        const dayNum = d.getUTCDay() || 7;
-        d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-        const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-        const weekNum = Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
-        return `${d.getUTCFullYear()}-W${weekNum.toString().padStart(2, '0')}`;
-      }
-      if (by === 'month') {
-        return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
-      }
-      if (by === 'year') {
-        return `${date.getFullYear()}`;
-      }
-      return '';
-    }
-    result = {};
+    }, {});
+
+  } else {
+    // Time-period grouping: 'day' | 'week' | 'month' | 'year'
+    // Uses the module-level getPeriodKey() — NOT a locally-redeclared copy.
+    // Uses the module-level PERIOD_LIMITS — loaded from config/periods.json at startup.
+    const periodResult: Record<string, Record<string, number>> = {};
+
     errors.forEach((e) => {
-      // Используем lastSeen для группировки по периоду
-      const dateStr = e.firstSeen || '';
-      const periodKey = getPeriodKey(dateStr, by);
-      if (!periodKey) return;
-      if (!result[periodKey]) result[periodKey] = {};
-      const key = group === 'type' ? (e.type || 'Unknown') : (e.status || 'new');
-      result[periodKey][key] = (result[periodKey][key] || 0) + 1;
+      const dateStr   = e.firstSeen || '';
+      const periodKey = getPeriodKey(dateStr, safeBy);
+      if (!periodKey) return; // skip records with no/invalid date
+
+      if (!periodResult[periodKey]) periodResult[periodKey] = {};
+      // Determine the sub-grouping key: type or status.
+      const subKey = group === 'type' ? (e.type || 'Unknown') : (e.status || 'new');
+      periodResult[periodKey][subKey] = (periodResult[periodKey][subKey] || 0) + 1;
     });
-    // Применяем ограничение по числу периодов для уменьшения объёма данных,
-    // если это необходимо (напр., дни/недели/месяцы/годы).
-    const PERIOD_LIMITS: Record<string, number> = { day: 7, week: 8, month: 6, year: 4 };
-    const sortedKeys = Object.keys(result).sort();
-    const lim = (PERIOD_LIMITS as Record<string, number>)[by] ?? 0;
+
+    // Trim to the configured number of most-recent periods.
+    const sortedKeys = Object.keys(periodResult).sort();
+    const lim        = PERIOD_LIMITS[safeBy] ?? 0; // uses the config-loaded constant
 
     if (lim > 0 && sortedKeys.length > lim) {
+      // Keep only the last `lim` periods.
       const last = sortedKeys.slice(-lim);
-      const filtered: Record<string, Record<string, number>> = {};
-      last.forEach((k) => {
-        filtered[k] = result[k];
-      });
-      return res.json(filtered);
+      const trimmed: Record<string, Record<string, number>> = {};
+      last.forEach((k) => { trimmed[k] = periodResult[k]; });
+      return res.json(trimmed);
     }
-    return res.json(result);
+    return res.json(periodResult);
   }
-  // Если параметр некорректный — по умолчанию возвращаем по статусу
-  else {
-    const statusResult = errors.reduce<Record<string, number>>((acc, e) => {
-      const status = e.status || 'new';
-      acc[status] = (acc[status] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-    result = statusResult;
-  }
-  console.log('[STATS] Результат:', result);
+
   return res.json(result);
 });
 
-// Маршрут для получения ошибок
+// =============================================================================
+// ROUTES: ERRORS — CRUD
+// =============================================================================
+
+/**
+ * GET /errors — List errors, with optional filtering and sorting.
+ *
+ * Query params:
+ *   - Any field name: filters by substring match (case-insensitive)
+ *   - filter:  legacy type filter (equivalent to ?type=value)
+ *   - sort:    field to sort by ('status' | 'count' | 'firstSeen' | 'lastSeen')
+ *   - order:   'asc' | 'desc'
+ */
 app.get('/errors', async (req: Request, res: Response) => {
   await db.read();
   let errors = db.data.errors || [];
 
-  // Универсальная фильтрация по любому query-параметру (кроме служебных)
-  const filterKeys = Object.keys(req.query).filter((k) => !['sort', 'order', 'filter'].includes(k));
+  // Allowlist of known sortable/filterable field names to prevent arbitrary
+  // field probing (information leakage via filter timing).
+  const ALLOWED_FILTER_KEYS = new Set([
+    'projectId', 'type', 'status', 'message', 'stack', 'comment',
+  ]);
+  const RESERVED_KEYS = new Set(['sort', 'order', 'filter']);
+
+  // Apply field filters from query params.
+  const filterKeys = Object.keys(req.query).filter(
+    (k) => !RESERVED_KEYS.has(k) && ALLOWED_FILTER_KEYS.has(k)
+  );
   if (filterKeys.length > 0) {
     errors = errors.filter((e) => {
-      const anyE = e as any; // для динамического доступа к полям
+      const anyE = e as unknown as Record<string, unknown>;
       return filterKeys.every((key) => {
-        // Приводим к строке и сравниваем без регистра
-        return anyE[key] !== undefined && String(anyE[key]).toLowerCase().includes(String(req.query[key]).toLowerCase());
+        const val = anyE[key];
+        return (
+          val !== undefined &&
+          String(val).toLowerCase().includes(
+            sanitizeString(req.query[key] as string, 200).toLowerCase()
+          )
+        );
       });
     });
   }
 
-  // Фильтрация по типу ошибки (старый вариант, если используется filter)
+  // Legacy ?filter= parameter (filters by type).
   if (req.query.filter) {
-    const filterVal = String(req.query.filter).toLowerCase();
-    errors = errors.filter((e) => String((e as any).type).toLowerCase() === filterVal);
+    const filterVal = sanitizeString(req.query.filter as string, 100).toLowerCase();
+    errors = errors.filter((e) => String(e.type || '').toLowerCase() === filterVal);
   }
 
-  // Сортировка по полю
+  // Sorting.
   if (req.query.sort) {
-    const order = String(req.query.order) === 'desc' ? -1 : 1;
-    const sortKey = String(req.query.sort);
+    const order   = sanitizeString(req.query.order as string, 10) === 'desc' ? -1 : 1;
+    const sortKey = sanitizeString(req.query.sort as string, 50);
+
     if (sortKey === 'status') {
       const statusOrder = ['new', 'in_progress', 'fixed', 'ignored'];
-      errors = errors.sort((a, b) => {
-        const aStatus = (String((a as any).status || 'new')).toLowerCase();
-        const bStatus = (String((b as any).status || 'new')).toLowerCase();
-        const aIndex = statusOrder.indexOf(aStatus);
-        const bIndex = statusOrder.indexOf(bStatus);
+      errors = errors.slice().sort((a, b) => {
+        const aStatus = String(a.status || 'new').toLowerCase();
+        const bStatus = String(b.status || 'new').toLowerCase();
+        const aIndex  = statusOrder.indexOf(aStatus);
+        const bIndex  = statusOrder.indexOf(bStatus);
         if (aIndex !== -1 && bIndex !== -1) return (aIndex - bIndex) * order;
         if (aIndex !== -1) return -1 * order;
         if (bIndex !== -1) return 1 * order;
         return aStatus.localeCompare(bStatus) * order;
       });
     } else if (sortKey === 'count') {
-      errors = errors.sort((a, b) => {
-        return ((Number((a as any).count || 0) - Number((b as any).count || 0))) * order;
-      });
+      errors = errors.slice().sort((a, b) => (Number(a.count || 0) - Number(b.count || 0)) * order);
     } else if (sortKey === 'firstSeen') {
-      const getFirstSeen = (err: any) => err.firstSeen || '';
-      errors = errors.sort((a, b) => {
-        const aValue = getFirstSeen(a) ? new Date(getFirstSeen(a)).getTime() : 0;
-        const bValue = getFirstSeen(b) ? new Date(getFirstSeen(b)).getTime() : 0;
-        return (aValue - bValue) * order;
+      errors = errors.slice().sort((a, b) => {
+        const aVal = a.firstSeen ? new Date(a.firstSeen).getTime() : 0;
+        const bVal = b.firstSeen ? new Date(b.firstSeen).getTime() : 0;
+        return (aVal - bVal) * order;
       });
     } else if (sortKey === 'lastSeen') {
-      const getLastSeen = (err: any) => err.lastSeen || '';
-      errors = errors.sort((a, b) => {
-        const aValue = getLastSeen(a) ? new Date(getLastSeen(a)).getTime() : 0;
-        const bValue = getLastSeen(b) ? new Date(getLastSeen(b)).getTime() : 0;
-        return (aValue - bValue) * order;
-      });
-    } else {
-      errors = errors.sort((a, b) => {
-        const anyA = a as any;
-        const anyB = b as any;
-        if (anyA[sortKey] < anyB[sortKey]) return -1 * order;
-        if (anyA[sortKey] > anyB[sortKey]) return 1 * order;
-        return 0;
+      errors = errors.slice().sort((a, b) => {
+        const aVal = a.lastSeen ? new Date(a.lastSeen).getTime() : 0;
+        const bVal = b.lastSeen ? new Date(b.lastSeen).getTime() : 0;
+        return (aVal - bVal) * order;
       });
     }
+    // Unknown sort keys are silently ignored (no sort applied).
   }
+
   res.json(errors);
 });
 
-// Маршрут для добавления новой ошибки
-app.post('/errors', async (req: Request, res: Response) => {
-  const newError: any = req.body;
-  if (!newError || !newError.message) {
-    return res.status(400).json({ error: 'Invalid error data' });
+/**
+ * POST /errors — Ingest a new error report from a client snippet.
+ *
+ * Project resolution order:
+ *   1. X-API-KEY header
+ *   2. body.apiKey / body.key
+ *   3. body.projectId
+ *   4. body.owner or body.user if it looks like an email
+ *
+ * Errors for the same project + type + message + stack on the same calendar
+ * day are de-duplicated (count is incremented instead of inserting a new row).
+ */
+app.post('/errors', errorIngestLimiter, async (req: Request, res: Response) => {
+  // Use the typed CreateErrorRequest DTO rather than `any`.
+  const body = req.body as CreateErrorRequest;
+
+  // Validate the one required field.
+  const message = sanitizeString(body?.message, 5000);
+  if (!message) {
+    return res.status(400).json({ error: 'Error message is required.' });
   }
 
   await db.read();
   if (!db.data) db.data = { errors: [], projects: [], users: [] };
-  db.data.errors = db.data.errors || [];
+  db.data.errors   = db.data.errors   || [];
   db.data.projects = db.data.projects || [];
 
-  // Разрешение проекта: заголовок X-API-KEY -> body.apiKey -> body.projectId -> email владельца в body или пользователя
-  const headerApiKey = String(req.headers['x-api-key'] || req.headers['X-API-KEY'] || '');
-  const bodyApiKey = String(newError.apiKey || newError.key || '');
-  const bodyProjectId = String(newError.projectId || '');
-  let project = null;
+  // --- Project resolution ---
+  const headerApiKey = sanitizeString(req.headers['x-api-key'] as string | undefined, 128);
+  const bodyApiKey   = sanitizeString(body.apiKey, 128);
+  const bodyProjectId = sanitizeString(body.projectId, 128);
+
+  let project: ProjectDTO | null = null;
   if (headerApiKey) project = findProjectByApiKey(headerApiKey);
-  if (!project && bodyApiKey) project = findProjectByApiKey(bodyApiKey);
+  if (!project && bodyApiKey)    project = findProjectByApiKey(bodyApiKey);
   if (!project && bodyProjectId) project = findProjectById(bodyProjectId);
-  //  Попытка разрешения email владельца/участника (используйте newError.owner || newError.user, если похоже на email)
   if (!project) {
-    const maybeEmail = newError.owner || newError.user || '';
-    if (typeof maybeEmail === 'string' && maybeEmail.includes('@')) {
+    // Last resort: try to match by owner/member email in the body.
+    // Cast through unknown to access the non-standard 'owner' field safely.
+    const bodyAny = body as unknown as Record<string, unknown>;
+    const maybeEmail = sanitizeString(bodyAny.owner as string || body.user, 200);
+    if (maybeEmail && maybeEmail.includes('@')) {
       project = findProjectByOwnerOrMember(maybeEmail);
     }
   }
-  // Если все еще не найден — помечаем как неизвестный (мягкий режим)
+  // If no project matched, mark as 'unknown' (soft mode — don't reject the error).
   const projectId = project ? project.id : 'unknown';
 
-  // Ключи для группировки + дата
-  const groupKeys = ['type', 'message', 'stack'];
-  const user = newError.user || 'unknown';
-  const now = new Date().toISOString();
-  // Получаем день ошибки (YYYY-MM-DD)
-  const day = now.slice(0, 10);
+  // --- Sanitise incoming fields ---
+  const type    = sanitizeString(body.type, 100);
+  const stack   = sanitizeString(body.stack, 10000);
+  const user    = sanitizeString(body.user, 500) || 'unknown';
+  const now     = new Date().toISOString();
+  const day     = now.slice(0, 10); // YYYY-MM-DD
 
-  // Нормализуем сравниваемые поля (trim, toLowerCase, пустая строка вместо undefined)
-  function normalize(val: any) {
-    return val === undefined || val === null ? '' : String(val).trim().toLowerCase();
-  }
-
-  let found = db.data.errors.find((e) =>
-    // группируем только в рамках одного проекта (или оба неизвестны)
-    String((e as any).projectId || 'unknown') === String(projectId) &&
-    groupKeys.every((k) => normalize((e as any)[k]) === normalize(newError[k])) &&
-    (e as any).firstSeen && (e as any).firstSeen.slice(0, 10) === day,
+  // --- De-duplication: group same error on same day in same project ---
+  const found = db.data.errors.find((e) =>
+    String(e.projectId || 'unknown') === String(projectId) &&
+    normalize(e.type)    === normalize(type)    &&
+    normalize(e.message) === normalize(message) &&
+    normalize(e.stack)   === normalize(stack)   &&
+    e.firstSeen          && e.firstSeen.slice(0, 10) === day
   );
 
   if (found) {
-    // Увеличиваем count, обновляем lastSeen, добавляем пользователя
+    // Existing record: increment count, update lastSeen, add user.
     found.count = (found.count || 1) + 1;
     found.lastSeen = now;
     if (!found.users) found.users = [];
     if (!found.users.includes(user)) found.users.push(user);
-    // проверяем наличие projectId у найденной ошибки
     if (!found.projectId) found.projectId = projectId;
     await db.write();
     return res.status(200).json(found);
-  } else {
-    // Создаём новую уникальную ошибку (на этот день)
-    const errorObj = {
-      id: uuidv4(),
-      projectId: projectId,
-      type: newError.type,
-      message: newError.message,
-      stack: newError.stack,
-      status: newError.status || 'new',
-      comment: newError.comment || '',
-      count: 1,
-      firstSeen: now,
-      lastSeen: now,
-      users: [user],
-    };
-    db.data.errors.push(errorObj);
-    await db.write();
-    return res.status(201).json(errorObj);
-  }
-});
-
-// Маршрут для обновления ошибки по ID
-app.put('/errors/:id', async (req: Request, res: Response) => {
-  const updatedError: any = req.body;
-  if (!updatedError || !updatedError.message) {
-    return res.status(400).json({ error: 'Invalid error data' });
   }
 
-  await db.read();
-  if (!db.data || !db.data.errors) {
-    return res.status(404).json({ error: 'No errors found' });
-  }
-
-  const index = db.data.errors.findIndex((e) => e.id === req.params.id);
-  if (index === -1) {
-    return res.status(404).json({ error: 'Error not found' });
-  }
-
-  updatedError.id = db.data.errors[index].id; // Сохраняем оригинальный ID
-  // Обновляем lastSeen при любом изменении
-  updatedError.lastSeen = new Date().toISOString();
-  db.data.errors[index] = updatedError;
-
+  // New error record for this day.
+  const errorObj = {
+    id:        uuidv4(),
+    projectId,
+    type:      type || 'error',
+    message,
+    stack,
+    status:    'new' as const,
+    comment:   '',
+    count:     1,
+    firstSeen: now,
+    lastSeen:  now,
+    users:     [user],
+  };
+  db.data.errors.push(errorObj);
   await db.write();
-  res.json(updatedError);
+  return res.status(201).json(errorObj);
 });
 
-// Маршрут для получения ошибки по ID
+/**
+ * GET /errors/:id — Get a single error record by ID.
+ */
 app.get('/errors/:id', async (req: Request, res: Response) => {
   await db.read();
-  if (!db.data || !db.data.errors) {
-    return res.status(404).json({ error: 'No errors found' });
+  if (!db.data?.errors) {
+    return res.status(404).json({ error: 'No errors found.' });
   }
-
   const error = db.data.errors.find((e) => e.id === req.params.id);
-  if (!error) {
-    return res.status(404).json({ error: 'Error not found' });
-  }
-
+  if (!error) return res.status(404).json({ error: 'Error not found.' });
   res.json(error);
 });
 
-// Маршрут для удаления ошибки по ID
-app.delete('/errors/:id', async (req: Request, res: Response) => {
+/**
+ * PUT /errors/:id — Update an error record.
+ *
+ * SECURITY: Only the following fields may be updated by a caller:
+ *   - status  (must be a valid status value)
+ *   - comment (free text, capped at 2000 chars)
+ *
+ * All other fields (id, projectId, message, stack, count, firstSeen, users)
+ * are preserved from the existing DB record and cannot be overwritten.
+ * This prevents full record replacement attacks and data tampering.
+ */
+app.put('/errors/:id', requireApiKey, writeLimiter, async (req: Request, res: Response) => {
+  // Use the typed UpdateErrorRequest DTO.
+  const body = req.body as Partial<UpdateErrorRequest>;
+  if (!body) {
+    return res.status(400).json({ error: 'Request body is required.' });
+  }
+
   await db.read();
-  if (!db.data || !db.data.errors) {
-    return res.status(404).json({ error: 'No errors found' });
+  if (!db.data?.errors) {
+    return res.status(404).json({ error: 'No errors found.' });
   }
 
   const index = db.data.errors.findIndex((e) => e.id === req.params.id);
-  if (index === -1) {
-    return res.status(404).json({ error: 'Error not found' });
+  if (index === -1) return res.status(404).json({ error: 'Error not found.' });
+
+  // Only allow patching of safe, explicitly-listed fields.
+  // Cast through unknown first because ErrorRecord has no index signature.
+  const existing = db.data.errors[index];
+  const rawStatus = sanitizeString(body.status as string | undefined, 20);
+
+  if (rawStatus && !VALID_STATUSES.has(rawStatus)) {
+    return res.status(400).json({
+      error: `Invalid status value. Must be one of: ${[...VALID_STATUSES].join(', ')}.`,
+    });
   }
+
+  // Merge only the allowed fields; all other fields remain unchanged.
+  const updated = {
+    ...existing,
+    // Apply safe fields if present in the request body.
+    ...(rawStatus ? { status: rawStatus as 'new' | 'in_progress' | 'fixed' | 'ignored' | 'unknown' } : {}),
+    ...(body.comment !== undefined ? { comment: sanitizeString(body.comment, 2000) } : {}),
+    // Always update lastSeen on any successful PUT.
+    lastSeen: new Date().toISOString(),
+  };
+
+  db.data.errors[index] = updated;
+  await db.write();
+  return res.json(updated);
+});
+
+/**
+ * DELETE /errors/:id — Delete an error record by ID.
+ * Requires a valid API key (uses requireApiKey middleware).
+ */
+app.delete('/errors/:id', requireApiKey, writeLimiter, async (req: Request, res: Response) => {
+  await db.read();
+  if (!db.data?.errors) {
+    return res.status(404).json({ error: 'No errors found.' });
+  }
+
+  const index = db.data.errors.findIndex((e) => e.id === req.params.id);
+  if (index === -1) return res.status(404).json({ error: 'Error not found.' });
 
   db.data.errors.splice(index, 1);
   await db.write();
+  // 204 No Content — no body on successful delete.
   res.status(204).end();
 });
 
-// Запуск сервера
+// =============================================================================
+// SERVER START
+// =============================================================================
+
 const PORT: number = Number(process.env.PORT) || 3000;
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server is running on http://0.0.0.0:${PORT}`);
+  console.log(`[server] Running on http://0.0.0.0:${PORT} (NODE_ENV=${process.env.NODE_ENV || 'development'})`);
 });
 
-// Экспорт приложения для тестирования
+// Export for test suites (supertest etc.)
 export default app;
