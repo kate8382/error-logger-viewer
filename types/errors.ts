@@ -5,7 +5,9 @@ export interface ErrorDTO {
   type?: string;
   message: string;
   stack?: string;
-  status?: 'new' | 'in_progress' | 'fixed' | 'ignored' | string;
+  // Closed union — do not add `| string` here; that makes the type meaningless.
+  // Use 'unknown' only as a temporary fallback for legacy records that predate this schema.
+  status?: 'new' | 'in_progress' | 'fixed' | 'ignored' | 'unknown';
   comment?: string;
   count?: number;
   firstSeen?: string;
