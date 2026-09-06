@@ -58,7 +58,7 @@ module.exports = (env = {}) => ({
       patterns: [
         { from: path.resolve(__dirname, 'frontend', 'src', 'assets', 'img'), to: 'img' },
         { from: path.resolve(__dirname, 'frontend', 'src', 'assets', 'fonts'), to: 'fonts' },
-        { from: path.resolve(__dirname, 'frontend', 'favicon.ico'), to: '' },
+        { from: path.resolve(__dirname, 'frontend', 'src', 'assets', 'img', 'logo.png'), to: 'favicon.png' },
       ],
     }),
   ],
