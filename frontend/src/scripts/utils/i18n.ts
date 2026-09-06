@@ -124,8 +124,8 @@ export const translations = {
     placeholderTable: 'Search in table...',
     ariaInputTable: 'Search in table',
     // Sidebar
-    logoFigmaAria: 'Open original logo design in Figma',
-    logoFigmaTitle: 'Open original logo design in Figma',
+    logoProjectAria: 'Open repository in GitHub',
+    logoProjectTitle: 'Open repository in GitHub',
     ariaSidebar: 'Sidebar navigation',
     // About
     navAbout: 'About',
@@ -284,8 +284,8 @@ export const translations = {
     placeholderTable: 'Поиск в таблице...',
     ariaInputTable: 'Поиск в таблице',
     // Sidebar
-    logoFigmaAria: 'Открыть оригинальный макет логотипа в Figma',
-    logoFigmaTitle: 'Открыть оригинальный макет логотипа в Figma',
+    logoProjectAria: 'Открыть проект на GitHub',
+    logoProjectTitle: 'Открыть проект на GitHub',
     ariaSidebar: 'Навигация по сайдбару',
     // About
     navAbout: 'О программе',

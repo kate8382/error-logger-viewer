@@ -19,7 +19,7 @@
     "skipLibCheck": true,
     "ignoreDeprecations": "6.0",
     "resolveJsonModule": true,
-    "types": ["node", "jest"]
+
   }
   ,
   "exclude": ["types"]
