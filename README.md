@@ -87,7 +87,7 @@ error-logger-viewer/
 ## Acknowledgements
 
 - **Application Development:** [kate8382](https://github.com/kate8382)
-- **Backend Architecture & Security:** Collaboration with [Manuja](https://github.com/MMVS-79)
+- **Backend Architecture & Security:** Collaboration with [MMVS-79](https://github.com/MMVS-79)
 - **UI Design Kit:** [M. Ali, Free Admin Dashboard UI Kit](https://www.figma.com/community/file/1244293267600418871)
 
 ## License
