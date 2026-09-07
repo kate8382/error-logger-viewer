@@ -1,104 +1,19 @@
+@use 'variables' as *;
+
 // Styles for registration full-page section
 .register-section {
   position: fixed;
   inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: var(--body-color);
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
-.register {
-  width: min(1100px, 96%);
-  height: 70vh;
-  display: flex;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-  border-radius: 12px;
-  overflow: hidden;
-  background: #fff;
-}
-
-.register__left {
-  flex: 1 1 55%;
-  background: linear-gradient(180deg, #6b2bd8 0%, #4b21a8 100%);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-}
-
-.register__branding {
-  max-width: 420px;
-}
-
-.register__title {
-  font-size: 36px;
-  margin-bottom: 12px;
-}
-
-.register__subtitle {
-  opacity: 0.95;
-}
-
-.register__right {
-  flex: 1 1 45%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-}
-
-.register__form {
-  width: 100%;
-  max-width: 380px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.register__form input {
-  padding: 12px 14px;
-  border-radius: 8px;
-  border: 1px solid #e6e6e9;
-  background: #fafafa;
-}
-
-.register__controls {
-  display: flex;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.btn--primary {
-  background: linear-gradient(90deg, #6b2bd8, #7a4df0);
-  color: #fff;
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: none;
-}
-
-.btn--ghost {
-  background: transparent;
-  border: 1px solid #ddd;
-  padding: 10px 14px;
-  border-radius: 8px;
-}
-
-@media (max-width: 768px) {
   .register {
-    flex-direction: column;
-    height: auto;
-  }
-
-  .register__left {
-    width: 100%;
-    padding: 24px;
-  }
-
-  .register__right {
-    width: 100%;
-    padding: 24px;
+    z-index: 2;
+    display: flex;
+    width: 100vw;
+    margin: 0 auto;
   }
 }

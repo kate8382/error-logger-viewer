@@ -1,81 +1,157 @@
+import { setChildren } from 'redom';
+import { t, getLabel, onLangChange } from './utils/i18n';
+import { createElement, translateNodes, qsa } from './utils/dom';
+
 export class Register {
   container: HTMLElement | null;
+  private form: HTMLFormElement | null = null;
+  private nameInput: HTMLInputElement | null = null;
+  private projectInput: HTMLInputElement | null = null;
+  private emailInput: HTMLInputElement | null = null;
+  private passwordInput: HTMLInputElement | null = null;
+  private guestLink: HTMLAnchorElement | null = null;
 
   constructor() {
     this.container = document.getElementById('registerSection');
+    // Подписка на смену языка — обновляем переводы в секции
+    onLangChange(() => this.translatePage());
   }
 
-  init() {
+  init(): void {
     if (!this.container) return;
     this.render();
+    this.translatePage();
+    this.captureElements();
     this.bind();
   }
 
-  render() {
+  private render(): void {
     if (!this.container) return;
-    this.container.innerHTML = `
-      <div class="register">
-        <div class="register__left">
-          <div class="register__branding">
-            <h1 class="register__title">Sign Up</h1>
-            <p class="register__subtitle">Start tracking errors and get insights for your project.</p>
-          </div>
-        </div>
-        <div class="register__right">
-          <form class="register__form" id="registerForm" novalidate>
-            <label class="visually-hidden" for="r-name">Name</label>
-            <input id="r-name" name="name" placeholder="Your name" required>
 
-            <label class="visually-hidden" for="r-project">Project (optional)</label>
-            <input id="r-project" name="project" placeholder="Project name (optional)">
+    const branding = createElement('div', { className: 'register__branding' },
+      createElement('img', { className: 'register__logo', attrs: { src: 'assets/src/img/logo.png', alt: 'App logo' }, dataI18n: 'logoProjectTitle' }),
+      createElement('h1', { className: 'register__title', dataI18n: 'registerTitle', attrs: { 'data-i18n-aria-label': 'titleAria' } }, 'Error Logger & Viewer'),
+      createElement('p', { className: 'register__text', dataI18n: 'registerText', attrs: { 'data-i18n-aria-label': 'registerTextAria' } }, 'Start tracking errors and get insights for your project'),
+      createElement('ul', { className: 'register__features', attrs: { 'aria-hidden': 'false' } },
+        createElement('li', { dataI18n: 'registerFeatureRealtime', attrs: { 'data-i18n-aria-label': 'registerFeatureRealtimeAria' } }, 'Real-time error tracking'),
+        createElement('li', { dataI18n: 'registerFeatureTeam', attrs: { 'data-i18n-aria-label': 'registerFeatureTeamAria' } }, 'Team & Solo projects'),
+        createElement('li', { dataI18n: 'registerFeatureAnalytics', attrs: { 'data-i18n-aria-label': 'registerFeatureAnalyticsAria' } }, 'Advanced analytics')
+      )
+    );
 
-            <div class="register__controls">
-              <button type="submit" class="btn btn--primary">Get started</button>
-              <button type="button" id="continueGuest" class="btn btn--ghost">Continue as guest</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    `;
+    const left = createElement('div', { className: 'register__left', role: 'complementary', attrs: { 'aria-hidden': 'false' } }, branding);
+
+    const formEl = createElement('form', { className: 'register__form', id: 'registerForm', attrs: { novalidate: 'true' }, role: 'form' },
+      createElement('label', { className: 'visually-hidden', attrs: { for: 'r-name' } }, 'User Name'),
+      createElement('input', { className: 'input', id: 'r-name', name: 'name', type: 'text', required: true, attrs: { placeholder: 'Your name', 'data-i18n-placeholder': 'registerFormName', 'data-i18n-aria-label': 'registerFormNameAria' } }),
+
+      createElement('label', { className: 'visually-hidden', attrs: { for: 'r-project' } }, 'Project Name'),
+      createElement('input', { className: 'input', id: 'r-project', name: 'project', type: 'text', attrs: { placeholder: 'Project name (optional)', 'data-i18n-placeholder': 'registerFormProject', 'data-i18n-aria-label': 'registerFormProjectAria' } }),
+
+      createElement('label', { className: 'visually-hidden', attrs: { for: 'r-email' } }, 'Email'),
+      createElement('input', { className: 'input', id: 'r-email', name: 'email', type: 'email', required: true, attrs: { placeholder: 'Email', 'data-i18n-placeholder': 'registerFormEmail', 'data-i18n-aria-label': 'registerFormEmailAria' } }),
+
+      createElement('label', { className: 'visually-hidden', attrs: { for: 'r-password' } }, 'Password'),
+      createElement('input', { className: 'input', id: 'r-password', name: 'password', type: 'password', required: true, attrs: { placeholder: 'Password', 'data-i18n-placeholder': 'registerFormPassword', 'data-i18n-aria-label': 'registerFormPasswordAria' } }),
+
+      createElement('div', { className: 'register__controls', role: 'group', attrs: { 'data-i18n-aria-label': 'registerControlsAria' } },
+        createElement('button', { className: 'btn btn--primary', type: 'submit', dataI18n: 'registerButtonSignup', attrs: { 'data-i18n-aria-label': 'registerButtonSignupAria' } }, 'Sign Up'),
+        createElement('a', { className: 'register__guest', id: 'continueGuest', role: 'button', dataI18n: 'registerLinkGuest', attrs: { href: '#', 'data-i18n-aria-label': 'registerLinkGuestAria' } }, 'Continue as Guest →')
+      )
+    );
+
+    const right = createElement('div', { className: 'register__right', role: 'main' },
+      createElement('h2', { className: 'register__subtitle', dataI18n: 'registerSubtitle' }, 'Sign Up'),
+      formEl,
+    );
+
+    const wrapper = createElement('div', { className: 'register' }, left, right);
+
+    setChildren(this.container, [wrapper]);
   }
 
-  bind() {
-    const form = document.getElementById('registerForm') as HTMLFormElement | null;
-    const guestBtn = document.getElementById('continueGuest');
-    if (form) {
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const data = new FormData(form);
-        const name = String(data.get('name') || '').trim();
-        const project = String(data.get('project') || '').trim();
-        if (!name) {
-          // simple client validation
-          alert('Please enter your name');
-          return;
-        }
-        // For now we store minimal user info in localStorage as a demo flow
-        const user = { name, project: project || null, mode: 'user' };
-        try {
-          localStorage.setItem('currentUser', JSON.stringify(user));
-        } catch {}
-        alert('Registered (demo). You can extend server flow later.');
-        // TODO: navigate to main app section
-      });
+  private captureElements(): void {
+    if (!this.container) return;
+    this.form = this.container.querySelector<HTMLFormElement>('#registerForm');
+    this.nameInput = this.container.querySelector<HTMLInputElement>('#r-name');
+    this.projectInput = this.container.querySelector<HTMLInputElement>('#r-project');
+    this.emailInput = this.container.querySelector<HTMLInputElement>('#r-email');
+    this.passwordInput = this.container.querySelector<HTMLInputElement>('#r-password');
+    this.guestLink = this.container.querySelector<HTMLAnchorElement>('#continueGuest');
+  }
+
+  private bind(): void {
+    if (this.form) {
+      this.form.addEventListener('submit', this.onSubmit.bind(this));
     }
-    if (guestBtn) {
-      guestBtn.addEventListener('click', () => {
-        const user = { name: 'Guest', project: null, mode: 'guest' };
-        try {
-          localStorage.setItem('currentUser', JSON.stringify(user));
-        } catch {}
-        // TODO: navigate to main app section
-        alert('Continuing as guest (demo)');
-      });
+    if (this.guestLink) {
+      this.guestLink.addEventListener('click', this.onGuest.bind(this));
     }
   }
 
-  translatePage() {
-    // Placeholder for i18n integration
+  private onSubmit(e: Event): void {
+    e.preventDefault();
+    const name = (this.nameInput?.value || '').trim();
+    const projectRaw = (this.projectInput?.value || '').trim();
+    const project = projectRaw || 'Solo Project';
+    const email = (this.emailInput?.value || '').trim();
+    const password = (this.passwordInput?.value || '').trim();
+
+    if (!name) {
+      this.announce('Please enter your name');
+      return;
+    }
+    if (!email) {
+      this.announce('Please enter your email');
+      return;
+    }
+    if (!password) {
+      this.announce('Please enter your password');
+      return;
+    }
+
+    const user = { name, project, email, mode: 'user' };
+    try {
+      localStorage.setItem('currentUser', JSON.stringify(user));
+    } catch {}
+    this.announce('Registered (demo).');
+    // TODO: replace with actual navigation / API call to server
+  }
+
+  private onGuest(e: Event): void {
+    e.preventDefault();
+    const user = { name: 'unknown', project: 'unknown', email: 'unknown', mode: 'guest' };
+    try {
+      localStorage.setItem('currentUser', JSON.stringify(user));
+    } catch {}
+    this.announce('Continuing as guest (demo)');
+    // TODO: navigate to main app
+  }
+
+  private announce(message: string): void {
+    // simple accessible announcement — can be improved with live region
+    // eslint-disable-next-line no-alert
+    alert(message);
+  }
+
+  translatePage(): void {
+    if (!this.container) return;
+    // переводим текстовые узлы
+    translateNodes(this.container, '[data-i18n]');
+
+    // placeholder для полей
+    const placeholders = qsa<HTMLElement>('[data-i18n-placeholder]', this.container);
+    placeholders.forEach((element) => {
+      const key = element.getAttribute('data-i18n-placeholder') || '';
+      element.setAttribute('placeholder', t(key) || key);
+    });
+
+    // aria-label через ключи
+    const ariaElements = qsa<HTMLElement>('[data-i18n-aria-label]', this.container);
+    ariaElements.forEach((elm) => {
+      const key = elm.getAttribute('data-i18n-aria-label') || '';
+      if (key) elm.setAttribute('aria-label', t(key));
+    });
   }
 }
 
