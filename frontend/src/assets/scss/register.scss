@@ -4,16 +4,28 @@
 .register-section {
   position: fixed;
   inset: 0;
-  z-index: 1;
+  // Ensure the registration section is above table sections (z-index: 2)
+  z-index: 3;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  color: var(--black-color);
   background: var(--body-color);
 
   .register {
-    z-index: 2;
     display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100vw;
-    margin: 0 auto;
   }
+
+  // Neutralize theme variables inside registration so theme switching doesn't affect it
+  // This makes the section use default/light theme tokens regardless of [data-theme]
+  --body-color: #dbdcde;
+  --white-color: #FFFFFF;
+  --black-color: #3A3541;
+  --grey-color: #89868d;
+  --stats-btn-color: #f4f5f9;
+  --stats-text-color: #b4b2b7;
+  --focus-color: #9255FD;
+  --hover-color: #DECCFE;
+  --active-color: #6E39CB;
 }

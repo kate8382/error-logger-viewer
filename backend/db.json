@@ -935,6 +935,21 @@
       "users": [
         "unknown"
       ]
+    },
+    {
+      "id": "721c6538-a964-44e9-9bb2-49564f9641af",
+      "projectId": "unknown",
+      "type": "ResourceLoadError",
+      "message": "Failed to load resource: IMG",
+      "stack": "",
+      "status": "new",
+      "comment": "",
+      "count": 2,
+      "firstSeen": "2026-09-08T13:05:14.864Z",
+      "lastSeen": "2026-09-08T13:29:14.795Z",
+      "users": [
+        "unknown"
+      ]
     }
   ],
   "projects": [
