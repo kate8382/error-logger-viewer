@@ -7,7 +7,7 @@ import { typeColors, statusColors } from './utils/colors';
 import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 
 // Типы и интерфейсы, получающие и возвращающие функции статистики
-export type DoughnutData = { percents: number[], counts: number[] };
+export type DoughnutData = { percents: number[]; counts: number[] };
 export type GetStatsFn = () => Array<[string, number]>;
 export type GetPercentsFn = () => number[];
 
@@ -24,7 +24,7 @@ export interface RenderSectionOptions {
 }
 
 export class StatsManager {
-  // eslint-disable-next-line prettier/prettier, no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   constructor(public errors: ErrorItem[] = []) {
     // Подписка на смену языка для автоматического обновления статистики
     onLangChange(() => {
@@ -121,7 +121,7 @@ export class StatsManager {
   }
 
   // Универсальный рендер полу-бублика
-  renderDoughnut({ chartId, stats, colors, view = 'percent' }: { chartId: string, stats: { percents: number[], counts: number[] }, colors: readonly string[], view?: 'percent' | 'count' }) {
+  renderDoughnut({ chartId, stats, colors, view = 'percent' }: { chartId: string; stats: { percents: number[]; counts: number[] }; colors: readonly string[]; view?: 'percent' | 'count' }) {
     const canvasWrapper = qs<HTMLElement>(`#${chartId}`);
     if (!canvasWrapper) return;
     canvasWrapper.innerHTML = '';
@@ -213,7 +213,12 @@ export class StatsManager {
             colors: typeColors,
             btnPercentId: 'btnStatsTypePercent',
             btnCountId: 'btnStatsTypeCount',
-            doughnutMethod: makeDoughnut(() => this.typePercentStats, () => this.typeStats.map(([, c]) => c), 'statsChartType', typeColors),
+            doughnutMethod: makeDoughnut(
+              () => this.typePercentStats,
+              () => this.typeStats.map(([, c]) => c),
+              'statsChartType',
+              typeColors,
+            ),
           });
           hideCenterSpinner(groupTypeContent);
         }
@@ -228,7 +233,12 @@ export class StatsManager {
             colors: statusColors,
             btnPercentId: 'btnStatsStatusPercent',
             btnCountId: 'btnStatsStatusCount',
-            doughnutMethod: makeDoughnut(() => this.statusPercentStats, () => this.statusStats.map(([, c]) => c), 'statsChartStatus', statusColors),
+            doughnutMethod: makeDoughnut(
+              () => this.statusPercentStats,
+              () => this.statusStats.map(([, c]) => c),
+              'statsChartStatus',
+              statusColors,
+            ),
           });
           hideCenterSpinner(groupStatusContent);
         }

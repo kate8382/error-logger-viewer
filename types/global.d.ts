@@ -42,4 +42,15 @@ declare global {
 
 export {};
 
+declare module 'chart.js/auto' {
+  const Chart: any;
+  export default Chart;
+}
+
+declare module 'chart.js' {
+  export type Chart = any;
+  const Chart: any;
+  export default Chart;
+}
+
 

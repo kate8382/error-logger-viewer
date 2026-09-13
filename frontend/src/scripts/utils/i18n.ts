@@ -7,7 +7,7 @@ try {
     currentLang = savedLang as 'en' | 'ru';
   } else {
     // Локальное приведение `window.app` к минимальному типу для безопасной проверки errorApi
-    const app = window.app as unknown as { errorApi?: { mode?: string }, lang?: 'en' | 'ru' } | undefined;
+    const app = window.app as unknown as { errorApi?: { mode?: string }; lang?: 'en' | 'ru' } | undefined;
     if (app && app.errorApi) {
       // window.app присутствует — используем app.lang дальше при необходимости
     } else {
