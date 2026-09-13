@@ -43,21 +43,9 @@ declare global {
 export {};
 
 declare module 'chart.js/auto' {
-  export default class Chart {
-    constructor(canvas: any, config: any);
-    destroy(): void;
-    update(): void;
-    static register(...args: any[]): void;
-  }
-}
-
-declare module 'chart.js' {
-  export default class Chart {
-    constructor(canvas: any, config: any);
-    destroy(): void;
-    update(): void;
-  }
-  export type ChartType = any;
+  import { Chart } from 'chart.js';
+  export * from 'chart.js';
+  export default Chart;
 }
 
 
