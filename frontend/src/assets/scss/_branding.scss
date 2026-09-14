@@ -21,6 +21,9 @@
     border: none;
     transition: color 0.3s ease-in-out;
 
+    /* Ensure the title text keeps the h1 size even when the h1 wrapper isn't moved into register */
+    font-size: var(--h1-font);
+
     // для табуляции
     &:focus {
       color: var(--focus-color);

@@ -1,12 +1,14 @@
 @use 'normalize';
 @use 'variables' as *;
+@use 'branding' as *;
 @use 'aside';
 @use 'header';
+@use 'register';
+@use 'about';
 @use 'stats';
 @use 'charts';
 @use 'table';
 @use 'modal';
-@use 'register';
 
 html {
   box-sizing: border-box;

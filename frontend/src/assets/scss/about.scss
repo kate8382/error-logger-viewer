@@ -1,0 +1,121 @@
+@use 'variables' as *;
+
+.about {
+  position: relative;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: auto;
+  padding: var(--max-gap);
+  font-size: var(--body-font);
+  line-height: 1.4;
+  border-radius: var(--card-radius);
+  background-color: var(--white-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  .about-btn-close {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    width: 30px;
+    height: 30px;
+    margin: 0;
+    color: var(--black-color);
+    transition: color 0.3s ease-in-out;
+
+    &:hover {
+      color: var(--grey-color);
+    }
+
+    &:active {
+      color: var(--black-color);
+    }
+
+    .about-btn-close-icon {
+      width: 18px;
+      height: 18px;
+      color: currentColor;
+
+      @media (max-width: #{$desktop}) {
+        width: 16px;
+        height: 16px;
+      }
+
+      @media (max-width: #{$tablet}) {
+        width: 14px;
+        height: 14px;
+      }
+    }
+  }
+
+  .about__title {
+    margin-bottom: var(--max-gap);
+    font-size: var(--h2-font);
+  }
+
+  .about__description {
+    margin-bottom: var(--min-gap);
+
+    &-highlight {
+      font-weight: 700;
+    }
+  }
+
+  .about__subtitle {
+    margin-bottom: var(--min-gap);
+    font-size: var(--h3-font);
+  }
+
+  .about__features {
+    flex-direction: column;
+    gap: var(--min-gap);
+    margin-bottom: var(--max-gap);
+    padding-left: 20px;
+    list-style: disc;
+
+    .about__feature {
+      font-size: var(--body-font);
+
+      &-bold {
+        font-weight: 700;
+      }
+    }
+  }
+
+  .about__steps {
+    margin-bottom: var(--max-gap);
+    padding-left: var(--max-gap);
+    padding-right: 16px;
+    list-style: decimal;
+    line-height: 1;
+
+    .about__step {
+      margin-bottom: var(--min-gap);
+    }
+  }
+
+  .about__steps li::marker {
+    font-weight: bold;
+  }
+
+  .about__text {
+    font-style: italic;
+
+    .about__link {
+      color: var(--type8-color);
+      transition: color 0.3s ease-in-out;
+
+      &:focus {
+        color: var(--type3-color);
+      }
+
+      &:hover {
+        color: var(--type7-color);
+      }
+
+      &:active {
+        color: var(--type8-color);
+      }
+    }
+  }
+}
