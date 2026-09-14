@@ -1,0 +1,66 @@
+@use 'variables' as *;
+
+/* Общие стили для бренда: логотип в сайдбаре и заголовок в хедере, переключатель языка */
+.sidebar__logo {
+  width: 85px;
+  height: 85px;
+  margin-bottom: 28px;
+
+  @media (max-width: #{$desktop}) {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 26px;
+  }
+}
+
+.header__title {
+  font-size: var(--h1-font);
+
+  &-text {
+    outline: none;
+    border: none;
+    transition: color 0.3s ease-in-out;
+
+    /* Ensure the title text keeps the h1 size even when the h1 wrapper isn't moved into register */
+    font-size: var(--h1-font);
+
+    // для табуляции
+    &:focus {
+      color: var(--focus-color);
+    }
+  }
+}
+
+.header__lang-switch {
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--body-font);
+  width: 10%;
+
+  @media (max-width: #{$mobile}) {
+    display: none;
+    width: 0;
+  }
+
+  .lang-btn {
+    font-weight: bold;
+    font-size: var(--body-font);
+    transition: color 0.3s ease-in-out;
+
+    @media (max-width: #{$tablet}) {
+      font-size: 14px;
+    }
+
+    &:focus {
+      color: var(--focus-color);
+    }
+
+    &:hover {
+      color: var(--hover-color);
+    }
+
+    &:active {
+      color: var(--active-color);
+    }
+  }
+}

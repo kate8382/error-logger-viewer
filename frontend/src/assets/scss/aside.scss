@@ -1,339 +1,209 @@
-   @use 'variables' as *;
+  @use 'variables' as *;
+  @use 'branding' as *;
 
-   .sidebar {
-     grid-area: sidebar;
-     flex-direction: column;
-     align-items: center;
-     min-width: 0;
-     min-height: 0;
-     padding-top: 14px;
-     background: var(--white-color);
+  .sidebar {
+    grid-area: sidebar;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+    min-height: 0;
+    padding-top: 14px;
+    background: var(--white-color);
 
-     @media (max-width: #{$desktop}) {
-       padding-top: 20px;
-     }
+    @media (max-width: #{$desktop}) {
+      padding-top: 20px;
+    }
 
-     @media (max-width:#{$mobile}) {
-       &--active {
-         position: fixed;
-         top: 0;
-         left: 0;
-         z-index: 10;
-         width: 250px;
-         height: 100%;
-         overflow-y: scroll;
-         box-shadow: 2px 0 8px rgba(0, 0, 0, 0.12);
-       }
-     }
+    @media (max-width:#{$mobile}) {
+      &--active {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 10;
+        width: 250px;
+        height: 100%;
+        overflow-y: scroll;
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.12);
+      }
+    }
 
-     .sidebar__logo {
-       width: 85px;
-       height: 85px;
-       margin-bottom: 28px;
+    /* .sidebar__logo styles moved to _branding.scss */
 
-       @media (max-width: #{$desktop}) {
-         width: 70px;
-         height: 70px;
-         margin-bottom: 26px;
-       }
-     }
+    // Миксины для общих стилей
+    @mixin item-link {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--min-gap);
+      width: 100%;
+      min-height: 40px;
+      padding: var(--min-gap);
+      padding-left: 11px;
+      color: currentColor;
+      border-radius: var(--card-radius);
+      transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 
-     // Миксины для общих стилей
-     @mixin item-link {
-       flex-direction: row;
-       align-items: center;
-       gap: var(--min-gap);
-       width: 100%;
-       min-height: 40px;
-       padding: var(--min-gap);
-       padding-left: 11px;
-       color: currentColor;
-       border-radius: var(--card-radius);
-       transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+      &:focus,
+      &:hover,
+      &:active {
+        color: var(--active-color);
+        background-color: var(--hover-color);
+      }
+    }
 
-       &:focus,
-       &:hover,
-       &:active {
-         color: var(--active-color);
-         background-color: var(--hover-color);
-       }
-     }
+    @mixin item-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
 
-     @mixin item-icon {
-       width: 20px;
-       height: 20px;
-       flex-shrink: 0;
+      @media (max-width: #{$desktop}) {
+        width: 18px;
+        height: 18px;
+      }
 
-       @media (max-width: #{$desktop}) {
-         width: 18px;
-         height: 18px;
-       }
+      @media (max-width: #{$tablet}) {
+        width: 16px;
+        height: 16px;
+      }
+    }
 
-       @media (max-width: #{$tablet}) {
-         width: 16px;
-         height: 16px;
-       }
-     }
+    @mixin item-text {
+      font-weight: 700;
+      line-height: 1.2;
+    }
 
-     @mixin item-text {
-       font-weight: 700;
-       line-height: 1.2;
-     }
+    @mixin dropdown-arrow {
+      width: 14px;
+      height: 14px;
+      margin-left: auto;
+      transition: transform 0.2s;
 
-     @mixin dropdown-arrow {
-       width: 14px;
-       height: 14px;
-       margin-left: auto;
-       transition: transform 0.2s;
+      @media (max-width: #{$tablet}) {
+        width: 12px;
+        height: 12px;
+      }
+    }
 
-       @media (max-width: #{$tablet}) {
-         width: 12px;
-         height: 12px;
-       }
-     }
+    .sidebar__list {
+      flex-direction: column;
+      gap: var(--max-gap);
+      width: 100%;
 
-     .sidebar__list {
-       flex-direction: column;
-       gap: var(--max-gap);
-       width: 100%;
+      .sidebar__item {
+        width: 100%;
+        min-height: 40px;
+        padding: 12px 26px;
 
-       .sidebar__item {
-         width: 100%;
-         min-height: 40px;
-         padding: 12px 26px;
+        @media (max-width: #{$desktop}) {
+          padding: 10px 10px 10px 20px;
+        }
 
-         @media (max-width: #{$desktop}) {
-           padding: 10px 10px 10px 20px;
-         }
+        .sidebar__item-link {
+          @include item-link;
 
-         .sidebar__item-link {
-           @include item-link;
+          .sidebar__item-icon {
+            @include item-icon;
+          }
 
-           .sidebar__item-icon {
-             @include item-icon;
-           }
+          .sidebar__item-text {
+            @include item-text;
+          }
 
-           .sidebar__item-text {
-             @include item-text;
-           }
+          @media (max-width: #{$desktop}) {
+            padding: 11px 5px;
+          }
+        }
+      }
 
-           @media (max-width: #{$desktop}) {
-             padding: 11px 5px;
-           }
-         }
-       }
+      .sidebar__dropdown {
+        position: relative;
+        user-select: none;
+        z-index: 1;
+        width: 100%;
 
-       .sidebar__dropdown {
-         position: relative;
-         user-select: none;
-         z-index: 1;
-         width: 100%;
+        .sidebar__dropdown-btn {
+          @include item-link;
+          position: relative;
 
-         .sidebar__dropdown-btn {
-           @include item-link;
-           position: relative;
+          .sidebar__item-icon {
+            @include item-icon;
+          }
 
-           .sidebar__item-icon {
-             @include item-icon;
-           }
+          .sidebar__item-text {
+            @include item-text;
+          }
 
-           .sidebar__item-text {
-             @include item-text;
-           }
+          .sidebar__dropdown-arrow {
+            @include dropdown-arrow;
+          }
+        }
 
-           .sidebar__dropdown-arrow {
-             @include dropdown-arrow;
-           }
-         }
+        .sidebar__dropdown-list {
+          position: absolute;
+          left: 0;
+          top: 100%;
+          display: none;
+          flex-direction: column;
+          gap: var(--body-font);
+          width: 100%;
+          padding: var(--small-font);
+          background: var(--white-color);
+          opacity: 0;
+          visibility: hidden;
+          transition: opacity 0.2s, visibility 0.2s;
+        }
 
-         .sidebar__dropdown-list {
-           position: absolute;
-           left: 0;
-           top: 100%;
-           display: none;
-           flex-direction: column;
-           gap: var(--body-font);
-           width: 100%;
-           padding: var(--small-font);
-           background: var(--white-color);
-           opacity: 0;
-           visibility: hidden;
-           transition: opacity 0.2s, visibility 0.2s;
-         }
+        &.open .sidebar__dropdown-list {
+          display: flex;
+          opacity: 1;
+          visibility: visible;
+        }
 
-         &.open .sidebar__dropdown-list {
-           display: flex;
-           opacity: 1;
-           visibility: visible;
-         }
+        &.open>.sidebar__dropdown-btn .sidebar__dropdown-arrow {
+          transform: rotate(180deg);
+        }
 
-         &.open>.sidebar__dropdown-btn .sidebar__dropdown-arrow {
-           transform: rotate(180deg);
-         }
+        .sidebar__dropdown-group {
 
-         .sidebar__dropdown-group {
+          .sidebar__dropdown-group-btn {
+            @include item-link;
+            @include item-text;
+            justify-content: space-evenly;
+            align-items: center;
+            width: 75%;
+            padding-left: 18px;
+            font-weight: 700;
+            text-align: left;
+            transition: background 0.2s;
+          }
 
-           .sidebar__dropdown-group-btn {
-             @include item-link;
-             @include item-text;
-             justify-content: space-evenly;
-             align-items: center;
-             width: 75%;
-             padding-left: 18px;
-             font-weight: 700;
-             text-align: left;
-             transition: background 0.2s;
-           }
+          .sidebar__dropdown-arrow {
+            @include dropdown-arrow;
+          }
 
-           .sidebar__dropdown-arrow {
-             @include dropdown-arrow;
-           }
+          .sidebar__dropdown-sublist {
+            display: none;
+            flex-direction: column;
+            gap: var(--body-font);
+            width: 100%;
+            padding: var(--small-font) var(--h3-font);
 
-           .sidebar__dropdown-sublist {
-             display: none;
-             flex-direction: column;
-             gap: var(--body-font);
-             width: 100%;
-             padding: var(--small-font) var(--h3-font);
+            .sidebar__dropdown-option {
+              @include item-link;
+              padding: 11px 8px;
+              text-align: left;
+              font-weight: 700;
+              transition: background 0.2s;
+            }
+          }
 
-             .sidebar__dropdown-option {
-               @include item-link;
-               padding: 11px 8px;
-               text-align: left;
-               font-weight: 700;
-               transition: background 0.2s;
-             }
-           }
+          &.open .sidebar__dropdown-sublist {
+            display: flex;
+          }
 
-           &.open .sidebar__dropdown-sublist {
-             display: flex;
-           }
-
-           &.open>.sidebar__dropdown-group-btn .sidebar__dropdown-arrow {
-             transform: rotate(180deg);
-           }
-         }
-       }
-     }
-   }
-
-   // About
-   .about-section {
-     position: relative;
-     flex-direction: column;
-     align-items: flex-start;
-     width: 100%;
-     margin-top: auto;
-     padding: var(--max-gap);
-     font-size: var(--body-font);
-     line-height: 1.4;
-     border-radius: var(--card-radius);
-     background-color: var(--white-color);
-     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-
-     .about-btn-close {
-       position: absolute;
-       top: 15px;
-       right: 25px;
-       width: 30px;
-       height: 30px;
-       margin: 0;
-       color: var(--black-color);
-       transition: color 0.3s ease-in-out;
-
-       &:hover {
-         color: var(--grey-color);
-       }
-
-       &:active {
-         color: var(--black-color);
-       }
-
-       .about-btn-close-icon {
-         width: 18px;
-         height: 18px;
-         color: currentColor;
-
-         @media (max-width: #{$desktop}) {
-           width: 16px;
-           height: 16px;
-         }
-
-         @media (max-width: #{$tablet}) {
-           width: 14px;
-           height: 14px;
-         }
-       }
-     }
-
-     .about-title {
-       margin-bottom: var(--max-gap);
-       font-size: var(--h2-font);
-     }
-
-     .about-description {
-       margin-bottom: var(--min-gap);
-
-       &-highlight {
-         font-weight: 700;
-       }
-     }
-
-     .about-subtitle {
-       margin-bottom: var(--min-gap);
-       font-size: var(--h3-font);
-     }
-
-     .about-features {
-       flex-direction: column;
-       gap: var(--min-gap);
-       margin-bottom: var(--max-gap);
-       padding-left: 20px;
-       list-style: disc;
-
-       .about-feature {
-         font-size: var(--body-font);
-
-         &-bold {
-           font-weight: 700;
-         }
-       }
-     }
-
-     .about-steps {
-       margin-bottom: var(--max-gap);
-       padding-left: var(--max-gap);
-       padding-right: 16px;
-       list-style: decimal;
-       line-height: 1;
-
-       .about-step {
-         margin-bottom: var(--min-gap);
-       }
-     }
-
-     .about-steps li::marker {
-       font-weight: bold;
-     }
-
-     .about-text {
-       font-style: italic;
-
-       .about-link {
-         color: var(--type8-color);
-         transition: color 0.3s ease-in-out;
-
-         &:focus {
-           color: var(--type3-color);
-         }
-
-         &:hover {
-           color: var(--type7-color);
-         }
-
-         &:active {
-           color: var(--type8-color);
-         }
-       }
-     }
-   }
+          &.open>.sidebar__dropdown-group-btn .sidebar__dropdown-arrow {
+            transform: rotate(180deg);
+          }
+        }
+      }
+    }
+  }

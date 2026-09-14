@@ -1,11 +1,9 @@
-# Error Logger & Viewer
+# <img src="./frontend/src/assets/img/logo.png" alt="Error Logger & Viewer" width="56" height="56" style="vertical-align: middle; margin-right: 10px;"> Error Logger & Viewer
 
 [![CI](https://github.com/kate8382/error-logger-viewer/actions/workflows/ci.yml/badge.svg)](https://github.com/kate8382/error-logger-viewer/actions)
 [![Pages](https://github.com/kate8382/error-logger-viewer/actions/workflows/deploy-gh-pages.yml/badge.svg)](https://github.com/kate8382/error-logger-viewer/actions)
 
 **Error Logger & Viewer** is a modern full-stack SPA for collecting, storing, analyzing, and visualizing client-side JavaScript errors in web applications. Built with TypeScript across both frontend and backend, it provides developers with tools to track runtime exceptions, promise rejections, and network failures in real time.
-
-![Banner](./frontend/src/assets/img/banner_ELV-1.png)
 
 🚀 **Live Demo:** [https://kate8382.github.io/error-logger-viewer/](https://kate8382.github.io/error-logger-viewer/) — click *"Create test error"* on the demo page to test the app in action.
 

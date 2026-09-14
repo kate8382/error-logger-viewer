@@ -5,10 +5,10 @@ import { ErrorApi } from './api';
 import './header';
 import { StatsManager } from './stats';
 import ChartManager from './charts';
+import Register from './register';
 import type { ChartManagerType } from './charts'; // Импорт типа ChartManager чтобы приводить созданный инстанс к правильному типу (вместо ambient-описание в global.d.ts)
 import type { Aside } from './aside'; // Импорт типа Aside для приведения динамически загруженного синглтона
 import { ErrorTable } from './table';
-
 import { onLangChange } from './utils/i18n';
 import { updateTestErrorButtonVisibility } from './utils/testErrorButton';
 import handleModuleLoadError from './utils/moduleLoad';
@@ -55,6 +55,15 @@ class ErrorLoggerApp {
             // `translatePage` не принимает аргументы — он читает текущий язык из i18n.
             asideLocal.translatePage();
             onLangChange(() => asideLocal?.translatePage?.());
+          }
+          // Инициализируем секцию регистрации (если присутствует в DOM)
+          try {
+            const reg = new Register();
+            reg.init();
+            // Сохраняем ссылку для отладки
+            (window as any).registerInstance = reg;
+          } catch (e) {
+            // игнорируем, если модуль Register недоступен или контейнер отсутствует
           }
         })
         .catch((err) => {
