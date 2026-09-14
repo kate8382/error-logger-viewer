@@ -76,28 +76,15 @@ export class Register {
     if (langSwitch && !this.langNode) {
       try {
         const clone = langSwitch.cloneNode(true) as HTMLElement;
-        // Удаляем потенциальные id-дубликаты
-        clone.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
         // Подготовим соответствие оригинал <-> клон для кнопок
         const origButtons = Array.from(langSwitch.querySelectorAll<HTMLButtonElement>('.lang-btn'));
         const cloneButtons = Array.from(clone.querySelectorAll<HTMLButtonElement>('.lang-btn'));
         try {
-          const copyComputed = (src: Element, dst: HTMLElement) => {
-            const cs = window.getComputedStyle(src as Element);
-            for (let i = 0; i < cs.length; i++) {
-              const p = cs[i];
-              const v = cs.getPropertyValue(p);
-              if (v) dst.style.setProperty(p, v);
-            };
-          };
-          // копируем для контейнера
-          copyComputed(langSwitch, clone as HTMLElement);
-          // для кнопок: навесим делегирующие клики и скопируем стили
+          // не копируем все вычисленные стили (они ставят inline-стили и перекрывают авторские CSS)
+          // для кнопок: навесим делегирующие клики
           cloneButtons.forEach((btn, i) => {
             const orig = origButtons[i];
             if (orig) {
-              // копируем стиль кнопки
-              copyComputed(orig, btn as HTMLElement);
               // синхронизируем data-lang
               const dataLang = orig.getAttribute('data-lang') || (orig.textContent || '').trim().toLowerCase();
               btn.setAttribute('data-lang', dataLang || '');
@@ -110,16 +97,20 @@ export class Register {
           });
         } catch {}
 
-        const wrapper = this.container.querySelector<HTMLElement>('.register');
-        const rightEl = wrapper ? wrapper.querySelector<HTMLElement>('.register__right') : null;
-        if (wrapper) {
-          // prepend clone into the start of .register__right so lang switch is inside right column
-          if (rightEl) {
-            try { rightEl.insertBefore(clone, rightEl.firstChild); } catch { wrapper.insertBefore(clone, rightEl); }
-          } else {
-            // fallback: append to wrapper
-            wrapper.appendChild(clone);
-          }
+        // Use the existing container (section#registerSection) as wrapper
+        const wrapperEl = this.container as HTMLElement;
+        const rightEl = wrapperEl.querySelector<HTMLElement>('.register__right');
+        if (rightEl) {
+          try { rightEl.insertBefore(clone, rightEl.firstChild); } catch { wrapperEl.insertBefore(clone, rightEl); }
+        } else if (wrapperEl) {
+          wrapperEl.appendChild(clone);
+        }
+          // Remove any inline styles copied previously (they очень часто перекрывают SCSS правила)
+          try {
+            clone.removeAttribute('style');
+            clone.querySelectorAll<HTMLElement>('[style]').forEach((el) => el.removeAttribute('style'));
+          } catch {}
+
           // Set active state according to current language
           try {
             const cur = getCurrentLang();
@@ -130,8 +121,7 @@ export class Register {
             });
           } catch {}
           this.langNode = clone;
-        }
-      } catch {}
+        } catch {}
     }
   }
 
@@ -197,25 +187,25 @@ export class Register {
 
     const formEl = createElement('form', { className: 'register__form flex', id: 'registerForm', attrs: { novalidate: 'true' }, role: 'form' },
       createElement('label', { className: 'visually-hidden', attrs: { for: 'r-name' } }, registerFormName),
-      createElement('input', { className: 'input', id: 'r-name', name: 'name', type: 'text', required: true, attrs: { placeholder: 'Your name', 'data-i18n-placeholder': 'registerFormName' } }),
-
-      createElement('label', { className: 'visually-hidden', attrs: { for: 'r-project' } }, registerFormProject),
-      createElement('input', { className: 'input', id: 'r-project', name: 'project', type: 'text', attrs: { placeholder: 'Project name (optional)', 'data-i18n-placeholder': 'registerFormProject' } }),
+      createElement('input', { className: 'register__input', id: 'r-name', name: 'name', type: 'text', required: true, attrs: { placeholder: registerFormName, 'data-i18n-placeholder': 'registerFormName' } }),
 
       createElement('label', { className: 'visually-hidden', attrs: { for: 'r-email' } }, registerFormEmail),
-      createElement('input', { className: 'input', id: 'r-email', name: 'email', type: 'email', required: true, attrs: { placeholder: 'Email', 'data-i18n-placeholder': 'registerFormEmail' } }),
+      createElement('input', { className: 'register__input', id: 'r-email', name: 'email', type: 'email', required: true, attrs: { placeholder: registerFormEmail, 'data-i18n-placeholder': 'registerFormEmail' } }),
 
       createElement('label', { className: 'visually-hidden', attrs: { for: 'r-password' } }, registerFormPassword),
-      createElement('input', { className: 'input', id: 'r-password', name: 'password', type: 'password', required: true, attrs: { placeholder: 'Password', 'data-i18n-placeholder': 'registerFormPassword' } }),
+      createElement('input', { className: 'register__input', id: 'r-password', name: 'password', type: 'password', required: true, attrs: { placeholder: registerFormPassword, 'data-i18n-placeholder': 'registerFormPassword' } }),
+
+      createElement('label', { className: 'visually-hidden', attrs: { for: 'r-project' } }, registerFormProject),
+      createElement('input', { className: 'register__input', id: 'r-project', name: 'project', type: 'text', attrs: { placeholder: registerFormProject, 'data-i18n-placeholder': 'registerFormProject' } }),
 
       // Controls: primary signup, secondary Google signup, and footer links (guest / sign in)
       createElement('div', { className: 'register__controls flex', role: 'group' },
-        createElement('button', { className: 'btn btn--primary register__signup', type: 'submit', dataI18n: 'registerButtonSignup' }, registerButtonSignup),
-        createElement('button', { className: 'btn btn--secondary register__signup-google', type: 'button', id: 'signupGoogle' }, t('registerSignUpGoogle') || 'Sign up with Google'),
+        createElement('button', { className: 'register__signup', type: 'submit', dataI18n: 'registerButtonSignup' }, registerButtonSignup),
+        createElement('button', { className: 'register__signup-google', type: 'button', id: 'signupGoogle' }, t('registerSignUpGoogle') || 'Sign up with Google'),
+        createElement('div', { className: 'register__account flex' }, createElement('span', { className: 'register__account-text' }, t('registerHaveAccount') || 'I have an account.'), createElement('a', { className: 'register__signin', id: 'signInLink', attrs: { href: '#' } }, t('registerSignIn') || 'Sign in'))
+        ),
         createElement('div', { className: 'register__controls-footer' },
-          createElement('a', { className: 'register__guest', id: 'continueGuest', role: 'button', dataI18n: 'registerLinkGuest', attrs: { href: '#' } }, registerLinkGuest),
-          createElement('div', { className: 'register__account' }, createElement('span', { className: 'register__account-text' }, t('registerHaveAccount') || 'I have an account.'), createElement('a', { className: 'register__signin', id: 'signInLink', attrs: { href: '#' } }, t('registerSignIn') || 'Sign in'))
-        )
+          createElement('a', { className: 'register__guest', id: 'continueGuest', role: 'button', dataI18n: 'registerLinkGuest', attrs: { href: '#' } }, registerLinkGuest)
       )
     );
 
@@ -224,10 +214,10 @@ export class Register {
       formEl,
     );
 
-    const wrapper = createElement('div', { className: 'register flex' }, left, right);
-
-    setChildren(this.container, [wrapper]);
+    // Use existing container (section#registerSection) which already has class 'register'
+    setChildren(this.container, [left, right]);
   }
+
 
   private captureElements(): void {
     if (!this.container) return;
@@ -322,6 +312,7 @@ export class Register {
     // aria-label handled by semantic labels where needed; no automatic aria-label setting
   }
 }
+
 
 export default Register;
 

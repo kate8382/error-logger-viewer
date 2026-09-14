@@ -1,20 +1,211 @@
 @use 'variables' as *;
+@use 'branding' as *;
 
 // Styles for registration full-page section
-.register-section {
+.register {
   position: fixed;
   inset: 0;
   // Ensure the registration section is above table sections (z-index: 2)
   z-index: 3;
-  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  padding: calc(var(--max-gap) * 2);
   color: var(--black-color);
-  background: var(--body-color);
+  /* gradient using hover / active color so left visually separates */
+  background: linear-gradient(90deg, var(--hover-color) 50%, var(--white-color) 50%);
 
-  .register {
-    display: flex;
+  .register__left {
+    align-items: flex-start;
+    gap: var(--max-gap);
+    width: 50%;
+    padding-right: var(--max-gap);
+    font-weight: 500;
+
+    .register__branding {
+      flex-direction: column;
+      justify-content: center;
+      gap: var(--max-gap);
+      width: 100%;
+
+      .register__brand-zone {
+        justify-content: flex-start;
+        align-items: center;
+        gap: var(--min-gap);
+        width: 100%;
+        margin-left: -15px;
+
+        .sidebar__logo {
+          margin-bottom: 0;
+        }
+
+        .header__title-text {
+          align-self: center;
+          font-weight: 700;
+        }
+      }
+
+      .register__text {
+        font-size: var(--h3-font);
+      }
+
+      .register__features {
+        flex-direction: column;
+        gap: var(--max-gap);
+        padding-left: var(--max-gap);
+        font-size: var(--h4-font);
+        list-style-type: disc;
+      }
+    }
+  }
+
+  .register__right {
+    position: relative;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100vw;
+    gap: var(--max-gap);
+    width: 50%;
+    height: 100vh;
+
+    .header__lang-switch {
+      position: absolute;
+      top: var(--max-gap);
+      right: var(--max-gap);
+      width: auto;
+      z-index: 5;
+
+      .lang-btn {
+        color: var(--black-color);
+        transition: color 0.3s ease-in-out;
+
+        &:hover {
+          color: var(--hover-color);
+        }
+
+        &:focus {
+          color: var(--focus-color);
+        }
+
+        &:active {
+          color: var(--active-color);
+        }
+      }
+    }
+
+    .register__subtitle {
+      align-self: center;
+      width: 100%;
+      max-width: 360px;
+      text-align: left;
+      font-size: var(--h2-font);
+    }
+
+    .register__form {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--max-gap);
+      max-width: 360px;
+      width: 100%;
+
+      .register__input {
+        width: 100%;
+        height: 44px;
+        padding: 8px 12px;
+        border-radius: var(--card-radius);
+        border: 1px solid var(--body-color);
+        background: var(--stats-btn-color);
+        font-size: var(--small-font);
+        color: var(--body-color);
+      }
+
+      .register__controls {
+        flex-direction: column;
+        gap: var(--max-gap);
+        width: 100%;
+
+        .register__signup {
+          width: 100%;
+          height: 44px;
+          background: var(--active-color);
+          color: var(--white-color);
+          border-radius: var(--card-radius);
+          font-weight: 600;
+          transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+
+          &:hover {
+            color: var(--black-color);
+            background: var(--hover-color);
+          }
+
+          &:focus,
+          &:active {
+            color: var(--white-color);
+            background: var(--focus-color);
+          }
+        }
+
+        .register__signup-google {
+          width: 100%;
+          height: 40px;
+          background: var(--hover-color);
+          color: var(--black-color);
+          border-radius: var(--card-radius);
+          font-weight: 600;
+          transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+
+          &:hover {
+            color: var(--white-color);
+            background: var(--focus-color);
+          }
+
+          &:focus,
+          &:active {
+            color: var(--white-color);
+            background: var(--active-color);
+          }
+        }
+
+        .register__account {
+          align-items: center;
+          justify-content: center;
+          gap: var(--min-gap);
+          font-size: var(--small-font);
+          color: var(--grey-color);
+
+          .register__signin {
+            text-decoration: underline;
+            transition: color 0.3s ease-in-out;
+
+            &:hover {
+              color: var(--grey-color);
+            }
+
+            &:focus,
+            &:active {
+              color: var(--active-color);
+            }
+          }
+        }
+      }
+
+      .register__controls-footer {
+        .register__guest {
+          transition: color 0.3s ease-in-out;
+
+          &:hover {
+            color: var(--grey-color);
+          }
+
+          &:focus,
+          &:active {
+            color: var(--active-color);
+          }
+        }
+      }
+    }
   }
 
   // Neutralize theme variables inside registration so theme switching doesn't affect it
