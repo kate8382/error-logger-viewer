@@ -1,0 +1,38 @@
+deployment:
+  tasks:
+    - run: "exec > /home/ekaterina/deploy.log 2>&1 || true"
+    - run: "export DEPLOYPATH=/home/ekaterina/public_html; export BACKENDPATH=/home/ekaterina/backend; echo DEPLOYPATH=$DEPLOYPATH BACKENDPATH=$BACKENDPATH"
+    - run: |
+        echo "------ DEPLOY START ------"
+        date
+        echo "Repo root: $(pwd)"
+        # choose frontend source: frontend/dist (recommended) or frontend (fallback)
+        if [ -d frontend/dist ]; then
+          SRC=frontend/dist
+        elif [ -d frontend ]; then
+          SRC=frontend
+        else
+          echo "No frontend source found (frontend/dist or frontend)"
+          exit 1
+        fi
+        echo "Using frontend source: $SRC"
+        mkdir -p "$DEPLOYPATH"
+        echo "--- before clean $DEPLOYPATH ---"
+        ls -la "$DEPLOYPATH" || true
+        rm -rf "$DEPLOYPATH"/* || true
+        echo "--- copying frontend from $SRC to $DEPLOYPATH ---"
+        cp -a "$SRC"/. "$DEPLOYPATH"/ || echo "cp frontend -> public_html exited with code $?"
+        echo "--- after copy ---"
+        ls -la "$DEPLOYPATH" || true
+        # backend: prefer backend/dist when present
+        if [ -d backend/dist ]; then
+          mkdir -p "$BACKENDPATH"
+          cp -a backend/dist/. "$BACKENDPATH"/ || echo "cp backend/dist exited with code $?"
+        elif [ -d backend ]; then
+          mkdir -p "$BACKENDPATH"
+          cp -a backend/. "$BACKENDPATH"/ || echo "cp backend exited with code $?"
+        else
+          echo "No backend to deploy"
+        fi
+        echo "------ DEPLOY END ------"
+        date
