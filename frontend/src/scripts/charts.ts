@@ -10,19 +10,19 @@ import { showCenterSpinner, hideCenterSpinner } from './utils/loading';
 
 // Тип для подготовленных данных графика
 type PreparedChartData = {
-  labels: string[],
+  labels: string[];
   datasets: Array<{
-    label: string,
-    data: number[],
-    backgroundColor?: string[] | string,
-    borderWidth: number,
-    borderRadius: number,
-    barPercentage: number,
-    categoryPercentage: number,
-    stack: string,
-  }>,
-  maxY: number,
-  stepSize: number,
+    label: string;
+    data: number[];
+    backgroundColor?: string[] | string;
+    borderWidth: number;
+    borderRadius: number;
+    barPercentage: number;
+    categoryPercentage: number;
+    stack: string;
+  }>;
+  maxY: number;
+  stepSize: number;
 };
 
 export default class ChartManager {
@@ -266,7 +266,7 @@ export default class ChartManager {
                 },
                 tooltip: {
                   callbacks: {
-                    label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y}`, // ctx - контекст, где ctx.dataset.label - отвечает за название набора данных (label), а ctx.parsed.y - за значение по оси Y
+                    label: (ctx: any) => `${ctx.dataset.label}: ${ctx.parsed.y}`, // ctx - контекст, где ctx.dataset.label - отвечает за название набора данных (label), а ctx.parsed.y - за значение по оси Y
                   },
                 },
               },
@@ -308,7 +308,7 @@ export default class ChartManager {
                     padding: 10,
                     color: '#89868d',
                     stepSize: stepSize,
-                    callback: function (value) {
+                    callback: function (value: any) {
                       return value;
                     },
                   },
@@ -499,7 +499,7 @@ export default class ChartManager {
   }
 
   // eslint-disable-next-line no-unused-vars
-  prepareChartData(stats: Stats, labelFn: (key: string) => string | undefined = getLabel): { labels: string[], data: number[] } {
+  prepareChartData(stats: Stats, labelFn: (key: string) => string | undefined = getLabel): { labels: string[]; data: number[] } {
     // stats: { "type1": count, "type2": count, ... }
     const labels = Object.keys(stats).map((key) => labelFn(key) ?? key);
     const data = Object.values(stats);

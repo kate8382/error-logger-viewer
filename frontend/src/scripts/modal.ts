@@ -151,7 +151,7 @@ export class Modal {
     const usersValue = Array.isArray(error.users) ? error.users.join(', ') : '';
     const message = error.message || '';
     const comment = String(error.comment || '');
-    const statusOptions: Array<{ value: string, label: string }> = [
+    const statusOptions: Array<{ value: string; label: string }> = [
       { value: 'new', label: t('new') },
       { value: 'in_progress', label: t('in_progress') },
       { value: 'fixed', label: t('fixed') },

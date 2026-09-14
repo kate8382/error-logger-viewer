@@ -42,4 +42,10 @@ declare global {
 
 export {};
 
+declare module 'chart.js/auto' {
+  import { Chart } from 'chart.js';
+  export * from 'chart.js';
+  export default Chart;
+}
+
 

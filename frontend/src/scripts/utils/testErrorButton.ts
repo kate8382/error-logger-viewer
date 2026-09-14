@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable prettier/prettier */
 
 import type { ErrorApi } from '../api';
 import { t, onLangChange } from './i18n';

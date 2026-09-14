@@ -10,7 +10,8 @@
 // =============================================================================
 
 // --- Standard library & third-party imports ---
-import express, { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import cors from 'cors';
 // helmet sets secure HTTP response headers (X-Frame-Options, CSP, etc.)
 import helmet from 'helmet';
@@ -23,7 +24,7 @@ import { dirname, join, resolve } from 'path';
 import { promises as fs } from 'fs';
 import { existsSync } from 'fs';
 import { v4 as uuidv4 } from 'uuid';
-import { DBSchema } from './types/db';
+import type { DBSchema } from './types/db';
 import type { ProjectDTO } from 'projects';
 import type { CreateErrorRequest, UpdateErrorRequest } from 'errors';
 import type { UserDTO } from 'users';

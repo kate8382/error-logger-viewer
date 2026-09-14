@@ -1,5 +1,5 @@
 import type { ErrorItem } from 'errors';
-// eslint-disable-next-line prettier/prettier
+
 import type * as I18n from '../scripts/utils/i18n';
 
 // Функция для получения даты в формате ДД.ММ.ГГГГ из строки даты
@@ -15,8 +15,8 @@ export function getDateOnly(str?: string): string {
 
 // Типы для функций i18n
 type I18nHelpers = {
-  getLabel?: typeof I18n.getLabel,
-  t?: typeof I18n.t,
+  getLabel?: typeof I18n.getLabel;
+  t?: typeof I18n.t;
 };
 
 // Фильтрация списка ошибок по поисковому запросу с учетом i18n

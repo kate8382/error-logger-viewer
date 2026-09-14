@@ -91,7 +91,7 @@ export class Aside {
         const mode = option.dataset.value as Mode;
         // Локальное приведение глобального `app` к минимальному типу для обращения к errorApi/updateErrorTable
         // eslint-disable-next-line no-unused-vars
-        const app = window.app as unknown as { errorApi?: { setMode?: (m: Mode) => void }, updateErrorTable?: () => void } | undefined;
+        const app = window.app as unknown as { errorApi?: { setMode?: (m: Mode) => void }; updateErrorTable?: () => void } | undefined;
         if (app && app.errorApi && typeof app.updateErrorTable === 'function') {
           if (typeof app.errorApi.setMode === 'function') app.errorApi.setMode(mode);
           /* Приведение глобального инстанса таблицы к реальному типу ErrorTable. Это нужно для безопасного вызова метода `setMode`, т.к. `window.errorTableInstance` объявлен минимально в global.d.ts */
