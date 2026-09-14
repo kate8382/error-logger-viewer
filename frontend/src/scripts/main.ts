@@ -172,7 +172,7 @@ class ErrorLoggerApp {
         }
         return response;
       } catch (error) {
-        const err = error as unknown as { message?: string, stack?: string };
+        const err = error as unknown as { message?: string; stack?: string };
         console.log('[ErrorLogger] Creating Fetch error:', err?.message || err);
         this.handleErrorCreate({
           type: 'FetchError',
@@ -193,8 +193,8 @@ class ErrorLoggerApp {
         if (event.error) {
           // Это JS-ошибка (TypeError, SyntaxError и др.)
           if (window.app && window.app.errorApi) {
-            const evErr = event.error as unknown as { name?: string, message?: string, stack?: string } | undefined;
-            const evMeta = event as unknown as { filename?: string, lineno?: number, colno?: number };
+            const evErr = event.error as unknown as { name?: string; message?: string; stack?: string } | undefined;
+            const evMeta = event as unknown as { filename?: string; lineno?: number; colno?: number };
             window.app.errorApi.createError({
               type: evErr?.name || 'Error',
               message: evErr?.message || String(event.message),

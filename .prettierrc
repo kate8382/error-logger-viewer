@@ -1,6 +1,5 @@
 {
   "singleQuote": true,
-  "parser": "flow",
   "endOfLine": "auto",
   "printWidth": 300
 }
