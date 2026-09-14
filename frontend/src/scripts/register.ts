@@ -1,5 +1,7 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable no-empty */
 import { setChildren } from 'redom';
-import { t, getCurrentLang, onLangChange, setLang } from './utils/i18n';
+import { t, getCurrentLang, onLangChange } from './utils/i18n';
 import { createElement, translateNodes, qsa } from './utils/dom';
 
 export class Register {
@@ -9,7 +11,6 @@ export class Register {
   private logoNode: HTMLElement | null = null;
   private logoOrigParent: Node | null = null;
   private logoOrigNext: Node | null = null;
-
   private titleLinkNode: HTMLElement | null = null;
   private titleOrigParent: Node | null = null;
   private titleOrigNext: Node | null = null;
@@ -22,6 +23,8 @@ export class Register {
   private emailInput: HTMLInputElement | null = null;
   private passwordInput: HTMLInputElement | null = null;
   private guestLink: HTMLAnchorElement | null = null;
+  private signupGoogleBtn: HTMLButtonElement | null = null;
+  private signInLink: HTMLAnchorElement | null = null;
 
   constructor() {
     this.container = document.getElementById('registerSection');
@@ -78,16 +81,14 @@ export class Register {
         // Подготовим соответствие оригинал <-> клон для кнопок
         const origButtons = Array.from(langSwitch.querySelectorAll<HTMLButtonElement>('.lang-btn'));
         const cloneButtons = Array.from(clone.querySelectorAll<HTMLButtonElement>('.lang-btn'));
-        // Копируем вычисленные стили для контейнера и для каждой кнопки, чтобы клон выглядел как оригинал
         try {
           const copyComputed = (src: Element, dst: HTMLElement) => {
             const cs = window.getComputedStyle(src as Element);
-            // небольшой набор свойств для копирования — достаточно для визуального соответствия
-            const props = ['display','padding','font','font-size','color','background','background-color','border','outline','width','height','align-items','justify-content','gap','cursor', 'color'];
-            props.forEach((p) => {
+            for (let i = 0; i < cs.length; i++) {
+              const p = cs[i];
               const v = cs.getPropertyValue(p);
               if (v) dst.style.setProperty(p, v);
-            });
+            };
           };
           // копируем для контейнера
           copyComputed(langSwitch, clone as HTMLElement);
@@ -112,8 +113,13 @@ export class Register {
         const wrapper = this.container.querySelector<HTMLElement>('.register');
         const rightEl = wrapper ? wrapper.querySelector<HTMLElement>('.register__right') : null;
         if (wrapper) {
-          if (rightEl) wrapper.insertBefore(clone, rightEl);
-          else wrapper.appendChild(clone);
+          // prepend clone into the start of .register__right so lang switch is inside right column
+          if (rightEl) {
+            try { rightEl.insertBefore(clone, rightEl.firstChild); } catch { wrapper.insertBefore(clone, rightEl); }
+          } else {
+            // fallback: append to wrapper
+            wrapper.appendChild(clone);
+          }
           // Set active state according to current language
           try {
             const cur = getCurrentLang();
@@ -158,15 +164,6 @@ export class Register {
       this.titleOrigParent = null;
       this.titleOrigNext = null;
     }
-
-    // удаляем вставленную копию переключателя языка (оригинал остаётся на месте)
-    // if (this.langNode && this.langNode.parentNode) {
-    //   try {
-    //     this.langNode.parentNode.removeChild(this.langNode);
-    //   } catch {}
-    //   this.langNode = null;
-    // }
-    // оригинал `.header__lang-switch` не трогаем здесь
   }
 
   private render(): void {
@@ -185,20 +182,20 @@ export class Register {
     const registerSubtitle = t('registerSubtitle');
 
     // Блок, в который мы временно переместим существующие элементы (логотип и заголовок)
-    const branding = createElement('div', { className: 'register__branding' },
+    const branding = createElement('div', { className: 'register__branding flex' },
       // Вставляем пустую зону для бренда — туда mount() будет перемещать существующие DOM-узлы
-      createElement('div', { className: 'register__brand-zone' }),
+      createElement('div', { className: 'register__brand-zone flex' }),
       createElement('p', { className: 'register__text', dataI18n: 'registerText' }, registerText),
-      createElement('ul', { className: 'register__features', attrs: { 'aria-hidden': 'false' } },
+      createElement('ul', { className: 'register__features flex', attrs: { 'aria-hidden': 'false' } },
         createElement('li', { dataI18n: 'registerFeatureRealtime' }, registerFeatureRealtime),
         createElement('li', { dataI18n: 'registerFeatureTeam' }, registerFeatureTeam),
         createElement('li', { dataI18n: 'registerFeatureAnalytics' }, registerFeatureAnalytics)
       )
     );
 
-    const left = createElement('div', { className: 'register__left', role: 'complementary', attrs: { 'aria-hidden': 'false' } }, branding);
+    const left = createElement('div', { className: 'register__left flex', role: 'complementary', attrs: { 'aria-hidden': 'false' } }, branding);
 
-    const formEl = createElement('form', { className: 'register__form', id: 'registerForm', attrs: { novalidate: 'true' }, role: 'form' },
+    const formEl = createElement('form', { className: 'register__form flex', id: 'registerForm', attrs: { novalidate: 'true' }, role: 'form' },
       createElement('label', { className: 'visually-hidden', attrs: { for: 'r-name' } }, registerFormName),
       createElement('input', { className: 'input', id: 'r-name', name: 'name', type: 'text', required: true, attrs: { placeholder: 'Your name', 'data-i18n-placeholder': 'registerFormName' } }),
 
@@ -211,18 +208,23 @@ export class Register {
       createElement('label', { className: 'visually-hidden', attrs: { for: 'r-password' } }, registerFormPassword),
       createElement('input', { className: 'input', id: 'r-password', name: 'password', type: 'password', required: true, attrs: { placeholder: 'Password', 'data-i18n-placeholder': 'registerFormPassword' } }),
 
-      createElement('div', { className: 'register__controls', role: 'group' },
-        createElement('button', { className: 'btn btn--primary', type: 'submit', dataI18n: 'registerButtonSignup' }, registerButtonSignup),
-        createElement('a', { className: 'register__guest', id: 'continueGuest', role: 'button', dataI18n: 'registerLinkGuest', attrs: { href: '#' } }, registerLinkGuest)
+      // Controls: primary signup, secondary Google signup, and footer links (guest / sign in)
+      createElement('div', { className: 'register__controls flex', role: 'group' },
+        createElement('button', { className: 'btn btn--primary register__signup', type: 'submit', dataI18n: 'registerButtonSignup' }, registerButtonSignup),
+        createElement('button', { className: 'btn btn--secondary register__signup-google', type: 'button', id: 'signupGoogle' }, t('registerSignUpGoogle') || 'Sign up with Google'),
+        createElement('div', { className: 'register__controls-footer' },
+          createElement('a', { className: 'register__guest', id: 'continueGuest', role: 'button', dataI18n: 'registerLinkGuest', attrs: { href: '#' } }, registerLinkGuest),
+          createElement('div', { className: 'register__account' }, createElement('span', { className: 'register__account-text' }, t('registerHaveAccount') || 'I have an account.'), createElement('a', { className: 'register__signin', id: 'signInLink', attrs: { href: '#' } }, t('registerSignIn') || 'Sign in'))
+        )
       )
     );
 
-    const right = createElement('div', { className: 'register__right', role: 'main' },
+    const right = createElement('div', { className: 'register__right flex', role: 'main' },
       createElement('h2', { className: 'register__subtitle', dataI18n: 'registerSubtitle' }, registerSubtitle),
       formEl,
     );
 
-    const wrapper = createElement('div', { className: 'register' }, left, right);
+    const wrapper = createElement('div', { className: 'register flex' }, left, right);
 
     setChildren(this.container, [wrapper]);
   }
@@ -235,6 +237,8 @@ export class Register {
     this.emailInput = this.container.querySelector<HTMLInputElement>('#r-email');
     this.passwordInput = this.container.querySelector<HTMLInputElement>('#r-password');
     this.guestLink = this.container.querySelector<HTMLAnchorElement>('#continueGuest');
+    this.signupGoogleBtn = this.container.querySelector<HTMLButtonElement>('#signupGoogle');
+    this.signInLink = this.container.querySelector<HTMLAnchorElement>('#signInLink');
   }
 
   private bind(): void {
@@ -243,6 +247,18 @@ export class Register {
     }
     if (this.guestLink) {
       this.guestLink.addEventListener('click', this.onGuest.bind(this));
+    }
+    if (this.signupGoogleBtn) {
+      this.signupGoogleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.announce(t('registerSignUpGoogle') || 'Sign up with Google');
+      });
+    }
+    if (this.signInLink) {
+      this.signInLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.announce(t('registerSignIn') || 'Sign in');
+      });
     }
   }
 
@@ -287,7 +303,7 @@ export class Register {
 
   private announce(message: string): void {
     // simple accessible announcement — can be improved with live region
-    // eslint-disable-next-line no-alert
+
     alert(message);
   }
 

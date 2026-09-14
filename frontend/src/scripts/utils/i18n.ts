@@ -139,6 +139,9 @@ export const translations = {
     registerFormEmail: 'Email',
     registerFormPassword: 'Password',
     registerButtonSignup: 'Sign Up',
+    registerSignUpGoogle: 'Sign up with Google',
+    registerHaveAccount: 'I have an account.',
+    registerSignIn: 'Sign in',
     registerLinkGuest: 'Continue as Guest →',
     // About
     navAbout: 'About',
@@ -312,6 +315,9 @@ export const translations = {
     registerFormEmail: 'Электронная почта',
     registerFormPassword: 'Пароль',
     registerButtonSignup: 'Зарегистрироваться',
+    registerSignUpGoogle: 'Зарегистрироваться через Google',
+    registerHaveAccount: 'У меня есть аккаунт.',
+    registerSignIn: 'Войти',
     registerLinkGuest: 'Продолжить как гость →',
     // About
     navAbout: 'О программе',
