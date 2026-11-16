@@ -1,6 +1,5 @@
-// Универсальный API-клиент для работы с ошибками
-// По умолчанию используем same-origin: в dev это проксируется webpack-dev-server,
-// в prod фронтенд и API обслуживаются одним Express-сервером.
+// Universal API client for errors
+// Default same-origin: in dev proxied by webpack-dev-server, in prod served by Express.
 export const API_BASE_URL = (typeof globalThis !== 'undefined' && (globalThis as any).API_BASE_URL) || '';
 
 import { request } from '../shared/request';
@@ -39,7 +38,7 @@ export class ErrorApi {
     }
   }
 
-  // Получить статистику по статусу, типу или дням
+  // Get stats by status, type, or day
   async getStats(by: 'status' | 'type' | 'day' = 'status'): Promise<Stats> {
     if (this.mode === 'server') {
       try {
@@ -63,7 +62,7 @@ export class ErrorApi {
         if (!res) throw new Error('Empty response from createError');
         return res;
       } catch (e) {
-        // Если отправка на сервер не удалась (например, backend недоступен), сохраняем ошибку локально для последующей отправки и возвращаем локальную запись.
+        // If server fails (e.g., backend down), cache locally and return it.
         console.error('[ErrorApi] createError failed, caching locally', e);
         const raw = localStorage.getItem(this.localKey) || '[]';
         const errors = JSON.parse(raw) as ErrorItem[];
@@ -129,6 +128,21 @@ export class ErrorApi {
       }
       return null;
     }
+  }
+
+  // Register user and create project (demo mode skips server)
+  async registerUser(data: { name: string; email: string; project: string }): Promise<void> {
+    if (this.mode !== 'server') return;
+    await request<unknown>(`${this.baseUrl}/users`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: data.name, email: data.email }),
+    } as RequestInit);
+    await request<unknown>(`${this.baseUrl}/projects`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: data.project, owner: data.email }),
+    } as RequestInit);
   }
 
   setMode(mode: Mode) {

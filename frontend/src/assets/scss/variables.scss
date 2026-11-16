@@ -1,4 +1,4 @@
-// Светлая тема (по умолчанию)
+// Light theme (default)
 :root {
   // Container
   --container-width: 100vw;
@@ -48,7 +48,7 @@
   --card-radius: 8px;
 }
 
-// Тёмная тема
+// Dark theme
 [data-theme="dark"] {
   color-scheme: dark;
   --body-color: #89868d;
@@ -79,7 +79,7 @@
   --total-bg: #FFDFDF;
 }
 
-// Медиа-переопределения переменных
+// Media variable overrides
 $desktop: 1140px;
 $tablet: 980px;
 $mobile: 780px;

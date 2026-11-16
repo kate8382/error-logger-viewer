@@ -1,4 +1,5 @@
 @use 'variables' as *;
+@use 'branding' as *;
 
 .header {
   grid-area: header;
@@ -40,20 +41,7 @@
     height: 20px;
   }
 
-  .header__title {
-    font-size: var(--h1-font);
-
-    &-text {
-      outline: none;
-      border: none;
-      transition: color 0.3s ease-in-out;
-
-      // для табуляции
-      &:focus {
-        color: var(--focus-color);
-      }
-    }
-  }
+  /* .header__title styles moved to _branding.scss */
 
   .header__search {
     justify-content: space-between;
@@ -112,37 +100,5 @@
     }
   }
 
-  .header__lang-switch {
-    justify-content: flex-end;
-    align-items: center;
-    gap: var(--body-font);
-    width: 10%;
-
-    @media (max-width: #{$mobile}) {
-      display: none;
-      width: 0;
-    }
-
-    .lang-btn {
-      font-weight: bold;
-      font-size: var(--body-font);
-      transition: color 0.3s ease-in-out;
-
-      @media (max-width: #{$tablet}) {
-        font-size: 14px;
-      }
-
-      &:focus {
-        color: var(--focus-color);
-      }
-
-      &:hover {
-        color: var(--hover-color);
-      }
-
-      &:active {
-        color: var(--active-color);
-      }
-    }
-  }
+  /* .header__lang-switch styles moved to _branding.scss */
 }
