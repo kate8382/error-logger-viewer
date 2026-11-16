@@ -142,6 +142,7 @@ export const translations = {
     registerSignUpGoogle: 'Sign up with Google',
     registerHaveAccount: 'I have an account.',
     registerSignIn: 'Sign in',
+    registerErrorRequest: 'Registration failed. Please try again.',
     registerLinkGuest: 'Continue as Guest →',
     // About
     navAbout: 'About',
@@ -318,6 +319,7 @@ export const translations = {
     registerSignUpGoogle: 'Зарегистрироваться через Google',
     registerHaveAccount: 'У меня есть аккаунт.',
     registerSignIn: 'Войти',
+    registerErrorRequest: 'Не удалось зарегистрироваться. Попробуйте ещё раз.',
     registerLinkGuest: 'Продолжить как гость →',
     // About
     navAbout: 'О программе',

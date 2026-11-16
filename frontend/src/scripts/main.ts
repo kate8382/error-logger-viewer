@@ -58,7 +58,7 @@ class ErrorLoggerApp {
           }
           // Инициализируем секцию регистрации (если присутствует в DOM)
           try {
-            const reg = new Register();
+            const reg = new Register(app.errorApi);
             reg.init();
             // Сохраняем ссылку для отладки
             (window as any).registerInstance = reg;
