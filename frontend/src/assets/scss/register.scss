@@ -111,11 +111,12 @@ body.register-open {
     .register__subtitle {
       align-self: center;
       margin-top: auto;
-      width: 75%;
+      width: 60%;
       text-align: left;
       font-size: var(--h2-font);
 
       @media (max-width: #{$tablet}) {
+        width: 75%;
         font-size: var(--h3-font);
       }
     }
@@ -125,9 +126,13 @@ body.register-open {
       align-items: center;
       justify-content: center;
       gap: var(--max-gap);
-      width: 75%;
+      width: 60%;
       margin-bottom: auto;
       color: var(--black-color);
+
+      @media (max-width: #{$tablet}) {
+        width: 75%;
+      }
 
       .register__input {
         width: 100%;
